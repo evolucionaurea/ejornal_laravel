@@ -1,0 +1,35 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+
+///////////////// Propios /////////////////
+
+
+// Generales
+@import 'general';
+@import 'buttons';
+@import 'tablas';
+
+
+// Users loggeados
+@import 'sidebar';
+
+
+// Admin
+
+
+// Clientes
+@import 'clientes_resumen';
+
+// Individuos
+
+
+
+// Querys
+@import 'query_clientes';

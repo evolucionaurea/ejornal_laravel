@@ -1,0 +1,183 @@
+#sidebar-wrapper {
+  min-height: 100vh;
+  margin-left: -15rem;
+  -webkit-transition: margin .25s ease-out;
+  -moz-transition: margin .25s ease-out;
+  -o-transition: margin .25s ease-out;
+  transition: margin .25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+  width: 15rem;
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: 0;
+}
+
+#hamburguesa{
+  background-color: transparent;
+  border: none;
+}
+
+#hamburguesa:focus{
+  outline: inherit;
+}
+
+.bg_sidebar{
+  background-color: #2f4050;
+}
+
+.list-group-item{
+  background-color: transparent !important;
+}
+
+.list-group-item-action{
+  color: #c9c9c9 !important;
+}
+
+.logo_sidebar{
+
+  & img{
+    width: 170px;
+  }
+}
+
+.sidebar_datos_user{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #263240;
+  padding: 20px;
+
+  & i{
+    font-size: 3em;
+    color: white;
+    margin-bottom: 10px;
+  }
+
+  & span{
+    color: white;
+    margin-bottom: 10px;
+
+  }
+
+  & small{
+    color: #c2c2c2;
+    font-size: 12px;
+  }
+
+  & p{
+    color: #c2c2c2;
+    font-size: 10px;
+  }
+
+}
+
+.sidebar_menu{
+
+  & li{
+    list-style: none;
+    border-bottom: 1px solid #212b36;
+  }
+
+  & .menu_sin_sub_menu{
+    display: flex;
+    align-items: center;
+
+    & i{
+      color: white;
+      padding-left: 20px;
+      padding-right: 10px;
+    }
+
+    & a{
+      padding-left: 0px;
+    }
+  }
+
+  & li:hover{
+    background-color: #2a3745 !important;
+  }
+
+
+
+}
+
+
+.dropdownButton {
+  display: flex;
+  align-items: center;
+
+  & i:first-child{
+    color: white;
+    padding-left: 20px;
+    padding-right: 10px;
+  }
+
+  & .flecha_sub_menu{
+    padding-left: 15px;
+    padding-right: 15px;
+    color: white;
+  }
+
+  & a{
+    padding-left: 0px;
+  }
+
+
+}
+
+
+.dropdownContent{
+  display: none;
+
+  & ul{
+    margin: 0px;
+    & ol{
+      height: 46px;
+      display: flex;
+      align-items: center;
+      border-bottom: none;
+      border-top: 1px solid #212b36;
+      background-color: #293645;
+      cursor: pointer;
+
+      & a{
+        padding-left: 20px;
+        color: #c9c9c9;
+      }
+      & a:hover{
+        text-decoration: none;
+      }
+    }
+    & ol:hover{
+      background-color: #3b4959;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
+
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -15rem;
+  }
+}

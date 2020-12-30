@@ -1,0 +1,38 @@
+@media (max-width: 1300px) {
+
+  .clientes_resumen_estadisticas {
+    flex-direction: column;
+  }
+
+  #lineChart{
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  #grafico_provienen_interesados{
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+  }
+
+}
+
+
+@media (max-width: 950px) {
+
+.chat_grupos{
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10em;
+
+  & a{
+    margin-bottom: 15px;
+  }
+}
+
+.chat_users{
+  margin-top: 20px;
+}
+
+}
