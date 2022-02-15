@@ -15,10 +15,9 @@ class CreateClienteUserTable extends Migration
     {
         Schema::create('cliente_user', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->tinyInteger('id_cliente');
-            $table->tinyInteger('id_user');
+            $table->unsignedBigInteger('id_cliente'); // Relacion
+            $table->unsignedBigInteger('id_user'); // Relacion
             $table->timestamps();
-
             $table->unique(['id_cliente', 'id_user']);
         });
     }

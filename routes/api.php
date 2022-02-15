@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/ausentismos_mes_actual/{token}', 'EndpointsController@ausentismosMesActual');
+Route::get('/ausentismos_hoy/{token}', 'EndpointsController@ausentismosHoy');
+Route::get('/get_nominas/{token}', 'EndpointsController@getNominas');
+Route::post('/set_nominas', 'EndpointsController@setNominas');
+Route::delete('/delete_nominas', 'EndpointsController@deleteNominas');

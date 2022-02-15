@@ -1,6 +1,6 @@
 @extends('partials.layout')
 
-  @section('title', 'Empleado')
+@section('title', 'Empleado')
 
 @section('content')
 
@@ -10,140 +10,179 @@
     <div id="page-content-wrapper">
         @include('partials.nav_sup')
 
-
-        <div class="contenedor_gral">
-
-            <div class="contenedor_resumen py-5">
-                <div class="row contenedor_resumen_bloque_principal">
-                    <div class="resumen_bloque_principal">
-                        <div class="resumen_bloque_principal_titulo">
-                            <h6>Nomina</h6>
-                        </div>
-                        <div class="resumen_bloque_datos">
-                            <h2>150</h2>
-                            <span>trabajadores</span>
-                        </div>
-                    </div>
-                    <div class="resumen_bloque_principal">
-                        <div class="resumen_bloque_principal_titulo">
-                            <h6>Medicamentos</h6>
-                        </div>
-                        <div class="resumen_bloque_datos">
-                            <h2>1050</h2>
-                            <span>en stock</span>
-                        </div>
-                    </div>
-                    <div class="resumen_bloque_principal">
-                        <div class="resumen_bloque_principal_titulo">
-                            <h6>Fichadas hoy</h6>
-                        </div>
-                        <div class="resumen_bloque_datos">
-                            <h2>140</h2>
-                            <span>Faltan 10</span>
-                        </div>
-                    </div>
-                    <div class="resumen_bloque_principal">
-                        <div class="resumen_bloque_principal_titulo">
-                            <h6>Otro mas</h6>
-                        </div>
-                        <div class="resumen_bloque_datos">
-                            <h2>8</h2>
-                            <span>algun dato</span>
-                        </div>
-                    </div>
-                    <div class="resumen_bloque_principal">
-                        <div class="resumen_bloque_principal_titulo">
-                            <h6>Otro</h6>
-                        </div>
-                        <div class="resumen_bloque_datos">
-                            <h2>230</h2>
-                            <span>Mas info</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="contenedor_resumen resumen_tablas">
-                <div class="row">
-                    <div class="tarjeta col-md-6">
-                        <div class="table-responsive text-nowrap tabla">
-                            <div class="tabla_titulo">
-                                <h4>Algun dato</h4>
-                            </div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Nro</th>
-                                        <th>Dato 1</th>
-                                        <th>Dato 2</th>
-                                        <th>Dato 3</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Info 1</td>
-                                        <td>Info 2</td>
-                                        <td>Info 3</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Info 1</td>
-                                        <td>Info 2</td>
-                                        <td>Info 3</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta col-md-6">
-                        <div class="table-responsive text-nowrap tabla">
-                            <div class="tabla_titulo">
-                                <h4>Top Otro info</h4>
-                            </div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Nro</th>
-                                        <th>Dato 1</th>
-                                        <th>Dato 2</th>
-                                        <th>Dato 3</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Info 1</td>
-                                        <td>Info 2</td>
-                                        <td>Info 3</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Info 1</td>
-                                        <td>Info 2</td>
-                                        <td>Info 3</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-
         {{-- Contenido de la pagina --}}
+
+        @if (!isset($clientes) || empty($clientes) || count($clientes) < 1) <div class="tarjeta">
+            <section class="text-center px-md-5 mx-md-5 dark-grey-text">
+                <div class="row mb-5">
+                    <div class="col-md-4 mx-auto">
+                        <div class="mb-4 pb-2">
+                            <i class="fas fa-tools fa-10x text_danger"></i>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="font-weight-bold mb-4 pb-2 text_danger">No tienes empresas asignadas</h3>
+                <p class="text-center mx-auto mb-4 pb-2">Comuníquese con la empresa o su superior para solicitar que le asignen alguna empresa</p>
+            </section>
     </div>
+
+    @else
+
+    <div class="container">
+        <section>
+            <div class="row">
+
+                <div class="col-md-4 col-lg-4 mb-4">
+                    <div class="card primary-color white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$total_nomina}}</p>
+                                <p class="mb-0">Nomina (Activos)</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-users fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-4 mb-4">
+                    <div class="card red white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$ausentes_hoy}}</p>
+                                <p class="mb-0">Ausentes del dia</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-users fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-4 mb-4">
+                    <div class="card red white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$ausencia_covid}}</p>
+                                <p class="mb-0">Ausencias del día por covid</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-users fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-4 mb-4">
+                    <div class="card light-blue lighten-1 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$medicas_mes}}</p>
+                                <p class="mb-0">Consultas medicas cargadas del mes</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-comments fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-4 mb-4">
+                    <div class="card light-blue lighten-1 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$enfermerias_mes}}</p>
+                                <p class="mb-0">Consultas enfermería cargadas del mes</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-comments fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-4 mb-4">
+                    <div class="card light-blue lighten-1 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$consultas_medicas + $consultas_enfermeria}}</p>
+                                <p class="mb-0">Consultas del día</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-comments fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card secondary-color-dark lighten-1 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$testeos_positivos}}</p>
+                                <p class="mb-0">Testeos positivos</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-disease fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card secondary-color-dark accent-2 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_una_dosis}}</p>
+                                <p class="mb-0">Con al menos 1 dosis</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-disease fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card secondary-color-dark accent-2 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_dos_dosis}}</p>
+                                <p class="mb-0">Con 2 dosis</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-disease fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card secondary-color-dark accent-2 white-text">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_tres_dosis}}</p>
+                                <p class="mb-0">Con 3 dosis</p>
+                            </div>
+                            <div>
+                                <i class="fas fa-disease fa-2x text-black-40"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    @endif
+
+
+
+    {{-- Contenido de la pagina --}}
 </div>
-
-
-
-
+</div>
 
 
 @endsection

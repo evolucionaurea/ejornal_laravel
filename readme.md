@@ -1,74 +1,117 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+## eJornal
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Sistema de salud. La empresa Jornal Salud cuenta con empleados (medicos y enfermeros) que trabajan en las locaciones
+de sus clientes (empresas como por ejemplo: Carrefour, Coto). En estas empresas donde trabajan los empleados de Jornal
+Salud hay empleados de la propia empresa, que el sistema llama Nomina (osea trabajadores de una nomina).
+En este punto podemos decir que:
+- Admin: eJornal
+- Empleado: Medicos y enfermeros que trabajan para eJornal
+- Clientes: Son clientes de eJornal. Empresas donde los medicos y enfermeros trabajan.
 
-## About Laravel
+Los empleados son los que mas funcionalidades tienen, ya que, al fichar su entrada, pueden realizar multiplicidad de actividades.
+Es importante destacar que los Clientes tambien se pueden loggear y hasta tienen una API a disposición si el admin la habilita.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laravel 6.2
+- PHP 7.2
+- Javascript/Jquery
+- composer 2
 
-## Learning Laravel
+## Laravel Auditing
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+El sistema cuenta con:
+- laravel-auditing 12
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Esto se utiliza en algunas tablas.
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Composer
+Es importante tener instalado composer 2 para valerse de la siguiente dependencia:
+- "doctrine/dbal": "2.*",
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
+Con ésta podemos modificar/alterar las migraciones ya creadas en local o en produccion.
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Entornos
+El sitio se hostea el Hostinger. En caso de necesitar ingresar solicitar datos a Javier.
 
-## Security Vulnerabilities
+A la fecha hay 2 entornos:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Test:
+sitio => http://e2-test.jornalsalud.com/
 
-## License
+IP SSH =>  185.201.11.44
+Puerto SSH => 65002
+SSH Username => u693804549
+SSH Pass => Vicente2020!
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+FTP => IP 185.201.11.60
+FTP => user u693804549
+FTP => Pass Vicente2020!
+
+mysql
+user => u693804549_wuCA5
+pass => Vicente2020!
+nombre base => u6938 04549_iZ2NG
+
+Acceso por phpmyadmin => https://auth-db154.hostinger.com/index.php?db=u693804549_iZ2NG
+
+Dejo acceso formateado rápido para SSH => ssh -p 65002 u693804549@185.201.11.60
+
+
+- Prod:
+sitio => e2.jornalsalud.com
+
+ftp => e2.jornalsalud.com
+user => u646345361
+pass => Vicente2020!
+
+SSH port => 65002
+user => u646345361
+pass => Vicente2020!
+
+Dejo acceso formateado rápido para SSH => ssh -p 65002 u646345361@185.201.11.44
+
+
+## FRONTEND
+Se utilizó el framework MDBoostrap.
+Link directo:
+https://mdbootstrap.com/docs/b4/jquery/
+
+Allí tendrá varios componentes visuales para utilizar.
+También hay estilos propios que encontrará logicamente en /resources/sass
+
+
+
+## IMPORTANTE
+
+### Tablas
+El sistema fue pensado de una forma y fue cambiando durante la marcha por pedidos que fueron surgiendo. Es importante aclarar que algunas cosas que se decidieron cambiar ya no eran posibles en los tiempos requeridos porque no fue pensado así originalmente o porque estaba online ya funcionando de determinada manera, por tanto algunos registros se consultan por ID en forma harcodeada.
+Hay algunas tablas que se consultan por datos concretos porque no fue pensado.
+Por ejemplo los Tipos de Ausentismo:
+- ID 8 y ID 9: Son casos sospechosos o confirmados de covid. Se utilizan para las querys y logica en varias partes del sitio. Están harcodeados (8, 9). Hoy dia se pueden crear, modificar y eliminar tipos de ausentismos. El cliente sabe que no debe eliminarlos, pero es un riesgo que exista la posibilidad. Por el momento no se tomó otra decisión al respecto.
+- ID 12 Es de accidente. Esto se utiliza para las estadisticas y logica tambien.
+
+### Tabla Users
+- Id cliente actual:
+Es para cuando un empleado está loggeado saber en que empresa está trabajando, osea en que cliente de eJornal.
+
+- Id cliente relacionar:
+Es para saber, este usuario, a que cliente pertenece. Esto solo se completa cuando el usuario tiene relacion con un ID Cliente. Si es un user empleado o admin, entonces en esta columna verás null.
+
+- ID especialidad:
+Esto puede ser "medico" o "enfermero." Son rol de usuario empleado que pueden tener alguno de estos tipos.
+
+- Drive:
+Aquí se coloca el link al drive de un user de tipo empleado porque alli la empresa sube los comprobantes de pago.
+
+- Permiso desplegables:
+Esto es para limitar al user empleado en la posibilidad de usar algunos select. La limitacion se hace desde los blade con if
+
+- Personal interno:
+Es para saber si un usuario empleado es parte de eJornal o está terciarizado.
+
+- Archivo - hasharchivo / matricula - hashmatricula / Etc:
+Es para el user empleado. Un requerimiento que ingresó despues para poder subir contenido.

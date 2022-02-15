@@ -11,7 +11,7 @@ class Cliente extends Model
   protected $table = 'clientes';
 
   // Campos habilitados para ingresar
-  protected $fillable = ['logo', 'direccion', 'nombre'];
+  protected $fillable = ['logo', 'direccion', 'nombre', 'token'];
 
 
 }

@@ -20,9 +20,15 @@ class v1_0_0TableSeeder extends Seeder
       }
 
         $this->call(DbVersion1_0_0TableSeeder::class);
-        $this->call(UserSeeder::class);
         $this->call(RolSeeder::class);
-        $this->call(ClienteSeeder::class);
+        $this->call(EspecialidadesSeeder::class);
+        $this->call(UserSeeder::class);
+        // $this->call(ClienteSeeder::class);
         $this->call(ClienteUserSeeder::class);
+        $this->call(MigrarSitioPrevioSeeder::class);
+        $this->call(TipoAusentismoSeeder::class);
+        $this->call(TipoComunicacionSeeder::class);
+        $this->call(TipoCovidTesteosSeeder::class);
+        $this->call(TipoCovidVacunasSeeder::class);
     }
 }

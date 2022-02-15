@@ -15,15 +15,25 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->tinyInteger('id_rol');
+            $table->unsignedBigInteger('id_rol'); // Relacion
+            $table->unsignedBigInteger('id_especialidad'); // Relacion
+            $table->tinyInteger('id_cliente_actual')->nullable();
             $table->string('nombre');
             $table->tinyInteger('estado');
+            $table->tinyInteger('fichada')->nullable()->default(0);
             $table->tinyInteger('personal_interno')->nullable()->default(0);
+            $table->tinyInteger('permiso_desplegables')->nullable()->default(1);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            //Relaciones
+            $table->foreign('id_rol')->references('id')->on('roles')
+      			->onDelete('cascade')
+      			->onUpdate('cascade');
+
         });
     }
 

@@ -1,0 +1,15 @@
+.liquidacion_datos_personales {
+
+  & li {
+    list-style: none;
+  }
+}
+
+.img_onedrive {
+  width: 120px;
+  border: 1px solid #f2f2f2;
+
+  &:hover {
+    background-color: #f2f2f2;
+  }
+}

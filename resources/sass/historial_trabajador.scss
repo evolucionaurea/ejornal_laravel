@@ -1,0 +1,30 @@
+.card_consultas{
+  padding: 20px;
+  border-radius: 27px 27px 27px 27px;
+-moz-border-radius: 27px 27px 27px 27px;
+-webkit-border-radius: 27px 27px 27px 27px;
+  border: 1px solid #e8e8e8;
+
+  & h4{
+    color: $ejornal;
+  }
+
+  & .card_consultas_titulo{
+    background: #ebebeb;
+    padding: 10px 20px 10px 20px;
+
+    & h6{
+      color: black;
+    }
+
+  }
+}
+
+
+.testeos_vacunas_historial_trabajador {
+  list-style: none;
+
+  & li{
+    color: #e3e3e3;
+  }
+}

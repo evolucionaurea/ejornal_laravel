@@ -1,86 +1,202 @@
 <div class="bg_sidebar border-right" id="sidebar-wrapper">
     <div class="sidebar-heading logo_sidebar">
-        <img src="{{asset('img/logo_white.png')}}" alt="">
+        <img src="{{asset('img/logos/isologo.png')}}" alt="">
     </div>
     <div class="sidebar_datos_user">
         <i class="fas fa-user"></i>
         <small>Empleado eJornal</small>
         <span>{{auth()->user()->nombre}}</span>
-        @if (!isset($clientes) || empty($clientes))
+        @if (!isset($clientes) || empty($clientes) || count($clientes) < 1)
         <p>Sin empresas asignadas</p>
         @else
         <div class="form-group">
-            <select class="form-control form-control-sm">
+          @php
+            $url_actual = request()->url();
+          @endphp
+          @if (strpos($url_actual, 'create') == true || strpos($url_actual, 'edit') == true || strpos($url_actual, 'show') == true)
+              <select disabled name="select_clientes_sidebar" id="cliente_seleccionado_sidebar" class="form-control form-control-sm">
+            @else
+              <select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar" class="form-control form-control-sm">
+          @endif
               @foreach ($clientes as $cliente)
-              <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+                @if ($cliente->id == auth()->user()->id_cliente_actual)
+                    <option selected value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+                  @else
+                    <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+                @endif
               @endforeach
             </select>
         </div>
         @endif
     </div>
+
+    {{-- Este dato es para tomarlo por JS y saber si está trabajando actualmente (osea si fichó). En sidebar.js se usa el dato --}}
+    <input class="empleado_trabajando_saber" type="hidden" name="" value="{{auth()->user()->fichada}}">
+    <input class="id_cliente_actual" type="hidden" name="" value="{{auth()->user()->id_cliente_actual}}">
+    {{-- Este dato es para tomarlo por JS y saber si está trabajando actualmente (osea si fichó). En sidebar.js se usa el dato --}}
+
+@if (!isset($clientes) || empty($clientes) || count($clientes) < 1)
+  <div class="list-group list-group-flush sidebar_menu">
+    <li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
+      <i class="fas fa-tachometer-fast"></i>
+      <a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen</a>
+    </li>
+  </div>
+  @else
     <div class="list-group list-group-flush sidebar_menu">
-        <li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
-            <i class="fas fa-tachometer-fast"></i>
-            <a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen</a>
-        </li>
-        <li class="{{ setActive('/empleados/cuenta') }} dropdownMenu">
-            <div class="dropdownButton">
-                <i class="far fa-id-card"></i>
-                <a href="#!" class="list-group-item list-group-item-action sidebar_item">Mi eJornal</a>
-                <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
-            </div>
-            <div class="dropdownContent">
-                <ul>
-                    <ol class="{{ setActiveSub('/empleados/cuenta') }}" onclick="javascript:location.href='{{url('/empleados/cuenta')}}'">
-                        <a href="{{url('/empleados/cuenta')}}">Mi cuenta</a>
-                    </ol>
-                    <ol class="{{ setActiveSub('/empleados/liquidacion') }}" onclick="javascript:location.href='{{url('/empleados/liquidacion')}}'">
-                        <a href="{{url('/empleados/liquidacion')}}">Liquidación</a>
-                    </ol>
-                </ul>
-            </div>
-        </li>
-        <li class="{{ setActive('/empleados/nomina') }} dropdownMenu">
-            <div class="dropdownButton">
-                <i class="fas fa-users"></i>
-                <a href="#!" class="list-group-item list-group-item-action sidebar_item">Nomina</a>
-                <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
-            </div>
-            <div class="dropdownContent">
-                <ul>
-                    <ol class="{{ setActiveSub('/empleados/nomina') }}" onclick="javascript:location.href='{{url('/empleados/nomina')}}'">
-                        <a href="{{url('/empleados/nomina')}}">listado</a>
-                    </ol>
-                    <ol class="{{ setActiveSub('/empleados/importar') }}" onclick="javascript:location.href='{{url('/empleados/importar')}}'">
-                        <a href="{{url('/empleados/importar')}}">importar</a>
-                    </ol>
-                </ul>
-            </div>
-        </li>
-        <li class="{{ setActive('/empleados/ausentismos') }} menu_sin_sub_menu">
-            <i class="fas fa-user-times"></i>
-            <a href="{{url('/empleados/ausentismos')}}" class="list-group-item list-group-item-action sidebar_item">Ausentismos</a>
-        </li>
-        <li class="{{ setActive('/empleados/preocupacionales') }} menu_sin_sub_menu">
-            <i class="fas fa-briefcase-medical"></i>
-            <a href="{{url('/empleados/preocupacionales')}}" class="list-group-item list-group-item-action sidebar_item">Preocupacionales</a>
-        </li>
-        <li class="{{ setActive('/empleados/medicamentos') }} dropdownMenu">
-            <div class="dropdownButton">
-                <i class="fas fa-syringe"></i>
-                <a href="#!" class="list-group-item list-group-item-action sidebar_item">Medicamentos</a>
-                <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
-            </div>
-            <div class="dropdownContent">
-                <ul>
-                    <ol class="{{ setActiveSub('/empleados/medicamentos') }}" onclick="javascript:location.href='{{url('/empleados/medicamentos')}}'">
-                        <a href="{{url('/empleados/medicamentos')}}">Listado</a>
-                    </ol>
-                    <ol class="{{ setActiveSub('/empleados/medicamentos/movimientos') }}" onclick="javascript:location.href='{{url('/empleados/medicamentos/movimientos')}}'">
-                        <a href="{{url('/empleados/medicamentos/movimientos')}}">Movimientos</a>
-                    </ol>
-                </ul>
-            </div>
-        </li>
+      <li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
+        <i class="fas fa-tachometer-fast"></i>
+        <a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen</a>
+      </li>
+      <li class="{{ setActive('/empleados/nominas') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-user"></i>
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Nominas</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/nominas') }}" onclick="javascript:location.href='{{url('/empleados/nominas')}}'">
+              <a href="{{url('/empleados/nominas')}}">Listado</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
+      <li class="{{ setActive('/empleados/ausentismos') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-user-times"></i>
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Ausentismos</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/ausentismos') }}" onclick="javascript:location.href='{{url('/empleados/ausentismos')}}'">
+              <a href="{{url('/empleados/ausentismos')}}">Listado</a>
+            </ol>
+            <ol class="{{ setActiveSub('/empleados/comunicaciones') }}" onclick="javascript:location.href='{{url('/empleados/comunicaciones')}}'">
+              <a href="{{url('/empleados/comunicaciones')}}">Comunicaciones</a>
+            </ol>
+            <ol class="{{ setActiveSub('/empleados/certificados') }}" onclick="javascript:location.href='{{url('/empleados/certificados')}}'">
+              <a href="{{url('/empleados/certificados')}}">Certificados</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
+      <li class="{{ setActive('/empleados/medicamentos') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-user-md"></i>
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Consultas</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/consultas/medicas') }}" onclick="javascript:location.href='{{url('/empleados/consultas/medicas')}}'">
+              <a href="{{url('/empleados/consultas/medicas')}}">Medicas</a>
+            </ol>
+            <ol class="{{ setActiveSub('/empleados/consultas/enfermeria') }}" onclick="javascript:location.href='{{url('/empleados/consultas/enfermeria')}}'">
+              <a href="{{url('/empleados/consultas/enfermeria')}}">Enfermeria</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
+      <li class="{{ setActive('/empleados/covid') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-clinic-medical"></i>
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Covid 19</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/covid/testeos') }}" onclick="javascript:location.href='{{url('/empleados/covid/testeos')}}'">
+              <a href="{{url('/empleados/covid/testeos')}}">Testeos</a>
+            </ol>
+            <ol class="{{ setActiveSub('/empleados/covid/vacunas') }}" onclick="javascript:location.href='{{url('/empleados/covid/vacunas')}}'">
+              <a href="{{url('/empleados/covid/vacunas')}}">Vacunas</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
+      <li class="{{ setActive('/empleados/medicamentos') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-syringe"></i>
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Medicamentos</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/medicamentos') }}" onclick="javascript:location.href='{{url('/empleados/medicamentos')}}'">
+              <a href="{{url('/empleados/medicamentos')}}">Listado</a>
+            </ol>
+            <ol class="{{ setActiveSub('/empleados/medicamentos_movimientos') }}" onclick="javascript:location.href='{{url('/empleados/medicamentos_movimientos')}}'">
+              <a href="{{url('/empleados/medicamentos_movimientos')}}">Movimientos</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
+      <li class="{{ setActive('/empleados/preocupacionales') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-book-medical"></i>
+          {{-- Est Med Comp es: Estudios medicos complementarios. La seccion real se llama preocupacionales pero luego
+          decidieron cambiarle el nombre. Solo cambio los "label digamos". Rutas y demas queda igual --}}
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Est Med Compl</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/preocupacionales') }}" onclick="javascript:location.href='{{url('/empleados/preocupacionales')}}'">
+              <a href="{{url('/empleados/preocupacionales')}}">Listado</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
+      <li class="{{ setActive('/empleados/cuenta') }} dropdownMenu">
+        <div class="dropdownButton">
+          <i class="fas fa-file-invoice"></i>
+          <a href="#!" class="list-group-item list-group-item-action sidebar_item">Mi eJornal</a>
+          <i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+        </div>
+        <div class="dropdownContent">
+          <ul>
+            <ol class="{{ setActiveSub('/empleados/cuenta') }}" onclick="javascript:location.href='{{url('/empleados/cuenta')}}'">
+              <a href="{{url('/empleados/cuenta')}}">Mi cuenta</a>
+            </ol>
+            <ol class="{{ setActiveSub('/empleados/liquidacion') }}" onclick="javascript:location.href='{{url('/empleados/liquidacion')}}'">
+              <a href="{{url('/empleados/liquidacion')}}">Liquidacion</a>
+            </ol>
+          </ul>
+        </div>
+      </li>
     </div>
+@endif
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal_alerta_cliente_trabajando" tabindex="-1" aria-labelledby="cliente_trabajando_modal_titulo" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cliente_trabajando_modal_titulo">Advertencia</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <i class="fas fa-exclamation-triangle fa-8x text_danger"></i>
+          </div>
+          <div class="col-md-12">
+            <p>
+              No puedes cambiar de cliente mientras estás trabajando. Debes fichar tu salida del cliente
+              actual para poder cambiar a otro. Arriba a la derecha veras la huella de tu fichada en verde.
+              Dale click para fichar tu salida y pasará a roja.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

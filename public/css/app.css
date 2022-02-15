@@ -10933,7 +10933,7 @@ a.text-dark:focus {
 
 .activo {
   background-color: #293846;
-  border-left: 4px solid #19aa8d;
+  border-left: 4px solid #61d6f2;
 }
 
 .activo_home {
@@ -10942,14 +10942,23 @@ a.text-dark:focus {
 }
 
 .tarjeta {
+  max-width: 100%;
+  background-color: white;
+  min-height: auto;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
   box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.15);
   border-radius: 1.5rem;
   border: 1px solid #e6e6e6;
-  background-color: white;
   padding: 20px;
-  color: #676a6c;
-  margin-top: 10px;
-  margin-bottom: 15px;
+}
+
+.tarjeta h4 {
+  font-weight: bold;
+  font-size: 21px;
+  color: #404040;
+  margin-bottom: 20px;
 }
 
 .contenedor_gral {
@@ -10963,17 +10972,27 @@ a.text-dark:focus {
 }
 
 .cabecera {
-  width: 100%;
+  max-width: 100%;
   background-color: white;
-  min-height: 200px;
-  margin-top: 20px;
+  min-height: auto;
+  margin: 20px;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.15);
+  border-radius: 1.5rem;
+  border: 1px solid #e6e6e6;
+  background-color: white;
+  padding: 20px;
 }
 
 .cabecera h2 {
   font-weight: bold;
   font-size: 26px;
+  color: #376d7a;
+}
+
+.cabecera p {
+  color: grey;
 }
 
 .cabecera .cabecera_acciones {
@@ -10983,8 +11002,18 @@ a.text-dark:focus {
   margin-bottom: 10px;
 }
 
-.btn-ela {
-  background-color: #00a7a4;
+.card-columns .card {
+  border-radius: 29px 29px 29px 29px;
+  -moz-border-radius: 29px 29px 29px 29px;
+  -webkit-border-radius: 29px 29px 29px 29px;
+  border: 0px solid #000000;
+}
+
+select {
+  -webkit-appearance: menulist !important;
+}
+
+.btn-ejornal {
   color: white !important;
   cursor: pointer;
   border-radius: 1.5rem;
@@ -10994,20 +11023,208 @@ a.text-dark:focus {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   padding: 8px 18px 8px 18px;
   font-size: 12px;
+  margin-right: 20px;
 }
 
-.btn-ela i {
+.btn-ejornal i {
   padding-right: 5px;
 }
 
-.btn-ela:hover {
+.btn-ejornal:hover {
   text-decoration: none;
   color: white;
-  background-color: #058785;
 }
 
-.cabecera_tabla_acciones {
-  background-color: transparent;
+.btn-ejornal-base {
+  background-color: #2e87b8;
+}
+
+.btn-ejornal-base:hover {
+  background-color: #376d7a;
+}
+
+.btn-ejornal-gris-claro {
+  background-color: #cfcfcf;
+  color: black !important;
+}
+
+.btn-ejornal-gris-claro:hover {
+  color: black;
+  opacity: 0.8;
+}
+
+.btn-ejornal-success {
+  background-color: #32a88b;
+  color: white !important;
+}
+
+.btn-ejornal-success:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+.btn-ejornal-dark {
+  background-color: #404040;
+  color: white !important;
+}
+
+.btn-ejornal-dark:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+.btn_sm {
+  padding: 5px 10px 5px 10px;
+}
+
+.tag_ejornal {
+  color: white !important;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  padding: 8px 18px 8px 18px;
+  font-size: 12px;
+  margin-right: 20px;
+}
+
+.tag_ejornal i {
+  padding-right: 5px;
+}
+
+.tag_ejornal:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.tag_ejornal_success {
+  background-color: #32a88b;
+  color: white !important;
+}
+
+.tag_ejornal_success:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+.tag_ejornal_danger {
+  background-color: #8a2c2c;
+  color: white !important;
+}
+
+.tag_ejornal_danger:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+.tag_ejornal_grey {
+  background-color: #cfcfcf;
+  color: black !important;
+}
+
+.tag_ejornal_grey:hover {
+  color: black;
+  opacity: 0.8;
+}
+
+.tag_ejornal_dark {
+  background-color: #404040;
+  color: white !important;
+}
+
+.tag_ejornal_dark:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+.dt-buttons button {
+  background-color: #cccccc !important;
+  border: none;
+  box-shadow: none;
+}
+
+.dt-buttons button:hover {
+  color: black;
+  background-color: #b5b5b5 !important;
+  box-shadow: none;
+}
+
+.dt-buttons button:focus {
+  color: black;
+  background-color: #b5b5b5 !important;
+  box-shadow: none;
+}
+
+.acciones_tabla {
+  display: flex;
+}
+
+.acciones_tabla a {
+  background-color: #2e87b8;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px !important;
+}
+
+.acciones_tabla a i {
+  color: white;
+}
+
+.acciones_tabla button {
+  background-color: #8a2c2c;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.acciones_tabla button i {
+  color: white;
+}
+
+.sorting_1.dtr-control::before {
+  top: 20px !important;
+}
+
+.dataTables_filter label input[type="search"] {
+  cursor: initial;
+}
+
+.error_404 {
+  text-align: center;
+}
+
+.error_404 i {
+  color: #376d7a;
+  font-size: 6em;
+}
+
+.text_success {
+  color: #32a88b;
+}
+
+.text_primary {
+  color: #2e87b8;
+}
+
+.text_danger {
+  color: #8a2c2c;
+}
+
+.text_warning {
+  color: #969035;
+}
+
+.text_grey {
+  color: #cfcfcf;
+}
+
+.text_black {
+  color: #376d7a;
 }
 
 #sidebar-wrapper {
@@ -11054,8 +11271,14 @@ a.text-dark:focus {
   color: #c9c9c9 !important;
 }
 
+.logo_sidebar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .logo_sidebar img {
-  width: 170px;
+  width: 60px;
 }
 
 .sidebar_datos_user {
@@ -11127,6 +11350,7 @@ a.text-dark:focus {
   padding-left: 15px;
   padding-right: 15px;
   color: white;
+  cursor: pointer;
 }
 
 .dropdownButton a {
@@ -11179,103 +11403,61 @@ a.text-dark:focus {
   }
 }
 
-.double-nav .breadcrumb-dn {
-  color: #fff;
-}
-
-.clientes_resumen_estadisticas {
-  display: flex;
-  justify-content: space-between;
-}
-
-.clientes_resumen_estadisticas .tabla {
+.card_consultas {
   padding: 20px;
+  border-radius: 27px 27px 27px 27px;
+  -moz-border-radius: 27px 27px 27px 27px;
+  -webkit-border-radius: 27px 27px 27px 27px;
+  border: 1px solid #e8e8e8;
 }
 
-.clientes_resumen_estadisticas .tabla .tabla_titulo {
-  width: 100%;
-  height: auto;
-  background-color: white;
-  border: 50%;
-  padding: 20px;
-  box-shadow: 0px 0px 11px -5px rgba(0, 0, 0, 0.19);
+.card_consultas h4 {
+  color: #2e87b8;
 }
 
-.clientes_resumen_estadisticas .tabla .tabla_titulo h4 {
+.card_consultas .card_consultas_titulo {
+  background: #ebebeb;
+  padding: 10px 20px 10px 20px;
+}
+
+.card_consultas .card_consultas_titulo h6 {
   color: black;
 }
 
-.resumen_graficos {
-  display: flex;
-  justify-content: space-between;
+.testeos_vacunas_historial_trabajador {
+  list-style: none;
 }
 
-#grafico_compra_venta {
-  max-width: 500px;
-  width: auto;
-  height: 300px;
+.testeos_vacunas_historial_trabajador li {
+  color: #e3e3e3;
 }
 
-#grafico_provienen_interesados {
-  max-width: 500px;
-  width: auto;
-  height: auto;
+.liquidacion_datos_personales li {
+  list-style: none;
 }
 
-.contenedor_resumen {
-  margin: 10px;
+.img_onedrive {
+  width: 120px;
+  border: 1px solid #f2f2f2;
 }
 
-.contenedor_resumen_bloque_principal {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+.img_onedrive:hover {
+  background-color: #f2f2f2;
 }
 
-.contenedor_resumen_bloque_principal .resumen_bloque_principal {
-  background-color: white;
-  border: 1px solid grey;
-  border: 1px solid #d9d9d9;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
-  margin-bottom: 20px;
-}
-
-.contenedor_resumen_bloque_principal .resumen_bloque_principal .resumen_bloque_principal_titulo {
-  background-color: rgba(81, 164, 162, 0.85);
+.bloque_codigo pre {
   padding: 10px;
-  text-align: center;
-}
-
-.contenedor_resumen_bloque_principal .resumen_bloque_principal .resumen_bloque_principal_titulo h6 {
   color: white;
+  background-color: #3d3d3d;
+  box-shadow: inset 10px 0px 57px -25px black;
 }
 
-.contenedor_resumen_bloque_principal .resumen_bloque_principal .resumen_bloque_datos {
-  min-height: 100px;
-  text-align: center;
-  margin-top: 10px;
+.resumen_graficos_ausentismos_mes {
+  display: none;
 }
 
-.contenedor_resumen_bloque_principal .resumen_bloque_principal .resumen_bloque_datos h2 {
-  color: #408280;
-}
-
-.contenedor_resumen_bloque_principal .resumen_bloque_principal .resumen_bloque_datos span {
-  color: #408280;
-}
-
-.resumen_tablas {
-  display: flex;
-  width: 100%;
-  align-items: center;
-}
-
-.resumen_tablas .tarjeta {
-  width: 100%;
-  padding: 20px;
+.resumen_graficos_ausentismos_anual {
+  display: none;
 }
 
 @media (max-width: 1300px) {
@@ -11309,6 +11491,10 @@ a.text-dark:focus {
 
   .chat_users {
     margin-top: 20px;
+  }
+
+  .sorting_1.dtr-control::before {
+    top: 20px !important;
   }
 }
 

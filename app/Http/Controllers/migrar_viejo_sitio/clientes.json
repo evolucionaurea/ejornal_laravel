@@ -1,0 +1,16 @@
+[
+{"id":"1","nombre":"Testing","direccion":"Camino de la gominola 2400"},
+{"id":"2","nombre":"Carrefour","direccion":"Camino cintura 1700  Esteban Echeberria"},
+{"id":"3","nombre":"Megaflex","direccion":"Luis Maria Drago 1760 - Burzaco"},
+{"id":"4","nombre":"Walmart","direccion":"Bolivia 5831 CABA"},
+{"id":"5","nombre":"Isover","direccion":"Bouchard y Einz - Llavallol"},
+{"id":"6","nombre":"Disprofarma","direccion":"Castañares 3222 - CABA"},
+{"id":"7","nombre":"Weber","direccion":"Estados Unidos 4951, Área de Promoción El Triangulo"},
+{"id":"8","nombre":"Arcor","direccion":"Calle Tobias 23"},
+{"id":"9","nombre":"Diagnósticos Maipú","direccion":"Maipú 354"},
+{"id":"10","nombre":"Stambouilean","direccion":"Dj"},
+{"id":"11","nombre":"OCASA","direccion":"Avenida Velez Sarsfield 1709, CABA"},
+{"id":"12","nombre":"Sogefi","direccion":"Aguilar 3003, Remedios de Escalada"},
+{"id":"14","nombre":"IFF","direccion":"International Flavors & Fragances ARgentina\r\n\r\nGarin, Buenos Aires"},
+{"id":"15","nombre":"ID Logistics","direccion":"Cuyo 3500 Martinez"}
+]

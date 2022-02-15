@@ -14,29 +14,24 @@ class ClienteUserSeeder extends Seeder
     {
 
       ClienteUser::create([
-        'id_cliente' => 1,
-        'id_user' => 2
-      ]);
-
-      ClienteUser::create([
-        'id_cliente' => 1,
-        'id_user' => 3
-      ]);
-
-      ClienteUser::create([
         'id_cliente' => 2,
-        'id_user' => 2
+        'id_user' => 101
       ]);
 
       ClienteUser::create([
         'id_cliente' => 1,
-        'id_user' => 4
+        'id_user' => 101
       ]);
 
-      ClienteUser::create([
-        'id_cliente' => 2,
-        'id_user' => 5
-      ]);
+      // ClienteUser::create([
+      //   'id_cliente' => 1,
+      //   'id_user' => 4
+      // ]);
+      //
+      // ClienteUser::create([
+      //   'id_cliente' => 2,
+      //   'id_user' => 5
+      // ]);
 
 
     }

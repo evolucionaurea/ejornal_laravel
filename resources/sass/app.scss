@@ -15,21 +15,35 @@
 @import 'general';
 @import 'buttons';
 @import 'tablas';
+@import 'error_404';
+@import 'textos';
+
+
 
 
 // Users loggeados
 @import 'sidebar';
 
 
+
+
 // Admin
 
 
+
+
+
+// Empleados
+@import 'historial_trabajador';
+@import 'liquidacion';
+
+
 // Clientes
+@import 'mostrar_codigo';
 @import 'clientes_resumen';
 
-// Individuos
 
 
 
 // Querys
-@import 'query_clientes';
+@import 'query_gral';

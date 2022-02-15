@@ -5,7 +5,7 @@
 
 .activo {
     background-color: #293846;
-    border-left: 4px solid #19aa8d;
+    border-left: 4px solid $ejornal_claro;
 }
 
 .activo_home {
@@ -14,15 +14,25 @@
 }
 
 .tarjeta {
-    -webkit-box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
-    box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
-    border-radius: 1.5rem;
-    border: 1px solid #e6e6e6;
-    background-color: white;
-    padding: 20px;
-    color: #676a6c;
-    margin-top: 10px;
-    margin-bottom: 15px;
+  max-width: 100%;
+  background-color: white;
+  min-height: auto;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+  border-radius: 1.5rem;
+  border: 1px solid #e6e6e6;
+  padding: 20px;
+
+  & h4 {
+    font-weight: bold;
+    font-size: 21px;
+    color: $ejornal_gris_oscuro;
+    margin-bottom: 20px;
+  }
+
 }
 
 .contenedor_gral {
@@ -36,16 +46,27 @@
 }
 
 .cabecera {
-  width: 100%;
+  max-width: 100%;
   background-color: white;
-  min-height: 200px;
-  margin-top: 20px;
+  min-height: auto;
+  margin: 20px;
   display: flex;
   flex-direction: column;
+  -webkit-box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+  border-radius: 1.5rem;
+  border: 1px solid #e6e6e6;
+  background-color: white;
+  padding: 20px;
 
   & h2 {
     font-weight: bold;
     font-size: 26px;
+    color: $ejornal_dark;
+  }
+
+  & p {
+    color: grey;
   }
 
   & .cabecera_acciones {
@@ -54,4 +75,17 @@
     margin-top: 10px;
     margin-bottom: 10px;
   }
+}
+
+
+.card-columns .card{
+  border-radius: 29px 29px 29px 29px;
+-moz-border-radius: 29px 29px 29px 29px;
+-webkit-border-radius: 29px 29px 29px 29px;
+border: 0px solid #000000;
+}
+
+
+select{
+  -webkit-appearance: menulist !important;
 }

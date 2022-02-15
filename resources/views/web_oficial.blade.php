@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="eJornal sistema de gestion medica" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{asset('img/logos/favicon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{asset('img/logos/isologo.png')}}">
     <title>@yield('title', 'eJornal')</title>
 
     <link rel="stylesheet" href="/css/web_oficial.css">
@@ -26,7 +26,12 @@
             <section>
                 <div class="mask d-flex justify-content-center align-items-center">
                     <div class="container py-5 my-5">
-                        <h3 class="font-weight-bold text-center grey-text pb-2">eJornal</h3>
+                        <h3 class="font-weight-bold text-center grey-text pb-2">
+                          <img class="text-center" src="{{asset('img/logos/isologo.png')}}" alt="">
+                          <br>
+                          <br>
+                          eJornal
+                        </h3>
                         <p class="lead text-center grey-text pt-2 mb-5">Iniciar sesión</p>
                         <div class="row d-flex align-items-center justify-content-center">
                             <div class="col-md-6 col-xl-5">

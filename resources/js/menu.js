@@ -12,7 +12,7 @@ $(document).ready(() => {
   		if($(this).next().is(':hidden') == true) {
   			//Añade la clase on en el botón
   			$(this).addClass('on');
-        $(this).next().find('ul .activo_sub a').css('color', '#00a7a4');
+        $(this).next().find('ul .activo_sub a').css('color', '#61d6f2');
   			//Abre el slide
   			$(this).next().slideDown('slow');
   		 }

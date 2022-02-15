@@ -12,9 +12,9 @@ body {
 
 
 .fondo_login{
-  background-image: url('/img/login/fondo_login_4.jpg');
+  background-image: url('/img/login/fondo_oficial.jpg');
   background-repeat: no-repeat;
-  background-size: inherit;
+  background-size: cover;
 }
 
 
@@ -22,4 +22,13 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+
+@media (max-width: 950px) {
+
+  .fondo_login{
+    background-size: auto;
+  }
+
 }

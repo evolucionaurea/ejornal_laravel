@@ -24,7 +24,7 @@ class UserController extends Controller
 
       if (Auth::attempt(['email' => $data->email, 'password' => $data->password])) {
         $user = User::where('users.email', $data->email)
-        ->select('users.id_rol', 'users.estado')
+        ->select('users.id_rol', 'users.estado', 'users.id')
         ->first();
 
         if ($user->estado == 1) {

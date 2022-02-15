@@ -1,0 +1,206 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\ClienteUser;
+use App\CovidTesteo;
+use App\CovidTesteoTipo;
+use App\Nomina;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
+class EmpleadosCovidTesteoController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
+        ->where('cliente_user.id_user', '=', auth()->user()->id)
+        ->select('clientes.nombre', 'clientes.id')
+        ->get();
+
+        $testeos = CovidTesteo::join('nominas', 'covid_testeos.id_nomina', 'nominas.id')
+        ->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
+        ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+        ->select('nominas.nombre', DB::raw('covid_testeos_tipo.nombre tipo'), 'covid_testeos.fecha',
+        'covid_testeos.laboratorio', 'covid_testeos.resultado', 'covid_testeos.id')
+        ->get();
+
+        return view('empleados.covid.testeos', compact('clientes', 'testeos'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
+        ->where('cliente_user.id_user', '=', auth()->user()->id)
+        ->select('clientes.nombre', 'clientes.id')
+        ->get();
+
+        $covid_testeos_tipo = CovidTesteoTipo::orderBy('nombre')->get();
+        $nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
+
+        return view('empleados.covid.testeos.create', compact('clientes', 'covid_testeos_tipo', 'nominas'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+      $validatedData = $request->validate([
+        'nomina' => 'required',
+        'tipo' => 'required',
+        'fecha' => 'required',
+        'resultado' => 'required|string',
+        'laboratorio' => 'required|string'
+      ]);
+
+      $fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
+
+      //Guardar en base CovidTesteo
+      $testeo = new CovidTesteo();
+      $testeo->id_nomina = $request->nomina;
+      $testeo->id_tipo = $request->tipo;
+      $testeo->fecha = $fecha;
+      $testeo->resultado = $request->resultado;
+      $testeo->laboratorio = $request->laboratorio;
+      $testeo->save();
+
+      return redirect('empleados/covid/testeos')->with('success', 'Testeo de covid guardado con éxito');
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+
+      $testeo = CovidTesteo::where('covid_testeos.id', $id)
+      ->join('nominas', 'covid_testeos.id_nomina', 'nominas.id')
+      ->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
+      ->select('nominas.nombre', DB::raw('covid_testeos_tipo.nombre tipo'), 'covid_testeos.fecha',
+      'covid_testeos.laboratorio', 'covid_testeos.resultado', 'covid_testeos.id', 'covid_testeos.id_nomina', 'covid_testeos.id_tipo')
+      ->first();
+
+      $clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
+      ->where('cliente_user.id_user', '=', auth()->user()->id)
+      ->select('clientes.nombre', 'clientes.id')
+      ->get();
+
+      $covid_testeos_tipo = CovidTesteoTipo::all();
+      $nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+
+      return view('empleados.covid.testeos.edit', compact('testeo', 'clientes', 'covid_testeos_tipo', 'nominas'));
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+
+      $validatedData = $request->validate([
+        'nomina' => 'required',
+        'tipo' => 'required',
+        'fecha' => 'required',
+        'resultado' => 'required|string',
+        'laboratorio' => 'required|string'
+      ]);
+
+      $fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
+
+      //Actualizar en base
+      $testeo = CovidTesteo::findOrFail($id);
+      $testeo->id_nomina = $request->nomina;
+      $testeo->id_tipo = $request->tipo;
+      $testeo->fecha = $fecha;
+      $testeo->resultado = $request->resultado;
+      $testeo->laboratorio = $request->laboratorio;
+      $testeo->save();
+
+      return redirect('empleados/covid/testeos')->with('success', 'Testeo de Covid actualizado con éxito');
+
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+
+      $testeo = CovidTesteo::findOrFail($id)->delete();
+      return back()->with('success', 'Testeo de covid eliminado correctamente');
+
+    }
+
+
+    public function tipo(Request $request)
+    {
+        $validatedData = $request->validate([
+          'nombre' => 'required|string'
+        ]);
+
+        //Guardar en base
+        $tipo_testeo = new CovidTesteoTipo();
+        $tipo_testeo->nombre = $request->nombre;
+        $tipo_testeo->save();
+
+        return back()->with('success', 'Tipo de testeo para covid creado con éxito');
+    }
+
+
+    public function tipo_destroy($id_tipo)
+    {
+
+      $testeo_covid = CovidTesteo::where('id_tipo', $id_tipo)->get();
+
+      if (!empty($testeo_covid) && count($testeo_covid) > 0) {
+        return back()->with('error', 'Existen testeos de covid creados con este tipo de testeo. No puedes eliminarlo');
+      }
+
+        //Eliminar en base
+        $tipo_testeo = CovidTesteoTipo::find($id_tipo)->delete();
+        return back()->with('success', 'Tipo de testeo de covid eliminado correctamente');
+    }
+
+
+
+}
