@@ -24,6 +24,16 @@
          @include('../mensajes_validacion')
 
         <div class="tarjeta">
+          {{-- Falta ajustar el responsive de los filtros, las acciones de copiar y demas y el buscar --}}
+          <div class="d-flex justify-content-between row">
+              <h4 class="col-md-2 col-lg-5">Ausentismos</h4>
+              <div class="col-md-10 col-lg-7 d-flex">
+                  <input placeholder="Desde" id="reporte_ausentismos_desde" name="fecha_inicio" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
+                  <input placeholder="Hasta" id="reporte_ausentismos_hasta" name="fecha_final" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
+                  <a style="height: 35px; padding-top: 6px;" id="reporte_ausentismo_filtro" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-search"></i> Buscar</a>
+                  <a style="height: 35px; padding-top: 6px;" id="reporte_ausentismo_todo" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</a>
+              </div>
+          </div>
             <table class="table table-striped table-hover table-sm tabla_user">
 
                 <!--Table head-->
@@ -127,5 +137,28 @@
         {{-- Contenido de la pagina --}}
     </div>
 </div>
+
+
+<script type="text/javascript">
+
+  window.onload = function() {
+    let ausentismos = [];
+
+    // Ahora los datos se muestran por php. Deben mostrarse por javascript y sumar filtro por fecha
+    // El codigo de abajo ya trae los resultados a mostrar. Falta renderizarlos en el html y poner el
+    // filtro por fecha
+    axios.get('/empleados/getAusentismos')
+      .then(response => {
+          ausentismos = response.data;
+          console.log(ausentismos);
+      })
+      .catch(e => {
+          // Podemos mostrar los errores en la consola
+          console.log(e);
+      })
+
+  };
+
+</script>
 
 @endsection
