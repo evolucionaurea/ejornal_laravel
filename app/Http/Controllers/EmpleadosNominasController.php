@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\CovidVacuna;
 use App\CovidTesteo;
 use App\Preocupacional;
+use Illuminate\Support\Facades\Storage;
 
 class EmpleadosNominasController extends Controller
 {
@@ -108,7 +109,26 @@ class EmpleadosNominasController extends Controller
       }else{
         $trabajador->fecha_baja =  null;
       }
-      $trabajador->save();
+
+
+      // Si hay un archivo adjunto
+      if ($request->hasFile('foto') && $request->file('foto') > 0) {
+        $foto = $request->file('foto');
+        $nombre = $foto->getClientOriginalName();
+        $trabajador->foto = $nombre;
+        $trabajador->save();
+
+        // Guardar foto
+        Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
+
+        // Completar el base el hash del foto guardado
+        $trabajador->hash_foto = $foto->hashName();
+        $trabajador->save();
+      }else {
+        $trabajador->save();
+      }
+
+
 
       return redirect('empleados/nominas')->with('success', 'Trabajador asignado con éxito a la nómina');
     }
@@ -223,7 +243,48 @@ class EmpleadosNominasController extends Controller
       }else{
         $trabajador->fecha_baja =  null;
       }
-      $trabajador->save();
+
+
+/////////////////
+
+
+      // Si hay un archivo adjunto
+      if ($request->hasFile('foto') && $request->file('foto') > 0) {
+
+        //Saber si ya hay una foto guardada
+        if (isset($trabajador->foto) && !empty($trabajador->foto)) {
+            $foto = $request->file('foto');
+            $nombre = $foto->getClientOriginalName();
+            $trabajador->foto = $nombre;
+            $trabajador->save();
+
+            $ruta_archivo = public_path("storage/nominas/fotos/{$trabajador->id}/{$trabajador->hash_foto}");
+            unlink($ruta_archivo);
+            Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
+
+
+            // Completar en base el hash de la foto guardada
+            $trabajador = Nomina::findOrFail($trabajador->id);
+            $trabajador->hash_foto = $foto->hashName();
+            $trabajador->save();
+        } else {
+            $foto = $request->file('foto');
+            $nombre = $foto->getClientOriginalName();
+            $trabajador->foto = $nombre;
+            $trabajador->save();
+
+            // Guardar foto
+            Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
+
+            // Completar el base el hash del foto guardado
+            $trabajador->hash_foto = $foto->hashName();
+            $trabajador->save();
+        }
+
+      }else {
+        $trabajador->save();
+      }
+
 
       return redirect('empleados/nominas')->with('success', 'Trabajador de la nómina actualizado correctamente');
 

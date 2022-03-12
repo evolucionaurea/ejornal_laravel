@@ -37,7 +37,11 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-lg-4 col-md-3 col-sm-12 text-center">
+                          @if (isset($trabajador->foto) && !empty($trabajador->foto))
+                            <img style="width: 300px;" src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
+                          @else
                             <i class="fas fa-user fa-10x"></i>
+                          @endif
                             <br>
                             <br>
                             <h5>{{$trabajador->nombre}}</h5>

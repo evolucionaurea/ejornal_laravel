@@ -82,7 +82,14 @@
                 <tbody>
                     @foreach ($trabajadores as $trabajador)
                     <tr>
-                        <td>{{$trabajador->nombre}}</td>
+                        <td>
+                          @if (isset($trabajador->foto) && !empty($trabajador->foto))
+                            <img style="width: 80px;" src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
+                          @else
+                            <i class="fas fa-user fa-1x"></i>
+                          @endif
+                          {{$trabajador->nombre}}
+                        </td>
                         <td>{{$trabajador->email}}</td>
                         <td>{{$trabajador->telefono}}</td>
                         <td>{{$trabajador->dni}}</td>

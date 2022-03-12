@@ -30,35 +30,39 @@
         @endif
 
         <div class="tarjeta">
-            <form action="{{action('EmpleadosNominasController@store')}}" accept-charset="UTF-8" method="post">
+            <form action="{{action('EmpleadosNominasController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
             @csrf
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Nombre</label>
                     <input required name="nombre" type="text" class="form-control form-control-sm" placeholder="">
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Email</label>
                     <input required name="email" type="email" class="form-control form-control-sm" placeholder="">
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Teléfono</label>
                     <input name="telefono" type="text" class="form-control form-control-sm" placeholder="">
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>DNI</label>
                     <input name="dni" type="text" class="form-control form-control-sm" placeholder="">
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label >Estado</label>
                     <select name="estado" class="form-control form-control-sm">
                         <option value="1">Activo</option>
                         <option value="0">Inactivo</option>
                     </select>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Sector</label>
                     <input required name="sector" type="text" class="form-control form-control-sm" placeholder="">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Foto</label>
+                    <input name="foto" type="file" class="form-control form-control-sm" placeholder="">
                 </div>
             </div>
             <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear trabajador</button>

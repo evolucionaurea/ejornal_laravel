@@ -30,7 +30,7 @@
         @endif
 
         <div class="tarjeta">
-            <form action="{{action('EmpleadosNominasController@update', $trabajador->id)}}" accept-charset="UTF-8" method="post">
+            <form action="{{action('EmpleadosNominasController@update', $trabajador->id)}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 <input name="_method" type="hidden" value="PUT">
                 <div class="form-row">
@@ -66,7 +66,25 @@
                         <label>Sector</label>
                         <input name="sector" type="text" class="form-control form-control-sm" value="{{$trabajador->sector}}" placeholder="">
                     </div>
-                    <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
+                    <div class="form-group col-md-6">
+                      <label>Foto</label>
+                      <br>
+                      @if (isset($trabajador->foto) && !empty($trabajador->foto))
+                        <img style="width: 300px;" src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
+                      @else
+                        <span>
+                          <i class="fas fa-user fa-1x"></i>
+                          Sin foto cargada
+                        </span>
+                      @endif
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Subir/Reemplazar foto</label>
+                        <input name="foto" type="file" class="form-control form-control-sm" placeholder="">
+                    </div>
+                    <div class="col-12">
+                      <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
+                    </div>
                 </div>
             </form>
         </div>
