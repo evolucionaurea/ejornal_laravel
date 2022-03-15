@@ -40,7 +40,9 @@
                                 <p class="mb-0">Nomina (Activos)</p>
                             </div>
                             <div>
+                              <a href="{{ route('empleados.nominas_buscar_activos') }}">
                                 <i class="fas fa-users fa-2x text-black-40"></i>
+                              </a>
                             </div>
                         </div>
                     </div>

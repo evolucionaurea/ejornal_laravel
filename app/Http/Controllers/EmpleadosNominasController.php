@@ -453,5 +453,10 @@ class EmpleadosNominasController extends Controller
     }
 
 
+    public function buscar_activos()
+    {
+      dd('hola');
+    }
+
 
 }
