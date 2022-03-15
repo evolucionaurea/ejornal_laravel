@@ -14,7 +14,7 @@ class AddTokenToClientes extends Migration
     public function up()
     {
         Schema::table('clientes', function (Blueprint $table) {
-            $table->text('token')->after('direccion')->unique()->nullable();
+            $table->string('token',64)->after('direccion')->unique()->nullable();
         });
     }
 

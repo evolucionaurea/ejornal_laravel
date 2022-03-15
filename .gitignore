@@ -35,3 +35,6 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+/Input/
+/package-lock.json
+/.gitignore
