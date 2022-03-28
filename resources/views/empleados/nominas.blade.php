@@ -128,9 +128,14 @@
 							@endif
 						</td>
 						<td class="align-middle">
+							{{-- <pre>
+							@php
+								var_dump($trabajador->hoy)
+							@endphp
+							</pre> --}}
 							<h3>
 								<span class="@php
-							if (isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente') {
+								if (isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente') {
 								echo "tag_ejornal tag_ejornal_danger"; }
 									@endphp ">
 									@if (isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente')

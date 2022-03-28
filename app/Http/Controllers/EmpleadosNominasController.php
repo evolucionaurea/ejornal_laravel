@@ -31,34 +31,59 @@ class EmpleadosNominasController extends Controller
 			->select('clientes.nombre', 'clientes.id')
 			->get();
 
-			$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado')
-			->latest()
-			->get();
-
-			///dd($ausentismos);
 
 			$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
+			/*->select(DB::raw("(
+					SELECT IF(a.fecha_inicio<=DATE(NOW()) AND a.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente')
+					FROM ausentismos a
+					WHERE a.id_trabajador=nominas.id
+					ORDER BY a.created_at DESC
+					LIMIT 0,1
+				) 'ausentismo'"))*/
 			->get();
 
+			/*
+			SELECT n.id, n.nombre, n.email, n.sector,
+				(
+					SELECT IF(a.fecha_inicio<=DATE(NOW()) AND a.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente')
+					FROM ausentismos a
+					WHERE a.id_trabajador=n.id
+					ORDER BY a.created_at DESC
+					LIMIT 0,1
+				) 'ausentismo'
+			FROM nominas n
+			WHERE n.deleted_at IS NULL
+			*/
 
-			/*$fecha_actual = Carbon::now();
+
+			$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+			->select('ausentismos.*', DB::raw("IF(ausentismos.fecha_inicio<=DATE(NOW()) AND ausentismos.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente') hoy"))
+			->latest()
+			//->groupBy('ausentismos.id_trabajador')
+			->get();
+
+			$fecha_actual = Carbon::now();
+			//dd($fecha_actual);
 			foreach ($trabajadores as $trabajador) {
 				foreach ($ausentismos as $ausentismo) {
-					if ($ausentismo->id_trabajador == $trabajador->id) {
-						if (Carbon::parse($ausentismo->fecha_regreso_trabajar)->greaterThanOrEqualTo($fecha_actual) && Carbon::parse($ausentismo->fecha_inicio)->lessThanOrEqualTo($fecha_actual)) {
+					//var_dump($ausentismo->hoy);
+					if($ausentismo->id_trabajador == $trabajador->id && $ausentismo->hoy=='Ausente') $trabajador['hoy'] = ['estado'=>'Ausente'];
+					/*if ($ausentismo->id_trabajador == $trabajador->id) {
+							if (Carbon::parse($ausentismo->fecha_regreso_trabajar)->greaterThanOrEqualTo($fecha_actual) && Carbon::parse($ausentismo->fecha_inicio)->lessThanOrEqualTo($fecha_actual)) {
 							$trabajador['hoy'] = [
-								'estado' => 'Ausente'
+								'estado' => 'Ausente',
+								'fecha_inicio'=>$ausentismo->fecha_inicio
 							];
 						}else {
 							$trabajador['hoy'] = [
-								'estado' => 'Presente'
+								'estado' => 'Presente',
+								'fecha_inicio'=>$ausentismo->fecha_inicio
 							];
 						}
-					}
+					}*/
 				}
-			}*/
+			}
 
 			return view('empleados.nominas', compact('trabajadores', 'clientes'));
 		}

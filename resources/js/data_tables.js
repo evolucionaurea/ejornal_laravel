@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
  $('.tabla_user').DataTable({
-  scrollY: 400,
+  scrollY: 580,
   dom: 'Bfrtip',
   buttons: [{
       extend: 'copy',
