@@ -17,7 +17,9 @@ require('./stock_medicamentos.js');
 require('./documentacion_ausentismo.js');
 
 
-window.Vue = require('vue');
+if(route=='/empleados/nominas') require('./empleados/nominas')
+
+/*window.Vue = require('vue');
 import Vuetify from 'vuetify';
 Vue.use(Vuetify);
 
@@ -25,6 +27,9 @@ Vue.use(Vuetify);
 Vue.component('prueba-component', require('./components/PruebaComponent.vue').default);
 
 const app = new Vue({
-    el: '#app',
-    vuetify: new Vuetify(),
+	el: '#app',
+	vuetify: new Vuetify(),
 });
+*/
+
+console.log(route)

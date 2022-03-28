@@ -11013,6 +11013,36 @@ select {
   -webkit-appearance: menulist !important;
 }
 
+#loading {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  position: fixed;
+  text-align: center;
+  top: 0;
+  transition: opacity 0.5s ease-out;
+  visibility: hidden;
+  width: 100%;
+  z-index: 2100;
+}
+
+#loading .content .icon {
+  font-size: 2.2rem;
+}
+
+#loading .content .text {
+  margin-top: 10px;
+}
+
+#loading.active {
+  visibility: visible;
+  opacity: 1;
+}
+
 .btn-ejornal {
   color: white !important;
   cursor: pointer;
