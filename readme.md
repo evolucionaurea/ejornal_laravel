@@ -42,37 +42,9 @@ A la fecha hay 2 entornos:
 - Test:
 sitio => http://e2-test.jornalsalud.com/
 
-IP SSH =>  185.201.11.44
-Puerto SSH => 65002
-SSH Username => u693804549
-SSH Pass => Vicente2020!
-
-FTP => IP 185.201.11.60
-FTP => user u693804549
-FTP => Pass Vicente2020!
-
-mysql
-user => u693804549_wuCA5
-pass => Vicente2020!
-nombre base => u6938 04549_iZ2NG
-
-Acceso por phpmyadmin => https://auth-db154.hostinger.com/index.php?db=u693804549_iZ2NG
-
-Dejo acceso formateado rápido para SSH => ssh -p 65002 u693804549@185.201.11.60
-
 
 - Prod:
 sitio => e2.jornalsalud.com
-
-ftp => e2.jornalsalud.com
-user => u646345361
-pass => Vicente2020!
-
-SSH port => 65002
-user => u646345361
-pass => Vicente2020!
-
-Dejo acceso formateado rápido para SSH => ssh -p 65002 u646345361@185.201.11.44
 
 
 ## FRONTEND
