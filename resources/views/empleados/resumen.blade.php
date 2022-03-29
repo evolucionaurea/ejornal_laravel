@@ -39,34 +39,37 @@
 
 					<!-- Nómina -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<div class="card primary-color white-text">
-							<div class="card-body d-flex justify-content-between align-items-center">
+						<form action="{{ action('EmpleadosNominasController@listado') }}" class="card primary-color white-text" method="POST">
+							@csrf
+
+							<input type="hidden" name="estado" value="1">
+							<button class="card-body d-flex justify-content-between align-items-center" >
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$total_nomina}}</p>
 									<p class="mb-0">Nómina (Activos)</p>
 								</div>
 								<div>
-								  <a href="{{ route('empleados.nominas_buscar_activos') }}">
 									<i class="fas fa-users fa-2x text-black-40"></i>
-								  </a>
 								</div>
-							</div>
-						</div>
+							</button>
+						</form>
 					</div>
 
 					<!-- Ausentes -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<a href="#" class="card red white-text">
+						<form action="{{ action('EmpleadosNominasController@listado') }}" class="card red white-text" method="POST">
+							@csrf
+							<input type="hidden" name="ausentes_hoy" value="1">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$ausentes_hoy}}</p>
-									<p class="mb-0">Ausentes del dia</p>
+									<p class="mb-0">Ausentes del día</p>
 								</div>
 								<div>
 									<i class="fas fa-users fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</a>
+						</form>
 					</div>
 
 					<!-- Ausencias COVID -->

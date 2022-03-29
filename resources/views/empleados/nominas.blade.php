@@ -27,10 +27,11 @@
 		<div class="tarjeta">
 
 
-			<div class="row" >
+			<form action="{{action('EmpleadosNominasController@listado')}}" class="row" method="POST">
 
-				<div class="col-lg-2 form-group">
-					{{ csrf_field() }}
+				@csrf
+
+				<div  class="col-lg-2 form-group" >
 					<label for="">Ausentes</label>
 					<select name="ausentes_hoy" class="form-control form-control-sm" onchange="this.form.submit()">
 						<option value="">--Todos--</option>
@@ -42,12 +43,12 @@
 					<label for="">Activos/Inactivos</label>
 					<select name="estado" class="form-control form-control-sm" onchange="this.form.submit()">
 						<option value="">--Todos--</option>
-						<option value="1">Sólo Activos</option>
-						<option value="0">Sólo Inactivos</option>
+						<option value="1" {{isset($filtros) && $filtros['estado']=='1' ? 'selected' : '' }} >Sólo Activos</option>
+						<option value="0" {{isset($filtros) && $filtros['estado']=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
 					</select>
 				</div>
 
-			</div>
+			</form>
 			<hr>
 
 

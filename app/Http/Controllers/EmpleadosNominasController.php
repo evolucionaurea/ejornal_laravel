@@ -23,24 +23,12 @@ class EmpleadosNominasController extends Controller
 		 *
 		 * @return \Illuminate\Http\Response
 		 */
-		public function index(Request $request)
+		public function index()
 		{
 
-			$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-			->where('cliente_user.id_user', '=', auth()->user()->id)
-			->select('clientes.nombre', 'clientes.id')
-			->get();
-
-
-			$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
-			/*->select(DB::raw("(
-					SELECT IF(a.fecha_inicio<=DATE(NOW()) AND a.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente')
-					FROM ausentismos a
-					WHERE a.id_trabajador=nominas.id
-					ORDER BY a.created_at DESC
-					LIMIT 0,1
-				) 'ausentismo'"))*/
-			->get();
+			///dd($data);
+			$clientes = $this->clientes();
+			$trabajadores = $this->buscar();
 
 			/*
 			SELECT n.id, n.nombre, n.email, n.sector,
@@ -54,36 +42,6 @@ class EmpleadosNominasController extends Controller
 			FROM nominas n
 			WHERE n.deleted_at IS NULL
 			*/
-
-
-			$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->select('ausentismos.*', DB::raw("IF(ausentismos.fecha_inicio<=DATE(NOW()) AND ausentismos.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente') hoy"))
-			->latest()
-			//->groupBy('ausentismos.id_trabajador')
-			->get();
-
-			$fecha_actual = Carbon::now();
-			//dd($fecha_actual);
-			foreach ($trabajadores as $trabajador) {
-				foreach ($ausentismos as $ausentismo) {
-					//var_dump($ausentismo->hoy);
-					if($ausentismo->id_trabajador == $trabajador->id && $ausentismo->hoy=='Ausente') $trabajador['hoy'] = ['estado'=>'Ausente'];
-					/*if ($ausentismo->id_trabajador == $trabajador->id) {
-							if (Carbon::parse($ausentismo->fecha_regreso_trabajar)->greaterThanOrEqualTo($fecha_actual) && Carbon::parse($ausentismo->fecha_inicio)->lessThanOrEqualTo($fecha_actual)) {
-							$trabajador['hoy'] = [
-								'estado' => 'Ausente',
-								'fecha_inicio'=>$ausentismo->fecha_inicio
-							];
-						}else {
-							$trabajador['hoy'] = [
-								'estado' => 'Presente',
-								'fecha_inicio'=>$ausentismo->fecha_inicio
-							];
-						}
-					}*/
-				}
-			}
 
 			return view('empleados.nominas', compact('trabajadores', 'clientes'));
 		}
@@ -475,10 +433,71 @@ class EmpleadosNominasController extends Controller
 
 		}
 
-
-		public function buscar_activos()
+		public function buscar($params=[])
 		{
-			dd('hola');
+			//////dd($request);
+			$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
+
+			if(isset($params['estado']) && !is_null($params['estado'])) $query->where('nominas.estado',$params['estado']);
+			$trabajadores = $query->get();
+
+			$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+				->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+				->select('ausentismos.*', DB::raw("IF(ausentismos.fecha_inicio<=DATE(NOW()) AND ausentismos.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente') hoy"))
+				->latest()
+				->get();
+
+			//$fecha_actual = Carbon::now();
+			//dd($fecha_actual);
+			foreach ($trabajadores as $trabajador) {
+				foreach ($ausentismos as $ausentismo) {
+					//var_dump($ausentismo->hoy);
+					if($ausentismo->id_trabajador == $trabajador->id && $ausentismo->hoy=='Ausente') $trabajador['hoy'] = ['estado'=>'Ausente'];
+					/*if ($ausentismo->id_trabajador == $trabajador->id) {
+							if (Carbon::parse($ausentismo->fecha_regreso_trabajar)->greaterThanOrEqualTo($fecha_actual) && Carbon::parse($ausentismo->fecha_inicio)->lessThanOrEqualTo($fecha_actual)) {
+							$trabajador['hoy'] = [
+								'estado' => 'Ausente',
+								'fecha_inicio'=>$ausentismo->fecha_inicio
+							];
+						}else {
+							$trabajador['hoy'] = [
+								'estado' => 'Presente',
+								'fecha_inicio'=>$ausentismo->fecha_inicio
+							];
+						}
+					}*/
+				}
+			}
+
+			return $trabajadores;
+
+
+		}
+		public function clientes()
+		{
+			return ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
+				->where('cliente_user.id_user', '=', auth()->user()->id)
+				->select('clientes.nombre', 'clientes.id')
+				->get();
+		}
+
+
+		public function listado(Request $request)
+		{
+			//dd($request);
+			///////
+			//if()
+
+			//Sin filtros
+			///return redirect()->action('EmpleadosNominasController@index'); //Sin filtros
+
+			//Con filtros
+			$trabajadores = $this->buscar($request->all());
+			$filtros = $request->all();
+			$clientes = $this->clientes();
+			return view('empleados.nominas', compact('trabajadores', 'clientes', 'filtros'));
+
+			///return redirect()->action('\Ariel\SpotBuy\Http\Controllers\Admin\SpotBuyController@getPart', [$id]);
 		}
 
 

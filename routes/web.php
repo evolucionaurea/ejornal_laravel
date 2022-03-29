@@ -135,7 +135,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
     ]
   ]);
   Route::post('admin/nominas/cargar_excel', 'EmpleadosNominasController@cargar_excel')->name('/admin/nominas/cargar_excel');
-  Route::get('empleados/nominas_buscar_activos', 'EmpleadosNominasController@buscar_activos')->name('empleados.nominas_buscar_activos');
+  Route::post('empleados/listado', 'EmpleadosNominasController@listado')->name('empleados.listado');
+  Route::get('empleados/buscar', 'EmpleadosNominasController@buscar')->name('empleados.buscar');
 
   // Ausentismos
   Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
