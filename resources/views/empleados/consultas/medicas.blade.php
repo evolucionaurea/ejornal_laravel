@@ -5,136 +5,66 @@
 @section('content')
 
 <div class="d-flex" id="wrapper">
-    @include('partials.sidebar_empleados')
-    <div id="page-content-wrapper">
-        @include('partials.nav_sup')
+	@include('partials.sidebar_empleados')
+	<div id="page-content-wrapper">
+		@include('partials.nav_sup')
 
-        {{-- Contenido de la pagina --}}
+		{{-- Contenido de la pagina --}}
 
-        <div class="cabecera">
-            <h2>Listado de consultas médicas</h2>
-            <p>Aquí puede ver el listado de consultas médicas de la empresa</p>
-            @if (auth()->user()->fichada == 1 && auth()->user()->id_especialidad == 1)
-            <div class="cabecera_acciones">
-                <a class="btn-ejornal btn-ejornal-base" href="{{route('medicas.create')}}"><i class="fas fa-plus-circle"></i> Nueva consulta médica</a>
-            </div>
-            @endif
-        </div>
+		<div class="cabecera">
+			<h2>Listado de consultas médicas</h2>
+			<p>Aquí puede ver el listado de consultas médicas de la empresa</p>
+			@if (auth()->user()->fichada == 1 && auth()->user()->id_especialidad == 1)
+			<div class="cabecera_acciones">
+					<a class="btn-ejornal btn-ejornal-base" href="{{route('medicas.create')}}"><i class="fas fa-plus-circle"></i> Nueva consulta médica</a>
+			</div>
+			@endif
+		</div>
 
-        @include('../../mensajes_validacion')
+		@include('../../mensajes_validacion')
 
-        <div class="tarjeta">
-            <table class="table table-striped table-hover table-sm tabla_consultas_medicas">
+		<div class="tarjeta">
+			<table class="table table-striped table-hover table-sm tabla_consultas_medicas">
 
-                <!--Table head-->
-                <thead>
-                    <tr>
-                        <th class="th-lg">
-                                Trabajador
-                        </th>
-                        <th class="th-lg">
-                                Fecha
-                        </th>
-                        <th class="th-lg">
-                                Derivación
-                        </th>
-                        @if (auth()->user()->fichada == 1)
-                        <th class="th-lg">
-                                Acciones
-                        </th>
-                        @endif
-                    </tr>
-                </thead>
-                <!--Table head-->
+				<!--Table head-->
+				<thead>
+					<tr>
+						<th class="th-lg">Trabajador</th>
+						<th class="th-lg">Fecha</th>
+						<th class="th-lg">Derivación</th>
 
-                <!--Table body-->
-                <tbody>
-                    @foreach ($consultas as $consulta)
-                    <tr>
-                        <td>{{$consulta->nombre}}</td>
-                        {{-- <td>{{ (!empty($consulta->fecha)) ? date('d/m/Y',strtotime($consulta->fecha)) : "" }}</td> --}}
-                        <td>{{ (!empty($consulta->fecha)) ? $consulta->fecha : "" }}</td>
-                        <td>{{$consulta->derivacion_consulta}}</td>
-                        @if (auth()->user()->fichada == 1)
-                        <td class="acciones_tabla" scope="row">
-                            <a title="Ver" href="{{route('medicas.show', $consulta->id)}}">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                        </td>
-                        @endif
-                    </tr>
-                    @endforeach
-                </tbody>
-                <!--Table body-->
-            </table>
-        </div>
+						@if (auth()->user()->fichada == 1)
+						<th class="th-lg">Acciones</th>
+						@endif
+					</tr>
+				</thead>
+				<!--Table head-->
 
-        {{-- Contenido de la pagina --}}
-    </div>
+				<!--Table body-->
+				<tbody>
+						@foreach ($consultas as $consulta)
+						<tr>
+								<td>{{$consulta->nombre}}</td>
+								{{-- <td>{{ (!empty($consulta->fecha)) ? date('d/m/Y',strtotime($consulta->fecha)) : "" }}</td> --}}
+								<td>{{ (!empty($consulta->fecha)) ? $consulta->fecha : "" }}</td>
+								<td>{{$consulta->derivacion_consulta}}</td>
+								@if (auth()->user()->fichada == 1)
+								<td class="acciones_tabla" scope="row">
+										<a title="Ver" href="{{route('medicas.show', $consulta->id)}}">
+												<i class="fas fa-eye"></i>
+										</a>
+								</td>
+								@endif
+						</tr>
+						@endforeach
+				</tbody>
+					<!--Table body-->
+			</table>
+		</div>
+
+		{{-- Contenido de la pagina --}}
+	</div>
 </div>
 
-
-
-<script type="text/javascript">
-
-$(document).ready(function () {
-
- $('.tabla_consultas_medicas').DataTable({
-  scrollY: 400,
-  dom: 'Bfrtip',
-  order: [],
-  buttons: [{
-      extend: 'copy',
-      text: 'Copiar',
-    },
-    {
-      extend: 'excel',
-      title: 'eJornal',
-    },
-    {
-      extend: 'pdf',
-      text: 'PDF',
-      title: 'eJornal',
-    },
-    {
-      extend: 'print',
-      text: 'Imprimir',
-      title: 'eJornal',
-    }
-  ],
-  responsive: true,
-  "language": {
-    "ordering": false,
-    "sProcessing": "Procesando...",
-    "sLengthMenu": "Mostrar _MENU_ registros",
-    "sZeroRecords": "No se encontraron resultados",
-    "sEmptyTable": "Ningún dato disponible en esta tabla",
-    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-    "sInfoPostFix": "",
-    "sSearch": "Buscar:",
-    "sUrl": "",
-    "sInfoThousands": ",",
-    "sLoadingRecords": "Cargando...",
-    "oPaginate": {
-      "sFirst": "Primero",
-      "sLast": "Último",
-      "sNext": "Siguiente",
-      "sPrevious": "Anterior"
-    },
-    "oAria": {
-      "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-      "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-    }
-  }
-
-});
-
-
-
-});
-
-</script>
 
 @endsection

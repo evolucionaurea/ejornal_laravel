@@ -11224,6 +11224,10 @@ select {
   cursor: initial;
 }
 
+.tabla_user .small {
+  font-size: .875rem;
+}
+
 .error_404 {
   text-align: center;
 }

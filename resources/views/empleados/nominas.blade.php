@@ -33,18 +33,20 @@
 
 				<div  class="col-lg-2 form-group" >
 					<label for="">Ausentes</label>
-					<select name="ausentes_hoy" class="form-control form-control-sm" onchange="this.form.submit()">
-						<option value="">--Todos--</option>
-						<option value="1">Ausentes Hoy</option>
+					<select name="ausentes" class="form-control form-control-sm" onchange="this.form.submit()">
+						<option value="">--Seleccionar Filtro--</option>
+						<option value="hoy" {{isset($filtros) && isset($filtros['ausentes']) && $filtros['ausentes']=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
+						<option value="covid" {{isset($filtros) && isset($filtros['ausentes']) && $filtros['ausentes']=='covid' ? 'selected' : '' }}>Ausentes COVID</option>
 					</select>
 				</div>
+
 
 				<div class="col-lg-2 form-group">
 					<label for="">Activos/Inactivos</label>
 					<select name="estado" class="form-control form-control-sm" onchange="this.form.submit()">
-						<option value="">--Todos--</option>
-						<option value="1" {{isset($filtros) && $filtros['estado']=='1' ? 'selected' : '' }} >Sólo Activos</option>
-						<option value="0" {{isset($filtros) && $filtros['estado']=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
+						<option value="">--Seleccionar Filtro--</option>
+						<option value="1" {{isset($filtros) && isset($filtros['estado']) && $filtros['estado']=='1' ? 'selected' : '' }} >Sólo Activos</option>
+						<option value="0" {{isset($filtros) && isset($filtros['estado']) && $filtros['estado']=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
 					</select>
 				</div>
 
@@ -135,14 +137,17 @@
 							@endphp
 							</pre> --}}
 							<h3>
-								<span class="@php
-								if (isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente') {
-								echo "tag_ejornal tag_ejornal_danger"; }
-									@endphp ">
-									@if (isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente')
-									  Ausente
-									@endif
-								</span>
+
+								@php
+									if(isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente'):
+								@endphp
+								<span class="tag_ejornal tag_ejornal_danger">Ausente</span>
+
+
+								<div class="small mt-3 text-danger">{{$trabajador->hoy['tipo']}}</div>
+
+
+								@php endif; @endphp
 							</h3>
 						</td>
 						@if (auth()->user()->fichada == 1)

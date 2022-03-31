@@ -17,19 +17,19 @@ require('./stock_medicamentos.js');
 require('./documentacion_ausentismo.js');
 
 
-if(route=='/empleados/nominas') require('./empleados/nominas')
+if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
+if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
+if(route=='/empleados/comunicaciones') require('./empleados/comunicaciones')
+if(route=='/empleados/certificados') require('./empleados/certificados')
 
-/*window.Vue = require('vue');
-import Vuetify from 'vuetify';
-Vue.use(Vuetify);
+if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
+if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')
 
+if(route=='empleados.covid.testeos') require('./empleados/covid.testeos')
+if(route=='empleados.covid.vacunas') require('./empleados/covid.vacunas')
 
-Vue.component('prueba-component', require('./components/PruebaComponent.vue').default);
-
-const app = new Vue({
-	el: '#app',
-	vuetify: new Vuetify(),
-});
-*/
+if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
+if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
+if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 
 console.log(route)
