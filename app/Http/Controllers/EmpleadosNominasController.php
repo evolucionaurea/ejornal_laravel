@@ -434,18 +434,30 @@ class EmpleadosNominasController extends Controller
 		///if(isset($params->ausentes_hoy)) echo "ausentes";
 		$trabajadores = $query->get();
 
+
+		$fecha_actual = Carbon::now();
 		$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
 			->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
 			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->select('ausentismos.*', DB::raw("IF(ausentismos.fecha_inicio<=DATE(NOW()) AND ausentismos.fecha_regreso_trabajar<=DATE(NOW()), 'NULL','Ausente') hoy"), DB::raw('ausentismo_tipo.nombre ausentismo_tipo'))
+			->where('ausentismos.fecha_regreso_trabajar', null)
+      ->whereDate('ausentismos.fecha_inicio', '<', $fecha_actual)
+
+			->select(
+				'ausentismos.*',
+				DB::raw('ausentismo_tipo.nombre ausentismo_tipo')
+			)
+
+			/*IF(ausentismos.fecha_inicio<=DATE(NOW()) AND ausentismos.fecha_regreso_trabajar<=DATE(NOW()), 'NULL','Ausente') hoy*/
+
 			->latest()
 			->get();
 
-		//$fecha_actual = Carbon::now();
-		//dd($fecha_actual);
+		///dd($ausentismos);
+
+
 		foreach ($trabajadores as $kt=>$trabajador) {
 			foreach ($ausentismos as $ausentismo) {
-				if($ausentismo->id_trabajador == $trabajador->id && $ausentismo->hoy=='Ausente'){
+				if($ausentismo->id_trabajador == $trabajador->id){
 
 					if(isset($params->ausentes) && $params->ausentes=='covid' && !preg_match('/covid/', $ausentismo->ausentismo_tipo) ) continue;
 

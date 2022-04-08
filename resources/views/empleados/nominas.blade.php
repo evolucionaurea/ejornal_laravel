@@ -112,12 +112,8 @@
 				<tbody>
 					@foreach ($trabajadores as $trabajador)
 					<tr>
-						<td class="align-middle">
-						  @if (isset($trabajador->foto) && !empty($trabajador->foto))
-							<img style="width: 80px;" src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
-						  @else
-							<i class="fas fa-user fa-1x"></i>
-						  @endif
+						<td class="align-middle d-flex align-items-center">
+							<div class="foto-user-tabla {{ isset($trabajador->foto) && !empty($trabajador->foto) ? 'has-image' : '' }}" style="background-image:url({{ isset($trabajador->foto) && !empty($trabajador->foto) ? asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto) : ''  }})"></div>
 						  {{$trabajador->nombre}}
 						</td>
 						<td class="align-middle">{{$trabajador->email}}</td>
@@ -150,23 +146,33 @@
 								@php endif; @endphp
 							</h3>
 						</td>
+
 						@if (auth()->user()->fichada == 1)
-						<td class="acciones_tabla align-middle" scope="row">
-						  <a title="Historial" href="{{route('nominas.show', $trabajador->id)}}">
-							  <i class="fas fa-book"></i>
-						  </a>
-							<a title="Editar" href="{{route('nominas.edit', $trabajador->id)}}">
-								<i class="fas fa-pen"></i>
-							</a>
-							<form class="" action="{{route('nominas.destroy', $trabajador->id)}}" method="post">
-								{{ csrf_field() }}
-								<input type="hidden" name="_method" value="DELETE">
-								<button title="Eliminar" type="submit">
-									<i class="fas fa-trash"></i>
-								</button>
-							</form>
+						<td class="align-middle" scope="row">
+
+							<div class="acciones_tabla">
+
+							  <a title="Historial" href="{{route('nominas.show', $trabajador->id)}}">
+								  <i class="fas fa-book"></i>
+							  </a>
+
+								<a title="Editar" href="{{route('nominas.edit', $trabajador->id)}}">
+									<i class="fas fa-pen"></i>
+								</a>
+
+								<form class="" action="{{route('nominas.destroy', $trabajador->id)}}" method="post">
+									{{ csrf_field() }}
+									<input type="hidden" name="_method" value="DELETE">
+									<button title="Eliminar" type="submit">
+										<i class="fas fa-trash"></i>
+									</button>
+								</form>
+
+							</div>
+
 						</td>
 						@endif
+
 					</tr>
 					@endforeach
 				</tbody>
