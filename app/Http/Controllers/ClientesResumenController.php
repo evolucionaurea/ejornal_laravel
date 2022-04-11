@@ -60,22 +60,29 @@ class ClientesResumenController extends Controller
 
       $accidentes_mes_pasado = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-      ->where('ausentismo_tipo.id', 12)
+      ->where('ausentismos.id_tipo', 12)
+      ->orWhere('ausentismos.id_tipo', 11)
+      // ->where('ausentismo_tipo.nombre', 'LIKE', "%zo%")
       ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
       ->whereDate('ausentismos.fecha_inicio', '>=', $inicio_mes_pasado)
-      ->whereDate('ausentismos.fecha_final', '<=', $final_mes_pasado)
-      ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
+      ->whereDate('ausentismos.fecha_regreso_trabajar', '<=', $final_mes_pasado)
+      ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado',
+      DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
       ->count();
 
       $accidentes_mes_actual = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-      ->where('ausentismo_tipo.id', 12)
+      // ->where('ausentismo_tipo.id', 12)
+      // ->orWhere('ausentismo_tipo.id', 11)
+      ->where('ausentismo_tipo.nombre', 'LIKE', "%accidente%")
+      // ->where('ausentismo_tipo.nombre', 'LIKE', "%ART%")
       ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
       ->whereDate('ausentismos.fecha_inicio', '>=', $inicio_mes_actual)
-      ->whereDate('ausentismos.fecha_inicio', '<=', $final_mes_actual)
+      ->whereDate('ausentismos.fecha_regreso_trabajar', '<=', $final_mes_actual)
       ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
       ->count();
 
+      dd($accidentes_mes_actual);
 
       $ausentismos_top_10 = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
