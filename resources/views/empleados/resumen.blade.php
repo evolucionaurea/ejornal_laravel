@@ -92,7 +92,7 @@
 
 					<!-- Consultas Médicas x Mes -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<div class="card light-blue lighten-1 white-text">
+						<a href="{{route('empleados.consultas.medicas',['filtro'=>'mes'])}}" class="card light-blue lighten-1 white-text">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$medicas_mes}}</p>
@@ -102,12 +102,12 @@
 									<i class="fas fa-comments fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 					<!-- Consultas Enfermería x Mes -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<div class="card light-blue lighten-1 white-text">
+						<a href="{{route('empleados.consultas.enfermeria',['filtro'=>'mes'])}}" class="card light-blue lighten-1 white-text">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$enfermerias_mes}}</p>
@@ -117,7 +117,7 @@
 									<i class="fas fa-comments fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 
@@ -127,7 +127,7 @@
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$consultas_medicas + $consultas_enfermeria}}</p>
-									<p class="mb-0">Consultas del día</p>
+									<p class="mb-0">Consultas totales del día</p>
 								</div>
 								<div>
 									<i class="fas fa-comments fa-2x text-black-40"></i>

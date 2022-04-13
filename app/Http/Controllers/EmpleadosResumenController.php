@@ -88,12 +88,12 @@ class EmpleadosResumenController extends Controller
 
 		$consultas_medicas = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->whereDate('consultas_medicas.created_at', '=', Carbon::now()->format('Y-m-d'))
+		->whereDate('consultas_medicas.fecha', '=', Carbon::now()->format('Y-m-d'))
 		->count();
 
 		$consultas_enfermeria = ConsultaEnfermeria::join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->whereDate('consultas_enfermerias.created_at', '=', Carbon::now()->format('Y-m-d'))
+		->whereDate('consultas_enfermerias.fecha', '=', Carbon::now()->format('Y-m-d'))
 		->count();
 
 		$vacunados_varias_dosis = CovidVacuna::join('nominas', 'covid_vacunas.id_nomina', 'nominas.id')
@@ -127,12 +127,12 @@ class EmpleadosResumenController extends Controller
 
 		$medicas_mes = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->whereMonth('consultas_medicas.created_at', '=', $fecha_actual->month)
+		->whereMonth('consultas_medicas.fecha', '=', $fecha_actual->month)
 		->count();
 
 		$enfermerias_mes = ConsultaEnfermeria::join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->whereMonth('consultas_enfermerias.created_at', '=', $fecha_actual->month)
+		->whereMonth('consultas_enfermerias.fecha', '=', $fecha_actual->month)
 		->count();
 
 		/*$ausencia_covid = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')

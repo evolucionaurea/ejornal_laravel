@@ -15,7 +15,6 @@ Route::post('login', 'UserController@login');
 Route::group(['middleware' => ['autenticacion']], function () {
 
 // Admin
-
 Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	Route::get('admin/resumen', 'AdminResumenController@index')->name('/admin/resumen');
@@ -98,7 +97,6 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::post('admin/reportes/filtrar_comunicaciones', 'AdminReporteController@filtrarComunicaciones')->name('reportes.filtrar_comunicaciones');
 
 });
-
 // Admin
 
 
@@ -248,6 +246,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 				'index' => 'empleados.consultas.enfermeria'
 			]
 		]);
+		Route::post('empleados/consultas/enfermeria/busqueda','EmpleadoConsultaEnfermeriaController@busqueda');
 		Route::post('empleados/consultas/enfermeria/tipo', 'EmpleadoConsultaEnfermeriaController@tipo')->name('/empleados/consultas/enfermeria/tipo');
 		Route::delete('empleados/consultas/enfermeria/tipo_delete/{id_tipo}', 'EmpleadoConsultaEnfermeriaController@tipo_destroy')->name('consultas.enfermeria.tipo_delete');
 
@@ -262,7 +261,6 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 // Clientes
-
 Route::group(['middleware' => 'autenticacion_clientes'], function () {
 
 
