@@ -23,16 +23,25 @@ class EmpleadoConsultaMedicaController extends Controller
 	 */
 	public function index()
 	{
-		$clientes = $this->clientes();
 
-		$consultas = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
-		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->select('nominas.nombre', 'consultas_medicas.*', DB::raw('diagnostico_consulta.nombre diagnostico'))
-		->orderBy('consultas_medicas.fecha', 'desc')
-		->get();
+		$clientes = $this->clientes();
+		$consultas = $this->busqueda();
 
 		return view('empleados.consultas.medicas', compact('clientes', 'consultas'));
+	}
+	public function busqueda()
+	{
+		$consultas = ConsultaMedica::select(
+			'nominas.nombre',
+			'consultas_medicas.*',
+			'diagnostico_consulta.nombre as diagnostico'
+		)
+		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
+		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->orderBy('consultas_medicas.fecha', 'desc')
+		->get();
+		return $consultas;
 	}
 
 	/**
