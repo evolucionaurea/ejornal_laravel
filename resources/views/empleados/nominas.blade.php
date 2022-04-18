@@ -137,7 +137,9 @@
 								@php
 									if(isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente'):
 								@endphp
-								<span class="tag_ejornal tag_ejornal_danger">Ausente</span>
+								<a href="{{route('ausentismos.edit',$trabajador->hoy['id'])}}" title="Click para editar ausentismo">
+									<span class="tag_ejornal tag_ejornal_danger">Ausente</span>
+								</a>
 
 
 								<div class="small mt-3 text-danger">{{$trabajador->hoy['tipo']}}</div>

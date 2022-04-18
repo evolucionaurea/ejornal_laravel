@@ -463,7 +463,8 @@ class EmpleadosNominasController extends Controller
 
 					$trabajadores[$kt]['hoy'] = [
 						'estado'=>'Ausente',
-						'tipo'=>$ausentismo->ausentismo_tipo
+						'tipo'=>$ausentismo->ausentismo_tipo,
+						'id'=>$ausentismo->id
 					];
 				}
 			}

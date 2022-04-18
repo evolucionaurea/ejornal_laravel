@@ -24,6 +24,11 @@
 		@include('../../mensajes_validacion')
 
 		<div class="tarjeta">
+
+
+			@include('../../modulos.busqueda_fecha')
+
+
 			<table class="table table-striped table-hover table-sm tabla_consultas_medicas">
 
 				<!--Table head-->
@@ -41,24 +46,8 @@
 				<!--Table head-->
 
 				<!--Table body-->
-				<tbody>
-						@foreach ($consultas as $consulta)
-						<tr>
-								<td>{{$consulta->nombre}}</td>
-								{{-- <td>{{ (!empty($consulta->fecha)) ? date('d/m/Y',strtotime($consulta->fecha)) : "" }}</td> --}}
-								<td>{{ (!empty($consulta->fecha)) ? $consulta->fecha : "" }}</td>
-								<td>{{$consulta->derivacion_consulta}}</td>
-								@if (auth()->user()->fichada == 1)
-								<td class="acciones_tabla" scope="row">
-										<a title="Ver" href="{{route('medicas.show', $consulta->id)}}">
-												<i class="fas fa-eye"></i>
-										</a>
-								</td>
-								@endif
-						</tr>
-						@endforeach
-				</tbody>
-					<!--Table body-->
+				<tbody></tbody>
+				<!--Table body-->
 			</table>
 		</div>
 

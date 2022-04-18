@@ -21,18 +21,54 @@ class EmpleadoConsultaMedicaController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		$clientes = $this->clientes();
 
-		$consultas = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
+		$ahora = Carbon::now();
+
+		switch ($request->filtro) {
+			case 'mes':
+				$fecha_inicio = $ahora->format('01/m/Y');
+				$fecha_final = $ahora->format('d/m/Y');
+				break;
+
+			case 'hoy':
+				$fecha_inicio = $ahora->format('d/m/Y');
+				$fecha_final = $ahora->format('d/m/Y');
+				break;
+
+			default:
+				$fecha_inicio = false;
+				$fecha_final = false;
+				break;
+		}
+
+		$clientes = $this->clientes();
+		return view('empleados.consultas.medicas', compact('clientes','fecha_inicio','fecha_final'));
+	}
+
+	public function busqueda(Request $request)
+	{
+		$query = ConsultaMedica::select(
+			'nominas.nombre',
+			'consultas_medicas.*',
+			'diagnostico_consulta.nombre as diagnostico'
+		)
+		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->select('nominas.nombre', 'consultas_medicas.*', DB::raw('diagnostico_consulta.nombre diagnostico'))
-		->orderBy('consultas_medicas.fecha', 'desc')
-		->get();
+		->orderBy('consultas_medicas.fecha', 'desc');
 
-		return view('empleados.consultas.medicas', compact('clientes', 'consultas'));
+		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+
+
+		$consultas = $query->get();
+		return [
+			'consultas'=>$consultas,
+			'fichada'=>auth()->user()->fichada,
+			'request'=>$request->all()
+		];
 	}
 
 	/**
@@ -240,6 +276,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		$consulta_medica = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id', $id)
+		->where('nominas.id_cliente',auth()->user()->id_cliente_actual) //IMPORTANTE: comprobar que está consultando a trabajadores de la nómina del cliente actual
 		->select('consultas_medicas.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado', 'nominas.email', DB::raw('diagnostico_consulta.nombre diagnostico'))
 		->first();
 

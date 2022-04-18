@@ -1,13 +1,14 @@
 require('./bootstrap');
 
+require('./functions');
 require('../slick/slick.min.js');
 require('./slick.js');
 require('./data_picker_code.js');
 require('./data_tables.js');
 require('./data_picker.js');
+require('./swal_options.js');
 
 require('./sidebar');
-require('./menu');
 require('./footer.js');
 require('./ajax.js');
 require('./users.js');
@@ -32,4 +33,4 @@ if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
 if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 
-console.log(route)
+//console.log(route)
