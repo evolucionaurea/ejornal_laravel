@@ -42,47 +42,77 @@ class ClientesResumenController extends Controller
       $anio_actual = Carbon::parse(Carbon::now()->format('Y'))->year;
       $fecha_actual = Carbon::now();
 
-      $ausentismos_mes_pasado = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+      $query = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
       ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
       ->whereDate('ausentismos.fecha_inicio', '>=', $inicio_mes_pasado)
-      ->whereDate('ausentismos.fecha_final', '<=', $final_mes_pasado)
+      ->whereDate('ausentismos.fecha_inicio', '<=', $final_mes_pasado)
       ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-      ->count();
+      ->get();
 
-      $ausentismos_mes_actual = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+      $ausentismos_mes_pasado = 0;
+      foreach ($query as $value) {
+        if ($value->fecha_regreso_trabajar == null || $value->fecha_regreso_trabajar <= $final_mes_pasado) {
+          $ausentismos_mes_pasado++;
+        }
+      }
+
+
+      $query = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
       ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
       ->whereDate('ausentismos.fecha_inicio', '>=', $inicio_mes_actual)
-      ->whereDate('ausentismos.fecha_final', '<=', $final_mes_actual)
       ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-      ->count();
+      ->get();
 
-      $accidentes_mes_pasado = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+      $ausentismos_mes_actual = 0;
+      foreach ($query as $value) {
+        if ($value->fecha_regreso_trabajar == null || $value->fecha_regreso_trabajar <= $final_mes_actual) {
+          $ausentismos_mes_actual++;
+        }
+      }
+
+
+      // accidentes_mes_pasado //
+      $query = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-      ->where('ausentismos.id_tipo', 12)
-      ->orWhere('ausentismos.id_tipo', 11)
-      // ->where('ausentismo_tipo.nombre', 'LIKE', "%zo%")
       ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
       ->whereDate('ausentismos.fecha_inicio', '>=', $inicio_mes_pasado)
-      ->whereDate('ausentismos.fecha_regreso_trabajar', '<=', $final_mes_pasado)
+      ->whereDate('ausentismos.fecha_inicio', '<=', $final_mes_pasado)
+      // ->where('ausentismo_tipo.nombre', 'LIKE', "%accidente%")
+      // ->orWhere('ausentismo_tipo.nombre', 'LIKE', "%art%")
       ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado',
       DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-      ->count();
+      ->get();
 
-      $accidentes_mes_actual = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+      $accidentes_mes_pasado = 0;
+      foreach ($query as $value) {
+        if ((strpos($value->nombre_ausentismo, 'ART') !== false || strpos($value->nombre_ausentismo, 'accidente') !== false) &&
+          ($value->fecha_regreso_trabajar == null || $value->fecha_regreso_trabajar <= $final_mes_pasado)) {
+          $accidentes_mes_pasado++;
+        }
+      }
+      // accidentes_mes_pasado //
+
+
+      // accidentes_mes_actual //
+      $query = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-      // ->where('ausentismo_tipo.id', 12)
-      // ->orWhere('ausentismo_tipo.id', 11)
-      ->where('ausentismo_tipo.nombre', 'LIKE', "%accidente%")
-      // ->where('ausentismo_tipo.nombre', 'LIKE', "%ART%")
       ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
       ->whereDate('ausentismos.fecha_inicio', '>=', $inicio_mes_actual)
-      ->whereDate('ausentismos.fecha_regreso_trabajar', '<=', $final_mes_actual)
+      // ->where('ausentismo_tipo.nombre', 'LIKE', "%accidente%")
+      // ->orWhere('ausentismo_tipo.nombre', 'LIKE', "%art%")
       ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-      ->count();
+      ->get();
 
-      dd($accidentes_mes_actual);
+      $accidentes_mes_actual = 0;
+      foreach ($query as $value) {
+        if ((strpos($value->nombre_ausentismo, 'ART') !== false || strpos($value->nombre_ausentismo, 'accidente') !== false) &&
+          ($value->fecha_regreso_trabajar == null || $value->fecha_regreso_trabajar <= $final_mes_actual)) {
+          $accidentes_mes_actual++;
+        }
+      }
+      // accidentes_mes_actual //
 
       $ausentismos_top_10 = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
       ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
