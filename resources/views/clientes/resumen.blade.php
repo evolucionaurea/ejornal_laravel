@@ -124,6 +124,43 @@
 
         <div class="row">
           <div class="col-6">
+            <div class="tarjeta ausentismos_mes_porcentajes">
+              <h4>Ausentismos del mes %</h4>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Porcentaje</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{-- Se carga por JS --}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="tarjeta ausentismos_anio_porcentajes">
+              <h4>Ausentismos del año %</h4>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Porcentaje</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{-- Se carga por JS --}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-6">
             <div class="tarjeta">
               <h4>Top 10 trabajadores que mas dias faltaron</h4>
               <table class="table table-striped">
@@ -255,6 +292,28 @@ window.onload = function() {
     }
 
 
+    let total = 0;
+    datos.map(item =>
+      total = total + item.cantidad
+    )
+
+    for (let i = 0; i < datos.length; i++) {
+    $('.ausentismos_mes_porcentajes table tbody').append(
+        $('<tr>', {
+            'class': ''
+        }).append(
+            $('<td>', {
+                'text': datos[i].nombre
+            })
+        )
+        .append(
+            $('<td>', {
+                'text': (datos[i].cantidad * 100) / total + '%'
+            })
+        )
+      )
+    }
+
 });
 // Accidentes mensual
 
@@ -334,6 +393,28 @@ axios.get(url_anual)
     $('.resumen_graficos_ausentismos_anual').css('display', 'block');
   }
 
+
+  let total = 0;
+  datos.map(item =>
+    total = total + item.cantidad
+  )
+
+  for (let i = 0; i < datos.length; i++) {
+  $('.ausentismos_anio_porcentajes table tbody').append(
+      $('<tr>', {
+          'class': ''
+      }).append(
+          $('<td>', {
+              'text': datos[i].nombre
+          })
+      )
+      .append(
+          $('<td>', {
+              'text': (datos[i].cantidad * 100) / total + '%'
+          })
+      )
+    )
+  }
 
 });
 // Accidentes anual
