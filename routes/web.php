@@ -211,20 +211,27 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 		Route::get('empleados/documentaciones/getDocumentacion/{id}', 'EmpleadosAusentismoDocumentacionController@getDocumentacion')->name('documentaciones.getDocumentacion');
 		Route::get('empleados/documentaciones/validarMatricula/{matricula}', 'EmpleadosAusentismoDocumentacionController@validarMatricula')->name('documentaciones.validarMatricula');
 
+
+		//COVID TESTEOS
 		Route::resource('empleados/covid/testeos', 'EmpleadosCovidTesteoController', [
 			'names' => [
 				'index' => 'empleados.covid.testeos'
 			]
 		]);
+		Route::delete('empleados/covid/testeos/destroy/{id}','EmpleadosCovidTesteoController@destroy');
+		Route::post('empleados/covid/testeos/busqueda','EmpleadosCovidTesteoController@busqueda');
 		Route::post('empleados/covid/testeos/tipo', 'EmpleadosCovidTesteoController@tipo')->name('/empleados/covid/testeos/tipo');
 		Route::delete('empleados/covid/testeos/tipo_delete/{id_tipo}', 'EmpleadosCovidTesteoController@tipo_destroy')->name('covid.testeos.tipo_delete');
 
 
+		//COVID VACUNAS
 		Route::resource('empleados/covid/vacunas', 'EmpleadosCovidVacunasController', [
 			'names' => [
 				'index' => 'empleados.covid.vacunas'
 			]
 		]);
+		Route::delete('empleados/covid/vacunas/destroy/{id}','EmpleadosCovidVacunasController@destroy');
+		Route::post('empleados/covid/vacunas/busqueda','EmpleadosCovidVacunasController@busqueda');
 		Route::post('empleados/covid/vacunas/tipo', 'EmpleadosCovidVacunasController@tipo')->name('/empleados/covid/vacunas/tipo');
 		Route::delete('empleados/covid/vacunas/tipo_delete/{id_tipo}', 'EmpleadosCovidVacunasController@tipo_destroy')->name('covid.vacunas.tipo_delete');
 

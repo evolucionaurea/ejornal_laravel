@@ -70,21 +70,17 @@ class ConsultasMedicas {
 			loading()
 			let consultas = await this.get({
 				from:this.modulo_busqueda.find('[name="fecha_inicio"]').val(),
-				to:this.modulo_busqueda.find('[name="fecha_final"]').val()
+				to:this.modulo_busqueda.find('[name="fecha_final"]').val(),
+				filtro:this.modulo_busqueda.find('[name="filtro"]').val()
 			})
 			this.render_table(consultas)
-		})
+		}).trigger('click')
 
 		this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
 			this.modulo_busqueda.find('[name="fecha_inicio"],[name="fecha_final"]').val('')
 			this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 		})
 
-		if(this.modulo_busqueda.find('[name="filtro"]').val()!=''){
-			this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
-		}else{
-			this.get().then(data=>this.render_table(data))
-		}
 
 
 

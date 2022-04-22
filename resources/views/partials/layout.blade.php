@@ -73,7 +73,11 @@
 
 
 
-	<script>var route = '{{ Route::currentRouteName() }}';</script>
+	<script>
+		var route = '{{ Route::currentRouteName() }}';
+		var csfr = '{{ csrf_token() }}';
+	</script>
+
 	<script src="{{ mix('js/app.js') }}" ></script>
 
 

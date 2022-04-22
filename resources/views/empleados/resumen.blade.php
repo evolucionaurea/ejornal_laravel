@@ -138,7 +138,7 @@
 
 					<!-- Testeos Positivos -->
 					<div class="col-md-4 col-lg-3 mb-4">
-						<div class="card secondary-color-dark lighten-1 white-text">
+						<a href="{{route('empleados.covid.testeos',['filtro'=>'positivos'])}}" class="card secondary-color-dark lighten-1 white-text">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$testeos_positivos}}</p>
@@ -148,13 +148,13 @@
 									<i class="fas fa-disease fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 
 					<!-- 1 dosis -->
 					<div class="col-md-4 col-lg-3 mb-4">
-						<div class="card secondary-color-dark accent-2 white-text">
+						<a href="{{route('empleados.covid.vacunas',['filtro'=>'dosis_1'])}}" class="card secondary-color-dark accent-2 white-text">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_una_dosis}}</p>
@@ -164,13 +164,13 @@
 									<i class="fas fa-disease fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 
 					<!-- 2 dosis -->
 					<div class="col-md-4 col-lg-3 mb-4">
-						<div class="card secondary-color-dark accent-2 white-text">
+						<a href="{{route('empleados.covid.vacunas',['filtro'=>'dosis_2'])}}" class="card secondary-color-dark accent-2 white-text">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_dos_dosis}}</p>
@@ -180,12 +180,12 @@
 									<i class="fas fa-disease fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 					<!-- 3 dosis -->
 					<div class="col-md-4 col-lg-3 mb-4">
-						<div class="card secondary-color-dark accent-2 white-text">
+						<a href="{{route('empleados.covid.vacunas',['filtro'=>'dosis_3'])}}" class="card secondary-color-dark accent-2 white-text">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_tres_dosis}}</p>
@@ -195,7 +195,7 @@
 									<i class="fas fa-disease fa-2x text-black-40"></i>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 				</div>

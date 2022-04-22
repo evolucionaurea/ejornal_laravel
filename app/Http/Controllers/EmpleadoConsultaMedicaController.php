@@ -62,7 +62,6 @@ class EmpleadoConsultaMedicaController extends Controller
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-
 		$consultas = $query->get();
 		return [
 			'consultas'=>$consultas,
