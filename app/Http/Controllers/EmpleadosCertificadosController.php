@@ -3,31 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\ClienteUser;
+//use App\ClienteUser;
+use App\Http\Traits\Clientes;
 use App\AusentismoDocumentacion;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class EmpleadosCertificadosController extends Controller
 {
 
-    public function listado()
-    {
-      $clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-      ->where('cliente_user.id_user', '=', auth()->user()->id)
-      ->select('clientes.nombre', 'clientes.id')
-      ->get();
+  use Clientes;
 
-      $certificados = AusentismoDocumentacion::join('ausentismos', 'ausentismo_documentacion.id_ausentismo', 'ausentismos.id')
-      ->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-      ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-      ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-      ->select('nominas.nombre', DB::raw('ausentismo_tipo.nombre tipo'), 'ausentismos.fecha_inicio',
-      'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismo_documentacion.medico',
-      'ausentismo_documentacion.matricula_nacional', 'ausentismo_documentacion.institucion')
-      ->get();
+	public function listado()
+	{
+	  $clientes = $this->getClientesUser();
 
-      return view('empleados.ausentismos.certificados', compact('clientes', 'certificados'));
-    }
+	  return view('empleados.ausentismos.certificados', compact('clientes'));
+	}
+
+	public function busqueda(Request $request)
+	{
+		$query = AusentismoDocumentacion::select(
+			'nominas.nombre',
+			DB::raw('ausentismo_tipo.nombre tipo'),
+			'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar',
+			'ausentismo_documentacion.medico', 'ausentismo_documentacion.matricula_nacional', 'ausentismo_documentacion.institucion'
+		)
+		->join('ausentismos', 'ausentismo_documentacion.id_ausentismo', 'ausentismos.id')
+	  ->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+
+
+	  if($request->from) $query->whereDate('ausentismos.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+
+
+		return [
+			'results'=>$query->get(),
+			'fichada'=>auth()->user()->fichada,
+			'request'=>$request->all()
+		];
+
+	}
 
 
 }

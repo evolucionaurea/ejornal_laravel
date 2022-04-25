@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\ConsultaMedica;
 use App\DiagnosticoConsulta;
 use Illuminate\Support\Facades\DB;
-use App\ClienteUser;
+//use App\ClienteUser;
+use App\Http\Traits\Clientes;
 use App\Nomina;
 use App\StockMedicamento;
 use App\ConsultaMedicacion;
@@ -16,11 +17,8 @@ use Illuminate\Support\Facades\Input;
 
 class EmpleadoConsultaMedicaController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+	use Clientes;
+
 	public function index(Request $request)
 	{
 
@@ -43,7 +41,7 @@ class EmpleadoConsultaMedicaController extends Controller
 				break;
 		}
 
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 		return view('empleados.consultas.medicas', compact('clientes','fecha_inicio','fecha_final'));
 	}
 
@@ -62,9 +60,8 @@ class EmpleadoConsultaMedicaController extends Controller
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-		$consultas = $query->get();
 		return [
-			'consultas'=>$consultas,
+			'results'=>$query->get(),
 			'fichada'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
@@ -78,7 +75,7 @@ class EmpleadoConsultaMedicaController extends Controller
 	public function create()
 	{
 
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 
 		$diagnostico_consultas = DiagnosticoConsulta::all();
 
@@ -279,7 +276,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		->select('consultas_medicas.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado', 'nominas.email', DB::raw('diagnostico_consulta.nombre diagnostico'))
 		->first();
 
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 
 		return view('empleados.consultas.medicas.show', compact('consulta_medica', 'clientes'));
 	}
@@ -317,15 +314,6 @@ class EmpleadoConsultaMedicaController extends Controller
 	{
 			//
 	}
-
-	public function clientes()
-	{
-		return ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-			->where('cliente_user.id_user', '=', auth()->user()->id)
-			->select('clientes.nombre', 'clientes.id')
-			->get();
-	}
-
 
 
 	public function tipo(Request $request)

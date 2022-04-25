@@ -11288,6 +11288,10 @@ select {
   color: #376d7a;
 }
 
+.swal2-container .swal2-popup .swal2-title {
+  font-size: 1.675rem;
+}
+
 #sidebar-wrapper {
   min-height: 100vh;
   margin-left: -15rem;

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Nomina;
-use App\ClienteUser;
-use App\Cliente;
+//use App\ClienteUser;
+//use App\Cliente;
+use App\Http\Traits\Clientes;
 use Carbon\Carbon;
 use App\Ausentismo;
 use App\ConsultaMedica;
@@ -18,32 +19,30 @@ use Illuminate\Support\Facades\Storage;
 
 class EmpleadosNominasController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+
+	use Clientes;
+
 	public function index()
 	{
 
 		///dd($data);
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 		$trabajadores = $this->buscar();
-
-		/*
-		SELECT n.id, n.nombre, n.email, n.sector,
-			(
-				SELECT IF(a.fecha_inicio<=DATE(NOW()) AND a.fecha_regreso_trabajar<=DATE(NOW()), NULL,'Ausente')
-				FROM ausentismos a
-				WHERE a.id_trabajador=n.id
-				ORDER BY a.created_at DESC
-				LIMIT 0,1
-			) 'ausentismo'
-		FROM nominas n
-		WHERE n.deleted_at IS NULL
-		*/
-
 		return view('empleados.nominas', compact('trabajadores', 'clientes'));
+	}
+	public function listado(Request $request)
+	{
+
+		//Sin filtros
+		///return redirect()->action('EmpleadosNominasController@index'); //Sin filtros
+
+		//Con filtros
+		$trabajadores = $this->buscar($request);
+		$filtros = $request->all();
+		$clientes = $this->getClientesUser();
+		return view('empleados.nominas', compact('trabajadores', 'clientes', 'filtros'));
+
+		///return redirect()->action('\Ariel\SpotBuy\Http\Controllers\Admin\SpotBuyController@getPart', [$id]);
 	}
 
 	/**
@@ -54,7 +53,7 @@ class EmpleadosNominasController extends Controller
 	public function create()
 	{
 
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 		return view('empleados.nominas.create', compact('clientes'));
 	}
 
@@ -124,7 +123,7 @@ class EmpleadosNominasController extends Controller
 	public function show($id)
 	{
 
-			$clientes = $this->clientes();
+			$clientes = $this->getClientesUser();
 
 			$trabajador = Nomina::findOrFail($id);
 
@@ -180,7 +179,7 @@ class EmpleadosNominasController extends Controller
 	public function edit($id)
 	{
 		$trabajador = Nomina::findOrFail($id);
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 
 		return view('empleados.nominas.edit', compact('trabajador', 'clientes'));
 	}
@@ -226,32 +225,32 @@ class EmpleadosNominasController extends Controller
 
 			//Saber si ya hay una foto guardada
 			if (isset($trabajador->foto) && !empty($trabajador->foto)) {
-					$foto = $request->file('foto');
-					$nombre = $foto->getClientOriginalName();
-					$trabajador->foto = $nombre;
-					$trabajador->save();
+				$foto = $request->file('foto');
+				$nombre = $foto->getClientOriginalName();
+				$trabajador->foto = $nombre;
+				$trabajador->save();
 
-					$ruta_archivo = public_path("storage/nominas/fotos/{$trabajador->id}/{$trabajador->hash_foto}");
-					unlink($ruta_archivo);
-					Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
+				$ruta_archivo = public_path("storage/nominas/fotos/{$trabajador->id}/{$trabajador->hash_foto}");
+				unlink($ruta_archivo);
+				Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
 
 
-					// Completar en base el hash de la foto guardada
-					$trabajador = Nomina::findOrFail($trabajador->id);
-					$trabajador->hash_foto = $foto->hashName();
-					$trabajador->save();
+				// Completar en base el hash de la foto guardada
+				$trabajador = Nomina::findOrFail($trabajador->id);
+				$trabajador->hash_foto = $foto->hashName();
+				$trabajador->save();
 			} else {
-					$foto = $request->file('foto');
-					$nombre = $foto->getClientOriginalName();
-					$trabajador->foto = $nombre;
-					$trabajador->save();
+				$foto = $request->file('foto');
+				$nombre = $foto->getClientOriginalName();
+				$trabajador->foto = $nombre;
+				$trabajador->save();
 
-					// Guardar foto
-					Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
+				// Guardar foto
+				Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
 
-					// Completar el base el hash del foto guardado
-					$trabajador->hash_foto = $foto->hashName();
-					$trabajador->save();
+				// Completar el base el hash del foto guardado
+				$trabajador->hash_foto = $foto->hashName();
+				$trabajador->save();
 			}
 
 		}else {
@@ -288,136 +287,136 @@ class EmpleadosNominasController extends Controller
 
 			// $registros = array();
 			$fichero = fopen($file, "r");
-					// Lee los nombres de los campos
-					$nombres_campos = fgetcsv($fichero, 0 , ";" , '"');
-					$num_campos = count($nombres_campos);
-					$registro = [];
-					// Lee los registros
-					while (($datos = fgetcsv($fichero, 0 , ";" , '"')) !== FALSE) {
-							// Crea un array asociativo con los nombres y valores de los campos
-							for ($icampo = 0; $icampo < $num_campos; $icampo++) {
-								if ($datos[$icampo] !== '') {
-									switch ($icampo) {
-											case 0:
-													$registro['nombre'] = $datos[$icampo];
-													break;
-											case 1:
-													$registro['email'] = $datos[$icampo];
-													break;
-											case 2:
-													$registro['telefono'] = $datos[$icampo];
-													break;
-											case 3:
-													$registro['dni'] = $datos[$icampo];
-													break;
-											case 4:
-													$registro['estado'] = $datos[$icampo];
-													break;
-											case 5:
-													$registro['sector'] = $datos[$icampo];
-													break;
-									}
-								}else {
-									switch ($icampo) {
-											case 0:
-													$registro['nombre'] = '';
-													break;
-											case 1:
-													$registro['email'] = '';
-													break;
-											case 2:
-													$registro['telefono'] = '';
-													break;
-											case 3:
-													$registro['dni'] = '';
-													break;
-											case 4:
-													$registro['estado'] = '';
-													break;
-											case 5:
-													$registro['sector'] = '';
-													break;
-									}
-								}
-							}
-							// Añade el registro leido al array de registros
-							$registros[] = $registro;
-					}
-					fclose($fichero);
-
-					$errores = false;
-					$vueltas = 1;
-					foreach ($registros as $registro) {
-						if ($registro['nombre'] == null || $registro['nombre'] == '' || $registro['estado'] == null ||
-								$registro['estado'] == '' || $registro['sector'] == null || $registro['sector'] == '') {
-							$respuesta_error = "El excel tiene datos mal cargados en la fila " . $vueltas;
-							return back()->with('error', $respuesta_error);
+			// Lee los nombres de los campos
+			$nombres_campos = fgetcsv($fichero, 0 , ";" , '"');
+			$num_campos = count($nombres_campos);
+			$registro = [];
+			// Lee los registros
+			while (($datos = fgetcsv($fichero, 0 , ";" , '"')) !== FALSE) {
+				// Crea un array asociativo con los nombres y valores de los campos
+				for ($icampo = 0; $icampo < $num_campos; $icampo++) {
+					if ($datos[$icampo] !== '') {
+						switch ($icampo) {
+							case 0:
+								$registro['nombre'] = $datos[$icampo];
+								break;
+							case 1:
+								$registro['email'] = $datos[$icampo];
+								break;
+							case 2:
+								$registro['telefono'] = $datos[$icampo];
+								break;
+							case 3:
+								$registro['dni'] = $datos[$icampo];
+								break;
+							case 4:
+								$registro['estado'] = $datos[$icampo];
+								break;
+							case 5:
+								$registro['sector'] = $datos[$icampo];
+								break;
 						}
-						if (!isset($registro['nombre']) || !isset($registro['email']) || !isset($registro['telefono']) ||
-								!isset($registro['dni']) || !isset($registro['estado']) || !isset($registro['sector'])) {
-							$errores = true;
-						}else {
-							$errores = false;
-						}
-						$vueltas++;
-					}
-
-
-					if ($errores) {
-						return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector');
 					}else {
+						switch ($icampo) {
+							case 0:
+								$registro['nombre'] = '';
+								break;
+							case 1:
+								$registro['email'] = '';
+								break;
+							case 2:
+								$registro['telefono'] = '';
+								break;
+							case 3:
+								$registro['dni'] = '';
+								break;
+							case 4:
+								$registro['estado'] = '';
+								break;
+							case 5:
+								$registro['sector'] = '';
+								break;
+						}
+					}
+				}
+				// Añade el registro leido al array de registros
+				$registros[] = $registro;
+			}
+			fclose($fichero);
 
-						foreach ($registros as $registro) {
+			$errores = false;
+			$vueltas = 1;
+			foreach ($registros as $registro) {
+				if ($registro['nombre'] == null || $registro['nombre'] == '' || $registro['estado'] == null ||
+						$registro['estado'] == '' || $registro['sector'] == null || $registro['sector'] == '') {
+					$respuesta_error = "El excel tiene datos mal cargados en la fila " . $vueltas;
+					return back()->with('error', $respuesta_error);
+				}
+				if (!isset($registro['nombre']) || !isset($registro['email']) || !isset($registro['telefono']) ||
+						!isset($registro['dni']) || !isset($registro['estado']) || !isset($registro['sector'])) {
+					$errores = true;
+				}else {
+					$errores = false;
+				}
+				$vueltas++;
+			}
 
-							$buscar_coincidencia = Nomina::where('email', $registro['email'])->first();
 
-							if ($buscar_coincidencia == null) {
-								//Guardar en base
-								$nomina = new Nomina();
-								$nomina->id_cliente = auth()->user()->id_cliente_actual;
-								$nomina->nombre = $registro['nombre'];
-								if (isset($registro['email']) && !empty($registro['email'])) {
-									$nomina->email = $registro['email'];
-								}
-								$nomina->telefono = $registro['telefono'];
-								if (isset($registro['dni']) && !empty($registro['dni'])) {
-									$nomina->dni = $registro['dni'];
-								}
-								$nomina->sector = $registro['sector'];
-								if ($registro['estado'] == 'Activo') {
-									$nomina->estado = 1;
-									$nomina->fecha_baja =  null;
-								}else {
-									$nomina->estado = 0;
-									$nomina->fecha_baja =  Carbon::now();
-								}
-								$nomina->save();
+			if ($errores) {
+				return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector');
+			}else {
 
-							}else {
-								// 1 es actualizar los datos completos / 2 Es no subirlo y dejar el actual
-								if ($request->coincidencia == 1) {
-									$buscar_coincidencia->id_cliente = auth()->user()->id_cliente_actual;
-									$buscar_coincidencia->nombre = $registro['nombre'];
-									$buscar_coincidencia->telefono = $registro['telefono'];
-									if (isset($registro['dni']) && !empty($registro['dni'])) {
-										$buscar_coincidencia->dni = $registro['dni'];
-									}
-									$buscar_coincidencia->sector = $registro['sector'];
-									if ($registro['estado'] == 'Activo') {
-										$buscar_coincidencia->estado = 1;
-										$buscar_coincidencia->fecha_baja =  null;
-									}else {
-										$buscar_coincidencia->estado = 0;
-										$buscar_coincidencia->fecha_baja =  Carbon::now();
-									}
-									$buscar_coincidencia->save();
-								}
+				foreach ($registros as $registro) {
+
+					$buscar_coincidencia = Nomina::where('email', $registro['email'])->first();
+
+					if ($buscar_coincidencia == null) {
+						//Guardar en base
+						$nomina = new Nomina();
+						$nomina->id_cliente = auth()->user()->id_cliente_actual;
+						$nomina->nombre = $registro['nombre'];
+						if (isset($registro['email']) && !empty($registro['email'])) {
+							$nomina->email = $registro['email'];
+						}
+						$nomina->telefono = $registro['telefono'];
+						if (isset($registro['dni']) && !empty($registro['dni'])) {
+							$nomina->dni = $registro['dni'];
+						}
+						$nomina->sector = $registro['sector'];
+						if ($registro['estado'] == 'Activo') {
+							$nomina->estado = 1;
+							$nomina->fecha_baja =  null;
+						}else {
+							$nomina->estado = 0;
+							$nomina->fecha_baja =  Carbon::now();
+						}
+						$nomina->save();
+
+					}else {
+						// 1 es actualizar los datos completos / 2 Es no subirlo y dejar el actual
+						if ($request->coincidencia == 1) {
+							$buscar_coincidencia->id_cliente = auth()->user()->id_cliente_actual;
+							$buscar_coincidencia->nombre = $registro['nombre'];
+							$buscar_coincidencia->telefono = $registro['telefono'];
+							if (isset($registro['dni']) && !empty($registro['dni'])) {
+								$buscar_coincidencia->dni = $registro['dni'];
 							}
-
+							$buscar_coincidencia->sector = $registro['sector'];
+							if ($registro['estado'] == 'Activo') {
+								$buscar_coincidencia->estado = 1;
+								$buscar_coincidencia->fecha_baja =  null;
+							}else {
+								$buscar_coincidencia->estado = 0;
+								$buscar_coincidencia->fecha_baja =  Carbon::now();
+							}
+							$buscar_coincidencia->save();
 						}
 					}
 
-				return redirect('empleados/nominas')->with('success', 'Carga masiva de trabajadores de la nómina exitosa');
+				}
+			}
+
+			return redirect('empleados/nominas')->with('success', 'Carga masiva de trabajadores de la nómina exitosa');
 
 		}else {
 			return back()->with('error', 'No has subido ningún archivo');
@@ -477,29 +476,6 @@ class EmpleadosNominasController extends Controller
 		return $trabajadores;
 
 
-	}
-	public function clientes()
-	{
-		return ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-			->where('cliente_user.id_user', '=', auth()->user()->id)
-			->select('clientes.nombre', 'clientes.id')
-			->get();
-	}
-
-
-	public function listado(Request $request)
-	{
-
-		//Sin filtros
-		///return redirect()->action('EmpleadosNominasController@index'); //Sin filtros
-
-		//Con filtros
-		$trabajadores = $this->buscar($request);
-		$filtros = $request->all();
-		$clientes = $this->clientes();
-		return view('empleados.nominas', compact('trabajadores', 'clientes', 'filtros'));
-
-		///return redirect()->action('\Ariel\SpotBuy\Http\Controllers\Admin\SpotBuyController@getPart', [$id]);
 	}
 
 

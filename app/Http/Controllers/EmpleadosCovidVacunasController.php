@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\ClienteUser;
+//use App\ClienteUser;
+use App\Http\Traits\Clientes;
 use App\CovidVacuna;
 use App\Nomina;
 use Carbon\Carbon;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class EmpleadosCovidVacunasController extends Controller
 {
+	use Clientes;
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -21,7 +23,7 @@ class EmpleadosCovidVacunasController extends Controller
 	{
 		//$data = $this->busqueda($request);
 		//dd($data);
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 		return view('empleados.covid.vacunas', compact('clientes'));
 	}
 
@@ -43,27 +45,30 @@ class EmpleadosCovidVacunasController extends Controller
 		if($request->to) $query->whereDate('covid_vacunas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
 		if($request->filtro=='dosis_1') $query->whereRaw('(SELECT COUNT(*) FROM covid_vacunas cv WHERE cv.id_nomina=covid_vacunas.id_nomina GROUP BY cv.id_nomina)=1');
+
+		/*->when($filtro_universo != 0, function($query) use ($filtro_universo){
+			return $query->where('carpetas.id_universo', $filtro_universo);
+		})*/
+		/*
+		$users = User::where(function ($query) {
+			    $query->select('type')
+			        ->from('membership')
+			        ->whereColumn('membership.user_id', 'users.id')
+			        ->orderByDesc('membership.start_date')
+			        ->limit(1);
+			}, 'Pro')->get();*/
+
 		if($request->filtro=='dosis_2') $query->whereRaw('(SELECT COUNT(*) FROM covid_vacunas cv WHERE cv.id_nomina=covid_vacunas.id_nomina GROUP BY cv.id_nomina)=2');
 		if($request->filtro=='dosis_3') $query->whereRaw('(SELECT COUNT(*) FROM covid_vacunas cv WHERE cv.id_nomina=covid_vacunas.id_nomina GROUP BY cv.id_nomina)=3');
 		///if($request->filtro=='dosis_2') $query->where('covid_testeos.resultado','positivo');
 		///if($request->filtro=='dosis_3') $query->where('covid_testeos.resultado','positivo');
 
-
-		$vacunas = $query->get();
 		return [
-			'vacunas'=>$vacunas,
+			'results'=>$query->get(),
 			'fichada'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
 
-	}
-
-	public function clientes()
-	{
-		return ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-			->where('cliente_user.id_user', '=', auth()->user()->id)
-			->select('clientes.nombre', 'clientes.id')
-			->get();
 	}
 
 	/**
@@ -74,7 +79,7 @@ class EmpleadosCovidVacunasController extends Controller
 	public function create()
 	{
 
-		$clientes = $this->clientes();
+		$clientes =  $this->getClientesUser();
 
 		$covid_vacunas_tipo = CovidVacunaTipo::orderBy('nombre')->get();
 		$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
@@ -140,7 +145,7 @@ class EmpleadosCovidVacunasController extends Controller
 		'covid_vacunas.institucion', 'covid_vacunas.id', 'covid_vacunas.id_nomina', 'covid_vacunas.id_tipo')
 		->first();
 
-		$clientes = $this->clientes();
+		$clientes =  $this->getClientesUser();
 
 		$covid_vacunas_tipo = CovidVacunaTipo::all();
 
@@ -220,9 +225,9 @@ class EmpleadosCovidVacunasController extends Controller
 			return back()->with('error', 'Existen vacunas de covid creados con este tipo de vacuna. No puedes eliminarlo');
 		}
 
-			//Eliminar en base
-			$tipo_dosis = CovidVacunaTipo::find($id_tipo)->delete();
-			return back()->with('success', 'Tipo de vacuna de covid eliminado correctamente');
+		//Eliminar en base
+		$tipo_dosis = CovidVacunaTipo::find($id_tipo)->delete();
+		return back()->with('success', 'Tipo de vacuna de covid eliminado correctamente');
 	}
 
 

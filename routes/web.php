@@ -106,10 +106,10 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 // Empleados
 Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
-	// Resumen
+	// RESUMEN
 	Route::get('empleados/resumen', 'EmpleadosResumenController@index')->name('/empleados/resumen');
 
-	// Cuenta
+	// CUENTA
 	Route::get('empleados/cuenta', 'EmpleadosCuentaController@index')->name('/empleados/cuenta');
 	Route::post('empleados/cuenta', 'EmpleadosCuentaController@store')->name('/empleados/cuenta');
 	Route::post('empleados/cambiar_pass', 'EmpleadosCuentaController@cambiar_pass')->name('/empleados/cambiar_pass');
@@ -120,11 +120,11 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/cuenta/download_dni_detras/{id}', 'EmpleadosCuentaController@downloadDniDetras')->name('cuenta.download_dni_detras');
 	Route::get('empleados/cuenta/download_matricula_detras/{id}', 'EmpleadosCuentaController@downloadMatriculaDetras')->name('cuenta.download_matricula_detras');
 
-	// Liquidacion
+	// LIQUIDACION
 	Route::get('empleados/liquidacion', 'EmpleadosLiquidacionController@index')->name('/empleados/liquidacion');
 
 
-	// Nominas (Trabajadores)
+	// NOMINAS (Trabajadores)
 	Route::resource('empleados/nominas', 'EmpleadosNominasController', [
 		'names' => [
 			'index' => '/empleados/nominas'
@@ -134,23 +134,27 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/listado', 'EmpleadosNominasController@listado')->name('empleados.listado');
 	Route::get('empleados/buscar', 'EmpleadosNominasController@buscar')->name('empleados.buscar');
 
-	// Ausentismos
+	// AUSENTISMOS
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
 		'names' => [
 			'index' => '/empleados/ausentismos'
 		]
 	]);
+	Route::delete('empleados/ausentismos/destroy/{id}','EmpleadosAusentismosController@destroy');
+	Route::post('empleados/ausentismos/busqueda','EmpleadosAusentismosController@busqueda');
+	//Route::get('empleados/getAusentismos', 'EmpleadosAusentismosController@getAusentismos')->name('ausentismos.get_ausentismos');
 	Route::post('empleados/ausentismos/tipo', 'EmpleadosAusentismosController@tipo')->name('/empleados/ausentismos/tipo');
 	Route::delete('empleados/ausentismos/tipo_delete/{id_tipo}', 'EmpleadosAusentismosController@tipo_destroy')->name('ausentismos.tipo_delete');
 	Route::get('empleados/ausentismos/archivo/{id}', 'EmpleadosAusentismosController@descargar_archivo')->name('ausentismos.archivo');
-	Route::get('empleados/getAusentismos', 'EmpleadosAusentismosController@getAusentismos')->name('ausentismos.get_ausentismos');
 
+
+
+	// FICHADAS
 	Route::resource('empleados/fichadas', 'EmpleadosFichadasController', [
 		'names' => [
 			'index' => '/empleados/fichadas'
 		]
 	]);
-
 	Route::resource('empleados/fichadas_nuevas', 'EmpleadosFichadasNuevasController', [
 		'names' => [
 			'index' => '/empleados/fichadas_nuevas'
@@ -174,88 +178,102 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@clienteActual')->name('empleados/actualizar_cliente_actual');
 
 
-
+	// COMUNICACIONES
 	Route::resource('empleados/comunicaciones', 'EmpleadosComunicacionesController', [
 		'names' => [
 			'index' => '/empleados/comunicaciones'
 		]
 	]);
+	Route::delete('empleados/comunicaciones/destroy/{id}','EmpleadosComunicacionesController@destroy');
+	Route::post('empleados/comunicaciones/busqueda','EmpleadosComunicacionesController@busqueda');
 	Route::post('empleados/comunicaciones/tipo', 'EmpleadosComunicacionesController@tipo')->name('/empleados/comunicaciones/tipo');
 	Route::delete('empleados/comunicaciones/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesController@tipo_destroy')->name('comunicaciones.tipo_delete');
 	Route::get('empleados/comunicaciones/getComunicacion/{id}', 'EmpleadosComunicacionesController@getComunicacion')->name('comunicaciones.getComunicacion');
-	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');
 
+	// CERTIFICADOS
+	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');
+	Route::post('empleados/certificados/busqueda','EmpleadosCertificadosController@busqueda');
+
+
+	// PREOCUPACIONALES
 	Route::resource('empleados/preocupacionales', 'EmpleadosPreocupacionalesController', [
 		'names' => [
 			'index' => '/empleados/preocupacionales'
 		]
 	]);
-
-		Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
-
-
-		Route::resource('empleados/medicamentos', 'EmpleadosStockMedicamentoController', [
-			'names' => [
-				'index' => '/empleados/medicamentos'
-			]
-		]);
-		Route::get('empleados/medicamentos_movimientos', 'EmpleadosStockMedicamentoController@movimientos')->name('/empleados/medicamentos_movimientos');
+	Route::delete('empleados/preocupacionales/destroy/{id}','EmpleadosPreocupacionalesController@destroy');
+	Route::post('empleados/preocupacionales/busqueda','EmpleadosPreocupacionalesController@busqueda');
+	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
 
 
-		Route::resource('empleados/documentaciones', 'EmpleadosAusentismoDocumentacionController', [
-			'names' => [
-				'index' => 'empleados.documentaciones'
-			]
-		]);
-		Route::get('empleados/documentacion_ausentismo/archivo/{id}', 'EmpleadosAusentismoDocumentacionController@descargar_archivo')->name('documentacion_ausentismo.archivo');
-		Route::get('empleados/documentaciones/getDocumentacion/{id}', 'EmpleadosAusentismoDocumentacionController@getDocumentacion')->name('documentaciones.getDocumentacion');
-		Route::get('empleados/documentaciones/validarMatricula/{matricula}', 'EmpleadosAusentismoDocumentacionController@validarMatricula')->name('documentaciones.validarMatricula');
+	// MEDICAMENTOS
+	Route::resource('empleados/medicamentos', 'EmpleadosStockMedicamentoController', [
+		'names' => [
+			'index' => '/empleados/medicamentos'
+		]
+	]);
+	Route::post('empleados/medicamentos/busqueda','EmpleadosStockMedicamentoController@busqueda');
+	Route::post('empleados/medicamentos_movimientos/busqueda','EmpleadosStockMedicamentoController@busquedaMovimientos');
+	Route::get('empleados/medicamentos_movimientos', 'EmpleadosStockMedicamentoController@movimientos')->name('/empleados/medicamentos_movimientos');
 
 
-		//COVID TESTEOS
-		Route::resource('empleados/covid/testeos', 'EmpleadosCovidTesteoController', [
-			'names' => [
-				'index' => 'empleados.covid.testeos'
-			]
-		]);
-		Route::delete('empleados/covid/testeos/destroy/{id}','EmpleadosCovidTesteoController@destroy');
-		Route::post('empleados/covid/testeos/busqueda','EmpleadosCovidTesteoController@busqueda');
-		Route::post('empleados/covid/testeos/tipo', 'EmpleadosCovidTesteoController@tipo')->name('/empleados/covid/testeos/tipo');
-		Route::delete('empleados/covid/testeos/tipo_delete/{id_tipo}', 'EmpleadosCovidTesteoController@tipo_destroy')->name('covid.testeos.tipo_delete');
+	// DOCUMENTACIONES
+	Route::resource('empleados/documentaciones', 'EmpleadosAusentismoDocumentacionController', [
+		'names' => [
+			'index' => 'empleados.documentaciones'
+		]
+	]);
+	Route::get('empleados/documentacion_ausentismo/archivo/{id}', 'EmpleadosAusentismoDocumentacionController@descargar_archivo')->name('documentacion_ausentismo.archivo');
+	Route::get('empleados/documentaciones/getDocumentacion/{id}', 'EmpleadosAusentismoDocumentacionController@getDocumentacion')->name('documentaciones.getDocumentacion');
+	Route::get('empleados/documentaciones/validarMatricula/{matricula}', 'EmpleadosAusentismoDocumentacionController@validarMatricula')->name('documentaciones.validarMatricula');
 
 
-		//COVID VACUNAS
-		Route::resource('empleados/covid/vacunas', 'EmpleadosCovidVacunasController', [
-			'names' => [
-				'index' => 'empleados.covid.vacunas'
-			]
-		]);
-		Route::delete('empleados/covid/vacunas/destroy/{id}','EmpleadosCovidVacunasController@destroy');
-		Route::post('empleados/covid/vacunas/busqueda','EmpleadosCovidVacunasController@busqueda');
-		Route::post('empleados/covid/vacunas/tipo', 'EmpleadosCovidVacunasController@tipo')->name('/empleados/covid/vacunas/tipo');
-		Route::delete('empleados/covid/vacunas/tipo_delete/{id_tipo}', 'EmpleadosCovidVacunasController@tipo_destroy')->name('covid.vacunas.tipo_delete');
+	// COVID TESTEOS
+	Route::resource('empleados/covid/testeos', 'EmpleadosCovidTesteoController', [
+		'names' => [
+			'index' => 'empleados.covid.testeos'
+		]
+	]);
+	Route::delete('empleados/covid/testeos/destroy/{id}','EmpleadosCovidTesteoController@destroy');
+	Route::post('empleados/covid/testeos/busqueda','EmpleadosCovidTesteoController@busqueda');
+	Route::post('empleados/covid/testeos/tipo', 'EmpleadosCovidTesteoController@tipo')->name('/empleados/covid/testeos/tipo');
+	Route::delete('empleados/covid/testeos/tipo_delete/{id_tipo}', 'EmpleadosCovidTesteoController@tipo_destroy')->name('covid.testeos.tipo_delete');
 
 
-
-		Route::resource('empleados/consultas/medicas', 'EmpleadoConsultaMedicaController', [
-			'names' => [
-				'index' => 'empleados.consultas.medicas'
-			]
-		]);
-		Route::post('empleados/consultas/medicas/busqueda','EmpleadoConsultaMedicaController@busqueda');
-		Route::post('empleados/consultas/medicas/tipo', 'EmpleadoConsultaMedicaController@tipo')->name('/empleados/consultas/medicas/tipo');
-		Route::delete('empleados/consultas/medicas/tipo_delete/{id_tipo}', 'EmpleadoConsultaMedicaController@tipo_destroy')->name('consultas.medicas.tipo_delete');
+	// COVID VACUNAS
+	Route::resource('empleados/covid/vacunas', 'EmpleadosCovidVacunasController', [
+		'names' => [
+			'index' => 'empleados.covid.vacunas'
+		]
+	]);
+	Route::delete('empleados/covid/vacunas/destroy/{id}','EmpleadosCovidVacunasController@destroy');
+	Route::post('empleados/covid/vacunas/busqueda','EmpleadosCovidVacunasController@busqueda');
+	Route::post('empleados/covid/vacunas/tipo', 'EmpleadosCovidVacunasController@tipo')->name('/empleados/covid/vacunas/tipo');
+	Route::delete('empleados/covid/vacunas/tipo_delete/{id_tipo}', 'EmpleadosCovidVacunasController@tipo_destroy')->name('covid.vacunas.tipo_delete');
 
 
 
-		Route::resource('empleados/consultas/enfermeria', 'EmpleadoConsultaEnfermeriaController', [
-			'names' => [
-				'index' => 'empleados.consultas.enfermeria'
-			]
-		]);
-		Route::post('empleados/consultas/enfermeria/busqueda','EmpleadoConsultaEnfermeriaController@busqueda');
-		Route::post('empleados/consultas/enfermeria/tipo', 'EmpleadoConsultaEnfermeriaController@tipo')->name('/empleados/consultas/enfermeria/tipo');
-		Route::delete('empleados/consultas/enfermeria/tipo_delete/{id_tipo}', 'EmpleadoConsultaEnfermeriaController@tipo_destroy')->name('consultas.enfermeria.tipo_delete');
+	// CONSULTAS MEDICAS
+	Route::resource('empleados/consultas/medicas', 'EmpleadoConsultaMedicaController', [
+		'names' => [
+			'index' => 'empleados.consultas.medicas'
+		]
+	]);
+	Route::post('empleados/consultas/medicas/busqueda','EmpleadoConsultaMedicaController@busqueda');
+	Route::post('empleados/consultas/medicas/tipo', 'EmpleadoConsultaMedicaController@tipo')->name('/empleados/consultas/medicas/tipo');
+	Route::delete('empleados/consultas/medicas/tipo_delete/{id_tipo}', 'EmpleadoConsultaMedicaController@tipo_destroy')->name('consultas.medicas.tipo_delete');
+
+
+
+	// CONSULTAS ENFERMERIA
+	Route::resource('empleados/consultas/enfermeria', 'EmpleadoConsultaEnfermeriaController', [
+		'names' => [
+			'index' => 'empleados.consultas.enfermeria'
+		]
+	]);
+	Route::post('empleados/consultas/enfermeria/busqueda','EmpleadoConsultaEnfermeriaController@busqueda');
+	Route::post('empleados/consultas/enfermeria/tipo', 'EmpleadoConsultaEnfermeriaController@tipo')->name('/empleados/consultas/enfermeria/tipo');
+	Route::delete('empleados/consultas/enfermeria/tipo_delete/{id_tipo}', 'EmpleadoConsultaEnfermeriaController@tipo_destroy')->name('consultas.enfermeria.tipo_delete');
 
 
 

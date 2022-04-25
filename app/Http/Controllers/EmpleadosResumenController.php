@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use App\ClienteUser;
+//use App\ClienteUser;
+use App\Http\Traits\Clientes;
 use App\Nomina;
 use App\Ausentismo;
 use Carbon\Carbon;
@@ -22,11 +23,9 @@ use Jenssegers\Agent\Agent;
 
 class EmpleadosResumenController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	*/
+
+	use Clientes;
+
 	public function index()
 	{
 
@@ -50,10 +49,7 @@ class EmpleadosResumenController extends Controller
 
 		$fecha_actual = Carbon::now();
 
-		$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-		->where('cliente_user.id_user', '=', auth()->user()->id)
-		->select('clientes.nombre', 'clientes.id')
-		->get();
+		$clientes = $this->getClientesUser();
 
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
 		->where('nominas.estado', 1)

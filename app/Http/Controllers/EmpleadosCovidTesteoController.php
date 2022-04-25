@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\ClienteUser;
+//use App\ClienteUser;
+use App\Http\Traits\Clientes;
 use App\CovidTesteo;
 use App\CovidTesteoTipo;
 use App\Nomina;
@@ -12,14 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 class EmpleadosCovidTesteoController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+	use Clientes;
+
 	public function index(Request $request)
 	{
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 
 		return view('empleados.covid.testeos', compact('clientes'));
 	}
@@ -42,22 +40,12 @@ class EmpleadosCovidTesteoController extends Controller
 
 		if($request->filtro=='positivos') $query->where('covid_testeos.resultado','positivo');
 
-		$testeos = $query->get();
 		return [
-			'testeos'=>$testeos,
+			'results'=>$query->get(),
 			'fichada'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
 	}
-
-	public function clientes()
-	{
-		return ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-			->where('cliente_user.id_user', '=', auth()->user()->id)
-			->select('clientes.nombre', 'clientes.id')
-			->get();
-	}
-
 
 
 	/**
@@ -67,7 +55,7 @@ class EmpleadosCovidTesteoController extends Controller
 	 */
 	public function create()
 	{
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 
 		$covid_testeos_tipo = CovidTesteoTipo::orderBy('nombre')->get();
 		$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
@@ -134,7 +122,7 @@ class EmpleadosCovidTesteoController extends Controller
 		'covid_testeos.laboratorio', 'covid_testeos.resultado', 'covid_testeos.id', 'covid_testeos.id_nomina', 'covid_testeos.id_tipo')
 		->first();
 
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 
 		$covid_testeos_tipo = CovidTesteoTipo::all();
 		$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
@@ -203,9 +191,9 @@ class EmpleadosCovidTesteoController extends Controller
 			return back()->with('error', 'Existen testeos de covid creados con este tipo de testeo. No puedes eliminarlo');
 		}
 
-			//Eliminar en base
-			$tipo_testeo = CovidTesteoTipo::find($id_tipo)->delete();
-			return back()->with('success', 'Tipo de testeo de covid eliminado correctamente');
+		//Eliminar en base
+		$tipo_testeo = CovidTesteoTipo::find($id_tipo)->delete();
+		return back()->with('success', 'Tipo de testeo de covid eliminado correctamente');
 	}
 
 

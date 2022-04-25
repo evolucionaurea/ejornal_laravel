@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\ConsultaEnfermeria;
 use App\DiagnosticoConsulta;
 use Illuminate\Support\Facades\DB;
-use App\ClienteUser;
+///use App\ClienteUser;
+use App\Http\Traits\Clientes;
 use App\Nomina;
 use App\StockMedicamento;
 use App\ConsultaMedicacion;
@@ -16,11 +17,8 @@ use Illuminate\Support\Facades\Input;
 
 class EmpleadoConsultaEnfermeriaController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+	use Clientes;
+
 	public function index(Request $request)
 	{
 
@@ -43,7 +41,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				break;
 		}
 
-		$clientes = $this->clientes();
+		$clientes = $this->getClientesUser();
 		return view('empleados.consultas.enfermeria', compact('clientes','fecha_inicio','fecha_final'));
 	}
 
@@ -62,10 +60,8 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		if($request->from) $query->whereDate('consultas_enfermerias.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-
-		$consultas = $query->get();
 		return [
-			'consultas'=>$consultas,
+			'results'=>$query->get(),
 			'fichada'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
@@ -80,10 +76,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 	public function create()
 	{
 
-		$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-		->where('cliente_user.id_user', '=', auth()->user()->id)
-		->select('clientes.nombre', 'clientes.id')
-		->get();
+		$clientes = $this->getClientesUser();
 
 		$diagnostico_consultas = DiagnosticoConsulta::all();
 
@@ -276,10 +269,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		->select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado', 'nominas.email', DB::raw('diagnostico_consulta.nombre diagnostico'))
 		->first();
 
-		$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-		->where('cliente_user.id_user', '=', auth()->user()->id)
-		->select('clientes.nombre', 'clientes.id')
-		->get();
+		$clientes = $this->getClientesUser();
 
 		return view('empleados.consultas.enfermeria.show', compact('consulta_enfermeria', 'clientes'));
 
