@@ -32,12 +32,12 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th class="th-lg">Nombre</th>
-						<th class="th-lg">Dosis</th>
-						<th class="th-lg">Fecha</th>
-						<th class="th-lg">Institución</th>
+						<th>Nombre</th>
+						<th>Dosis</th>
+						<th>Fecha</th>
+						<th>Institución</th>
 						@if (auth()->user()->fichada)
-						<th class="th-lg">
+						<th>
 							<a href="">Acciones</a>
 						</th>
 						@endif

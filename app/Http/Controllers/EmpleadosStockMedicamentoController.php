@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\StockMedicamento;
 //use App\Cliente;
 use App\Http\Traits\Clientes;
 use App\Medicamento;
 use App\StockMedicamentoHistorial;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use App\ClienteUser;
+use Carbon\Carbon;
 
 class EmpleadosStockMedicamentoController extends Controller
 {
@@ -108,6 +108,8 @@ class EmpleadosStockMedicamentoController extends Controller
 		'fecha_ingreso' => 'required',
 		'motivo' => 'required|string'
 	  ]);
+
+	  //dd(auth()->user()->id_cliente_actual);
 
 	  $fecha_ingreso = Carbon::createFromFormat('d/m/Y', $request->fecha_ingreso);
 

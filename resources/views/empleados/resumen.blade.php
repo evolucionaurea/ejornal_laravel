@@ -158,7 +158,7 @@
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_una_dosis}}</p>
-									<p class="mb-0">Con al menos 1 dosis</p>
+									<p class="mb-0">Con 1 dosis</p>
 								</div>
 								<div>
 									<i class="fas fa-disease fa-2x text-black-40"></i>

@@ -37,29 +37,29 @@
 				<thead>
 					<tr>
 						<th class="th-lg">
-							<a>Trabajador <i class="fas fa-sort ml-1"></i></a>
+							Trabajador <i class="fas fa-sort ml-1"></i>
 						</th>
 						<th class="th-lg">
-							<a>DNI <i class="fas fa-sort ml-1"></i></a>
+							DNI <i class="fas fa-sort ml-1"></i>
 						</th>
 						<th class="th-lg">
-							<a>Sector <i class="fas fa-sort ml-1"></i></a>
+							Sector <i class="fas fa-sort ml-1"></i>
 						</th>
 						<th class="th-lg">
-							<a href="">Tipo <i class="fas fa-sort ml-1"></i></a>
+							Tipo <i class="fas fa-sort ml-1"></i>
 						</th>
 						<th class="th-lg">
-							<a href="">Fecha inicio <i class="fas fa-sort ml-1"></i></a>
+							Fecha inicio <i class="fas fa-sort ml-1"></i>
 						</th>
 						<th class="th-lg">
-							<a href="">Fecha final <i class="fas fa-sort ml-1"></i></a>
+							Fecha final <i class="fas fa-sort ml-1"></i>
 						</th>
 						<th class="th-lg">
-							<a href="">Fecha en que regresó <i class="fas fa-sort ml-1"></i></a>
+							Fecha en que regresó <i class="fas fa-sort ml-1"></i>
 						</th>
 						@if (auth()->user()->fichada == 1)
 						<th class="th-lg">
-							<a href="">  Acciones <i class="fas fa-sort ml-1"></i></a>
+							Acciones <i class="fas fa-sort ml-1"></i>
 						</th>
 						@endif
 					</tr>

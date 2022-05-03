@@ -37,13 +37,13 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th class="th-lg">Nombre</th>
-						<th class="th-lg">Email</th>
-						<th class="th-lg">Tel</th>
-						<th class="th-lg">Fecha</th>
-						<th class="th-lg">Documentación</th>
+						<th>Nombre</th>
+						<th>Email</th>
+						<th>Tel</th>
+						<th>Fecha</th>
+						<th>Documentación</th>
 						@if (auth()->user()->fichada == 1)
-						<th class="th-lg">Acciones</th>
+						<th>Acciones</th>
 						@endif
 					</tr>
 				</thead>

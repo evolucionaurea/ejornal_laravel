@@ -60,48 +60,34 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th class="th-lg">
-							<a>
-								Nombre
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							Nombre
+							<i class="fas fa-sort ml-1"></i>
 						</th>
-						<th class="th-lg">
-							<a href="">
-								Email
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							Email
+							<i class="fas fa-sort ml-1"></i>
 						</th>
-						<th class="th-lg">
-							<a href="">
-								Tel
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							Tel
+							<i class="fas fa-sort ml-1"></i>
 						</th>
-						<th class="th-lg">
-							<a href="">
-								DNI
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							DNI
+							<i class="fas fa-sort ml-1"></i>
 						</th>
-						<th class="th-lg">
-							<a href="">
-								Estado
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							Estado
+							<i class="fas fa-sort ml-1"></i>
 						</th>
-						<th class="th-lg">
-							<a href="">
-								Hoy
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							Hoy
+							<i class="fas fa-sort ml-1"></i>
 						</th>
 						@if (auth()->user()->fichada == 1)
-						<th class="th-lg">
-							<a href="">
-								Acciones
-								<i class="fas fa-sort ml-1"></i>
-							</a>
+						<th>
+							Acciones
+							<i class="fas fa-sort ml-1"></i>
 						</th>
 						@endif
 					</tr>
@@ -127,11 +113,6 @@
 							@endif
 						</td>
 						<td class="align-middle">
-							{{-- <pre>
-							@php
-								var_dump($trabajador->hoy)
-							@endphp
-							</pre> --}}
 							<h3>
 
 								@php

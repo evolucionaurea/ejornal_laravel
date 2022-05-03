@@ -33,19 +33,11 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th class="th-lg">
-								Trabajador
-						</th>
-						<th class="th-lg">
-								Fecha
-						</th>
-						<th class="th-lg">
-								Derivación
-						</th>
+						<th>Trabajador</th>
+						<th>Fecha</th>
+						<th>Derivación</th>
 						@if (auth()->user()->fichada == 1)
-						<th class="th-lg">
-								Acciones
-						</th>
+						<th>Acciones</th>
 						@endif
 					</tr>
 				</thead>

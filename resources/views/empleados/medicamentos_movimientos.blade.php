@@ -27,13 +27,13 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th class="th-lg">Nombre</th>
-						<th class="th-lg">Ingreso</th>
-						<th class="th-lg">Suministrados</th>
-						<th class="th-lg">Egreso</th>
-						<th class="th-lg">Motivo</th>
-						<th class="th-lg">Fecha ingreso</th>
-						<th class="th-lg">Registro creado</th>
+						<th>Nombre</th>
+						<th>Ingreso</th>
+						<th>Suministrados</th>
+						<th>Egreso</th>
+						<th>Motivo</th>
+						<th>Fecha ingreso</th>
+						<th>Registro creado</th>
 					</tr>
 				</thead>
 				<!--Table head-->

@@ -43,12 +43,7 @@
 							<th>Motivo</th>
 
 							@if (auth()->user()->fichada == 1)
-							<th class="th-lg">
-								<a href="#">
-									Acciones
-									<i class="fas fa-sort ml-1"></i>
-								</a>
-							</th>
+							<th>Acciones</th>
 							@endif
 						</tr>
 					</thead>
