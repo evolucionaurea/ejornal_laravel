@@ -20,10 +20,34 @@ $(document).ready(() => {
 
   function validarMatricula(){
       let matricula_nacional = $('.nro_matricula_nacional').val();
+      let url = 'https://sisa.msal.gov.ar/sisa/services/rest/profesional/obtener';
+      let nombre = '';
+      let apellido = '';
+      let codigo = '';
+      let nrodoc = '';
 
-      $('.matricula_tilde').css('display', 'block');
-      $('.matricula_cruz').css('display', 'none');
-      $('.matricula_validada_hidden').val(1);
+
+      axios.post(url, {
+        usuario: 'jrpichot',
+        clave: 'JavierPichot00',
+        apellido: 'Perez',
+        nombre: 'Juan',
+        codigo: '025158',
+        nrodoc: '32105897'
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+      });
+
+
+      // $('.matricula_tilde').css('display', 'block');
+      // $('.matricula_cruz').css('display', 'none');
+      // $('.matricula_validada_hidden').val(1);
 
   }
 
