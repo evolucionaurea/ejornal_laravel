@@ -27,6 +27,9 @@ $(document).ready(() => {
       let nrodoc = '';
 
 
+      return console.log(matricula_nacional)
+
+
       axios.post(url, {
         usuario: 'jrpichot',
         clave: 'JavierPichot00',
@@ -41,9 +44,6 @@ $(document).ready(() => {
         .catch(function (error) {
           console.log(error);
         });
-
-      });
-
 
       // $('.matricula_tilde').css('display', 'block');
       // $('.matricula_cruz').css('display', 'none');
