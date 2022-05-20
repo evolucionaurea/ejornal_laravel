@@ -258,21 +258,29 @@ class EmpleadosAusentismoDocumentacionController extends Controller
     }
 
 
-    public function validarMatricula($matricula)
+    public function validarMatricula(Request $request)
     {
-      // User y pass
-      // usuario jrpichot
-      // clave JavierPichot00
-      if ($matricula == '' || !isset($matricula) || $matricula == undefined) {
-        return back()->with('error', 'Debes ingresar un valor para validar una matrícula');
+
+      if ($request->matricula == '' || !isset($request->matricula) || empty($request->matricula)) {
+        return response()->json(
+          ['mensaje' => 'Debes ingresar un valor para validar una matrícula']
+        );
       }
 
       $client = new \GuzzleHttp\Client();
-      $url = 'https://sisa.msal.gov.ar/sisa/services/rest/profesional/obtener';
-      $request = $client->get($url, [
-        'headers' => ['Content-Type' => 'application/json'],
+      $response = $client->request('GET', "https://sisa.msal.gov.ar/sisa/services/rest/profesional/obtener", [
+          "query" => [
+              "usuario"       => "jrpichot",
+              "clave" => "JavierPichot00",
+              "nombre"               => "Juan",
+              "apellido"                 => "lopez",
+              "codigo"            => "511",
+              "nrodoc"           => "5050",
+          ],
       ]);
-      return $request->getBody();
+
+      dump($response->getBody());
+      return $response->getBody();
 
     }
 

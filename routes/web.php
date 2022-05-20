@@ -225,7 +225,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	]);
 	Route::get('empleados/documentacion_ausentismo/archivo/{id}', 'EmpleadosAusentismoDocumentacionController@descargar_archivo')->name('documentacion_ausentismo.archivo');
 	Route::get('empleados/documentaciones/getDocumentacion/{id}', 'EmpleadosAusentismoDocumentacionController@getDocumentacion')->name('documentaciones.getDocumentacion');
-	Route::get('empleados/documentaciones/validarMatricula/{matricula}', 'EmpleadosAusentismoDocumentacionController@validarMatricula')->name('documentaciones.validarMatricula');
+	Route::post('empleados/documentaciones/validarMatricula', 'EmpleadosAusentismoDocumentacionController@validarMatricula');
 
 
 	// COVID TESTEOS

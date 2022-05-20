@@ -22,7 +22,7 @@ class ClientesAusentismosController extends Controller
     ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
     ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
     ->get();
-
+  
     return view('clientes.ausentismos', compact('ausentismos', 'cliente'));
   }
 
