@@ -61,7 +61,7 @@ class EmpleadosResumenController extends Controller
 		->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->where('ausentismos.fecha_regreso_trabajar', null)
-		->whereDate('ausentismos.fecha_inicio', '<', $fecha_actual)
+		->whereDate('ausentismos.fecha_inicio', '<=', $fecha_actual)
 		//->whereDate('ausentismos.fecha_final', '>=', $fecha_actual)
 		->select(
 			'ausentismos.*',

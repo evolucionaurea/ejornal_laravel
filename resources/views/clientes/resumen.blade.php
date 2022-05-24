@@ -308,7 +308,7 @@ window.onload = function() {
         )
         .append(
             $('<td>', {
-                'text': (datos[i].cantidad * 100) / total + '%'
+                'text': (datos[i].cantidad * 100 / total).toFixed(2) + '%'
             })
         )
       )
@@ -410,7 +410,7 @@ axios.get(url_anual)
       )
       .append(
           $('<td>', {
-              'text': (datos[i].cantidad * 100) / total + '%'
+              'text': (datos[i].cantidad * 100 / total).toFixed(2) + '%'
           })
       )
     )

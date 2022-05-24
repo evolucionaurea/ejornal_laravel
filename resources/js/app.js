@@ -18,6 +18,7 @@ require('./stock_medicamentos.js');
 require('./documentacion_ausentismo.js');
 
 
+//EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
 if(route=='/empleados/comunicaciones') require('./empleados/comunicaciones')
@@ -33,4 +34,7 @@ if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
 if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 
-//console.log(route)
+//CLIENTES
+if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
+
+///console.log(route)

@@ -6,24 +6,26 @@ export default class Tablas {
 		$.extend(this,obj)
 		$.extend(window.datatable_options,obj.datatable_options)
 
-		this.modulo_busqueda.find('[name="fecha_inicio"],[name="fecha_final"]').datepicker({
+		this.modulo_busqueda.find('[name="from"],[name="to"]').datepicker({
 			dateFormat:'dd/mm/yy'
 		})
 
 		/*Buscar*/
 		this.modulo_busqueda.find('[data-toggle="search"]').click(async btn=>{
 			loading()
-			let response = await this.get({
-				from:this.modulo_busqueda.find('[name="fecha_inicio"]').val(),
-				to:this.modulo_busqueda.find('[name="fecha_final"]').val(),
-				filtro:this.modulo_busqueda.find('[name="filtro"]').val()
+
+			let post = {}
+			$.each(this.modulo_busqueda.find('[name]'),(k,v)=>{
+				post[$(v).attr('name')] = $(v).val()
 			})
+
+			let response = await this.get(post)
 			this.render_table(response)
 		}).trigger('click')
 
 		/*Mostrar Todo*/
 		this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
-			this.modulo_busqueda.find('[name="fecha_inicio"],[name="fecha_final"]').val('')
+			this.modulo_busqueda.find('[name]').val('')
 			this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 		})
 
