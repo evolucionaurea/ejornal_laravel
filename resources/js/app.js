@@ -35,6 +35,8 @@ if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicament
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 
 //CLIENTES
+if(route=='/clientes/resumen') require('./clientes/resumen')
+if(route=='/clientes/nominas') require('./clientes/nominas')
 if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
 
-///console.log(route)
+console.log(route)

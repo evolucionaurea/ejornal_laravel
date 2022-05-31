@@ -50,6 +50,7 @@ class ClientesResumenController extends Controller
 			->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
 			->get();
 
+
 			$ausentismos_mes_pasado = 0;
 			foreach ($query as $value) {
 				if ($value->fecha_regreso_trabajar == null || $value->fecha_regreso_trabajar <= $final_mes_pasado) {
@@ -122,6 +123,8 @@ class ClientesResumenController extends Controller
 			DB::raw('YEAR(ausentismos.fecha_inicio) year, MONTH(ausentismos.fecha_inicio) month'))
 			->get();
 
+
+
 			$array_top_10_ausentismos = [];
 
 			// Tabla de cantidad de de veces que se cargó una falta para un trabajador //
@@ -147,6 +150,7 @@ class ClientesResumenController extends Controller
 			}
 			$faltas_array = array_values(array_unique($faltas, SORT_REGULAR));
 			$faltas_final = array_splice($faltas_array, 0, 10);
+
 
 			// Tabla de cantidad de de veces que se cargó una falta para un trabajador //
 
@@ -226,7 +230,7 @@ class ClientesResumenController extends Controller
 			}
 
 			return view('clientes.resumen', compact('cliente', 'ausentismos_mes_pasado', 'ausentismos_mes_actual',
-			'accidentes_mes_pasado', 'accidentes_mes_actual', 'top_10_ausentismos', 'faltas_final', 'ausencia_covid','cant_vacunados_una_dosis', 'cant_vacunados_dos_dosis', 'cant_vacunados_tres_dosis'));
+			'accidentes_mes_pasado', 'accidentes_mes_actual', 'top_10_ausentismos', 'faltas_final', 'ausencia_covid','cant_vacunados_una_dosis', 'cant_vacunados_dos_dosis', 'cant_vacunados_tres_dosis','mes_actual'));
 
 		}
 

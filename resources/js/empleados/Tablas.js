@@ -19,6 +19,8 @@ export default class Tablas {
 				post[$(v).attr('name')] = $(v).val()
 			})
 
+			//console.log(post)
+
 			let response = await this.get(post)
 			this.render_table(response)
 		}).trigger('click')
@@ -69,7 +71,7 @@ export default class Tablas {
 	}
 	render_table(data){
 
-		//console.log(data)
+		console.log(data)
 
 		this.table.find('tbody').html('')
 		loading({show:false})

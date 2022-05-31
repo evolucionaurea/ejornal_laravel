@@ -304,6 +304,7 @@ Route::group(['middleware' => 'autenticacion_clientes'], function () {
 
 
 	Route::get('clientes/nominas', 'ClientesNominasController@index')->name('/clientes/nominas');
+	Route::post('clientes/nominas/busqueda','ClientesNominasController@busqueda');
 
 	Route::get('clientes/ausentismos', 'ClientesAusentismosController@index')->name('/clientes/ausentismos');
 	Route::post('clientes/ausentismos/busqueda','ClientesAusentismosController@busqueda');
