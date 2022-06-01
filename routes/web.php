@@ -130,7 +130,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 			'index' => '/empleados/nominas'
 		]
 	]);
-	Route::post('admin/nominas/cargar_excel', 'EmpleadosNominasController@cargar_excel')->name('/admin/nominas/cargar_excel');
+	Route::post('empleados/nominas/cargar_excel', 'EmpleadosNominasController@cargar_excel')->name('/empleados/nominas/cargar_excel');
 	Route::post('empleados/listado', 'EmpleadosNominasController@listado')->name('empleados.listado');
 	Route::get('empleados/buscar', 'EmpleadosNominasController@buscar')->name('empleados.buscar');
 

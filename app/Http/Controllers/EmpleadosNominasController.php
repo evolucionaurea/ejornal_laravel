@@ -281,153 +281,211 @@ class EmpleadosNominasController extends Controller
 	public function cargar_excel(Request $request)
 	{
 
-		if ($request->hasFile('archivo')) {
 
-			$file = $request->file('archivo');
+		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo');
 
-			// $registros = array();
-			$fichero = fopen($file, "r");
-			// Lee los nombres de los campos
-			$nombres_campos = fgetcsv($fichero, 0 , ";" , '"');
-			$num_campos = count($nombres_campos);
+		$file = $request->file('archivo');
+
+		// $registros = array();
+		$fichero = fopen($file, "r");
+		// Lee los nombres de los campos
+		$nombres_campos = fgetcsv($fichero, 0 , ";" , '"');
+		$num_campos = count($nombres_campos);
+		$registros = [];
+
+
+
+		// Lee los registros
+		while (($datos = fgetcsv($fichero, 0 , ";" , '"')) !== FALSE) {
+
 			$registro = [];
-			// Lee los registros
-			while (($datos = fgetcsv($fichero, 0 , ";" , '"')) !== FALSE) {
-				// Crea un array asociativo con los nombres y valores de los campos
-				for ($icampo = 0; $icampo < $num_campos; $icampo++) {
-					if ($datos[$icampo] !== '') {
-						switch ($icampo) {
-							case 0:
-								$registro['nombre'] = $datos[$icampo];
-								break;
-							case 1:
-								$registro['email'] = $datos[$icampo];
-								break;
-							case 2:
-								$registro['telefono'] = $datos[$icampo];
-								break;
-							case 3:
-								$registro['dni'] = $datos[$icampo];
-								break;
-							case 4:
-								$registro['estado'] = $datos[$icampo];
-								break;
-							case 5:
-								$registro['sector'] = $datos[$icampo];
-								break;
-						}
-					}else {
-						switch ($icampo) {
-							case 0:
-								$registro['nombre'] = '';
-								break;
-							case 1:
-								$registro['email'] = '';
-								break;
-							case 2:
-								$registro['telefono'] = '';
-								break;
-							case 3:
-								$registro['dni'] = '';
-								break;
-							case 4:
-								$registro['estado'] = '';
-								break;
-							case 5:
-								$registro['sector'] = '';
-								break;
-						}
-					}
-				}
-				// Añade el registro leido al array de registros
-				$registros[] = $registro;
-			}
-			fclose($fichero);
+			// Crea un array asociativo con los nombres y valores de los campos
+			for ($icampo = 0; $icampo < $num_campos; $icampo++) {
 
-			$errores = false;
-			$vueltas = 1;
-			foreach ($registros as $registro) {
-				if ($registro['nombre'] == null || $registro['nombre'] == '' || $registro['estado'] == null ||
-						$registro['estado'] == '' || $registro['sector'] == null || $registro['sector'] == '') {
-					$respuesta_error = "El excel tiene datos mal cargados en la fila " . $vueltas;
-					return back()->with('error', $respuesta_error);
-				}
-				if (!isset($registro['nombre']) || !isset($registro['email']) || !isset($registro['telefono']) ||
-						!isset($registro['dni']) || !isset($registro['estado']) || !isset($registro['sector'])) {
-					$errores = true;
+				if ($datos[$icampo] !== '') {
+					switch ($icampo) {
+						case 0:
+							$registro['nombre'] = $datos[$icampo];
+							break;
+						case 1:
+							$registro['email'] = $datos[$icampo];
+							break;
+						case 2:
+							$registro['telefono'] = $datos[$icampo];
+							break;
+						case 3:
+							$registro['dni'] = $datos[$icampo];
+							break;
+						case 4:
+							$registro['estado'] = $datos[$icampo];
+							break;
+						case 5:
+							$registro['sector'] = $datos[$icampo];
+							break;
+					}
 				}else {
-					$errores = false;
-				}
-				$vueltas++;
-			}
-
-
-			if ($errores) {
-				return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector');
-			}else {
-
-				foreach ($registros as $registro) {
-
-					$buscar_coincidencia = Nomina::where('email', $registro['email'])->first();
-
-					if ($buscar_coincidencia == null) {
-						//Guardar en base
-						$nomina = new Nomina();
-						$nomina->id_cliente = auth()->user()->id_cliente_actual;
-						$nomina->nombre = $registro['nombre'];
-						if (isset($registro['email']) && !empty($registro['email'])) {
-							$nomina->email = $registro['email'];
-						}
-						$nomina->telefono = $registro['telefono'];
-						if (isset($registro['dni']) && !empty($registro['dni'])) {
-							$nomina->dni = $registro['dni'];
-						}
-						$nomina->sector = $registro['sector'];
-						if ($registro['estado'] == 'Activo') {
-							$nomina->estado = 1;
-							$nomina->fecha_baja =  null;
-						}else {
-							$nomina->estado = 0;
-							$nomina->fecha_baja =  Carbon::now();
-						}
-						$nomina->save();
-
-					}else {
-						// 1 es actualizar los datos completos / 2 Es no subirlo y dejar el actual
-						if ($request->coincidencia == 1) {
-							$buscar_coincidencia->id_cliente = auth()->user()->id_cliente_actual;
-							$buscar_coincidencia->nombre = $registro['nombre'];
-							$buscar_coincidencia->telefono = $registro['telefono'];
-							if (isset($registro['dni']) && !empty($registro['dni'])) {
-								$buscar_coincidencia->dni = $registro['dni'];
-							}
-							$buscar_coincidencia->sector = $registro['sector'];
-							if ($registro['estado'] == 'Activo') {
-								$buscar_coincidencia->estado = 1;
-								$buscar_coincidencia->fecha_baja =  null;
-							}else {
-								$buscar_coincidencia->estado = 0;
-								$buscar_coincidencia->fecha_baja =  Carbon::now();
-							}
-							$buscar_coincidencia->save();
-						}
+					switch ($icampo) {
+						case 0:
+							$registro['nombre'] = '';
+							break;
+						case 1:
+							$registro['email'] = '';
+							break;
+						case 2:
+							$registro['telefono'] = '';
+							break;
+						case 3:
+							$registro['dni'] = '';
+							break;
+						case 4:
+							$registro['estado'] = '';
+							break;
+						case 5:
+							$registro['sector'] = '';
+							break;
 					}
-
 				}
 			}
+			// Añade el registro leido al array de registros
+			$registros[] = $registro;
+		}
+		fclose($fichero);
 
-			return redirect('empleados/nominas')->with('success', 'Carga masiva de trabajadores de la nómina exitosa');
-
-		}else {
-			return back()->with('error', 'No has subido ningún archivo');
+		$errores = false;
+		$vueltas = 1;
+		foreach ($registros as $registro) {
+			if ($registro['nombre'] == null || $registro['nombre'] == '' || $registro['estado'] == null ||
+					$registro['estado'] == '' || $registro['sector'] == null || $registro['sector'] == '') {
+				$respuesta_error = "El excel tiene datos mal cargados en la fila " . $vueltas;
+				return back()->with('error', $respuesta_error);
+			}
+			if (!isset($registro['nombre']) || !isset($registro['email']) || !isset($registro['telefono']) ||
+					!isset($registro['dni']) || !isset($registro['estado']) || !isset($registro['sector'])) {
+				$errores = true;
+			}else {
+				$errores = false;
+			}
+			$vueltas++;
 		}
 
+		if ($errores)  return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector');
+
+
+		/// GUARDAR DATOS
+
+		// Traigo todos los empleados de la nómina
+		$empleados_existentes = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+
+		$empleados_borrables = [];
+		$empleados_inexistentes = [];
+		$empleados_actualizados = [];
+
+
+		foreach ($registros as $kr=>$registro){
+			if(!$empleado_id = $this->buscar_en_dbb($empleados_existentes,$registro)){
+				$empleados_inexistentes[] = $registro;
+			}else{
+				if($request->coincidencia==1){
+
+					$nomina = Nomina::find($empleado_id);
+					$nomina->nombre = $registro['nombre'];
+					$nomina->email = $registro['email'];
+					$nomina->dni = $registro['dni'];
+					$nomina->telefono = $registro['telefono'];
+					$nomina->estado = $registro['estado']=='Activo' ? 1 : 0;
+					$nomina->fecha_baja = $registro['estado']=='Activo' ? null : Carbon::now();
+					$nomina->save();
+
+					$empleados_actualizados[] = $registro;
+
+				}
+			}
+		}
+		foreach ($empleados_existentes as $ke=>$empleado){
+			if(!$this->buscar_en_csv($registros,$empleado)){
+				$empleados_borrables[] = $empleado->id;
+			}
+		}
+
+		if($request->borrar==1){
+			Nomina::whereIn('id',$empleados_borrables)->delete();
+		}
+
+
+		//dd($empleados_actualizados);
+
+		/*foreach ($registros as $registro) {
+
+
+			if ($buscar_coincidencia == null) {
+				//Guardar en base
+				$nomina = new Nomina();
+				$nomina->id_cliente = auth()->user()->id_cliente_actual;
+				$nomina->nombre = $registro['nombre'];
+				if (isset($registro['email']) && !empty($registro['email'])) {
+					$nomina->email = $registro['email'];
+				}
+				$nomina->telefono = $registro['telefono'];
+				if (isset($registro['dni']) && !empty($registro['dni'])) {
+					$nomina->dni = $registro['dni'];
+				}
+				$nomina->sector = $registro['sector'];
+				if ($registro['estado'] == 'Activo') {
+					$nomina->estado = 1;
+					$nomina->fecha_baja =  null;
+				}else {
+					$nomina->estado = 0;
+					$nomina->fecha_baja =  Carbon::now();
+				}
+				$nomina->save();
+
+			}else {
+				// 1 es actualizar los datos completos / 2 Es no subirlo y dejar el actual
+				if ($request->coincidencia == 1) {
+					$buscar_coincidencia->id_cliente = auth()->user()->id_cliente_actual;
+					$buscar_coincidencia->nombre = $registro['nombre'];
+					$buscar_coincidencia->telefono = $registro['telefono'];
+					if (isset($registro['dni']) && !empty($registro['dni'])) {
+						$buscar_coincidencia->dni = $registro['dni'];
+					}
+					$buscar_coincidencia->sector = $registro['sector'];
+					if ($registro['estado'] == 'Activo') {
+						$buscar_coincidencia->estado = 1;
+						$buscar_coincidencia->fecha_baja =  null;
+					}else {
+						$buscar_coincidencia->estado = 0;
+						$buscar_coincidencia->fecha_baja =  Carbon::now();
+					}
+					$buscar_coincidencia->save();
+				}
+			}
+
+		}*/
+
+		// Mostrar registro de empleados modificados, borrados y agregados.
+		return redirect('empleados/nominas')->with([
+			'success'=>'Carga masiva de trabajadores de la nómina exitosa'
+		]);
+
+	}
+
+	public function buscar_en_dbb($empleados,$registro){
+		foreach($empleados as $ke=>$empleado){
+			if($empleado->dni==$registro['dni'] || $empleado->email==$registro['email']) return $empleado->id;
+		}
+		return false;
+	}
+	public function buscar_en_csv($registros,$empleado){
+		foreach($registros as $kr=>$registro){
+			if($empleado->dni==$registro['dni'] || $empleado->email==$registro['email']) return true;
+		}
+		return false;
 	}
 
 	public function buscar($params=null)
 	{
 
-		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
+		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->limit(5);
 
 		if(isset($params->estado) && !is_null($params->estado)) $query->where('nominas.estado',$params->estado);
 		///if(isset($params->ausentes_hoy)) echo "ausentes";

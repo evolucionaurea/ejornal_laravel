@@ -22,7 +22,9 @@
 			@endif
 		</div>
 
+
 		@include('../mensajes_validacion')
+
 
 		<div class="tarjeta">
 
@@ -60,36 +62,18 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th>
-							Nombre
-							<i class="fas fa-sort ml-1"></i>
-						</th>
-						<th>
-							Email
-							<i class="fas fa-sort ml-1"></i>
-						</th>
-						<th>
-							Tel
-							<i class="fas fa-sort ml-1"></i>
-						</th>
-						<th>
-							DNI
-							<i class="fas fa-sort ml-1"></i>
-						</th>
-						<th>
-							Estado
-							<i class="fas fa-sort ml-1"></i>
-						</th>
-						<th>
-							Hoy
-							<i class="fas fa-sort ml-1"></i>
-						</th>
+						<th>Nombre</th>
+						<th>Email</th>
+						<th>Tel</th>
+						<th>DNI</th>
+						<th>Estado</th>
+						<th>Sector</th>
+						<th>Hoy</th>
+
 						@if (auth()->user()->fichada == 1)
-						<th>
-							Acciones
-							<i class="fas fa-sort ml-1"></i>
-						</th>
+						<th>Acciones</th>
 						@endif
+
 					</tr>
 				</thead>
 				<!--Table head-->
@@ -100,7 +84,7 @@
 					<tr>
 						<td class="align-middle d-flex align-items-center">
 							<div class="foto-user-tabla {{ isset($trabajador->foto) && !empty($trabajador->foto) ? 'has-image' : '' }}" style="background-image:url({{ isset($trabajador->foto) && !empty($trabajador->foto) ? asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto) : ''  }})"></div>
-						  {{$trabajador->nombre}}
+							{{$trabajador->nombre}}
 						</td>
 						<td class="align-middle">{{$trabajador->email}}</td>
 						<td class="align-middle">{{$trabajador->telefono}}</td>
@@ -112,6 +96,7 @@
 							<span class="tag_ejornal tag_ejornal_danger">Inactivo</span>
 							@endif
 						</td>
+						<td class="align-middle">{{$trabajador->sector}}</td>
 						<td class="align-middle">
 							<h3>
 
@@ -135,9 +120,9 @@
 
 							<div class="acciones_tabla">
 
-							  <a title="Historial" href="{{route('nominas.show', $trabajador->id)}}">
-								  <i class="fas fa-book"></i>
-							  </a>
+								<a title="Historial" href="{{route('nominas.show', $trabajador->id)}}">
+									<i class="fas fa-book"></i>
+								</a>
 
 								<a title="Editar" href="{{route('nominas.edit', $trabajador->id)}}">
 									<i class="fas fa-pen"></i>
@@ -184,41 +169,52 @@
 			<div class="modal-body">
 
 				<div class="card mb-4">
-					<h5 class="card-header">Paso 1</h5>
+					<h5 class="card-header">Paso 1 | Descargar modelo de excel</h5>
 					<div class="card-body">
-						<h5 class="card-title">Descargar modelo de excel</h5>
 						<p class="card-text">Descarge este excel modelo. Completelo con los campos solicitados y subalo en el paso 2</p>
 						<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/nominas_carga_masiva.csv')}}" download target="_blank">Descargar excel</a>
 					</div>
 				</div>
 				<div class="card mb-4">
-					<h5 class="card-header">Paso 2</h5>
+					<h5 class="card-header">Paso 2 | Cargar excel de clientes</h5>
 					<div class="card-body">
-						<h5 class="card-title">Cargar excel de clientes</h5>
+
 						<form action="{{action('EmpleadosNominasController@cargar_excel')}}" enctype="multipart/form-data" accept-charset="UTF-8" method="post">
 						{{ csrf_field() }}
-						<div class="form-group mb-4">
-							<input name="archivo" type="file" class="form-control-file form-control-sm">
-						</div>
-						<div class="row">
-						  <div class="col-md-12">
+							<div class="form-group mb-4">
+								<input name="archivo" type="file" class="form-control-file form-control-sm">
+							</div>
+
+							<hr>
+
 							<h6>¿Si durante la carga encontramos trabajadores que ya fueron cargados que desea hacer?</h6>
 							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="coincidencia" id="no_modificar_trabajador_radio" value="2" checked>
-							  <label class="form-check-label" for="no_modificar_trabajador_radio">
-								No modificarlo. Dejar el que está actualmente cargado.
-							  </label>
+								<input class="form-check-input" type="radio" name="coincidencia" id="no_modificar_trabajador_radio" value="2" checked>
+								<label class="form-check-label" for="no_modificar_trabajador_radio">No modificarlo. Dejar el que está actualmente cargado.</label>
 							</div>
 							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="coincidencia" id="actualizar_trabajador_radio" value="1">
-							  <label class="form-check-label" for="actualizar_trabajador_radio">
-								Actualizar con los datos del presente excel
-							  </label>
+								<input class="form-check-input" type="radio" name="coincidencia" id="actualizar_trabajador_radio" value="1">
+								<label class="form-check-label" for="actualizar_trabajador_radio">Actualizar con los datos del presente excel</label>
 							</div>
-						  </div>
-						</div>
-						<button type="submit" class="btn-ejornal btn-ejornal-success">Subir excel</button>
-						<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
+
+							<hr>
+
+							<h6>¿Borrar los trabajadores previamente guardados que no estén en el archivo excel?</h6>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="borrar" id="no_borrar_trabajador" value="0" checked>
+								<label class="form-check-label" for="no_borrar_trabajador">No borrar. Dejar el que está actualmente cargado.</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="borrar" id="borrar_trabajador" value="1">
+								<label class="form-check-label" for="borrar_trabajador">Si, borrarlo de la base de datos.</label>
+							</div>
+
+
+							<hr>
+
+
+							<button type="submit" class="btn-ejornal btn-ejornal-success">Subir excel</button>
+							<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
 						</form>
 					</div>
 				</div>
