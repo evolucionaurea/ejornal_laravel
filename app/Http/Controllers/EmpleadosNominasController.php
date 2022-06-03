@@ -383,22 +383,26 @@ class EmpleadosNominasController extends Controller
 
 		foreach ($registros as $kr=>$registro){
 			if(!$empleado_id = $this->buscar_en_dbb($empleados_existentes,$registro)){
+				// Crear empleado inexistente
+				$nomina = new Nomina;
+				$nomina->id_cliente = auth()->user()->id_cliente_actual;
 				$empleados_inexistentes[] = $registro;
 			}else{
-				if($request->coincidencia==1){
+				$nomina = Nomina::find($empleado_id);
+				if($request->coincidencia==1) $empleados_actualizados[] = $registro;
+			}
 
-					$nomina = Nomina::find($empleado_id);
-					$nomina->nombre = $registro['nombre'];
-					$nomina->email = $registro['email'];
-					$nomina->dni = $registro['dni'];
-					$nomina->telefono = $registro['telefono'];
-					$nomina->estado = $registro['estado']=='Activo' ? 1 : 0;
-					$nomina->fecha_baja = $registro['estado']=='Activo' ? null : Carbon::now();
-					$nomina->save();
 
-					$empleados_actualizados[] = $registro;
+			// Actualizar empleado existente
+			if(!$empleado_id || ($empleado_id && $request->coincidencia==1)){
+				$nomina->nombre = $registro['nombre'];
+				$nomina->email = $registro['email'];
+				$nomina->dni = $registro['dni'];
+				$nomina->telefono = $registro['telefono'];
+				$nomina->estado = $registro['estado']=='Activo' ? 1 : 0;
+				$nomina->fecha_baja = $registro['estado']=='Activo' ? null : Carbon::now();
+				$nomina->save();
 
-				}
 			}
 		}
 		foreach ($empleados_existentes as $ke=>$empleado){
@@ -485,7 +489,7 @@ class EmpleadosNominasController extends Controller
 	public function buscar($params=null)
 	{
 
-		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->limit(5);
+		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
 
 		if(isset($params->estado) && !is_null($params->estado)) $query->where('nominas.estado',$params->estado);
 		///if(isset($params->ausentes_hoy)) echo "ausentes";
