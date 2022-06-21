@@ -18,6 +18,12 @@ require('./stock_medicamentos.js');
 require('./documentacion_ausentismo.js');
 
 
+//ADMIN
+if(route=='/admin/users') require('./admin/admin_tablas')
+if(route=='/admin/clientes') require('./admin/admin_tablas')
+if(route=='/admin/medicamentos') require('./admin/admin_tablas')
+
+
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')

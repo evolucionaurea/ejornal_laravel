@@ -33,7 +33,7 @@
         @endif
 
         <div class="tarjeta">
-            <table class="table table-striped table-hover table-sm tabla_user">
+            <table class="table table-striped table-hover table-sm tabla">
                 <thead>
                     <tr>
                         <th class="th-lg">
