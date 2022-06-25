@@ -9,6 +9,7 @@ use App\Estado;
 use App\Cliente;
 use App\ClienteUser;
 use App\Especialidad;
+use App\FichadaNueva;
 use Illuminate\Support\Facades\DB;
 
 class AdminUserController extends Controller
@@ -141,7 +142,27 @@ class AdminUserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::where('users.id', $id)
+        ->join('roles', 'users.id_rol', 'roles.id')
+        ->select('users.nombre', 'users.cuil', 'users.estado', 'users.email', 'users.dni', DB::raw('roles.nombre rol'),
+        'users.id_rol', 'users.id_cliente_relacionar')
+        ->first();
+
+        switch ($user->id_rol) {
+          case 1:
+            $datos = [];
+            break;
+
+          case 2:
+            $datos = FichadaNueva::where('id_user', $id)->take(30)->get();
+            break;
+
+          case 3:
+            $datos = Cliente::find($user->id_cliente_relacionar);
+            break;
+        }
+
+        return view('admin.users.show', compact('user', 'datos'));
     }
 
     /**

@@ -23,6 +23,13 @@ if(route=='/admin/users') require('./admin/admin_tablas')
 if(route=='/admin/clientes') require('./admin/admin_tablas')
 if(route=='/admin/medicamentos') require('./admin/admin_tablas')
 
+const url = location.href;
+const admin = 'admin/users';
+if (url.includes(admin)) {
+  require('./admin/admin_tablas');
+}
+
+
 
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')

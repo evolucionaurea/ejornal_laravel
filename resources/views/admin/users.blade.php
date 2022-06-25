@@ -100,6 +100,9 @@
                         </td>
                         <td>{{$user->rol}}</td>
                         <td class="acciones_tabla" scope="row">
+                          <a title="Ver" href="{{route('users.show', $user->id)}}">
+                              <i class="fas fa-eye"></i>
+                          </a>
                             <a title="Editar" href="{{route('users.edit', $user->id)}}">
                                 <i class="fas fa-pen"></i>
                             </a>
