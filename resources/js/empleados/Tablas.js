@@ -73,7 +73,8 @@ export default class Tablas {
 
 		console.log(data)
 
-		this.table.find('tbody').html('')
+		this.table.find('tbody').remove()
+		let tbody = dom('tbody')
 		loading({show:false})
 
 		if(data.results.length==0) return false
@@ -86,8 +87,10 @@ export default class Tablas {
 		data.results.map(v=>{
 			let tr = this.render_row(v)
 			if(v.fichada==0) tr.find('td.acciones_tabla').remove()
-			this.table.find('tbody').append(tr)
+			tbody.append(tr)
 		})
+
+		this.table.append(tbody)
 
 		if(this.first_render){
 			this.datatable = this.table.DataTable(window.datatable_options);
