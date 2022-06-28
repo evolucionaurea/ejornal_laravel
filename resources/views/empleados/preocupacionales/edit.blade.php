@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Edición del estudio medico complementario</h2>
             <p>Aquí podrá editar el estudio medico complementario</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/preocupacionales')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../mensajes_validacion')

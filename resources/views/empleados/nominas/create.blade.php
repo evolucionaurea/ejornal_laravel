@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Creación de trabajadores</h2>
             <p>Aquí puedes cargar a los trabajadores que formarán parte de la nómina de la empresa</p>
+            <div class="cabecera_acciones">
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+            </div>
         </div>
 
         @include('../../mensajes_validacion')

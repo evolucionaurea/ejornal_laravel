@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Consulta de enfermería realizada</h2>
             <p>Aquí podrá ver una consulta de enfermería que fue cargada con anterioridad</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/consultas/enfermerias')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../../mensajes_validacion')

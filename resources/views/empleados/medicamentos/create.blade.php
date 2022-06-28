@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Movimiento de medicamentos</h2>
             <p>Aquí puedes generar un movimiento de los medicamentos pertinentes a la empresa en la que estas trabajando</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/medicamentos')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../mensajes_validacion')

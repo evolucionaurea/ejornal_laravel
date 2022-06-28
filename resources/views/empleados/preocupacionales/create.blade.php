@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Creación de estudios medicos complementarios</h2>
             <p>Aquí puedes cargar a los estudios medicos complementarios de la empresa</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/preocupacionales')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../mensajes_validacion')

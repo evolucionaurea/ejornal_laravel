@@ -1,7 +1,6 @@
 import Tablas from './Tablas.js';
 
 $(()=>{
-
 	new Tablas({
 		controller:'/empleados/comunicaciones',
 		table:$('.tabla_comunicaciones_listado'),
@@ -11,7 +10,7 @@ $(()=>{
 			return $(`
 				<tr>
 					<td>${comunicacion.nombre}</td>
-					<td>${comunicacion.email}</td>
+					<td>${(comunicacion.email == null) ? 'No fue cargado' : comunicacion.email}</td>
 					<td>${comunicacion.tipo}</td>
 					<td>
 						${comunicacion.created_at}

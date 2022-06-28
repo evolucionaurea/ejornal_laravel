@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Creación de ausencias</h2>
             <p>Aquí puedes cargar a los ausencias que formarán parte de la nómina de la empresa</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/ausentismos')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../mensajes_validacion')

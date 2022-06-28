@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Edición de testeos de covid de la empresa</h2>
             <p>Aquí podrá editar los testeos de covid de un trabajador de la empresa</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/covid/testeos')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../../mensajes_validacion')

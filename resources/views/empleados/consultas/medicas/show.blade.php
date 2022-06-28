@@ -15,6 +15,9 @@
 		<div class="cabecera">
 			<h2>Consulta médica realizada</h2>
 			<p>Aquí podrá ver una consulta médica que fue cargada con anterioridad</p>
+			<div class="cabecera_acciones">
+					<a class="btn-ejornal btn-ejornal-base" href="{{url('empleados/consultas/medicas')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+			</div>
 		</div>
 
 		@include('../../../mensajes_validacion')
@@ -32,7 +35,7 @@
 		<div class="tarjeta">
 			@if ($consulta_medica)
 			<div class="d-flex flex-wrap">
-				<div class="col-md-6">
+				<div class="col-md-12 col-lg-6">
 						<div class="d-flex flex-column bd-highlight mb-3">
 							<div class="col-md-12 text-center">
 							  <i class="fas fa-user fa-10x"></i>
@@ -72,7 +75,7 @@
 							</ul>
 						</div>
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-12 col-lg-6">
 						<div class="card mt-2 mb-3">
 							<div class="card-body">
 								<h5 class="card-title text_primary">

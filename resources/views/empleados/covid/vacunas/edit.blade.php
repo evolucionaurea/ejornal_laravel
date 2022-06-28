@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Edición de vacunas de covid de la empresa</h2>
             <p>Aquí podrá editar los vacunas de covid de un trabajador de la empresa</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/covid/vacunas')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../../mensajes_validacion')

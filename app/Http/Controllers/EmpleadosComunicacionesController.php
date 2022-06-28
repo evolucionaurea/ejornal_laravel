@@ -27,6 +27,7 @@ class EmpleadosComunicacionesController extends Controller
 	{
 
 		$query = Comunicacion::select(
+			'nominas.id',
 			'nominas.nombre',
 			'nominas.email',
 			DB::raw('tipo_comunicacion.nombre tipo'),

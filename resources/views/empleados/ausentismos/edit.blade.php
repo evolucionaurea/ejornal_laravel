@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Edición de un ausentismo</h2>
             <p>Aquí podrá editar la información referente al ausentismo de un trabajador</p>
+            <div class="cabecera_acciones">
+      					<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/ausentismos')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+      			</div>
         </div>
 
         @include('../../mensajes_validacion')

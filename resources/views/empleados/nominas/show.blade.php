@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Historial de un trabajador</h2>
             <p>Aquí podrá ver las consultas y ausentismos del trabajador</p>
+            <div class="cabecera_acciones">
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+            </div>
         </div>
 
         @include('../../../mensajes_validacion')

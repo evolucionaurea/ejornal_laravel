@@ -53,7 +53,12 @@
                     </p>
                 </div>
                 <div class="form-group col-md-4">
-                    <label >Token</label>
+                    <label >
+                      Token
+                      <button type="button" class="text text-primary" data-toggle="modal" data-target="#modal_token">
+                        <i class="fas fa-question-circle"></i>
+                      </button>
+                    </label>
                     <p style="color: grey;">
                       @if ($cliente->token == null)
                         Usted no tiene un token para utilizar la API
@@ -89,6 +94,42 @@
 
         {{-- Contenido de la pagina --}}
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal_token" tabindex="-1" aria-labelledby="modal_info_token" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_info_token">Token</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <small>El token es visible y está disponible cuando la empresa lo crea para usted.</small>
+          </li>
+          <li class="list-group-item">
+            <small>El token le servirá para utilizar la API.</small>
+          </li>
+          <li class="list-group-item">
+            <small>
+              Una Api es un concepto técnico. Por lo que debe facilitarle la información de la sección de API,
+              junto a este token, a su programador o equipo de IT.
+            </small>
+          </li>
+          <li class="list-group-item">
+            <small>Ante cualquier duda comuníquese con la empresa</small>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ejornal btn-ejornal-base" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
