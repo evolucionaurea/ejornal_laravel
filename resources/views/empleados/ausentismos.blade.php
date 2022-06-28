@@ -31,35 +31,35 @@
 			@include('../../modulos.busqueda_fecha')
 
 
-			<table class="table table-striped table-hover table-sm tabla_ausentismos">
+			<table class="table table-striped table-bordered table-hover table-sm tabla_ausentismos">
 
 				<!--Table head-->
 				<thead>
 					<tr>
 						<th class="th-lg">
-							Trabajador <i class="fas fa-sort ml-1"></i>
+							Trabajador
 						</th>
 						<th class="th-lg">
-							DNI <i class="fas fa-sort ml-1"></i>
+							DNI
 						</th>
 						<th class="th-lg">
-							Sector <i class="fas fa-sort ml-1"></i>
+							Sector
 						</th>
 						<th class="th-lg">
-							Tipo <i class="fas fa-sort ml-1"></i>
+							Tipo
 						</th>
 						<th class="th-lg">
-							Fecha inicio <i class="fas fa-sort ml-1"></i>
+							Fecha inicio
 						</th>
 						<th class="th-lg">
-							Fecha final <i class="fas fa-sort ml-1"></i>
+							Fecha final
 						</th>
 						<th class="th-lg">
-							Fecha en que regresó <i class="fas fa-sort ml-1"></i>
+							Fecha en que regresó
 						</th>
 						@if (auth()->user()->fichada == 1)
 						<th class="th-lg">
-							Acciones <i class="fas fa-sort ml-1"></i>
+							Acciones
 						</th>
 						@endif
 					</tr>

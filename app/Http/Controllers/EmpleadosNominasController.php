@@ -399,8 +399,8 @@ class EmpleadosNominasController extends Controller
 				$nomina->email = $registro['email'];
 				$nomina->dni = $registro['dni'];
 				$nomina->telefono = $registro['telefono'];
-				$nomina->estado = $registro['estado']=='Activo' ? 1 : 0;
-				$nomina->fecha_baja = $registro['estado']=='Activo' ? null : Carbon::now();
+				$nomina->estado = strtolower($registro['estado'])=='activo' ? 1 : 0;
+				$nomina->fecha_baja = strtolower($registro['estado'])=='activo' ? null : Carbon::now();
 				$nomina->save();
 
 			}

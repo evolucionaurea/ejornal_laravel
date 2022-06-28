@@ -24,7 +24,7 @@ mix.js('resources/js/app.js', 'public/js')
 //    'public/js/app.js').sourceMaps();
 
 
-mix.browserSync('http://ejornal_laravel.test/');
+mix.browserSync('http://ejornal.test/');
 
 if(mix.inProduction()) {
   mix.version();
