@@ -6,30 +6,34 @@ export default class Tablas {
 		$.extend(this,obj)
 		$.extend(window.datatable_options,obj.datatable_options)
 
-		this.modulo_busqueda.find('[name="from"],[name="to"]').datepicker({
-			dateFormat:'dd/mm/yy'
-		})
-
-		/*Buscar*/
-		this.modulo_busqueda.find('[data-toggle="search"]').click(async btn=>{
-			loading()
-
-			let post = {}
-			$.each(this.modulo_busqueda.find('[name]'),(k,v)=>{
-				post[$(v).attr('name')] = $(v).val()
+		if('modulo_busqueda' in this){
+			this.modulo_busqueda.find('[name="from"],[name="to"]').datepicker({
+				dateFormat:'dd/mm/yy'
 			})
 
-			//console.log(post)
+			/*Buscar*/
+			this.modulo_busqueda.find('[data-toggle="search"]').click(async btn=>{
+				loading()
 
-			let response = await this.get(post)
-			this.render_table(response)
-		}).trigger('click')
+				let post = {}
+				$.each(this.modulo_busqueda.find('[name]'),(k,v)=>{
+					post[$(v).attr('name')] = $(v).val()
+				})
+				let response = await this.get(post)
+				this.render_table(response)
+			}).trigger('click')
 
-		/*Mostrar Todo*/
-		this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
-			this.modulo_busqueda.find('[name]').val('')
-			this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
-		})
+			/*Mostrar Todo*/
+			this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
+				this.modulo_busqueda.find('[name]').val('')
+				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
+			})
+		}else{
+			loading()
+			this.get()
+				.then(response=>this.render_table(response))
+		}
+
 
 
 		/*Borrar*/
@@ -86,7 +90,7 @@ export default class Tablas {
 
 		data.results.map(v=>{
 			let tr = this.render_row(v)
-			if(v.fichada==0) tr.find('td.acciones_tabla').remove()
+			if(v.fichada==0) tr.find('.acciones_tabla').remove()
 			tbody.append(tr)
 		})
 

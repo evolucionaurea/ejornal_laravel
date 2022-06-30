@@ -39,10 +39,7 @@
 
 					<!-- Nómina -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<form action="{{ action('EmpleadosNominasController@listado') }}" class="card primary-color white-text" method="POST">
-							@csrf
-
-							<input type="hidden" name="estado" value="1">
+						<a href="{{ route('/empleados/nominas',['estado'=>1]) }}" class="card primary-color white-text" method="POST">
 							<button class="card-body d-flex justify-content-between align-items-center" >
 								<div>
 									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$total_nomina}}</p>
@@ -52,13 +49,12 @@
 									<i class="fas fa-users fa-2x text-black-40"></i>
 								</div>
 							</button>
-						</form>
+						</a>
 					</div>
 
 					<!-- Ausentes -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<form action="{{ action('EmpleadosNominasController@listado') }}" class="card red white-text" method="POST">
-							@csrf
+						<a href="{{ route('/empleados/nominas',['ausentes'=>'hoy']) }}" class="card red white-text" method="POST">
 							<input type="hidden" name="ausentes" value="hoy">
 							<button class="card-body d-flex justify-content-between align-items-center">
 								<div>
@@ -69,13 +65,12 @@
 									<i class="fas fa-users fa-2x text-black-40"></i>
 								</div>
 							</button>
-						</form>
+						</a>
 					</div>
 
 					<!-- Ausencias COVID -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<form action="{{ action('EmpleadosNominasController@listado') }}" class="card red white-text" method="POST">
-							@csrf
+						<a href="{{ route('/empleados/nominas',['ausentes'=>'covid']) }}" class="card red white-text" method="POST">
 							<input type="hidden" name="ausentes" value="covid">
 							<button class="card-body d-flex justify-content-between align-items-center">
 								<div>
@@ -86,7 +81,7 @@
 									<i class="fas fa-users fa-2x text-black-40"></i>
 								</div>
 							</button>
-						</form>
+						</a>
 					</div>
 
 

@@ -131,8 +131,10 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 		]
 	]);
 	Route::post('empleados/nominas/cargar_excel', 'EmpleadosNominasController@cargar_excel')->name('/empleados/nominas/cargar_excel');
-	Route::post('empleados/listado', 'EmpleadosNominasController@listado')->name('empleados.listado');
-	Route::get('empleados/buscar', 'EmpleadosNominasController@buscar')->name('empleados.buscar');
+	//Route::post('empleados/listado', 'EmpleadosNominasController@listado')->name('empleados.listado');
+	//Route::get('empleados/buscar', 'EmpleadosNominasController@buscar')->name('empleados.buscar');
+	Route::delete('empleados/nominas/destroy/{id}','EmpleadosNominasController@destroy');
+	Route::post('empleados/nominas/busqueda','EmpleadosNominasController@busqueda');
 
 	// AUSENTISMOS
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [

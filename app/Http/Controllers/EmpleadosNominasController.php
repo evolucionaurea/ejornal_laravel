@@ -24,13 +24,72 @@ class EmpleadosNominasController extends Controller
 
 	public function index()
 	{
-
-		///dd($data);
 		$clientes = $this->getClientesUser();
-		$trabajadores = $this->buscar();
-		return view('empleados.nominas', compact('trabajadores', 'clientes'));
+		return view('empleados.nominas', compact('clientes'));
 	}
-	public function listado(Request $request)
+	public function busqueda(Request $request)
+	{
+
+		$query_trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->limit(40);
+
+		if(isset($request->estado)) $query_trabajadores->where('nominas.estado',$request->estado);
+		$trabajadores = $query_trabajadores->get();
+
+		$fecha_actual = Carbon::now();
+		$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+			->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
+			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+			->where('ausentismos.fecha_regreso_trabajar', null)
+			->whereDate('ausentismos.fecha_inicio', '<=', $fecha_actual)
+
+			->select(
+				'ausentismos.*',
+				DB::raw('ausentismo_tipo.nombre ausentismo_tipo')
+			)
+			->latest()
+			->get();
+
+		$key_remove = [];
+		foreach ($trabajadores as $kt=>$trabajador) {
+			foreach ($ausentismos as $ausentismo) {
+				if($ausentismo->id_trabajador == $trabajador->id){
+
+					if(isset($request->ausentes) && $request->ausentes=='covid' && !preg_match('/covid/', $ausentismo->ausentismo_tipo) ) continue;
+
+					$trabajadores[$kt]['hoy'] = [
+						'estado'=>'Ausente',
+						'tipo'=>$ausentismo->ausentismo_tipo,
+						'id'=>$ausentismo->id
+					];
+				}
+			}
+
+			///if(isset($request->ausentes) && ( is_null($trabajador->hoy) || $trabajador->hoy['estado'] != 'Ausente') ) {
+			if(isset($request->ausentes) && !isset($trabajadores[$kt]['hoy']) ) {
+				unset($trabajadores[$kt]);
+				///$key_remove[] = $kt;
+			}
+		}
+
+		/*if(!empty($key_remove)){
+			$trabajadores = \array_diff_key($trabajadores,$key_remove);
+		}*/
+
+		return [
+			'results'=>array_values($trabajadores->toArray()),
+			'fichada'=>auth()->user()->fichada,
+			'request'=>$request->all()
+		];
+
+	}
+
+	public function buscar($params=null)
+	{
+		///dd($ausentismos);
+		return $trabajadores;
+	}
+
+	/*public function listado(Request $request)
 	{
 
 		//Sin filtros
@@ -41,9 +100,7 @@ class EmpleadosNominasController extends Controller
 		$filtros = $request->all();
 		$clientes = $this->getClientesUser();
 		return view('empleados.nominas', compact('trabajadores', 'clientes', 'filtros'));
-
-		///return redirect()->action('\Ariel\SpotBuy\Http\Controllers\Admin\SpotBuyController@getPart', [$id]);
-	}
+	}*/
 
 	/**
 	 * Show the form for creating a new resource.
@@ -123,51 +180,51 @@ class EmpleadosNominasController extends Controller
 	public function show($id)
 	{
 
-			$clientes = $this->getClientesUser();
+		$clientes = $this->getClientesUser();
 
-			$trabajador = Nomina::findOrFail($id);
+		$trabajador = Nomina::findOrFail($id);
 
-			$consultas_medicas = ConsultaMedica::join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
-			->where('consultas_medicas.id_nomina', $id)
-			->select('consultas_medicas.fecha', 'consultas_medicas.amerita_salida', 'consultas_medicas.peso',
-			'consultas_medicas.altura', 'consultas_medicas.imc', 'consultas_medicas.glucemia', 'consultas_medicas.saturacion_oxigeno',
-			'consultas_medicas.tension_arterial', 'consultas_medicas.frec_cardiaca', 'consultas_medicas.derivacion_consulta', 'consultas_medicas.anamnesis',
-			'consultas_medicas.tratamiento', 'consultas_medicas.observaciones', DB::raw('diagnostico_consulta.nombre diagnostico'), 'consultas_medicas.created_at')
-			->get();
+		$consultas_medicas = ConsultaMedica::join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
+		->where('consultas_medicas.id_nomina', $id)
+		->select('consultas_medicas.fecha', 'consultas_medicas.amerita_salida', 'consultas_medicas.peso',
+		'consultas_medicas.altura', 'consultas_medicas.imc', 'consultas_medicas.glucemia', 'consultas_medicas.saturacion_oxigeno',
+		'consultas_medicas.tension_arterial', 'consultas_medicas.frec_cardiaca', 'consultas_medicas.derivacion_consulta', 'consultas_medicas.anamnesis',
+		'consultas_medicas.tratamiento', 'consultas_medicas.observaciones', DB::raw('diagnostico_consulta.nombre diagnostico'), 'consultas_medicas.created_at')
+		->get();
 
 
-			$consultas_enfermeria = ConsultaEnfermeria::join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
-			->where('consultas_enfermerias.id_nomina', $id)
-			->select('consultas_enfermerias.fecha', 'consultas_enfermerias.amerita_salida', 'consultas_enfermerias.peso',
-			'consultas_enfermerias.altura', 'consultas_enfermerias.imc', 'consultas_enfermerias.glucemia', 'consultas_enfermerias.saturacion_oxigeno',
-			'consultas_enfermerias.tension_arterial', 'consultas_enfermerias.frec_cardiaca', 'consultas_enfermerias.derivacion_consulta',
-			'consultas_enfermerias.observaciones', DB::raw('diagnostico_consulta.nombre diagnostico'), 'consultas_enfermerias.created_at')
-			->get();
+		$consultas_enfermeria = ConsultaEnfermeria::join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
+		->where('consultas_enfermerias.id_nomina', $id)
+		->select('consultas_enfermerias.fecha', 'consultas_enfermerias.amerita_salida', 'consultas_enfermerias.peso',
+		'consultas_enfermerias.altura', 'consultas_enfermerias.imc', 'consultas_enfermerias.glucemia', 'consultas_enfermerias.saturacion_oxigeno',
+		'consultas_enfermerias.tension_arterial', 'consultas_enfermerias.frec_cardiaca', 'consultas_enfermerias.derivacion_consulta',
+		'consultas_enfermerias.observaciones', DB::raw('diagnostico_consulta.nombre diagnostico'), 'consultas_enfermerias.created_at')
+		->get();
 
-			$ausentismos = Ausentismo::join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-			->where('ausentismos.id_trabajador', $id)
-			->select('ausentismos.id', 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar',
-			'ausentismos.archivo', 'ausentismos.hash_archivo', DB::raw('ausentismo_tipo.nombre tipo'), 'ausentismos.created_at')
-			->get();
+		$ausentismos = Ausentismo::join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+		->where('ausentismos.id_trabajador', $id)
+		->select('ausentismos.id', 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar',
+		'ausentismos.archivo', 'ausentismos.hash_archivo', DB::raw('ausentismo_tipo.nombre tipo'), 'ausentismos.created_at')
+		->get();
 
-			$testeos = CovidTesteo::where('id_nomina', $id)
-			->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
-			->select('covid_testeos_tipo.nombre', 'covid_testeos.resultado', 'covid_testeos.laboratorio', 'covid_testeos.fecha')
-			->get();
+		$testeos = CovidTesteo::where('id_nomina', $id)
+		->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
+		->select('covid_testeos_tipo.nombre', 'covid_testeos.resultado', 'covid_testeos.laboratorio', 'covid_testeos.fecha')
+		->get();
 
-			$vacunas = CovidVacuna::where('id_nomina', $id)
-			->join('covid_vacunas_tipo', 'covid_vacunas.id_tipo', 'covid_vacunas_tipo.id')
-			->select('covid_vacunas_tipo.nombre', 'covid_vacunas.institucion', 'covid_vacunas.fecha')
-			->get();
+		$vacunas = CovidVacuna::where('id_nomina', $id)
+		->join('covid_vacunas_tipo', 'covid_vacunas.id_tipo', 'covid_vacunas_tipo.id')
+		->select('covid_vacunas_tipo.nombre', 'covid_vacunas.institucion', 'covid_vacunas.fecha')
+		->get();
 
-			$preocupacionales = Preocupacional::join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->select('preocupacionales.id', 'nominas.nombre', 'preocupacionales.observaciones', 'preocupacionales.archivo',
-			'preocupacionales.hash_archivo', 'preocupacionales.created_at', 'preocupacionales.fecha')
-			->get();
+		$preocupacionales = Preocupacional::join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->select('preocupacionales.id', 'nominas.nombre', 'preocupacionales.observaciones', 'preocupacionales.archivo',
+		'preocupacionales.hash_archivo', 'preocupacionales.created_at', 'preocupacionales.fecha')
+		->get();
 
-			return view('empleados.nominas.show', compact('trabajador', 'consultas_medicas',
-			'consultas_enfermeria', 'ausentismos', 'clientes', 'vacunas', 'testeos', 'preocupacionales'));
+		return view('empleados.nominas.show', compact('trabajador', 'consultas_medicas',
+		'consultas_enfermeria', 'ausentismos', 'clientes', 'vacunas', 'testeos', 'preocupacionales'));
 	}
 
 	/**
@@ -399,6 +456,7 @@ class EmpleadosNominasController extends Controller
 				$nomina->email = $registro['email'];
 				$nomina->dni = $registro['dni'];
 				$nomina->telefono = $registro['telefono'];
+				$nomina->sector = $registro['sector'];
 				$nomina->estado = strtolower($registro['estado'])=='activo' ? 1 : 0;
 				$nomina->fecha_baja = strtolower($registro['estado'])=='activo' ? null : Carbon::now();
 				$nomina->save();
@@ -484,60 +542,6 @@ class EmpleadosNominasController extends Controller
 			if($empleado->dni==$registro['dni'] || $empleado->email==$registro['email']) return true;
 		}
 		return false;
-	}
-
-	public function buscar($params=null)
-	{
-
-		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
-
-		if(isset($params->estado) && !is_null($params->estado)) $query->where('nominas.estado',$params->estado);
-		///if(isset($params->ausentes_hoy)) echo "ausentes";
-		$trabajadores = $query->get();
-
-
-		$fecha_actual = Carbon::now();
-		$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-			->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->where('ausentismos.fecha_regreso_trabajar', null)
-      ->whereDate('ausentismos.fecha_inicio', '<=', $fecha_actual)
-
-			->select(
-				'ausentismos.*',
-				DB::raw('ausentismo_tipo.nombre ausentismo_tipo')
-			)
-
-			/*IF(ausentismos.fecha_inicio<=DATE(NOW()) AND ausentismos.fecha_regreso_trabajar<=DATE(NOW()), 'NULL','Ausente') hoy*/
-
-			->latest()
-			->get();
-
-		///dd($ausentismos);
-
-
-		foreach ($trabajadores as $kt=>$trabajador) {
-			foreach ($ausentismos as $ausentismo) {
-				if($ausentismo->id_trabajador == $trabajador->id){
-
-					if(isset($params->ausentes) && $params->ausentes=='covid' && !preg_match('/covid/', $ausentismo->ausentismo_tipo) ) continue;
-
-					$trabajadores[$kt]['hoy'] = [
-						'estado'=>'Ausente',
-						'tipo'=>$ausentismo->ausentismo_tipo,
-						'id'=>$ausentismo->id
-					];
-				}
-			}
-
-			if(isset($params->ausentes) && (is_null($trabajador->hoy) || $trabajador->hoy['estado'] != 'Ausente')) {
-				unset($trabajadores[$kt]);
-			}
-		}
-
-		return $trabajadores;
-
-
 	}
 
 
