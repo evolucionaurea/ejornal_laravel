@@ -30,7 +30,7 @@ class EmpleadosNominasController extends Controller
 	public function busqueda(Request $request)
 	{
 
-		$query_trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->limit(40);
+		$query_trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
 
 		if(isset($request->estado)) $query_trabajadores->where('nominas.estado',$request->estado);
 		$trabajadores = $query_trabajadores->get();
