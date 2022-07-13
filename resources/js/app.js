@@ -22,10 +22,12 @@ require('./documentacion_ausentismo.js');
 if(route=='/admin/users') require('./admin/admin_tablas')
 if(route=='/admin/clientes') require('./admin/admin_tablas')
 if(route=='/admin/medicamentos') require('./admin/admin_tablas')
+if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
 
 const url = location.href;
 const admin = 'admin/users';
-if (url.includes(admin)) {
+const cliente = 'admin/clientes';
+if (url.includes(admin) || url.includes(cliente)) {
   require('./admin/admin_tablas');
 }
 

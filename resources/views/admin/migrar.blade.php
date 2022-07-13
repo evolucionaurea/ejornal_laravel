@@ -34,7 +34,7 @@
                   Migrar nominas
                 </a>
               @endif
-              @if (auth()->user()->email == "sebas_admin@ejornal.com.ar")
+              @if (auth()->user()->email == "sebas_admin@ejornal.com.ar" && $nominas == false)
                 <a class="btn-ejornal btn-ejornal-base" href="{{route('migrar_fichadas')}}">
                   <i class="fas fa-sync"></i>
                     Migrar Fichadas a FichadasNuevas

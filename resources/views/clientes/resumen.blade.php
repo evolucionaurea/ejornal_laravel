@@ -135,7 +135,7 @@
 			<div class="col-6">
 				<div class="tarjeta ausentismos_mes_porcentajes">
 					<h4>Ausentismos de {{ $now->formatLocalized('%B') }}</h4>
-					<table class="table table-striped">
+					<table class="table table-striped tabla">
 						<thead>
 							<tr>
 								<th scope="col">Tipo</th>

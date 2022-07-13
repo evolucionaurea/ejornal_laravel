@@ -100,7 +100,7 @@
 
             <div class="tarjeta">
                 <h4>Nómina</h4>
-                <table class="table table-striped table-hover table-sm tabla_user">
+                <table class="table table-striped table-hover table-sm tabla">
                     <thead>
                         <tr>
                             <th class="th-lg">
