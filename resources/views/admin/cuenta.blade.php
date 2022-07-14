@@ -62,6 +62,33 @@
                         @endif
                     </select>
                 </div>
+                <div class="form-group col-md-4">
+                    <label >User creado:</label>
+                    <input
+                    disabled
+                    type="text"
+                    class="form-control form-control-sm"
+                    value="{{date('d/m/Y',strtotime(auth()->user()->created_at))}}"
+                    >
+                </div>
+                <div class="form-group col-md-4">
+                    <label >DNI:</label>
+                    <input
+                    disabled
+                    type="text"
+                    class="form-control form-control-sm"
+                    value="{{ (auth()->user()->dni !== null) ? auth()->user()->dni : "" }}"
+                    >
+                </div>
+                <div class="form-group col-md-4">
+                    <label >CUIL:</label>
+                    <input
+                    disabled
+                    type="text"
+                    class="form-control form-control-sm"
+                    value="{{ (auth()->user()->cuil !== null) ? auth()->user()->cuil : "" }}"
+                    >
+                </div>
                 <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
             </form>
         </div>

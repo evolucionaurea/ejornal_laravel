@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Creación de clientes</h2>
             <p>Aquí puedes crear los clientes del sistema</p>
+            <div class="cabecera_acciones">
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('admin/clientes')}}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+            </div>
         </div>
 
         @include('../../mensajes_validacion')

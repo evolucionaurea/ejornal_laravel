@@ -1,6 +1,6 @@
 <div class="bg_sidebar border-right" id="sidebar-wrapper">
     <div class="sidebar-heading logo_sidebar">
-        <img src="{{asset('img/logo_white.png')}}" alt="">
+        <img src="{{asset('img/logos/isologo.png')}}" alt="">
     </div>
     <div class="sidebar_datos_user">
         <i class="fas fa-user"></i>

@@ -15,6 +15,12 @@
         <div class="cabecera">
             <h2>Api</h2>
             <p>Aquí puedes ver los recursos de los que dispone tu empresa para utilizar la API</p>
+            <div class="cabecera_acciones">
+                <a data-toggle="modal" data-target="#explicacion_api" class="btn-ejornal btn-ejornal-gris-claro" href="#">
+                  <i class="fas fa-question"></i>
+                  ¿Que es una API?
+                </a>
+            </div>
         </div>
 
         <input type="hidden" name="token" value="{{$cliente->token}}">
@@ -141,6 +147,43 @@ id_nomina: integer|required
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="explicacion_api" tabindex="-1" aria-labelledby="title_explicaicon_api" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title_explicaicon_api">API</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="card mb-4">
+                    <h5 class="card-header">¿Que es una API?</h5>
+                    <div class="card-body">
+                        <p class="card-text">
+                          Una API es un puente entre sistemas. Es la "autopista" que conecta dos sistemas o que
+                          permite acceso a un sistema. Esa autopista tiene carriles. Estos carriles se llaman
+                          "Endpoints". Los endpoints son lo que encontrará a continuación. Parecen links visualmente.
+                        </p>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <h5 class="card-header">¿Como se usa?</h5>
+                    <div class="card-body">
+                        <p>
+                          Al ser una herramienta técnica debe tener un programador para hacer uso de la misma.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
 
