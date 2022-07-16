@@ -18,6 +18,7 @@ Route::group(['middleware' => ['autenticacion']], function () {
 Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	Route::get('admin/resumen', 'AdminResumenController@index')->name('/admin/resumen');
+	Route::get('admin/get_medicamentos', 'AdminResumenController@getMedicamentos');
 
 	Route::resource('admin/users', 'AdminUserController', [
 			'names' => [

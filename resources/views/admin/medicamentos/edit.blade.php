@@ -15,6 +15,9 @@
         <div class="cabecera">
             <h2>Edición de medicamentos</h2>
             <p>Aquí podrá editar la información de un medicamento</p>
+            <div class="cabecera_acciones">
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('admin/medicamentos')}}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+            </div>
         </div>
 
         @include('../../mensajes_validacion')

@@ -66,6 +66,35 @@
                         </div>
                     </div>
 
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="media white z-depth-1 rounded">
+                            <i class="fas fa-pills fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
+                            <div class="media-body p-1">
+                                <p class="text-uppercase text-muted mb-1"><small>Medicamento mas suministrado</small></p>
+                                <h5 class="font-weight-bold mb-0">{{$mas_sumunistrado->nombre}} ({{$mas_sumunistrado->suministrados}})</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="tarjeta medicamentos_disponibles_por_empresa tabla">
+                            <h4>Medicamentos disponibles</h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Medicamento</th>
+                                        <th scope="col">Disponibles</th>
+                                        <th scope="col">Empresa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{-- Se carga por JS --}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>

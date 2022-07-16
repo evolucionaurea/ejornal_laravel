@@ -23,6 +23,7 @@ if(route=='/admin/users') require('./admin/admin_tablas')
 if(route=='/admin/clientes') require('./admin/admin_tablas')
 if(route=='/admin/medicamentos') require('./admin/admin_tablas')
 if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
+if(route=='/admin/resumen') require('./admin/resumen')
 
 const url = location.href;
 const admin = 'admin/users';
