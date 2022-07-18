@@ -28,13 +28,13 @@ $(()=>{
 						<div class="foto-user-tabla ${'foto' in trabajador && trabajador.foto!='' ? 'has-image' : '' }" style="background-image:url(${'foto' in trabajador && trabajador.foto!=null ? '/storage/nominas/fotos/'+trabajador.id+'/'+trabajador.hash_foto : ''})"></div>
 						${trabajador.nombre}
 					</td>
-					<td>${trabajador.email}</td>
-					<td>${trabajador.telefono}</td>
-					<td>${trabajador.dni}</td>
+					<td>${trabajador.email==null ? 'no cargado' : trabajador.email}</td>
+					<td>${trabajador.telefono==null ? 'no cargado' : trabajador.telefono}</td>
+					<td>${trabajador.dni==null ? 'no cargado' : trabajador.dni}</td>
 					<td>
 						<span class="tag_ejornal tag_ejornal_${trabajador.estado==1 ? 'success' : 'danger'}">${trabajador.estado==1 ? 'Activo' : 'Inactivo'}</span>
 					</td>
-					<td>${trabajador.sector}</td>
+					<td>${trabajador.sector==null ? 'no cargado' : trabajador.sector}</td>
 					<td>
 						${ausentismo}
 					</td>

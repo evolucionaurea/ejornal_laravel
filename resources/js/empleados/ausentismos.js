@@ -12,12 +12,12 @@ $(()=>{
 			return $(`
 				<tr>
 					<td>${ausentismo.nombre}</td>
-					<td>${ausentismo.dni}</td>
-					<td>${ausentismo.sector}</td>
+					<td>${ausentismo.dni==null ? 'no cargado' : ausentismo.dni}</td>
+					<td>${ausentismo.sector==null ? 'no cargado' : ausentismo.sector}</td>
 					<td>${ausentismo.nombre_ausentismo}</td>
 					<td>${ausentismo.fecha_inicio}</td>
 					<td>${ausentismo.fecha_final}</td>
-					<td>${ausentismo.fecha_regreso_trabajar==null ? '[no cargada]' : ausentismo.fecha_regreso_trabajar}</td>
+					<td>${ausentismo.fecha_regreso_trabajar==null ? 'no cargada' : ausentismo.fecha_regreso_trabajar}</td>
 
 					<td class="acciones_tabla" scope="row">
 

@@ -16,7 +16,7 @@ $(()=>{
 					<td>${certificado.fecha_inicio}</td>
 					<td>${certificado.fecha_final}</td>
 					<td>${certificado.fecha_regreso_trabajar}</td>
-					<td>${certificado.matricula_nacional}</td>
+					<td>${certificado.matricula_nacional==null ? 'no cargada' : certificado.matricula_nacional}</td>
 				</tr>`
 			)
 		}

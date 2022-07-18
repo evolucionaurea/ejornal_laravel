@@ -23,19 +23,33 @@
         @include('../mensajes_validacion')
 
         @if (!empty($users_sin_empresas))
-        <div class="alert alert-danger mt-2 mr-4 ml-4" role="alert">
-            <p>Hay {{count($users_sin_empresas)}} empleados sin empresas asignadas</p>
-            @foreach ($users_sin_empresas as $value)
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                  {{$value->nombre}} {{$value->email}}
-                  <a title="Editar" href="{{route('users.edit', $value->id)}}">
-                    <i class="fas fa-pen"></i>
-                  </a>
-                </li>
-            </ul>
-            @endforeach
+
+        <div id="accordion" class="p-4">
+            <div class="card">
+                <div class="card-header text-danger" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                        <p>Hay {{count($users_sin_empresas)}} empleados sin empresas asignadas</p>
+                        <i class="fas fa-angle-down"></i>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        @foreach ($users_sin_empresas as $value)
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                {{$value->nombre}} {{$value->email}}
+                                <a title="Editar" href="{{route('users.edit', $value->id)}}">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
+
         @endif
 
         <div class="tarjeta">
@@ -100,9 +114,9 @@
                         </td>
                         <td>{{$user->rol}}</td>
                         <td class="acciones_tabla" scope="row">
-                          <a title="Ver" href="{{route('users.show', $user->id)}}">
-                              <i class="fas fa-eye"></i>
-                          </a>
+                            <a title="Ver" href="{{route('users.show', $user->id)}}">
+                                <i class="fas fa-eye"></i>
+                            </a>
                             <a title="Editar" href="{{route('users.edit', $user->id)}}">
                                 <i class="fas fa-pen"></i>
                             </a>

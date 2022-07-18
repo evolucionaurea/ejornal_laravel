@@ -12,9 +12,8 @@ $(()=>{
 			return $(`
 				<tr>
 					<td>${preocupacional.nombre}</td>
-					<td>${preocupacional.email}</td>
-					<td>${preocupacional.telefono}</td>
-
+					<td>${preocupacional.email==null ? 'no cargado' : preocupacional.email}</td>
+					<td>${preocupacional.telefono==null ? 'no cargado' : preocupacional.telefono}</td>
 					<td>${preocupacional.fecha}</td>
 					<td>
 						<a class="btn-ejornal btn-ejornal-gris-claro" href="preocupacionales/archivo/${preocupacional.id}">
