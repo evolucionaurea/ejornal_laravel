@@ -75,15 +75,13 @@ export default class Tablas {
 	}
 	render_table(data){
 
-		console.log(data)
-
-		this.table.find('tbody').remove()
+		//this.table.find('tbody').remove()
 		let tbody = dom('tbody')
 		loading({show:false})
 
 		if(data.results.length==0) return false
 
-		if(!this.first_render){
+		if($.fn.dataTable.isDataTable(this.table)){
 			this.datatable.clear()
 			this.datatable.destroy()
 		}
@@ -94,12 +92,10 @@ export default class Tablas {
 			tbody.append(tr)
 		})
 
-		this.table.append(tbody)
 
-		if(this.first_render){
-			this.datatable = this.table.DataTable(window.datatable_options);
+		this.table.html(tbody)
+		if(!$.fn.dataTable.isDataTable(this.table)){
 			this.first_render = false
-		}else{
 			this.datatable = this.table.DataTable(window.datatable_options);
 		}
 

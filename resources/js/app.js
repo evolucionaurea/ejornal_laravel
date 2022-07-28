@@ -25,14 +25,12 @@ if(route=='/admin/medicamentos') require('./admin/admin_tablas')
 if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
 if(route=='/admin/resumen') require('./admin/resumen')
 
-const url = location.href;
+/*const url = location.href;
 const admin = 'admin/users';
 const cliente = 'admin/clientes';
 if (url.includes(admin) || url.includes(cliente)) {
   require('./admin/admin_tablas');
-}
-
-
+}*/
 
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
