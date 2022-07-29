@@ -75,28 +75,29 @@ export default class Tablas {
 	}
 	render_table(data){
 
-		//this.table.find('tbody').remove()
+
+		this.table.find('tbody').remove()
 		let tbody = dom('tbody')
 		loading({show:false})
 
 		if(data.results.length==0) return false
 
 		if($.fn.dataTable.isDataTable(this.table)){
-			this.datatable.clear()
-			this.datatable.destroy()
+			//this.datatable.clear()
+			//this.datatable.destroy()
 		}
 
 		data.results.map(v=>{
 			let tr = this.render_row(v)
-			if(v.fichada==0) tr.find('.acciones_tabla').remove()
+			if('fichada_user' in v && v.fichada_user==0) tr.find('.acciones_tabla').remove()
 			tbody.append(tr)
 		})
 
 
-		this.table.html(tbody)
+		this.table.append(tbody)
 		if(!$.fn.dataTable.isDataTable(this.table)){
 			this.first_render = false
-			this.datatable = this.table.DataTable(window.datatable_options);
+			//this.datatable = this.table.DataTable(window.datatable_options);
 		}
 
 

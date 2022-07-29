@@ -77,7 +77,7 @@ class EmpleadosNominasController extends Controller
 
 		return [
 			'results'=>array_values($trabajadores->toArray()),
-			'fichada'=>auth()->user()->fichada,
+			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
 

@@ -85,6 +85,19 @@
   border: 0px solid #000000;
 }
 
+.card:hover{
+  opacity: .75;
+  text-decoration: none;
+}
+
+
+.media .media-body{
+  color:black;
+}
+.media:hover{
+  opacity: .75;
+  text-decoration: none;
+}
 
 select{
   -webkit-appearance: menulist !important;

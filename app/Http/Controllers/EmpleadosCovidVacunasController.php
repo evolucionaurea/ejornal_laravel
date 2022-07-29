@@ -65,7 +65,7 @@ class EmpleadosCovidVacunasController extends Controller
 
 		return [
 			'results'=>$query->get(),
-			'fichada'=>auth()->user()->fichada,
+			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
 

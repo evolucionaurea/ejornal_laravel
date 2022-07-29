@@ -1,21 +1,15 @@
 $(document).ready(function() {
 
-  $('#cliente_select_multiple').select2({
-      placeholder: 'Busque'
-  });
 
-  $('#select_cliente_original').select2({
-      placeholder: 'Busque'
-  });
 
-  if ($('.personal_interno_viene_de_base').val() == 1) {
+  /*if ($('.personal_interno_viene_de_base').val() == 1) {
     $('.check_personal_interno').prop('checked', true);
   }else {
     $('.check_personal_interno').prop('checked', false);
-  }
+  }*/
 
 
-  if ($('.capturar_rol').val() == 3) {
+  /*if ($('.capturar_rol').val() == 3) {
     $('.mostrar_personal_interno').css('display', 'none');
     $('.mostrar_clientes').css('display', 'none');
     $('.mostrar_permiso_desplegables').css('display', 'none');
@@ -74,7 +68,7 @@ $(document).ready(function() {
       $('.select_contratacion_users').css('display', 'none');
       $('.liquidacion_onedrive_creacion_users').css('display', 'none');
     }
-  });
+  });*/
 
 
 

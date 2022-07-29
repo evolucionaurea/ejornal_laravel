@@ -43,7 +43,7 @@ window.in_array = (value,array=[])=>{
 	return true;
 }
 window.dom = (el,classes='',id='') => {
-	let output = $('<'+el+'>').clone();
+	let output = $(`<${el}>`).clone();
 	if(id!='') {
 		output.attr('id',id);
 	}
