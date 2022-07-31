@@ -48,6 +48,7 @@ class AdminUserController extends Controller
 		if(isset($request->especialidad)) $query_users->where('users.id_especialidad',$request->especialidad);
 		if(isset($request->rol)) $query_users->where('users.id_rol',$request->rol);
 		if(isset($request->estado)) $query_users->where('users.estado',$request->estado);
+		if(isset($request->fichada)) $query_users->where('users.fichada',$request->fichada);
 
 		$users = $query_users->get();
 

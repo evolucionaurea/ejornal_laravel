@@ -27,7 +27,7 @@
 					</div>
 
 					<div class="col-lg-3 col-md-6 mb-4">
-						<a href="{{ route('/admin/users') }}" class="media white z-depth-1 rounded">
+						<a href="{{ route('/admin/users',['estado'=>1,'especialidad'=>2]) }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-user-times fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Enfermeros activos</small></p>
@@ -37,43 +37,43 @@
 					</div>
 
 					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
+						<a href="{{ route('/admin/users',['estado'=>1,'especialidad'=>1]) }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-user-md fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Medicos activos</small></p>
 								<h5 class="font-weight-bold mb-0">{{$medicos}}</h5>
 							</div>
-						</div>
+						</a>
 					</div>
 
 					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
+						<a href="{{ route('/admin/users',['estado'=>1,'especialidad'=>2,'fichada'=>1]) }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-download fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Enfermeros trabajando</small></p>
 								<h5 class="font-weight-bold mb-0">{{$enfermeros_trabajando}}</h5>
 							</div>
-						</div>
+						</a>
 					</div>
 
 					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
+						<a href="{{ route('/admin/users',['estado'=>1,'especialidad'=>1,'fichada'=>1]) }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-download fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Medicos trabajando</small></p>
 								<h5 class="font-weight-bold mb-0">{{$medicos_trabajando}}</h5>
 							</div>
-						</div>
+						</a>
 					</div>
 
 					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
+						<a href="{{ route('/admin/medicamentos',['medicamento'=>$mas_sumunistrado->id]) }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-pills fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
-								<p class="text-uppercase text-muted mb-1"><small>Medicamento mas suministrado</small></p>
+								<p class="text-uppercase text-muted mb-1"><small>Medicamento más suministrado</small></p>
 								<h5 class="font-weight-bold mb-0">{{$mas_sumunistrado->nombre}} ({{$mas_sumunistrado->suministrados}})</h5>
 							</div>
-						</div>
+						</a>
 					</div>
 
 				</div>

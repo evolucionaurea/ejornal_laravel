@@ -57,7 +57,7 @@
 
 			<div data-toggle="busqueda-filtros" class="d-flex row">
 
-				<div class="col-md-10 col-lg-7 d-flex">
+				<div class="col-lg-12 d-flex align-items-center">
 
 					<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
@@ -71,6 +71,12 @@
 						<option value="">--Seleccionar Estado--</option>
 						<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }} >Sólo Activos</option>
 						<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
+					</select>
+
+					<select name="fichada" class="form-control form-control-sm w-25 mr-2">
+						<option value="">--Seleccionar Fichaje--</option>
+						<option value="1" {{Request::get('fichada')=='1' ? 'selected' : '' }} >Fichada Activa</option>
+						<option value="0" {{Request::get('fichada')=='0' ? 'selected' : '' }} >Sin Fichar</option>
 					</select>
 
 					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
@@ -99,38 +105,7 @@
 				<!--Table head-->
 
 				<!--Table body-->
-				<tbody>
-					{{-- @foreach ($users as $user)
-					<tr>
-						<td>{{$user->nombre}}</td>
-						<td>{{$user->email}}</td>
-						<td>{{$user->especialidad}}</td>
-						<td>
-							@if ($user->estado == 1)
-							Activo
-							@else
-							Inactivo
-							@endif
-						</td>
-						<td>{{$user->rol}}</td>
-						<td class="acciones_tabla" scope="row">
-							<a title="Ver" href="{{route('users.show', $user->id)}}">
-								<i class="fas fa-eye"></i>
-							</a>
-							<a title="Editar" href="{{route('users.edit', $user->id)}}">
-								<i class="fas fa-pen"></i>
-							</a>
-							<form class="" action="{{route('users.destroy', $user->id)}}" method="post">
-								{{ csrf_field() }}
-								<input type="hidden" name="_method" value="DELETE">
-								<button title="Eliminar" type="submit">
-									<i class="fas fa-trash"></i>
-								</button>
-							</form>
-						</td>
-					</tr>
-					@endforeach --}}
-				</tbody>
+				<tbody></tbody>
 				<!--Table body-->
 			</table>
 		</div>

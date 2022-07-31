@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\StockMedicamento;
 
 class Medicamento extends Model
 {
@@ -12,5 +13,11 @@ class Medicamento extends Model
 
   // Campos habilitados para ingresar
   protected $fillable = ['nombre'];
+
+
+  public function stock_medicamento(){
+  	return $this->hasMany(StockMedicamento::class,'id_medicamento');
+  }
+
 
 }

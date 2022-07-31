@@ -23,9 +23,9 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	// USERS
 	Route::resource('admin/users', 'AdminUserController', [
-			'names' => [
-					'index' => '/admin/users'
-			]
+		'names' => [
+			'index' => '/admin/users'
+		]
 	]);
 	Route::delete('admin/users/destroy/{id}','AdminUserController@destroy');
 	Route::post('admin/users/busqueda','AdminUserController@busqueda');
@@ -58,6 +58,8 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 			]
 	]);
 	Route::get('admin/movimiento_medicamentos', 'AdminMovimientoMedicamentosController@index')->name('/admin/movimiento_medicamentos');
+	Route::delete('admin/medicamentos/destroy/{id}','AdminMedicamentosController@destroy');
+	Route::post('admin/medicamentos/busqueda','AdminMedicamentosController@busqueda');
 
 
 	Route::get('admin/cuenta', 'AdminCuentaController@index')->name('/admin/cuenta');

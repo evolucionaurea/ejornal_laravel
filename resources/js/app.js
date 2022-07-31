@@ -20,11 +20,11 @@ require('./documentacion_ausentismo.js');
 
 //ADMIN
 if(route=='/admin/clientes') require('./admin/admin_tablas')
-if(route=='/admin/medicamentos') require('./admin/admin_tablas')
+if(route=='/admin/medicamentos') require('./admin/medicamentos')
 if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
 if(route=='/admin/resumen') require('./admin/resumen')
 
-if(route=='/admin/users') require('./admin/users/index')
+if(route=='/admin/users') require('./admin/users')
 if(route=='users.create') require('./admin/users/create.edit')
 if(route=='users.edit') require('./admin/users/create.edit')
 

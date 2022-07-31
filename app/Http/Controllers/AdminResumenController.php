@@ -25,9 +25,9 @@ class AdminResumenController extends Controller
     $mas_sumunistrado = StockMedicamento::join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
     ->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
     ->where('stock_medicamentos.suministrados', $busqueda)
-    ->select('medicamentos.nombre', 'stock_medicamentos.suministrados')
+    ->select('medicamentos.id','medicamentos.nombre', 'stock_medicamentos.suministrados')
     ->first();
-    
+
     return view('admin.resumen', compact('clientes', 'enfermeros', 'medicos', 'enfermeros_trabajando', 'medicos_trabajando', 'mas_sumunistrado'));
   }
 
