@@ -43,8 +43,8 @@
 
 					<select name="stock" class="form-control form-control-sm w-25 mr-2">
 						<option value="">--C/S Stock--</option>
-						<option value="1" {{Request::get('stock')=='1' ? 'selected' : '' }} >Sin Stock</option>
-						<option value="0" {{Request::get('stock')=='0' ? 'selected' : '' }} >Con Stock</option>
+						<option value="1" {{Request::get('stock')=='1' ? 'selected' : '' }} >Con Stock</option>
+						<option value="0" {{Request::get('stock')=='0' ? 'selected' : '' }} >Sin Stock</option>
 					</select>
 
 

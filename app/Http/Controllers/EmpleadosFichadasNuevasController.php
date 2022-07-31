@@ -62,6 +62,7 @@ class EmpleadosFichadasNuevasController extends Controller
 
         //Actualizar en base
         $fichada = FichadaNueva::where('id_user', auth()->user()->id)->latest()->first();
+        //dd($fichada);
         $fichada->egreso = $egreso;
 
         $f_ingreso = new DateTime($fichada->ingreso);

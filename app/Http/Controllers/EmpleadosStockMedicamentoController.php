@@ -119,44 +119,44 @@ class EmpleadosStockMedicamentoController extends Controller
 
 	  if (isset($medicamento_existente) && !empty($medicamento_existente) && !is_null($medicamento_existente)) {
 
-		//Actualizar en base uno existente
-		$medicamento_existente->ingreso = $medicamento_existente->ingreso + $request->ingreso;
-		$medicamento_existente->stock = $medicamento_existente->stock + $request->ingreso;
-		$medicamento_existente->save();
+			//Actualizar en base uno existente
+			$medicamento_existente->ingreso = $medicamento_existente->ingreso + $request->ingreso;
+			$medicamento_existente->stock = $medicamento_existente->stock + $request->ingreso;
+			$medicamento_existente->save();
 
-		//Actualizar en base el historial
-		$stock_medicamentos_historial = new StockMedicamentoHistorial();
-		$stock_medicamentos_historial->id_stock_medicamentos = $medicamento_existente->id;
-		$stock_medicamentos_historial->ingreso = $request->ingreso;
-		$stock_medicamentos_historial->fecha_ingreso = $fecha_ingreso;
-		$stock_medicamentos_historial->motivo = $request->motivo;
-		$stock_medicamentos_historial->save();
+			//Actualizar en base el historial
+			$stock_medicamentos_historial = new StockMedicamentoHistorial();
+			$stock_medicamentos_historial->id_stock_medicamentos = $medicamento_existente->id;
+			$stock_medicamentos_historial->ingreso = $request->ingreso;
+			$stock_medicamentos_historial->fecha_ingreso = $fecha_ingreso;
+			$stock_medicamentos_historial->motivo = $request->motivo;
+			$stock_medicamentos_historial->save();
 
-	  }else {
-		//Guardar en base La primera vez que se crea
-		$stock_medicamento = new StockMedicamento();
-		$stock_medicamento->id_medicamento = $request->medicamento;
-		$stock_medicamento->id_user = auth()->user()->id;
-		$stock_medicamento->id_cliente = auth()->user()->id_cliente_actual;
-		$stock_medicamento->ingreso = $request->ingreso;
-		$stock_medicamento->stock = $request->ingreso;
-		$stock_medicamento->suministrados = 0;
-		$stock_medicamento->egreso = 0;
-		$stock_medicamento->fecha_ingreso = $fecha_ingreso;
-		$stock_medicamento->motivo = $request->motivo;
-		$stock_medicamento->save();
+		  }else {
+			//Guardar en base La primera vez que se crea
+			$stock_medicamento = new StockMedicamento();
+			$stock_medicamento->id_medicamento = $request->medicamento;
+			$stock_medicamento->id_user = auth()->user()->id;
+			$stock_medicamento->id_cliente = auth()->user()->id_cliente_actual;
+			$stock_medicamento->ingreso = $request->ingreso;
+			$stock_medicamento->stock = $request->ingreso;
+			$stock_medicamento->suministrados = 0;
+			$stock_medicamento->egreso = 0;
+			$stock_medicamento->fecha_ingreso = $fecha_ingreso;
+			$stock_medicamento->motivo = $request->motivo;
+			$stock_medicamento->save();
 
 
-		//Guardar en base
-		$stock_medicamentos_historial = new StockMedicamentoHistorial();
-		$stock_medicamentos_historial->id_stock_medicamentos = $stock_medicamento->id;
-		$stock_medicamentos_historial->ingreso = $request->ingreso;
-		$stock_medicamentos_historial->stock = $request->ingreso;
-		$stock_medicamentos_historial->suministrados = 0;
-		$stock_medicamentos_historial->egreso = 0;
-		$stock_medicamentos_historial->fecha_ingreso = $fecha_ingreso;
-		$stock_medicamentos_historial->motivo = $request->motivo;
-		$stock_medicamentos_historial->save();
+			//Guardar en base
+			$stock_medicamentos_historial = new StockMedicamentoHistorial();
+			$stock_medicamentos_historial->id_stock_medicamentos = $stock_medicamento->id;
+			$stock_medicamentos_historial->ingreso = $request->ingreso;
+			$stock_medicamentos_historial->stock = $request->ingreso;
+			$stock_medicamentos_historial->suministrados = 0;
+			$stock_medicamentos_historial->egreso = 0;
+			$stock_medicamentos_historial->fecha_ingreso = $fecha_ingreso;
+			$stock_medicamentos_historial->motivo = $request->motivo;
+			$stock_medicamentos_historial->save();
 	  }
 
 

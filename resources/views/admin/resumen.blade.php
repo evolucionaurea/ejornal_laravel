@@ -66,6 +66,7 @@
 						</a>
 					</div>
 
+					@if($mas_sumunistrado)
 					<div class="col-lg-3 col-md-6 mb-4">
 						<a href="{{ route('/admin/medicamentos',['medicamento'=>$mas_sumunistrado->id]) }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-pills fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
@@ -75,6 +76,7 @@
 							</div>
 						</a>
 					</div>
+					@endif
 
 				</div>
 				<div class="row">

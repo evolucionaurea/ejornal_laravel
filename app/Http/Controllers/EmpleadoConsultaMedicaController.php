@@ -107,7 +107,7 @@ class EmpleadoConsultaMedicaController extends Controller
 				$medicaciones = explode(",", $value);
 				$suministrados[] = [
 					'id_medicamento' => $medicaciones[0],
-					'suministrados' => $medicaciones[1]
+					'suministrados' => (int) $medicaciones[1]
 				];
 			}
 		}

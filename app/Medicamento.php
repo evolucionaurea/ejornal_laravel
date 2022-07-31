@@ -15,8 +15,13 @@ class Medicamento extends Model
   protected $fillable = ['nombre'];
 
 
-  public function stock_medicamento(){
+  public function stock_medicamento()
+  {
   	return $this->hasMany(StockMedicamento::class,'id_medicamento');
+  }
+  public function total_suministrados()
+  {
+  	return $this->hasMany(StockMedicamento::class,'id_medicamento')->sum('suministrados');
   }
 
 
