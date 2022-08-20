@@ -28,6 +28,8 @@ if(route=='/admin/users') require('./admin/users')
 if(route=='users.create') require('./admin/users/create.edit')
 if(route=='users.edit') require('./admin/users/create.edit')
 
+if(route=='grupos.create') require('./admin/grupos/create.edit')
+
 /*const url = location.href;
 const admin = 'admin/users';
 const cliente = 'admin/clientes';

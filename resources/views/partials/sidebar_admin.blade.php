@@ -53,6 +53,23 @@
 				</ul>
 			</div>
 		</li>
+		<li class="{{ setActive('/admin/grupos') }} dropdownMenu">
+			<div class="dropdownButton">
+				<i class="fas fa-building"></i>
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">Grupos</a>
+				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+			</div>
+			<div class="dropdownContent">
+				<ul>
+					<ol class="{{ setActiveSub('/admin/grupos') }}" onclick="javascript:location.href='{{url('/admin/grupos')}}'">
+						<a href="{{url('/admin/grupos')}}">Listado</a>
+					</ol>
+					<ol class="{{ setActiveSub('/admin/grupos/create') }}" onclick="javascript:location.href='{{url('/admin/create')}}'">
+						<a href="{{url('/admin/grupos/create')}}">Crear grupo</a>
+					</ol>
+				</ul>
+			</div>
+		</li>
 		<li class="{{ setActive('/admin/medicamentos') }} dropdownMenu">
 			<div class="dropdownButton">
 				<i class="fas fa-clinic-medical"></i>

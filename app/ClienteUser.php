@@ -11,6 +11,6 @@ class ClienteUser extends Model
   protected $table = 'cliente_user';
 
   // Campos habilitados para ingresar
-  protected $fillable = ['id_cliente', 'id_user'];
+  protected $fillable = ['id_cliente', 'id_user', 'id_grupo'];
 
 }

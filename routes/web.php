@@ -50,6 +50,13 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::post('admin/clientes/cargar_excel', 'AdminClientesController@cargar_excel')->name('/admin/clientes/cargar_excel');
 	Route::post('admin/generar_token', 'AdminClientesController@generarToken')->name('/admin/generar_token');
 
+	// GRUPOS
+	Route::resource('admin/grupos', 'AdminGruposController', [
+			'names' => [
+					'index' => '/admin/grupos'
+			]
+	]);
+
 	Route::delete('admin/delete_token', 'AdminClientesController@deleteToken')->name('delete_token');
 
 	Route::resource('admin/medicamentos', 'AdminMedicamentosController', [
