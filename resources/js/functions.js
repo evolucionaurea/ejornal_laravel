@@ -66,3 +66,7 @@ window.get_template = template => {
 			});
 	});
 }
+String.prototype.capitalize = function(){
+  const lower = this.toLowerCase();
+  return this.charAt(0).toUpperCase() + lower.slice(1);
+}

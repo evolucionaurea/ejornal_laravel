@@ -55,34 +55,79 @@
 		<div class="tarjeta">
 
 
-			<div data-toggle="busqueda-filtros" class="d-flex row">
+			<div data-toggle="busqueda-filtros" class="row align-items-center">
 
-				<div class="col-lg-12 d-flex align-items-center">
+				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-					<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-					<select name="especialidad" class="form-control form-control-sm w-25 mr-2">
-						<option value="">--Seleccionar Especialidad--</option>
-						<option value="2" {{Request::get('especialidad')==2 ? 'selected' : '' }}>Enfermero</option>
-						<option value="1" {{Request::get('especialidad')==1 ? 'selected' : '' }}>Médico</option>
-					</select>
+				<div class="col-lg-9 border-right">
 
-					<select name="estado" class="form-control form-control-sm w-25 mr-2">
-						<option value="">--Seleccionar Estado--</option>
-						<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }} >Sólo Activos</option>
-						<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
-					</select>
+					<div class="row">
 
-					<select name="fichada" class="form-control form-control-sm w-25 mr-2">
-						<option value="">--Seleccionar Fichaje--</option>
-						<option value="1" {{Request::get('fichada')=='1' ? 'selected' : '' }} >Fichada Activa</option>
-						<option value="0" {{Request::get('fichada')=='0' ? 'selected' : '' }} >Sin Fichar</option>
-					</select>
+						<div class="col-lg-4 form-group">
+							<select name="especialidad" class="form-control form-control-sm">
+								<option value="">--Seleccionar Especialidad--</option>
+								<option value="2" {{Request::get('especialidad')==2 ? 'selected' : '' }}>Enfermero</option>
+								<option value="1" {{Request::get('especialidad')==1 ? 'selected' : '' }}>Médico</option>
+							</select>
+						</div>
 
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+						<div class="col-lg-4 form-group">
+							<select name="estado" class="form-control form-control-sm">
+								<option value="">--Seleccionar Estado--</option>
+								<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }} >Sólo Activos</option>
+								<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
+							</select>
+						</div>
 
+						<div class="col-lg-4 form-group">
+							<select name="fichada" class="form-control form-control-sm">
+								<option value="">--Seleccionar Fichaje--</option>
+								<option value="1" {{Request::get('fichada')=='1' ? 'selected' : '' }} >Fichada Activa</option>
+								<option value="0" {{Request::get('fichada')=='0' ? 'selected' : '' }} >Sin Fichar</option>
+							</select>
+						</div>
+
+						<div class="col-lg-4 form-group">
+							<select name="rol" class="form-control form-control-sm">
+								<option value="">--Seleccionar Rol--</option>
+								@if($roles) @foreach($roles as $rol)
+								<option value="{{$rol->id}}" {{Request::get('rol')==$rol->id ? 'selected' : '' }} >{{$rol->nombre}}</option>
+								@endforeach @endif
+							</select>
+						</div>
+
+						<div class="col-lg-4 form-group">
+							<select name="grupo" class="form-control form-control-sm">
+								<option value="">--Seleccionar Grupo--</option>
+								@if($grupos) @foreach($grupos as $grupo)
+								<option value="{{$grupo->id}}" {{Request::get('grupo')==$grupo->id ? 'selected' : '' }} >{{$grupo->nombre}}</option>
+								@endforeach @endif
+							</select>
+						</div>
+
+						<div class="col-lg-4 form-group">
+							<select name="cliente" class="form-control form-control-sm">
+								<option value="">--Seleccionar Cliente--</option>
+								@if($clientes) @foreach($clientes as $cliente)
+								<option value="{{$cliente->id}}" {{Request::get('cliente')==$cliente->id ? 'selected' : '' }} >{{$cliente->nombre}}</option>
+								@endforeach @endif
+							</select>
+						</div>
+
+					</div>
 				</div>
+
+				<div class="col-lg-3">
+					<div class="form-group">
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+					</div>
+				</div>
+
+
+
+
 			</div>
 
 			<hr>
@@ -98,7 +143,7 @@
 						<th>Email</th>
 						<th>Especialidad</th>
 						<th>Estado</th>
-						<th>Rol</th>
+						<th style="width:120px">Rol</th>
 						<th>Acciones</th>
 					</tr>
 				</thead>

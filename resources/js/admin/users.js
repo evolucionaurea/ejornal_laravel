@@ -9,13 +9,27 @@ $(()=>{
 		datatable_options:{order:false},
 		delete_message:'¿Seguro deseas borrar este usuario?',
 		render_row:user=>{
+
+			let clientes = [];
+
+			user.clientes_user.map(cliente=>{
+				clientes.push(cliente.nombre)
+			})
+			/*if(user.rol=='cliente'){
+
+				clientes = '[clientes]';
+			}*/
+
 			return $(`
 				<tr>
 				<td>${user.nombre}</td>
 				<td>${user.email}</td>
 				<td>${user.especialidad!=null?user.especialidad:''}</td>
 				<td><span class="tag_ejornal tag_ejornal_${user.estado==1?'success':'danger'}">${user.estado==1?'Activo':'Inactivo'}</span></td>
-				<td>${user.rol}</td>
+				<td>
+					<div><b>${user.rol.capitalize()}</b></div>
+					<div class="small text-muted font-italic">${clientes.join(', ')}</div>
+				</td>
 
 				<td class="acciones_tabla" scope="row">
 					<a title="Ver" href="users/${user.id}/edit">

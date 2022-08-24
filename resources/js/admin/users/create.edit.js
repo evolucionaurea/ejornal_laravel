@@ -8,7 +8,7 @@ $(()=>{
 
 	const fields = [
 		{roles:[2],class:'.mostrar_personal_interno'},
-		{roles:[2],class:'.mostrar_clientes'},
+		{roles:[2,3],class:'.mostrar_clientes'},
 		{roles:[2],class:'.mostrar_permiso_desplegables'},
 		{roles:[2],class:'.mostrar_especialidades'},
 		{roles:[2],class:'.mostrar_cuil'},
@@ -40,9 +40,9 @@ $(()=>{
 		placeholder: 'Buscar...'
 	}).trigger('change');
 
-	$('#select_cliente_original').select2({
+	/*$('#select_cliente_original').select2({
 		placeholder: 'Buscar...'
-	}).trigger('change');
+	}).trigger('change');*/
 
 
 

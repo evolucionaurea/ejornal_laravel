@@ -35,7 +35,7 @@
 		<div class="tarjeta">
 			<form action="{{action('AdminUserController@store')}}" accept-charset="UTF-8" method="post">
 			@csrf
-			<div class="form-row">
+			<div class="form-row align-items-center">
 				<div class="form-group col-md-3">
 					<label>Nombre completo</label>
 					<input name="nombre" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nombre')}}">
@@ -75,7 +75,7 @@
 					<label>Confirmar contraseña</label>
 					<input name="cpassword" type="password" class="form-control form-control-sm" placeholder="">
 				</div>
-				<div class="form-group col-md-3 cliente_original">
+				{{-- <div class="form-group col-md-3 cliente_original">
 				  <label>Seleccione el cliente</label>
 				  <br>
 				  <select style="max-width: 500px; min-width: 300px;" id="select_cliente_original" name="id_cliente_original">
@@ -83,7 +83,7 @@
 					  <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
 					@endforeach
 				  </select>
-				</div>
+				</div> --}}
 				<div class="form-group col-md-2 mostrar_personal_interno">
 					<div class="form-check">
 						<input name="personal_interno" class="form-check-input" type="checkbox" id="personal_interno_check">
