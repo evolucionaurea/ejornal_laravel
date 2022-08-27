@@ -27,6 +27,16 @@ $(()=>{
 				$(field.class).removeClass('d-none')
 			}
 		})
+		switch (roleid) {
+			case 2:
+				$('.mostrar_clientes label').text('¿Para quien trabajará?');
+				break;
+			case 3:
+				$('.mostrar_clientes label').text('¿Este usuario a que Cliente pertenece?');
+				break;
+			default:
+
+		}
 	}
 	mostrar_ocultar_campos($('[name="rol"]').val())
 

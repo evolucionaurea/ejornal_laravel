@@ -70,24 +70,12 @@ class AdminGruposController extends Controller
       $cliente->save();
     }
 
-    foreach ($request->clientes as $value) {
-      $clientes = ClienteUser::where('id_cliente', $value)->get();
-      foreach ($clientes as $valor) {
-        $valor->id_grupo = $grupo->id;
-        $valor->save();
-      }
-
-      //Guardar en base
-      $grupo = new Grupo();
-      $grupo->nombre = $request->nombre;
-      $grupo->direccion = $request->direccion;
-      $grupo->save();
-
-      foreach ($request->clientes as $value) {
-        $cliente = Cliente::findOrFail($value);
-        $cliente->id_grupo = $grupo->id;
-        $cliente->save();
-      }
+    // foreach ($request->clientes as $value) {
+    //   $clientes = ClienteUser::where('id_cliente', $value)->get();
+    //   foreach ($clientes as $valor) {
+    //     $valor->id_grupo = $grupo->id;
+    //     $valor->save();
+    //   }
 
       foreach ($request->clientes as $value) {
         $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
@@ -99,9 +87,6 @@ class AdminGruposController extends Controller
           $cliente_user->save();
         }
       }
-
-      return redirect('admin/grupos')->with('success', 'Grupo guardado con éxito');
-    }
 
     return redirect('admin/grupos')->with('success', 'Grupo guardado con éxito');
   }
@@ -122,10 +107,18 @@ class AdminGruposController extends Controller
       return view('admin.grupos.edit', compact('grupo', 'clientes', 'clientes_seleccionados'));
     }
 
-    return view('admin.grupos.edit', compact('grupo'));
-  }
 
-      if (count($request->clientes) == 0) {
+
+
+    public function update(Request $request, $id)
+    {
+
+      $validatedData = $request->validate([
+        'nombre' => 'required|string',
+        'direccion' => 'required|string'
+      ]);
+
+      if (!$request->clientes || count($request->clientes) == 0) {
         return back()->with('error', 'Debes asociar clientes a este grupo empresario');
       }
 
@@ -157,18 +150,15 @@ class AdminGruposController extends Controller
       // }
 
       foreach ($request->clientes as $value) {
-        $clientes = ClienteUser::where('id_cliente', $value)->get();
-        foreach ($clientes as $valor) {
-          $validar_si_es_cliente = User::find($valor->id_user)->select('id', 'id_rol')->first();
-          if ($validar_si_es_cliente->id_rol == 3) {
-            $valor->id_grupo = $grupo->id;
-            $valor->save();
-          }
+        $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
+        if ($buscar_user !== null) {
+          $cliente_user = new ClienteUser();
+          $cliente_user->id_cliente = $value;
+          $cliente_user->id_user = $buscar_user->id;
+          $cliente_user->id_grupo = $grupo->id;
+          $cliente_user->save();
         }
       }
-
-      return redirect('admin/grupos')->with('success', 'Grupo actualizado con éxito');
-    }
 
     return redirect('admin/grupos')->with('success', 'Grupo actualizado con éxito');
   }
