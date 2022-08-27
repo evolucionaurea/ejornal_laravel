@@ -10,6 +10,7 @@ use App\Cliente;
 use App\ClienteUser;
 use App\Especialidad;
 use App\FichadaNueva;
+use App\Grupo;
 use Illuminate\Support\Facades\DB;
 
 class AdminUserController extends Controller
@@ -21,22 +22,33 @@ class AdminUserController extends Controller
 	 */
 	public function index()
 	{
-			$users = User::join('roles', 'users.id_rol', '=', 'roles.id')
-			->leftJoin('especialidades', 'users.id_especialidad', 'especialidades.id')
-			->select('users.*', DB::raw( 'roles.nombre rol'), DB::raw( 'especialidades.nombre especialidad'))
-			->orderBy('nombre')
-			->get();
 
-			$users_sin_empresas = [];
-			foreach ($users as $user) {
-				if ($user->id_rol == 2) {
-					if ($user->id_cliente_actual == null) {
-						$users_sin_empresas[] = $user;
-					}
+		/*$users = User::where('id',111)->get();
+		$user = $users[0];
+		$user->clientes =  $user->clientes_user()->get()->toArray();
+		dd($user);*/
+
+
+		$users = User::join('roles', 'users.id_rol', '=', 'roles.id')
+		->leftJoin('especialidades', 'users.id_especialidad', 'especialidades.id')
+		->select('users.*', DB::raw( 'roles.nombre rol'), DB::raw( 'especialidades.nombre especialidad'))
+		->orderBy('nombre')
+		->get();
+
+		$users_sin_empresas = [];
+		foreach ($users as $user) {
+			if ($user->id_rol == 2) {
+				if ($user->id_cliente_actual == null) {
+					$users_sin_empresas[] = $user;
 				}
 			}
+		}
 
-			return view('admin.users', compact('users', 'users_sin_empresas'));
+		$roles = Rol::all();
+		$clientes = Cliente::all();
+		$grupos = Grupo::all();
+
+		return view('admin.users', compact('users', 'users_sin_empresas', 'roles', 'clientes', 'grupos'));
 	}
 	public function busqueda(Request $request)
 	{
@@ -50,7 +62,11 @@ class AdminUserController extends Controller
 		if(isset($request->estado)) $query_users->where('users.estado',$request->estado);
 		if(isset($request->fichada)) $query_users->where('users.fichada',$request->fichada);
 
-		$users = $query_users->get();
+		if(isset($request->rol)) $query_users->where('users.id_rol',$request->rol);
+		//if(isset($request->grupo)) $query_users->where('users.fichada',$request->fichada);
+		//if(isset($request->cliente)) $query_users->where('users.fichada',$request->fichada);
+
+		$users = $query_users->with('clientes_user')->get();
 
 		return [
 			'results'=>$users,
@@ -135,12 +151,12 @@ class AdminUserController extends Controller
 			$user->contratacion = null;
 		}
 		if ($request->rol == 3) {
-			$user->id_cliente_relacionar = $request->id_cliente_original;
+			//$user->id_cliente_relacionar = $request->id_cliente_original;
 		}
 		$user->save();
 
 		//Guardar en base relacion con cliente y usuario para saber donde trabajará
-		if ($request->rol == 2) {
+		if ($request->rol == 2 || $request->rol == 3) {
 			$clientes_seleccionados = $request->clientes;
 			foreach ($clientes_seleccionados as $key => $value) {
 				$cliente_user = new ClienteUser();

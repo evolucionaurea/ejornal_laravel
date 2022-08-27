@@ -76,7 +76,7 @@ export default class Tablas {
 	}
 	render_table(data){
 
-		console.log(data)
+		//console.log(data)
 
 
 		this.table.find('tbody').remove()
