@@ -55,7 +55,15 @@
                         <div class="col-lg-4 col-sm-12">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
-                                    <b>Empresa: </b> {{$cliente->nombre}}
+                                    <b>Grupo empresario: </b>
+                                    @if ($grupo != null)
+                                      {{$grupo->nombre}}
+                                      @else
+                                      {{'No forma parte de un grupo'}}
+                                    @endif
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Cliente: </b> {{$cliente->nombre}}
                                 </li>
                                 <li class="list-group-item">
                                     <b>Dirección: </b> {{$cliente->direccion}}</li>

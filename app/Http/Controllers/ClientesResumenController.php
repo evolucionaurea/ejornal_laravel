@@ -24,9 +24,19 @@ class ClientesResumenController extends Controller
 		{
 
 			$cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
-			->select('clientes.nombre')
+			->select('clientes.nombre', 'clientes.id_grupo')
 			->first();
 
+			// if ($cliente->id_grupo === null) {
+			// 	$grupo = [];
+			// }else {
+			// 	$clientes_users = ClienteUser::where('id_grupo', $cliente->id_grupo)->get();
+			//
+			// 	foreach ($clientes_users as $value) {
+			// 		$users_del_grupo[] = User::find($value->id_user);
+			// 	}
+			//
+			// }
 
 			$inicio_mes_pasado = new Carbon('first day of last month');
 			$inicio_mes_pasado->startOfMonth();

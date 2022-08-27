@@ -50,7 +50,7 @@
 						</th>
 						<th class="th-lg">
 							<a href="">
-								Empresas asociadas
+								Clientes asociados
 								<i class="fas fa-sort ml-1"></i>
 							</a>
 						</th>

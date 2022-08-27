@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Grupo;
 use App\Cliente;
 use App\ClienteUser;
+use App\User;
 use Illuminate\Support\Facades\DB;
 
 class AdminGruposController extends Controller
@@ -70,10 +71,13 @@ class AdminGruposController extends Controller
       }
 
       foreach ($request->clientes as $value) {
-        $clientes = ClienteUser::where('id_cliente', $value)->get();
-        foreach ($clientes as $valor) {
-          $valor->id_grupo = $grupo->id;
-          $valor->save();
+        $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
+        if ($buscar_user !== null) {
+          $cliente_user = new ClienteUser();
+          $cliente_user->id_cliente = $value;
+          $cliente_user->id_user = $buscar_user->id;
+          $cliente_user->id_grupo = $grupo->id;
+          $cliente_user->save();
         }
       }
 
@@ -100,8 +104,11 @@ class AdminGruposController extends Controller
     public function edit($id)
     {
       $grupo = Grupo::findOrFail($id);
+      $busqueda = Cliente::where('id_grupo', $id)->select('id')->get();
+      $clientes_seleccionados = array_column($busqueda->toArray(), 'id');
+      $clientes = Cliente::all();
 
-      return view('admin.grupos.edit', compact('grupo'));
+      return view('admin.grupos.edit', compact('grupo', 'clientes', 'clientes_seleccionados'));
     }
 
     /**
@@ -118,11 +125,47 @@ class AdminGruposController extends Controller
         'direccion' => 'required|string'
       ]);
 
+      if (count($request->clientes) == 0) {
+        return back()->with('error', 'Debes asociar clientes a este grupo empresario');
+      }
+
       //Actualizar en base
       $grupo = Grupo::findOrFail($id);
       $grupo->nombre = $request->nombre;
       $grupo->direccion = $request->direccion;
       $grupo->save();
+
+      Cliente::where('id_grupo',$id)->update(['id_grupo'=>null]);
+      ClienteUser::where('id_grupo',$id)->update(['id_grupo'=>null]);
+
+      foreach ($request->clientes as $value) {
+        $cliente = Cliente::findOrFail($value);
+        $cliente->id_grupo = $grupo->id;
+        $cliente->save();
+      }
+
+
+      // foreach ($request->clientes as $value) {
+      //   $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
+      //   if ($buscar_user !== null) {
+      //     $cliente_user = ClienteUser::where('id_cliente', '')->where('id_user', '');
+      //     $cliente_user->id_cliente = $value;
+      //     $cliente_user->id_user = $buscar_user->id;
+      //     $cliente_user->id_grupo = $grupo->id;
+      //     $cliente_user->save();
+      //   }
+      // }
+
+      foreach ($request->clientes as $value) {
+        $clientes = ClienteUser::where('id_cliente', $value)->get();
+        foreach ($clientes as $valor) {
+          $validar_si_es_cliente = User::find($valor->id_user)->select('id', 'id_rol')->first();
+          if ($validar_si_es_cliente->id_rol == 3) {
+            $valor->id_grupo = $grupo->id;
+            $valor->save();
+          }
+        }
+      }
 
       return redirect('admin/grupos')->with('success', 'Grupo actualizado con éxito');
     }

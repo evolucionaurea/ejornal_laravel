@@ -29,6 +29,7 @@ if(route=='users.create') require('./admin/users/create.edit')
 if(route=='users.edit') require('./admin/users/create.edit')
 
 if(route=='grupos.create') require('./admin/grupos/create.edit')
+if(route=='grupos.edit') require('./admin/grupos/create.edit')
 
 /*const url = location.href;
 const admin = 'admin/users';

@@ -7,6 +7,7 @@ use App\Cliente;
 use App\Nomina;
 use App\ClienteUser;
 use App\User;
+use App\Grupo;
 use Illuminate\Support\Str;
 
 class AdminClientesController extends Controller
@@ -68,6 +69,7 @@ class AdminClientesController extends Controller
         $cliente = Cliente::findOrFail($id);
         $trabajadores = Nomina::where('id_cliente', $id)->get();
         $cliente_user = ClienteUser::where('id_cliente', $id)->get();
+        $grupo = Grupo::find($cliente->id_grupo);
 
         if (!empty($cliente_user) && count($cliente_user) > 0) {
           foreach ($cliente_user as $user) {
@@ -87,7 +89,7 @@ class AdminClientesController extends Controller
         }
 
 
-        return view('admin.clientes.show', compact('cliente', 'trabajadores', 'empleados'));
+        return view('admin.clientes.show', compact('cliente', 'trabajadores', 'empleados', 'grupo'));
     }
 
     /**
