@@ -94,7 +94,7 @@
 					  <div class="form-group col-lg-3 col-md-4 col-sm-12 cliente_original">
 						<label>Representa al cliente</label>
 						<br>
-						<select disabled style="max-width: 500px; min-width: 300px;" id="select_cliente_original" name="id_cliente_original">
+						<select disabled class="form-control form-control-sm" id="select_cliente_original" name="id_cliente_original">
 						  @foreach ($clientes as $cliente)
 							@if ($cliente->id == $user->id_cliente_relacionar)
 							  <option selected value="{{$cliente->id}}">{{$cliente->nombre}}</option>
@@ -103,6 +103,18 @@
 						</select>
 					  </div>
 					@endif
+
+					@if ($user->id_grupo != null)
+					  <div class="form-group col-lg-3 col-md-4 col-sm-12 grupos">
+						<label>Pertenece al grupo</label>
+						<br>
+						<select disabled class="form-control form-control-sm" name="id_grupo">
+							<option selected value="{{$user->id_grupo}}">{{$user->grupo->nombre}}</option>
+						</select>
+					  </div>
+					@endif
+
+
 					<div class="form-group col-lg-4 col-md-6 col-sm-12 mostrar_personal_interno">
 						<div class="form-check">
 							<input class="check_personal_interno" name="personal_interno" class="form-check-input" type="checkbox" id="gridCheck" {{$user->personal_interno ? 'checked' : '' }}>

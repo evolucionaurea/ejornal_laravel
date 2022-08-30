@@ -8,13 +8,14 @@ $(()=>{
 
 	const fields = [
 		{roles:[2],class:'.mostrar_personal_interno'},
-		{roles:[2,3],class:'.mostrar_clientes'},
+		{roles:[2],class:'.mostrar_clientes'},
 		{roles:[2],class:'.mostrar_permiso_desplegables'},
 		{roles:[2],class:'.mostrar_especialidades'},
 		{roles:[2],class:'.mostrar_cuil'},
 		{roles:[3],class:'.cliente_original'},
 		{roles:[2],class:'.select_contratacion_users'},
-		{roles:[2],class:'.liquidacion_onedrive_creacion_users'}
+		{roles:[2],class:'.liquidacion_onedrive_creacion_users'},
+		{roles:[4],class:'.grupos'}
 	]
 
 	let mostrar_ocultar_campos = roleid=>{

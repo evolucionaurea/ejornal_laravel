@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\ClienteUser;
 use App\Cliente;
+use App\Grupo;
 
 class User extends Authenticatable
 {
@@ -42,4 +43,12 @@ class User extends Authenticatable
 	{
 		return $this->hasManyThrough(Cliente::class, ClienteUser::class, 'id_user', 'id', 'id', 'id_cliente');
 	}
+
+
+	public function grupo()
+	{
+		return $this->belongsTo(Grupo::class,'id_grupo');
+	}
+
+
 }

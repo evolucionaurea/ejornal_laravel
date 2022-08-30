@@ -66,7 +66,7 @@ class AdminUserController extends Controller
 		//if(isset($request->grupo)) $query_users->where('users.fichada',$request->fichada);
 		//if(isset($request->cliente)) $query_users->where('users.fichada',$request->fichada);
 
-		$users = $query_users->with('clientes_user')->get();
+		$users = $query_users->with('clientes_user')->with('grupo')->get();
 
 		return [
 			'results'=>$users,
@@ -85,7 +85,8 @@ class AdminUserController extends Controller
 		$roles = Rol::all();
 		$clientes = Cliente::all();
 		$especialidades = Especialidad::all();
-		return view('admin.users.create', compact('roles', 'clientes', 'especialidades'));
+		$grupos = Grupo::all();
+		return view('admin.users.create', compact('roles', 'clientes', 'especialidades', 'grupos'));
 	}
 
 	/**
@@ -151,12 +152,16 @@ class AdminUserController extends Controller
 			$user->contratacion = null;
 		}
 		if ($request->rol == 3) {
-			//$user->id_cliente_relacionar = $request->id_cliente_original;
+			$user->id_cliente_relacionar = $request->id_cliente_original;
 		}
+		if($request->rol==4){
+			$user->id_grupo = $request->id_grupo;
+		}
+
 		$user->save();
 
 		//Guardar en base relacion con cliente y usuario para saber donde trabajará
-		if ($request->rol == 2 || $request->rol == 3) {
+		if ($request->rol == 2 ) {
 			$clientes_seleccionados = $request->clientes;
 			foreach ($clientes_seleccionados as $key => $value) {
 				$cliente_user = new ClienteUser();
@@ -165,6 +170,8 @@ class AdminUserController extends Controller
 				$cliente_user->save();
 			}
 		}
+
+
 
 		return redirect('admin/users')->with('success', 'Usuario guardado con éxito');
 
@@ -180,8 +187,9 @@ class AdminUserController extends Controller
 	{
 		$user = User::where('users.id', $id)
 		->join('roles', 'users.id_rol', 'roles.id')
+		->join('grupos', 'grupos.id_grupo', 'grupos.id')
 		->select('users.nombre', 'users.cuil', 'users.estado', 'users.email', 'users.dni', DB::raw('roles.nombre rol'),
-		'users.id_rol', 'users.id_cliente_relacionar')
+		'users.id_rol', 'users.id_cliente_relacionar', 'grupos.nombre grupo')
 		->first();
 
 		switch ($user->id_rol) {

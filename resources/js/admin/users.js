@@ -11,6 +11,7 @@ $(()=>{
 		render_row:user=>{
 
 			let clientes = [];
+			let grupo = '';
 
 			user.clientes_user.map(cliente=>{
 				clientes.push(cliente.nombre)
@@ -19,6 +20,8 @@ $(()=>{
 
 				clientes = '[clientes]';
 			}*/
+
+			if(user.grupo!=null) grupo = user.grupo.nombre
 
 			return $(`
 				<tr>
@@ -29,6 +32,7 @@ $(()=>{
 				<td>
 					<div><b>${user.rol.capitalize()}</b></div>
 					<div class="small text-muted font-italic">${clientes.join(', ')}</div>
+					<div class="small text-muted font-italic">${grupo}</div>
 				</td>
 
 				<td class="acciones_tabla" scope="row">

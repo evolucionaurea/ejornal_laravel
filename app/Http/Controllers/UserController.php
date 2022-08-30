@@ -31,18 +31,22 @@ class UserController extends Controller
           switch ($user->id_rol) {
             // Administrador
             case 1:
-            return Redirect::route('/admin/resumen');
-            break;
+              return Redirect::route('/admin/resumen');
+              break;
 
             // Empleado
             case 2:
-            return Redirect::route('/empleados/resumen');
-            break;
+              return Redirect::route('/empleados/resumen');
+              break;
 
             // Clientes
             case 3:
-            return Redirect::route('/clientes/resumen');
-            break;
+              return Redirect::route('/clientes/resumen');
+              break;
+
+            case 4:
+              return Redirect::route('/grupos/resumen');
+              break;
 
             default:
             return redirect('/')->with('error', 'Hubo un problema con su usuario. Inténtelo de nuevo o pongase en contacto');

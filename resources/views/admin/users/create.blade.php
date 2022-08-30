@@ -34,108 +34,130 @@
 
 		<div class="tarjeta">
 			<form action="{{action('AdminUserController@store')}}" accept-charset="UTF-8" method="post">
-			@csrf
-			<div class="form-row align-items-center">
-				<div class="form-group col-md-3">
-					<label>Nombre completo</label>
-					<input name="nombre" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nombre')}}">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Email</label>
-					<input name="email" type="email" class="form-control form-control-sm" placeholder="" value="{{old('email')}}">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Estado</label>
-					<select name="estado" class="form-control form-control-sm">
-						<option value="1">Activo</option>
-						<option value="0">Inactivo</option>
-					</select>
-				</div>
-				<div class="form-group col-md-3">
-					<label>Rol</label>
-					<select name="rol" class="form-control form-control-sm capturar_rol">
-						@foreach ($roles as $rol)
-						<option value="{{$rol->id}}">{{$rol->nombre}}</option>
-						@endforeach
-					</select>
-				</div>
-				<div class="form-group col-md-4 select_contratacion_users">
-				  <label>Contratación</label>
-				  <select name="contratacion" class="form-control form-control-sm">
-					<option value="0">--Seleccione--</option>
-					<option value="1">Efectivo</option>
-					<option value="2">Eventual</option>
-				  </select>
-				</div>
-				<div class="form-group col-md-4">
-					<label>Contraseña</label>
-					<input name="password" type="password" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-4">
-					<label>Confirmar contraseña</label>
-					<input name="cpassword" type="password" class="form-control form-control-sm" placeholder="">
-				</div>
-				{{-- <div class="form-group col-md-3 cliente_original">
-				  <label>Seleccione el cliente</label>
-				  <br>
-				  <select style="max-width: 500px; min-width: 300px;" id="select_cliente_original" name="id_cliente_original">
-					@foreach ($clientes as $cliente)
-					  <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
-					@endforeach
-				  </select>
-				</div> --}}
-				<div class="form-group col-md-2 mostrar_personal_interno">
-					<div class="form-check">
-						<input name="personal_interno" class="form-check-input" type="checkbox" id="personal_interno_check">
-						<label class="form-check-label" for="personal_interno_check">Personal interno</label>
+				@csrf
+				<div class="form-row align-items-center">
+					<div class="form-group col-md-3">
+						<label>Nombre completo</label>
+						<input name="nombre" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nombre')}}">
 					</div>
-				</div>
-				@if (count($clientes) > 0 && !empty($clientes))
-				  <div class="form-group col-md-3 mostrar_clientes">
-					<label>¿Para quien trabajará?</label>
-					<br>
-					<select style="max-width: 500px; min-width: 300px;" id="cliente_select_multiple" multiple="multiple" name="clientes[]">
-					  @foreach ($clientes as $cliente)
-						<option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
-					  @endforeach
-					</select>
-				  </div>
-				  <div class="form-group col-md-2 mostrar_permiso_desplegables">
-					  <label>Permiso edicion desplegables</label>
-					  <select name="permiso_desplegables" class="form-control form-control-sm">
-						  <option value="1">Si puede</option>
-						  <option value="0">No puede</option>
+					<div class="form-group col-md-3">
+						<label>Email</label>
+						<input name="email" type="email" class="form-control form-control-sm" placeholder="" value="{{old('email')}}">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Estado</label>
+						<select name="estado" class="form-control form-control-sm">
+							<option value="1">Activo</option>
+							<option value="0">Inactivo</option>
+						</select>
+					</div>
+					<div class="form-group col-md-3">
+						<label>Rol</label>
+						<select name="rol" class="form-control form-control-sm capturar_rol">
+							@foreach ($roles as $rol)
+							<option value="{{$rol->id}}">{{$rol->nombre}}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group col-md-4 select_contratacion_users">
+					  <label>Contratación</label>
+					  <select name="contratacion" class="form-control form-control-sm">
+						<option value="0">--Seleccione--</option>
+						<option value="1">Efectivo</option>
+						<option value="2">Eventual</option>
 					  </select>
-				  </div>
-				  <div class="form-group col-md-2 mostrar_especialidades">
-					  <label>Especialidad</label>
-					  <select name="especialidad" class="form-control form-control-sm">
-						@foreach ($especialidades as $especialidad)
-						  <option value="{{$especialidad->id}}">{{$especialidad->nombre}}</option>
+					</div>
+
+					<div class="form-group col-md-4">
+						<label>Contraseña</label>
+						<input name="password" type="password" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-4">
+						<label>Confirmar contraseña</label>
+						<input name="cpassword" type="password" class="form-control form-control-sm" placeholder="">
+					</div>
+
+					<div class="form-group col-md-3 cliente_original">
+					  <label>Seleccione el cliente</label>
+					  <br>
+					  <select class="form-control form-control-sm" id="select_cliente_original" name="id_cliente_original">
+						@foreach ($clientes as $cliente)
+						  <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
 						@endforeach
 					  </select>
-				  </div>
-				  <div class="form-group col-md-3 mostrar_cuil">
-					<label>Cuil</label>
-					  <input class="form-control form-control-sm" type="text" name="cuil" value="">
-				  </div>
-				  <div class="form-group col-md-12 liquidacion_onedrive_creacion_users">
-					<label>Link Liquidación OneDrive
-					  <a href="#" data-toggle="modal" data-target="#question_one_drive">
-						<i class="fas fa-question-circle"></i>
-					  </a>
-					</label>
-					  <textarea class="form-control" rows="2" name="onedrive"></textarea>
-				  </div>
-				  @else
-					<div class="form-group col-md-12">
-					  No tienes Clientes creados. Vé a su sección y crea Clientes
 					</div>
-				@endif
-				<div class="col-12">
-				  <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear usuario</button>
+
+					<div class="form-group col-md-2 mostrar_personal_interno">
+						<div class="form-check">
+							<input name="personal_interno" class="form-check-input" type="checkbox" id="personal_interno_check">
+							<label class="form-check-label" for="personal_interno_check">Personal interno</label>
+						</div>
+					</div>
+					@if (count($clientes) > 0 && !empty($clientes))
+					  <div class="form-group col-md-3 mostrar_clientes">
+						<label>¿Para quien trabajará?</label>
+						<br>
+						<select style="max-width: 500px; min-width: 300px;" id="cliente_select_multiple" multiple="multiple" name="clientes[]">
+						  @foreach ($clientes as $cliente)
+							<option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+						  @endforeach
+						</select>
+					  </div>
+					  <div class="form-group col-md-2 mostrar_permiso_desplegables">
+						  <label>Permiso edicion desplegables</label>
+						  <select name="permiso_desplegables" class="form-control form-control-sm">
+							  <option value="1">Si puede</option>
+							  <option value="0">No puede</option>
+						  </select>
+					  </div>
+					  <div class="form-group col-md-2 mostrar_especialidades">
+						  <label>Especialidad</label>
+						  <select name="especialidad" class="form-control form-control-sm">
+							@foreach ($especialidades as $especialidad)
+							  <option value="{{$especialidad->id}}">{{$especialidad->nombre}}</option>
+							@endforeach
+						  </select>
+					  </div>
+					  <div class="form-group col-md-3 mostrar_cuil">
+							<label>Cuil</label>
+						  <input class="form-control form-control-sm" type="text" name="cuil" value="">
+					  </div>
+					  <div class="form-group col-md-12 liquidacion_onedrive_creacion_users">
+							<label>Link Liquidación OneDrive
+							  <a href="#" data-toggle="modal" data-target="#question_one_drive">
+								<i class="fas fa-question-circle"></i>
+							  </a>
+							</label>
+						  <textarea class="form-control" rows="2" name="onedrive"></textarea>
+					  </div>
+
+					  @else
+						<div class="form-group col-md-12">
+						  No tienes Clientes creados. Vé a su sección y crea Clientes
+						</div>
+
+					@endif
+
+
+					<div class="form-group col-md-3 grupos">
+						<label for="">Seleccionar Grupo</label>
+						@if($grupos)
+						<select name="id_grupo" class="form-control form-control-sm">
+							@foreach($grupos as $grupo)
+							<option value="{{$grupo->id}}">{{$grupo->nombre}}</option>
+							@endforeach
+						</select>
+						@else
+						[Debes crear un grupo primero]
+						@endif
+					</div>
+
+					<div class="col-12">
+					  <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear usuario</button>
+					</div>
+
 				</div>
-			</div>
 			</form>
 		</div>
 
