@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Grupo;
+use App\User;
+use App\ClienteGrupo;
+use App\Http\Traits\ClientesGrupo;
 
 class GruposResumenController extends Controller
 {
+    use ClientesGrupo;
     /**
      * Display a listing of the resource.
      *
@@ -14,10 +18,16 @@ class GruposResumenController extends Controller
      */
     public function index()
     {
-        $grupo = Grupo::where('id',auth()->user()->id_grupo)->first();
-        ///$clientes = Clientes::
+        // el metodo getClientesGrupo heredada de App\Http\Traits\ClientesGrupo
+        return view('grupos.resumen',$this->getClientesGrupo());
+    }
 
-        return view('grupos.resumen',compact('grupo'));
+    public function clienteActual(Request $request)
+    {
+        $user = User::findOrFail(auth()->user()->id);
+        $user->id_cliente_actual = intval($request->id_cliente);
+        $user->save();
+        return ['status'=>'ok'];
     }
 
     /**

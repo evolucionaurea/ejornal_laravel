@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Grupo;
 use App\User;
+use App\Http\Traits\ClientesGrupo;
 
 class GruposCuentaController extends Controller
 {
+	use ClientesGrupo;
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -15,9 +17,7 @@ class GruposCuentaController extends Controller
 	 */
 	public function index()
 	{
-		//
-		$grupo = Grupo::where('id',auth()->user()->id_grupo)->first();
-		return view('grupos.cuenta', compact('grupo'));
+		return view('grupos.cuenta', $this->getClientesGrupo());
 	}
 
 	/**

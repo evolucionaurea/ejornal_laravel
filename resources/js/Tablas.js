@@ -76,14 +76,14 @@ export default class Tablas {
 	}
 	render_table(data){
 
-		//console.log(data)
+		console.log(data)
 
 
 		this.table.find('tbody').remove()
 		let tbody = dom('tbody')
 		loading({show:false})
 
-		if(data.results.length==0) return false
+		if(!data.results || data.results.length==0) return false
 
 		if($.fn.dataTable.isDataTable(this.table)){
 			this.datatable.clear()

@@ -3,85 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Grupo;
-use App\User;
+use App\Ausentismo;
+use App\AusentismoTipo;
+use App\Http\Traits\ClientesGrupo;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GruposAusentismosController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+	use ClientesGrupo;
+
 	public function index()
 	{
-		$grupo = Grupo::where('id',auth()->user()->id_grupo)->first();
-		return view('grupos.ausentismos', compact('grupo'));
+		$tipos = AusentismoTipo::get();
+		return view('grupos.ausentismos', array_merge($this->getClientesGrupo(),['tipos'=>$tipos]));
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create()
+
+	public function busqueda(Request $request)
 	{
-		//
+
+	  $query = Ausentismo::select(
+	  	'ausentismos.*',
+	  	'nominas.nombre',
+	  	'nominas.email',
+	  	'nominas.telefono',
+	  	'nominas.dni',
+	  	'nominas.estado',
+	  	DB::raw('ausentismo_tipo.nombre nombre_ausentismo'),
+	  	'nominas.sector'
+	  )
+	  ->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+
+		if($request->from) $query->whereDate('ausentismos.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->tipo) $query->where('ausentismos.id_tipo',$request->tipo);
+
+		return [
+			'results'=>$query->get(),
+			'request'=>$request->all()
+		];
+
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request)
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, $id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
 }

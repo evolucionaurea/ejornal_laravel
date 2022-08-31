@@ -12,13 +12,13 @@
 		@include('partials.nav_sup')
 
 		<div class="container">
-			<h4>Resumen</h4>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis porro voluptates ut aspernatur dolores, consectetur laborum praesentium laboriosam sequi itaque eos maxime vero sed veniam a, ipsam dolore rerum? Porro.</p>
+
+			<div class="cabecera">
+				<h4>Resumen</h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis porro voluptates ut aspernatur dolores, consectetur laborum praesentium laboriosam sequi itaque eos maxime vero sed veniam a, ipsam dolore rerum? Porro.</p>
+			</div>
 
 		</div>
-
-
-
 
 	</div>
 

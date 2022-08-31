@@ -59,4 +59,9 @@ if(route=='/clientes/resumen') require('./clientes/resumen')
 if(route=='/clientes/nominas') require('./clientes/nominas')
 if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
 
+//GRUPOS
+if(route=='/grupos/nominas') require('./grupos/nominas')
+if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
+
+
 console.log(route)

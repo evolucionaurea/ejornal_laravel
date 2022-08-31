@@ -7,7 +7,6 @@ $(()=>{
 		table:$('.tabla_ausentismos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:false},
-		delete_message:'¿Seguro deseas borrar este ausentismo?',
 		render_row:ausentismo=>{
 			///console.log(ausentismo)
 			return $(`

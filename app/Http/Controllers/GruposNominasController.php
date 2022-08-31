@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Grupo;
 use App\User;
+use App\Nomina;
+use App\Http\Traits\ClientesGrupo;
 
 class GruposNominasController extends Controller
 {
+	use ClientesGrupo;
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -15,8 +18,19 @@ class GruposNominasController extends Controller
 	 */
 	public function index()
 	{
-		$grupo = Grupo::where('id',auth()->user()->id_grupo)->first();
-		return view('grupos.nominas', compact('grupo'));
+		return view('grupos.nominas', $this->getClientesGrupo());
+	}
+
+	public function busqueda(Request $request)
+	{
+		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
+
+		if(!is_null($request->estado)) $query->where('estado',$request->estado);
+
+		return [
+			'results'=>$query->get(),
+			'request'=>$request->all()
+		];
 	}
 
 	/**

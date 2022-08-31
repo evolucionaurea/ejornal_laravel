@@ -55,6 +55,17 @@ $(document).ready(() => {
 
 	});
 
+	// Evento cuando se cambia el cliente desde el rol de grupo
+	$('#cliente_seleccionado_sidebar_grupo').on('change',select=>{
+		const id_cliente = select.currentTarget.value
+
+		axios.post('/grupos/actualizar_cliente_actual',{
+			id_cliente:id_cliente
+		})
+			.then(response=>location.reload())
+
+	})
+
 
 	if (obtenerDatoSessionStore > 0  && obtenerDatoSessionStore != null && obtenerDatoSessionStore != '') {
 		$('#cliente_seleccionado_sidebar').val(obtenerDatoSessionStore);
