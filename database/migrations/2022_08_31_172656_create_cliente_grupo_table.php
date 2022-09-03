@@ -21,8 +21,8 @@ class CreateClienteGrupoTable extends Migration
             $table->unique(['id_cliente', 'id_grupo']);
 
             //Foreign Key
-            $table->foreign('id_cliente')->references('id')->on('clientes')->cascadeOnDelete();
-            $table->foreign('id_grupo')->references('id')->on('grupos')->cascadeOnDelete();
+            // $table->foreign('id_cliente')->references('id')->on('clientes')->cascadeOnDelete();
+            // $table->foreign('id_grupo')->references('id')->on('grupos')->cascadeOnDelete();
         });
     }
 

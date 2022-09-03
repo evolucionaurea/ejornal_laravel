@@ -16,7 +16,7 @@ class UpdateIdClienteActualToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
 
             $table->unsignedBigInteger('id_cliente_actual')->change();
-            $table->foreign('id_cliente_actual')->references('id')->on('clientes')->onDelete('set null');
+            // $table->foreign('id_cliente_actual')->references('id')->on('clientes')->onDelete('set null');
         });
     }
 

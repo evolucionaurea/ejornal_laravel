@@ -68,23 +68,21 @@
 						<td>{{$grupo->nombre}}</td>
 						<td>{{$grupo->direccion}}</td>
 						<td>
-							@foreach ($clientes as $cliente)
-								@if ($cliente->id_grupo == $grupo->id)
-									{{$cliente->nombre}} -
-								@endif
+							@foreach ($grupo->clientes as $cliente)
+								{{$cliente}} -
 							@endforeach
 						</td>
 						<td class="acciones_tabla" scope="row">
 							<a title="Editar" href="{{route('grupos.edit', $grupo->id)}}">
 								<i class="fas fa-pen"></i>
 							</a>
-							<form class="" action="{{route('grupos.destroy', $grupo->id)}}" method="post">
+							{{-- <form class="" action="{{route('grupos.destroy', $grupo->id)}}" method="post">
 								{{ csrf_field() }}
 								<input type="hidden" name="_method" value="DELETE">
 								<button title="Eliminar" type="submit">
 									<i class="fas fa-trash"></i>
 								</button>
-							</form>
+							</form> --}}
 						</td>
 					</tr>
 					@endforeach

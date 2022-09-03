@@ -7,6 +7,7 @@ use App\Grupo;
 use App\Cliente;
 use App\ClienteUser;
 use App\User;
+use App\ClienteGrupo;
 use Illuminate\Support\Facades\DB;
 
 class AdminGruposController extends Controller
@@ -19,14 +20,18 @@ class AdminGruposController extends Controller
 
   public function index()
   {
+    $grupos = Grupo::all();
+    foreach ($grupos as $grupo) {
+      $busqueda = ClienteGrupo::where('id_grupo', $grupo->id)->get();
+      $array = array();
+      foreach ($busqueda as $value) {
+        $cliente = Cliente::find($value->id_cliente);
+        array_push($array, $cliente->nombre);
+      }
+      $grupo['clientes'] = $array;
+    }
 
-    $clientes = Cliente::where('id_grupo', '!=', null)
-    ->select('id', 'nombre', 'direccion', 'id_grupo')
-    ->get();
-
-    $grupos = Grupo::select('id', 'nombre', 'direccion')->get();
-
-    return view('admin.grupos', compact('grupos', 'clientes'));
+    return view('admin.grupos', compact('grupos'));
   }
 
   /**
@@ -65,28 +70,11 @@ class AdminGruposController extends Controller
     $grupo->save();
 
     foreach ($request->clientes as $value) {
-      $cliente = Cliente::findOrFail($value);
-      $cliente->id_grupo = $grupo->id;
-      $cliente->save();
+      $cliente_grupo = new ClienteGrupo();
+      $cliente_grupo->id_cliente = $value;
+      $cliente_grupo->id_grupo = $grupo->id;
+      $cliente_grupo->save();
     }
-
-    // foreach ($request->clientes as $value) {
-    //   $clientes = ClienteUser::where('id_cliente', $value)->get();
-    //   foreach ($clientes as $valor) {
-    //     $valor->id_grupo = $grupo->id;
-    //     $valor->save();
-    //   }
-
-      foreach ($request->clientes as $value) {
-        $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
-        if ($buscar_user !== null) {
-          $cliente_user = new ClienteUser();
-          $cliente_user->id_cliente = $value;
-          $cliente_user->id_user = $buscar_user->id;
-          $cliente_user->id_grupo = $grupo->id;
-          $cliente_user->save();
-        }
-      }
 
     return redirect('admin/grupos')->with('success', 'Grupo guardado con éxito');
   }
@@ -100,8 +88,8 @@ class AdminGruposController extends Controller
     public function edit($id)
     {
       $grupo = Grupo::findOrFail($id);
-      $busqueda = Cliente::where('id_grupo', $id)->select('id')->get();
-      $clientes_seleccionados = array_column($busqueda->toArray(), 'id');
+      $busqueda = ClienteGrupo::where('id_grupo', $id)->get();
+      $clientes_seleccionados = array_column($busqueda->toArray(), 'id_cliente');
       $clientes = Cliente::all();
 
       return view('admin.grupos.edit', compact('grupo', 'clientes', 'clientes_seleccionados'));
@@ -128,37 +116,15 @@ class AdminGruposController extends Controller
       $grupo->direccion = $request->direccion;
       $grupo->save();
 
-      Cliente::where('id_grupo',$id)->update(['id_grupo'=>null]);
-      ClienteUser::where('id_grupo',$id)->update(['id_grupo'=>null]);
+      ClienteGrupo::where('id_grupo',$id)->delete();
 
       foreach ($request->clientes as $value) {
-        $cliente = Cliente::findOrFail($value);
-        $cliente->id_grupo = $grupo->id;
-        $cliente->save();
+        $cliente_grupo = new ClienteGrupo();
+        $cliente_grupo->id_cliente = $value;
+        $cliente_grupo->id_grupo = $grupo->id;
+        $cliente_grupo->save();
       }
 
-
-      // foreach ($request->clientes as $value) {
-      //   $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
-      //   if ($buscar_user !== null) {
-      //     $cliente_user = ClienteUser::where('id_cliente', '')->where('id_user', '');
-      //     $cliente_user->id_cliente = $value;
-      //     $cliente_user->id_user = $buscar_user->id;
-      //     $cliente_user->id_grupo = $grupo->id;
-      //     $cliente_user->save();
-      //   }
-      // }
-
-      foreach ($request->clientes as $value) {
-        $buscar_user = User::where('id_cliente_relacionar', $value)->where('id_rol', 3)->select('id')->first();
-        if ($buscar_user !== null) {
-          $cliente_user = new ClienteUser();
-          $cliente_user->id_cliente = $value;
-          $cliente_user->id_user = $buscar_user->id;
-          $cliente_user->id_grupo = $grupo->id;
-          $cliente_user->save();
-        }
-      }
 
     return redirect('admin/grupos')->with('success', 'Grupo actualizado con éxito');
   }
@@ -171,7 +137,7 @@ class AdminGruposController extends Controller
    */
   public function destroy($id)
   {
-    // Validar que no haya Clientes vinculados antes de Eliminar
+    //De momento no contemplamos eliminar
     // $grupo = Grupo::find($id)->delete();
     // return redirect('admin/grupos')->with('success', 'Grupo eliminado correctamente');
   }
