@@ -127,6 +127,8 @@ class AdminUserController extends Controller
 			}
 		}
 
+
+
 		//Guardar en base
 		$user = new User();
 		$user->nombre = $request->nombre;
@@ -218,6 +220,7 @@ class AdminUserController extends Controller
 	public function edit($id)
 	{
 		$user = User::findOrFail($id);
+		// dd($user);
 		$roles = Rol::all();
 		$clientes = Cliente::all();
 		$especialidades = Especialidad::all();

@@ -38,7 +38,6 @@ class GruposCuentaController extends Controller
 	 */
 	public function store(Request $request)
 	{
-
 		if(!$request->nombre) return back()->with('error', 'No puedes guardar campos vacíos');
 
 		$user = User::findOrFail($request->id_user);
@@ -97,7 +96,6 @@ class GruposCuentaController extends Controller
 
 	public function cambiar_pass(Request $request)
 	{
-
 		$caracteres = strlen($request->password);
 
 		if (!$request->password || $caracteres < 6) {
