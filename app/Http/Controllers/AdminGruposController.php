@@ -20,8 +20,11 @@ class AdminGruposController extends Controller
 
   public function index()
   {
-    $grupos = Grupo::all();
-    foreach ($grupos as $grupo) {
+
+    // Query simplificada para traer grupos y los clientes asociados
+    $grupos = Grupo::with('clientes')->get();
+
+    /*foreach ($grupos as $grupo) {
       $busqueda = ClienteGrupo::where('id_grupo', $grupo->id)->get();
       $array = array();
       foreach ($busqueda as $value) {
@@ -29,7 +32,7 @@ class AdminGruposController extends Controller
         array_push($array, $cliente->nombre);
       }
       $grupo['clientes'] = $array;
-    }
+    }*/
 
     return view('admin.grupos', compact('grupos'));
   }

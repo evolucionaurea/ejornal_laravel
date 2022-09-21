@@ -63,10 +63,18 @@ class AdminUserController extends Controller
 		if(isset($request->fichada)) $query_users->where('users.fichada',$request->fichada);
 
 		if(isset($request->rol)) $query_users->where('users.id_rol',$request->rol);
-		//if(isset($request->grupo)) $query_users->where('users.fichada',$request->fichada);
-		//if(isset($request->cliente)) $query_users->where('users.fichada',$request->fichada);
+		if(isset($request->grupo)) $query_users->where('users.id_grupo',$request->grupo);
 
-		$users = $query_users->with('clientes_user')->with('grupo')->get();
+		$query_users->with('clientes_user')->with('grupo');
+
+		if(isset($request->cliente)){
+			$query_users->whereHas('clientes_user',function($query){
+				global $request;
+				return $query->where('id_cliente','=',$request->cliente);
+			})->orWhere('id_cliente_relacionar',$request->cliente);
+		}
+
+		$users = $query_users->get();
 
 		return [
 			'results'=>$users,

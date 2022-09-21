@@ -36,30 +36,10 @@
 			<table class="table table-striped table-hover table-sm tabla">
 				<thead>
 					<tr>
-						<th class="th-lg">
-							<a>
-								Nombre
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
-						<th class="th-lg">
-							<a href="">
-								Direccion
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
-						<th class="th-lg">
-							<a href="">
-								Clientes asociados
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
-						<th class="th-lg">
-							<a href="">
-								Acciones
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
+						<th>Nombre</th>
+						<th>Direccion</th>
+						<th>Clientes asociados</th>
+						<th>Acciones</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,9 +48,7 @@
 						<td>{{$grupo->nombre}}</td>
 						<td>{{$grupo->direccion}}</td>
 						<td>
-							@foreach ($grupo->clientes as $cliente)
-								{{$cliente}} -
-							@endforeach
+							{{$grupo->clientes->implode('nombre',', ')}}
 						</td>
 						<td class="acciones_tabla" scope="row">
 							<a title="Editar" href="{{route('grupos.edit', $grupo->id)}}">
