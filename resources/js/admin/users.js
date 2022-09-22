@@ -13,9 +13,20 @@ $(()=>{
 			let clientes = [];
 			let grupo = '';
 
+			console.log(user)
+
 			user.clientes_user.map(cliente=>{
 				clientes.push(cliente.nombre)
 			})
+			if(user.rol=='empleado' && user.clientes_user.length==0)
+			{
+				clientes = ['[sin cliente asignado]']
+			}
+			if(user.rol=='cliente')
+			{
+				clientes = [user.cliente_relacionar.nombre]
+
+			}
 			/*if(user.rol=='cliente'){
 
 				clientes = '[clientes]';

@@ -49,6 +49,10 @@ class User extends Authenticatable
 	{
 		return $this->belongsTo(Grupo::class,'id_grupo');
 	}
+	public function cliente_relacionar()
+	{
+		return $this->belongsTo(Cliente::class,'id_cliente_relacionar');
+	}
 
 
 }

@@ -8,11 +8,11 @@
     <small>{{$grupo->nombre}}</small>
     <span>{{auth()->user()->nombre}}</span>
 
-    @if($clientes_grupo)
+    @if($grupo->clientes)
     <div class="form-group">
     	<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar_grupo" class="form-control form-control-sm">
-        @foreach ($clientes_grupo as $cliente_grupo)
-          <option {{$cliente_grupo->id_cliente == auth()->user()->id_cliente_actual ? 'selected' : ''}} value="{{$cliente_grupo->id_cliente}}">{{$cliente_grupo->cliente->nombre}}</option>
+        @foreach ($grupo->clientes as $cliente_grupo)
+          <option {{$cliente_grupo->id == auth()->user()->id_cliente_actual ? 'selected' : ''}} value="{{$cliente_grupo->id}}">{{$cliente_grupo->nombre}}</option>
         @endforeach
     	</select>
     </div>

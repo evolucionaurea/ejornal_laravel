@@ -75,6 +75,17 @@ class EmpleadosNominasController extends Controller
 			$trabajadores = \array_diff_key($trabajadores,$key_remove);
 		}*/
 
+		//return datatable server-side
+		/*return [
+			'draw'=>0,
+			'recordsTotal'=>0,
+			'data'=>[],
+
+			'request'=>$request->all(),
+			'fichada_user'=>auth()->user()->fichada,
+			'results'=>[]
+		];*/
+
 		return [
 			'results'=>array_values($trabajadores->toArray()),
 			'fichada_user'=>auth()->user()->fichada,
