@@ -43,7 +43,7 @@
 									@foreach ($grupo->clientes as $cliente)
 									<tr>
 										<td>{{$cliente->nombre}}</td>
-										<td>{{$cliente->nominas->count()}}</td>
+										<td>{{$cliente->nominas_count}}</td>
 									</tr>
 									@endforeach
 								</tbody>
