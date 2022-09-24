@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Nomina;
+use App\Ausentismo;
 
 class Cliente extends Model
 {
@@ -17,9 +18,14 @@ class Cliente extends Model
 
   public function nominas()
   {
-  	return $this->hasMany(Nomina::class,'id_cliente'); //->count();
-  	//return Nomina::where('id_cliente','=',$this->id)->count();
+  	return $this->hasMany(Nomina::class,'id_cliente');
   }
+
+  public function ausentismos()
+  {
+  	return $this->hasManyThrough(Ausentismo::class, Nomina::class, 'id_cliente', 'id_trabajador', 'id', 'id');
+  }
+
 
 
 }

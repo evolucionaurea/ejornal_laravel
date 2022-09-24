@@ -39,3 +39,4 @@ Thumbs.db
 /package-lock.json
 /.gitignore
 /webpack.mix.js
+/composer.lock

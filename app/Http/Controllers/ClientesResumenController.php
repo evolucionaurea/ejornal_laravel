@@ -24,7 +24,7 @@ class ClientesResumenController extends Controller
 		{
 
 			$cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
-			->select('clientes.nombre', 'clientes.id_grupo')
+			->select('clientes.nombre')
 			->first();
 
 			// if ($cliente->id_grupo === null) {
