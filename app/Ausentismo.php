@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use App\AusentismoTipo;
-use App\Nominas;
+use App\Nomina;
 
 class Ausentismo extends Model implements Auditable
 {
@@ -21,8 +21,8 @@ class Ausentismo extends Model implements Auditable
   public function tipo(){
   	return $this->belongsTo(AusentismoTipo::class,'id_tipo');
   }
-  public function user(){
-  	return $this->belongsTo(Nominas::class,'id_trabajador');
+  public function trabajador(){
+  	return $this->belongsTo(Nomina::class,'id_trabajador');
   }
 
 }

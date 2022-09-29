@@ -25,6 +25,14 @@ class Cliente extends Model
   {
   	return $this->hasManyThrough(Ausentismo::class, Nomina::class, 'id_cliente', 'id_trabajador', 'id', 'id');
   }
+  public function ausentismos_mes()
+  {
+    return $this->ausentismos();
+  }
+  public function ausentismos_year()
+  {
+    return $this->ausentismos();
+  }
 
 
 

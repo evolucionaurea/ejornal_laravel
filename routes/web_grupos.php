@@ -5,6 +5,8 @@ Route::group(['middleware'=>App\Http\Middleware\Autenticacion_grupos::class],fun
 
 	Route::get('grupos/resumen', 'GruposResumenController@index')->name('/grupos/resumen');
 
+	Route::get('grupos/ausentismos_resumen', 'GruposResumenController@ausentismos_resumen');
+
 	Route::resource('grupos/cuenta', 'GruposCuentaController',[
 		'names'=>[
 			'index'=>'/grupos/cuenta'

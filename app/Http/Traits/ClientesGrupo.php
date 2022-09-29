@@ -11,19 +11,10 @@ trait ClientesGrupo {
 
 		//simplifico la query y traigo los clientes dentro del grupo
 		$grupo = Grupo::where('id',auth()->user()->id_grupo)
-		/*->with(['clientes'=>function($query){
-			$query->select('clientes.id','clientes.nombre')->withCount('nominas');
-		}])*/
 		->with('clientes')
 		->first();
 
     $cliente_actual = Cliente::where('id',auth()->user()->id_cliente_actual)->first();
-		///dd($grupo);
-		///$clientes_grupo = ClienteGrupo::where('id_grupo',auth()->user()->id_grupo)->with('cliente')->get();
-		//$clientes_vinculados = ClienteGrupo::where('id_grupo',auth()->user()->id_grupo)
-		//->join('clientes', 'cliente_grupo.id_cliente', 'clientes.id')
-		//->select('clientes.nombre')
-		//->get();
 
 		return compact('grupo','cliente_actual');
 	}

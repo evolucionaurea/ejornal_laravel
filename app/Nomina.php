@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Ausentismo;
+use App\Cliente;
 
 class Nomina extends Model
 {
@@ -22,6 +23,11 @@ class Nomina extends Model
   public function ausentismos()
   {
   	return $this->hasMany(Ausentismo::class,'id_trabajador');
+  }
+
+  public function cliente()
+  {
+    return $this->belongsTo(Cliente::class, 'id_cliente');
   }
 
 }
