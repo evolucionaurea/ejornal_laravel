@@ -27,6 +27,7 @@ export default class Tablas {
 		this.datatable_options.serverSide = true
 		this.datatable_options.processing = true
 		this.datatable_options.deferRender = true
+		this.datatable_options.dom = '<"table-spacer-top"lBf>t<"table-spacer-bottom"ip>'
 
 		this.datatable_options.ajax = {
 			url:`${this.controller}/busqueda`,
