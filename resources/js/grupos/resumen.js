@@ -11,6 +11,10 @@ $(()=>{
 	axios.get('ausentismos_resumen')
 		.then(response=>{
 
+
+			console.log(response.data)
+
+
 			const colores = [
 				"#FF6384",
 				"#36A2EB",
@@ -72,7 +76,7 @@ $(()=>{
 
 
 			// mensual
-			if(response.data.ausentismos_mes.length>=0){
+			if(response.data.ausentismos_mes.length>0){
 				response.data.ausentismos_mes.map(item=>{
 					data_mes.labels.push(item.tipo.nombre)
 					data_mes.datasets[0].data.push(item.total)
@@ -89,7 +93,7 @@ $(()=>{
 			}
 
 			// anual
-			if(response.data.ausentismos_anual.length>=0){
+			if(response.data.ausentismos_anual.length>0){
 				response.data.ausentismos_anual.map(item=>{
 					data_anual.labels.push(item.tipo.nombre)
 					data_anual.datasets[0].data.push(item.total)

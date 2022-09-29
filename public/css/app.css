@@ -11291,6 +11291,10 @@ div.dataTables_wrapper .table-spacer-top {
   width: 100%;
 }
 
+.pagination .page-item .page-link:focus {
+  background-color: #4285f4 !important;
+}
+
 .error_404 {
   text-align: center;
 }

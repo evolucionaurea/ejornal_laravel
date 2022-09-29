@@ -75,20 +75,28 @@ class GruposResumenController extends Controller
 
 		$today = CarbonImmutable::now();
 
-		$ausentismos_mes = Ausentismo::groupBy('id_tipo')
+		DB::enableQueryLog();
+
+		$ausentismos_mes = Ausentismo::selectRaw('count(*) as total, id_tipo')
 			->with('tipo')
-			->with(['trabajador'=>function($query){
-				$query->where('id_cliente',auth()->user()->id_cliente_actual);
-			}])
-			->selectRaw('count(*) as total, id_tipo')
-			->where('fecha_inicio','>=',$today->firstOfMonth())
+			->where('fecha_inicio','>=',$today->startOfMonth())
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->groupBy('id_tipo')
 			->get();
+
+		$query = DB::getQueryLog();
 
 		$ausentismos_year = Ausentismo::groupBy('id_tipo')
 			->with('tipo')
-			->with(['trabajador'=>function($query){
-				$query->where('id_cliente',auth()->user()->id_cliente_actual);
-			}])
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
 			->selectRaw('count(*) as total, id_tipo')
 			->where('fecha_inicio','>=',$today->firstOfYear())
 			->get();
@@ -96,7 +104,8 @@ class GruposResumenController extends Controller
 		return [
 			'status'=>'ok',
 			'ausentismos_mes'=>$ausentismos_mes,
-			'ausentismos_anual'=>$ausentismos_year
+			'ausentismos_anual'=>$ausentismos_year,
+			'query'=>$query
 		];
 	}
 

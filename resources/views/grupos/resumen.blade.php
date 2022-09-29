@@ -62,6 +62,8 @@
 
 			<hr>
 
+			@if ($cliente_actual)
+
 			<!-- Ausentismos Empresa Actual -->
 			<section>
 
@@ -83,6 +85,9 @@
 
 			</section>
 
+			@else
+			<p class="text-muted"><i>Debes seleccionar un cliente de la lista para ver las estadísticas.</i></p>
+			@endif
 
 		</div>
 

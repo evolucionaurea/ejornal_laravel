@@ -11,6 +11,9 @@
     @if($grupo->clientes)
     <div class="form-group">
     	<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar_grupo" class="form-control form-control-sm">
+        @if (is_null($cliente_actual))
+          <option value="">--Seleccionar Cliente--</option>
+        @endif
         @foreach ($grupo->clientes as $cliente_grupo)
           <option {{$cliente_grupo->id == auth()->user()->id_cliente_actual ? 'selected' : ''}} value="{{$cliente_grupo->id}}">{{$cliente_grupo->nombre}}</option>
         @endforeach
