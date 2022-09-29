@@ -4,62 +4,55 @@ export default class Tablas {
 		this.first_render = true
 
 		$.extend(this,obj)
-		$.extend(window.datatable_options,obj.datatable_options)
 
-		if('modulo_busqueda' in this){
-			this.modulo_busqueda.find('[name="from"],[name="to"]').datepicker({
-				dateFormat:'dd/mm/yy'
-			})
-
-			/*Buscar*/
-			this.modulo_busqueda.find('[data-toggle="search"]').click(async btn=>{
-				loading()
-
-				let post = {}
-				$.each(this.modulo_busqueda.find('[name]'),(k,v)=>{
-					post[$(v).attr('name')] = $(v).val()
-				})
-
-				let response = await this.get(post)
-				this.render_table(response)
-			}).trigger('click')
-
-			/*Mostrar Todo*/
-			this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
-				this.modulo_busqueda.find('[name]').val('')
-				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
-			})
-		}else{
-			loading()
-			this.get()
-				.then(response=>this.render_table(response))
-		}
+		this.init()
 
 
+	}
 
-		/*Borrar*/
-		this.table.on('click','[data-toggle="delete"]',btn=>{
-			const id = $(btn.currentTarget).attr('data-id')
+	set_filters(){
 
-			SwalWarning.fire({
-				title:'delete_message' in this ? this.delete_message : '¿Seguro deseas borrar este item?'
-			})
-			.then(async swal=>{
-				if(swal.value){
-					await this.delete(id)
-					let data = await this.get()
-					this.render_table(data)
+		if(!('modulo_busqueda' in this)) return true
 
-				}
-			})
+		let filters = {}
+		$.each(this.modulo_busqueda.find('[name]'),(k,v)=>{
+			filters[$(v).attr('name')] = $(v).val()
 		})
 
+		return filters
+	}
+
+	dt_server_side(){
+
+		this.datatable_options.serverSide = true
+		this.datatable_options.processing = true
+		this.datatable_options.deferRender = true
+
+		this.datatable_options.ajax = {
+			url:`${this.controller}/busqueda`,
+			type:'POST',
+			data:d=>{
+				d._token = csfr
+				$.extend(d,this.set_filters())
+				loading()
+			}
+		}
+		datatable_options.fnDrawCallback = settings=>{
+			loading({show:false})
+			console.log(settings.json)
+		}
+
+		$.extend(window.datatable_options,this.datatable_options)
+		this.datatable_instance = this.table.DataTable(window.datatable_options);
+
+		return true
 	}
 
 
 	get(filters={}){
+		loading()
 		return new Promise((resolve,reject)=>{
-			axios.post(`${this.controller}/busqueda`,filters)
+			axios.post(`${this.controller}/busqueda`,this.set_filters())
 				.then(response=>resolve(response.data))
 				.catch(error=>reject(error))
 		})
@@ -86,8 +79,8 @@ export default class Tablas {
 		if(!data.results || data.results.length==0) return false
 
 		if($.fn.dataTable.isDataTable(this.table)){
-			this.datatable.clear()
-			this.datatable.destroy()
+			this.datatable_instance.clear()
+			this.datatable_instance.destroy()
 		}
 
 		data.results.map(v=>{
@@ -100,8 +93,78 @@ export default class Tablas {
 		this.table.append(tbody)
 		if(!$.fn.dataTable.isDataTable(this.table)){
 			this.first_render = false
-			this.datatable = this.table.DataTable(window.datatable_options);
+			this.datatable_instance = this.table.DataTable(window.datatable_options);
 		}
+
+
+	}
+
+
+
+	init(){
+
+
+		/*Borrar*/
+		this.table.on('click','[data-toggle="delete"]',btn=>{
+			const id = $(btn.currentTarget).attr('data-id')
+
+			SwalWarning.fire({
+				title:'delete_message' in this ? this.delete_message : '¿Seguro deseas borrar este item?'
+			})
+			.then(async swal=>{
+				if(swal.value){
+					await this.delete(id)
+					let data = await this.get()
+					this.render_table(data)
+
+				}
+			})
+		})
+
+		$.extend(window.datatable_options,this.datatable_options)
+
+
+		if('server_side' in this && this.server_side==true){
+			this.dt_server_side()
+		}
+
+
+		if('modulo_busqueda' in this){
+
+			this.modulo_busqueda.find('[name="from"],[name="to"]').datepicker({
+				dateFormat:'dd/mm/yy'
+			})
+
+			/*Mostrar Todo*/
+			this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
+				this.modulo_busqueda.find('[name]').val('')
+				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
+			})
+
+
+			/*Buscar*/
+			this.modulo_busqueda.find('[data-toggle="search"]').click(async btn=>{
+
+				if(!('server_side' in this)) {
+					let response = await this.get()
+					this.render_table(response)
+				}else{
+					this.datatable_instance.ajax.reload()
+				}
+			})
+
+			if(!('server_side' in this)) {
+				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
+			}
+
+		}else{
+
+			if(!('server_side' in this)) {
+				this.get().then(response=>this.render_table(response))
+			}
+
+		}
+
 
 
 	}

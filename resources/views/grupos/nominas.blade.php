@@ -31,7 +31,7 @@
 					</select>
 				</div>
 
-				<div class="col-lg-3 form-group">
+				<div class="col-lg-9 form-group">
 					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
 					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
 				</div>
