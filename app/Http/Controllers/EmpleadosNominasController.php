@@ -190,7 +190,6 @@ class EmpleadosNominasController extends Controller
 	 */
 	public function show($id)
 	{
-
 		$clientes = $this->getClientesUser();
 
 		$trabajador = Nomina::findOrFail($id);

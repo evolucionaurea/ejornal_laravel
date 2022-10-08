@@ -65,15 +65,15 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Fecha inicio</label>
-                    <input required id="ausentismo_fecha_inicio" name="fecha_inicio" type="datetime" class="form-control" value="{{ old("fecha_inicio") }}">
+                    <input readonly required id="ausentismo_fecha_inicio" name="fecha_inicio" type="datetime" class="form-control" value="{{ old("fecha_inicio") }}">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Fecha final</label>
-                    <input id="ausentismo_fecha_final" name="fecha_final" type="datetime" class="form-control" value="{{ old("fecha_final") }}">
+                    <input readonly id="ausentismo_fecha_final" name="fecha_final" type="datetime" class="form-control" value="{{ old("fecha_final") }}">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Fecha en que regresó</label>
-                    <input id="ausentismo_fecha_regreso" name="fecha_regreso_trabajar" type="datetime" class="form-control" value="{{ old("fecha_regreso") }}">
+                    <input readonly id="ausentismo_fecha_regreso" name="fecha_regreso_trabajar" type="datetime" class="form-control" value="{{ old("fecha_regreso") }}">
                 </div>
                 <div class="form-group col-md-3">
                     <label >Documentación</label>

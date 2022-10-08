@@ -52,10 +52,20 @@
                         <div class="col-lg-4 col-md-5 col-sm-12">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
-                                    <b>Email: </b> {{$trabajador->email}}
+                                    <b>Email: </b>
+                                    @if ($trabajador->email !== null && $trabajador->email !== '')
+                                      <a href="mailto:{{$trabajador->email}}?subject=contacto ejornal">{{$trabajador->email}}</a>
+                                      @else
+                                        {{'No fue cargado'}}
+                                    @endif
                                 </li>
                                 <li class="list-group-item">
-                                    <b>Teléfono: </b> {{$trabajador->telefono}}
+                                    <b>Teléfono: </b>
+                                    @if ($trabajador->telefono !== null && $trabajador->telefono !== '')
+                                      <a href="tel:{{$trabajador->telefono}}">{{$trabajador->telefono}}</a>
+                                      @else
+                                        {{'No fue cargado'}}
+                                    @endif
                                 </li>
                             </ul>
                         </div>

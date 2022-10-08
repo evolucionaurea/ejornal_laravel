@@ -61,7 +61,7 @@
 
 
 				<div class="col-lg-9 border-right">
-
+					<h4>Filtros</h4>
 					<div class="row">
 
 						<div class="col-lg-4 form-group">
