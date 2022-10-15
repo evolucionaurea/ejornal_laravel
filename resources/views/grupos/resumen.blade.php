@@ -14,8 +14,6 @@
 
 		@include('partials.nav_sup')
 
-
-
 		<div class="container">
 
 			<!-- Ausentismos Totales -->

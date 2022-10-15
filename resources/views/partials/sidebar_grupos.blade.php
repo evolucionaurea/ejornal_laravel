@@ -7,7 +7,6 @@
     <i class="fas fa-user"></i>
     <small>{{$grupo->nombre}}</small>
     <span>{{auth()->user()->nombre}}</span>
-
     @if($grupo->clientes)
     <div class="form-group">
     	<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar_grupo" class="form-control form-control-sm">
@@ -42,6 +41,10 @@
     <li class="{{ setActive('/grupos/ausentismos') }} menu_sin_sub_menu">
       <i class="fas fa-user-times"></i>
       <a href="{{url('/grupos/ausentismos')}}" class="list-group-item list-group-item-action sidebar_item">Ausentismos</a>
+    </li>
+		<li class="{{ setActive('/grupos/api') }} menu_sin_sub_menu">
+      <i class="far fa-network-wired"></i>
+      <a href="{{url('/grupos/api')}}" class="list-group-item list-group-item-action sidebar_item">Api</a>
     </li>
 
   </div>

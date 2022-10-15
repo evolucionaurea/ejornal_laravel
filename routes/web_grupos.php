@@ -25,4 +25,6 @@ Route::group(['middleware'=>App\Http\Middleware\Autenticacion_grupos::class],fun
 
 	Route::post('grupos/actualizar_cliente_actual', 'GruposResumenController@clienteActual')->name('/grupos/actualizar_cliente_actual');
 
+	Route::get('grupos/api', 'GruposApiController@index')->name('/grupos/api');
+
 });
