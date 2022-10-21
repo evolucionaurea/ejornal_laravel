@@ -1,0 +1,193 @@
+@extends('partials.layout')
+
+@section('title', 'Grupos')
+
+@section('content')
+
+@inject('carbon', 'Carbon\Carbon')
+
+<div class="d-flex" id="wrapper">
+
+	@include('partials.sidebar_grupos')
+
+	<div id="page-content-wrapper">
+
+		@include('partials.nav_sup')
+
+		<div class="container">
+
+			@if ($cliente_actual)
+
+			<!-- Ausentismos Empresa Actual -->
+			<section>
+
+				<div class="row">
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-md fa-lg blue z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Accidentes mes actual</small></p>
+								<h5 class="font-weight-bold mb-0">xxx</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-md fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Accidentes mes pasado</small></p>
+								<h5 class="font-weight-bold mb-0">xxx</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-times fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes actual</small></p>
+								<h5 class="font-weight-bold mb-0">xx</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-times fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes pasado</small></p>
+								<h5 class="font-weight-bold mb-0">xx</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-md fa-lg secondary-color-dark z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Ausencias día Covid</small></p>
+								<h5 class="font-weight-bold mb-0">xx</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-md fa-lg secondary-color-dark z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Con al menos 1 dosis</small></p>
+								<h5 class="font-weight-bold mb-0">xx</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-times fa-lg secondary-color-dark z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Con 2 dosis</small></p>
+								<h5 class="font-weight-bold mb-0">xxx</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-md-6 mb-4">
+						<div class="media white z-depth-1 rounded">
+							<i class="fas fa-user-times fa-lg secondary-color-dark z-depth-1 p-4 rounded-left text-white mr-3"></i>
+							<div class="media-body p-1">
+								<p class="text-uppercase text-muted mb-1"><small>Con 3 dosis</small></p>
+								<h5 class="font-weight-bold mb-0">xxx</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+				<h5 class="font-weight-bold mt-4 text-center">Ausentismos en {{$cliente_actual->nombre}}</h5>
+
+
+				<div class="row d-flex justify-content-center">
+					<div class="col-md-5 tarjeta">
+						<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
+						<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
+						<canvas id="chart_ausentismos_mes" height="280"></canvas>
+					</div>
+					<div class="col-md-5 tarjeta">
+						<h4 class="text-center">Ausentismos del año</h4>
+						<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
+						<canvas id="chart_ausentismos_anual" height="280"></canvas>
+					</div>
+				</div>
+
+
+
+				<div class="row">
+					<div class="col-6">
+						<div class="tarjeta">
+							<h4>Top 10 trabajadores que mas días faltaron</h4>
+							<table data-table="top_10_faltas" class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Trabajador</th>
+										<th scope="col">Dias</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{-- @foreach ($top_10_ausentismos as $top) --}}
+									<tr>
+										<td>xx</td>
+										<td>xx</td>
+									</tr>
+									{{-- @endforeach --}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="col-6">
+						<div class="tarjeta">
+							<h4>Top trabajadores que mas veces solicitaron faltar</h4>
+							<table data-table="top_10_solicitudes_faltas" class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Trabajador</th>
+										<th scope="col">Cantidad</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{-- @foreach ($faltas_final as $falta) --}}
+									<tr>
+										<td>xx</td>
+										<td>xx</td>
+									</tr>
+									{{-- @endforeach --}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+
+
+			</section>
+
+			@else
+			<p class="text-muted"><i>Debes seleccionar un cliente de la lista para ver las estadísticas.</i></p>
+			@endif
+
+		</div>
+
+
+
+	</div>
+
+</div>
+
+
+@endsection

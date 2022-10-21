@@ -58,34 +58,6 @@
 
 			</section>
 
-			<hr>
-
-			@if ($cliente_actual)
-
-			<!-- Ausentismos Empresa Actual -->
-			<section>
-
-				<h5 class="font-weight-bold mt-4 text-center">Ausentismos en {{$cliente_actual->nombre}}</h5>
-
-
-				<div class="row d-flex justify-content-center">
-					<div class="col-md-5 tarjeta">
-						<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
-						<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
-						<canvas id="chart_ausentismos_mes" height="280"></canvas>
-					</div>
-					<div class="col-md-5 tarjeta">
-						<h4 class="text-center">Ausentismos del año</h4>
-						<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
-						<canvas id="chart_ausentismos_anual" height="280"></canvas>
-					</div>
-				</div>
-
-			</section>
-
-			@else
-			<p class="text-muted"><i>Debes seleccionar un cliente de la lista para ver las estadísticas.</i></p>
-			@endif
 
 		</div>
 

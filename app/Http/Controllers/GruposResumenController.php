@@ -61,7 +61,7 @@ class GruposResumenController extends Controller
 
 		}]);
 
-		//dd( $ausentismos_mes );
+		///dd( $clientes_grupo['cliente_actual'] );
 
 
 		$output = array_merge($clientes_grupo,[
@@ -70,6 +70,16 @@ class GruposResumenController extends Controller
 
 		return view('grupos.resumen',$output);
 	}
+
+	public function index_cliente()
+	{
+
+		setlocale(LC_TIME, 'Spanish');
+
+		$clientes_grupo = $this->getClientesGrupo();
+		return view('grupos.resumen_cliente',$clientes_grupo);
+	}
+
 	public function ausentismos_resumen()
 	{
 

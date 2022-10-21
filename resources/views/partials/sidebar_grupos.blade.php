@@ -25,10 +25,24 @@
 
 
   <div class="list-group list-group-flush sidebar_menu">
+
+
     <li class="{{ setActive('/grupos/resumen') }} menu_sin_sub_menu">
       <i class="fas fa-tachometer-fast"></i>
-      <a href="{{url('/grupos/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen</a>
+      <a href="{{url('/grupos/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen Global</a>
     </li>
+
+    <li class="{{ setActive('/grupos/resumen_cliente') }} menu_sin_sub_menu">
+      <i class="fas fa-tachometer-fast"></i>
+      <a href="{{url('/grupos/resumen_cliente')}}" class="list-group-item list-group-item-action sidebar_item">
+        <div>Resumen Cliente</div>
+        @if (!is_null($cliente_actual))
+        <div class="small font-italic">{{$cliente_actual->nombre }}</div>
+        @endif
+      </a>
+    </li>
+
+
      <li class="{{ setActive('/grupos/cuenta') }} menu_sin_sub_menu">
       <i class="fas fa-file-invoice"></i>
       <a href="{{url('/grupos/cuenta')}}" class="list-group-item list-group-item-action sidebar_item">Mi cuenta</a>
