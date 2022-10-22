@@ -41,23 +41,11 @@ $(()=>{
 
 			let data_mes = {
 				labels:[],
-				datasets:[
-					{
-						data:[],
-						backgroundColor:colores,
-						hoverBackgroundColor:colores_hover,
-					}
-				]
+				datasets:[]
 			}
 			let data_anual = {
 				labels:[],
-				datasets:[
-					{
-						data:[],
-						backgroundColor:colores,
-						hoverBackgroundColor:colores_hover,
-					}
-				]
+				datasets:[]
 			}
 			let options = {
 				cutoutPercentage:40
@@ -66,13 +54,27 @@ $(()=>{
 
 			// mensual
 			if(response.data.ausentismos_mes.length>0){
+				let mes_count = 0;
 				response.data.ausentismos_mes.map(item=>{
-					data_mes.labels.push(item.tipo.nombre)
-					data_mes.datasets[0].data.push(item.total)
+
+					if(mes_count>mes_count.length) mes_count = 0
+
+					data_mes.datasets.push({
+						label:item.tipo.nombre,
+						data:[item.total],
+						backgroundColor:colores[mes_count],
+						borderColor:colores_hover[mes_count],
+						borderWidth:1
+					})
+					mes_count++
+
+
+					//data_mes.labels.push(item.tipo.nombre)
+					//data_mes.datasets[0].data.push(item.total)
 				})
 				let chart_mes = document.getElementById("chart_ausentismos_mes").getContext("2d");
 				new Chart(chart_mes, {
-					type: 'doughnut',
+					type: 'bar',
 					data: data_mes,
 					options: options
 				})
@@ -83,13 +85,25 @@ $(()=>{
 
 			// anual
 			if(response.data.ausentismos_anual.length>0){
+				let anual_count = 0;
 				response.data.ausentismos_anual.map(item=>{
-					data_anual.labels.push(item.tipo.nombre)
-					data_anual.datasets[0].data.push(item.total)
+					//data_anual.labels.push(item.tipo.nombre)
+					//data_anual.datasets[0].data.push(item.total)
+					if(anual_count>anual_count.length) anual_count = 0
+					data_anual.datasets.push({
+						label:item.tipo.nombre,
+						data:[item.total],
+						backgroundColor:colores[anual_count],
+						borderColor:colores_hover[anual_count],
+						//hoverBackgroundColor:colores_hover[anual_count],
+						borderWidth:1
+					})
+					anual_count++
 				})
 				let chart_anual = document.getElementById("chart_ausentismos_anual").getContext("2d");
+				console.table(data_anual)
 				new Chart(chart_anual, {
-					type: 'doughnut',
+					type: 'bar',
 					data: data_anual,
 					options: options
 				})

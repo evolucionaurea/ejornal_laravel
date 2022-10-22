@@ -15,14 +15,15 @@ class EmpleadoAusentismoSeeder extends Seeder
 		 */
 		public function run()
 		{
-			$nomina = Nomina::all();
+			$nomina = Nomina::where('id_cliente',5)->get();
 			$tipos = AusentismoTipo::all();
 
-			$rows = 1500;
+			$rows = 20;
 
 			for($i=1; $i<=$rows; $i++){
 
-				$rand_day = rand(0,365);
+				//$rand_day = rand(273,303);
+				$rand_day = rand(1,10);
 
 				$value = [
 					'id_trabajador'=>$nomina[rand(0,count($nomina)-1)]->id,
