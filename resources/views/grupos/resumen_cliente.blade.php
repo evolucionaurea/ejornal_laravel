@@ -84,6 +84,41 @@
 
 
 				<div class="row">
+
+					<div class="col-6">
+						<div class="tarjeta">
+							<h4>Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }} en %</h4>
+							<table data-table="ausentismos-mes" class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Trabajador</th>
+										<th scope="col">Porcentaje</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="col-6">
+						<div class="tarjeta">
+							<h4>Ausentismos del año en %</h4>
+							<table data-table="ausentismos-anual" class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Trabajador</th>
+										<th scope="col">Porcentaje</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+
+
+					<!-- -->
+
+
 					<div class="col-6">
 						<div class="tarjeta">
 							<h4>Top 10 trabajadores que mas días faltaron</h4>
@@ -95,10 +130,10 @@
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($ausentismos_top_10 as $top)
+									@foreach ($ausentismos_top_10_dias as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
-										<td>{{ $top->total }}</td>
+										<td>{{ $top->total_dias }}</td>
 									</tr>
 									@endforeach
 								</tbody>
@@ -117,12 +152,12 @@
 									</tr>
 								</thead>
 								<tbody>
-									{{-- @foreach ($faltas_final as $falta) --}}
+									@foreach ($ausentismos_top_10 as $top)
 									<tr>
-										<td>xx</td>
-										<td>xx</td>
+										<td>{{ $top->trabajador->nombre }}</td>
+										<td>{{ $top->total }}</td>
 									</tr>
-									{{-- @endforeach --}}
+									@endforeach
 								</tbody>
 							</table>
 						</div>

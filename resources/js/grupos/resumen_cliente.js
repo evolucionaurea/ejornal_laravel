@@ -1,6 +1,6 @@
 $(()=>{
 
-	axios.get('ausentismos_resumen')
+	axios.get('index_cliente_ajax')
 		.then(response=>{
 			//console.log(response.data)
 
@@ -60,6 +60,7 @@ $(()=>{
 
 
 			// mensual
+			let total_ausentismos_mes_count = 0
 			if(response.data.ausentismos_mes.length>0){
 				let mes_count = 0;
 				response.data.ausentismos_mes.map(item=>{
@@ -74,6 +75,7 @@ $(()=>{
 						borderWidth:1
 					})
 					mes_count++
+					total_ausentismos_mes_count += item.total
 
 
 					//data_mes.labels.push(item.tipo.nombre)
@@ -91,6 +93,7 @@ $(()=>{
 			}
 
 			// anual
+			let total_ausentismos_anual_count = 0
 			if(response.data.ausentismos_anual.length>0){
 				let anual_count = 0;
 				response.data.ausentismos_anual.map(item=>{
@@ -106,6 +109,9 @@ $(()=>{
 						borderWidth:1
 					})
 					anual_count++
+
+					total_ausentismos_anual_count += item.total
+
 				})
 				let chart_anual = document.getElementById("chart_ausentismos_anual").getContext("2d");
 
@@ -117,6 +123,48 @@ $(()=>{
 			}else{
 				$('[data-toggle="blank-chart-ausentismos-anual"]').removeClass('d-none')
 				$('#chart_ausentismos_anual').remove()
+			}
+
+
+			// & mensual
+			if(response.data.ausentismos_mes.length>0){
+
+				response.data.ausentismos_mes.map(row=>{
+					const tr = dom('tr')
+					const td_nombre = dom('td')
+					const td_value = dom('td')
+					const percent = Math.round(row.total/total_ausentismos_mes_count*100)
+					td_nombre.text(row.tipo.nombre)
+					td_value.text( `${percent} %` )
+					tr.append(td_nombre,td_value)
+					$('[data-table="ausentismos-mes"]').append(tr)
+				})
+
+				$('[data-table="ausentismos-mes"]').dataTable({
+					order:[[1,'desc']],
+					dom:'t'
+				})
+
+			}
+			// & anual
+			if(response.data.ausentismos_anual.length>0){
+
+				response.data.ausentismos_anual.map(row=>{
+					const tr = dom('tr')
+					const td_nombre = dom('td')
+					const td_value = dom('td')
+					const percent = Math.round(row.total/total_ausentismos_anual_count*100)
+					td_nombre.text(row.tipo.nombre)
+					td_value.text( `${percent} %` )
+					tr.append(td_nombre,td_value)
+					$('[data-table="ausentismos-anual"]').append(tr)
+				})
+
+				$('[data-table="ausentismos-anual"]').dataTable({
+					order:[[1,'desc']],
+					dom:'t'
+				})
+
 			}
 
 

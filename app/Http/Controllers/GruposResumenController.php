@@ -81,7 +81,8 @@ class GruposResumenController extends Controller
 
 		$today = CarbonImmutable::now();
 
-		$ausentismos_mes = Ausentismo::where('fecha_inicio','>=',$today->startOfMonth())
+		$ausentismos_mes = Ausentismo::
+			where('fecha_inicio','>=',$today->startOfMonth())
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
@@ -90,7 +91,8 @@ class GruposResumenController extends Controller
 			->count();
 
 
-		$ausentismos_mes_pasado = Ausentismo::where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
+		$ausentismos_mes_pasado = Ausentismo::
+			where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
 			->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
@@ -100,7 +102,8 @@ class GruposResumenController extends Controller
 			->count();
 
 
-		$accidentes_mes = Ausentismo::whereHas('tipo',function($query){
+		$accidentes_mes = Ausentismo::
+			whereHas('tipo',function($query){
 				$query
 					->where('nombre','LIKE','%ART%')
 					->orWhere('nombre','LIKE','%accidente%');
@@ -114,7 +117,8 @@ class GruposResumenController extends Controller
 			->count();
 
 
-		$accidentes_mes_pasado = Ausentismo::whereHas('tipo',function($query){
+		$accidentes_mes_pasado = Ausentismo::
+			whereHas('tipo',function($query){
 				$query
 					->where('nombre','LIKE','%ART%')
 					->orWhere('nombre','LIKE','%accidente%');
@@ -129,19 +133,39 @@ class GruposResumenController extends Controller
 			->count();
 
 
-		$ausentismos_top_10 = Ausentismo::selectRaw('count(*) as total, id_trabajador')
+		$ausentismos_top_10 = Ausentismo::
+			selectRaw('count(*) as total, id_trabajador')
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',auth()->user()->id_cliente_actual);
 			})
-			->with('trabajador')
+			->with(['trabajador'=>function($query){
+				$query->select('id','nombre');
+			}])
 			->groupBy('id_trabajador')
 			->orderBy('total','desc')
 			->limit(10)
 			->get();
 
-		///dd($ausentismos_top_10[0]);
+
+
+		$ausentismos_top_10_dias = Ausentismo::
+			selectRaw('DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio ) total_dias, id_trabajador')
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->with(['trabajador'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->groupBy('id_trabajador')
+			->orderBy('total_dias','desc')
+			->limit(10)
+			->get();
+
+		//dd($ausentismos_top_10);
 
 
 		$output = array_merge($clientes_grupo,[
@@ -150,14 +174,15 @@ class GruposResumenController extends Controller
 			'accidentes_mes'=>$accidentes_mes,
 			'accidentes_mes_pasado'=>$accidentes_mes_pasado,
 
-			'ausentismos_top_10'=>$ausentismos_top_10
+			'ausentismos_top_10'=>$ausentismos_top_10,
+			'ausentismos_top_10_dias'=>$ausentismos_top_10_dias
 		]);
 
 
 		return view('grupos.resumen_cliente',$output);
 	}
 
-	public function ausentismos_resumen()
+	public function index_cliente_ajax()
 	{
 
 		$today = CarbonImmutable::now();
