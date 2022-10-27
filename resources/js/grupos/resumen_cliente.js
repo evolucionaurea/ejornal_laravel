@@ -48,7 +48,14 @@ $(()=>{
 				datasets:[]
 			}
 			let options = {
-				cutoutPercentage:40
+				///cutoutPercentage:40,
+				scales:{
+					yAxes:[{
+						ticks:{
+							beginAtZero:true
+						}
+					}]
+				}
 			}
 
 
@@ -101,7 +108,7 @@ $(()=>{
 					anual_count++
 				})
 				let chart_anual = document.getElementById("chart_ausentismos_anual").getContext("2d");
-				console.table(data_anual)
+
 				new Chart(chart_anual, {
 					type: 'bar',
 					data: data_anual,

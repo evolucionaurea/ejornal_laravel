@@ -77,7 +77,84 @@ class GruposResumenController extends Controller
 		setlocale(LC_TIME, 'Spanish');
 
 		$clientes_grupo = $this->getClientesGrupo();
-		return view('grupos.resumen_cliente',$clientes_grupo);
+
+
+		$today = CarbonImmutable::now();
+
+		$ausentismos_mes = Ausentismo::where('fecha_inicio','>=',$today->startOfMonth())
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->count();
+
+
+		$ausentismos_mes_pasado = Ausentismo::where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
+			->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->count();
+
+
+		$accidentes_mes = Ausentismo::whereHas('tipo',function($query){
+				$query
+					->where('nombre','LIKE','%ART%')
+					->orWhere('nombre','LIKE','%accidente%');
+			})
+			->where('fecha_inicio','>=',$today->startOfMonth())
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->count();
+
+
+		$accidentes_mes_pasado = Ausentismo::whereHas('tipo',function($query){
+				$query
+					->where('nombre','LIKE','%ART%')
+					->orWhere('nombre','LIKE','%accidente%');
+			})
+			->where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
+			->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->count();
+
+
+		$ausentismos_top_10 = Ausentismo::selectRaw('count(*) as total, id_trabajador')
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->with('trabajador')
+			->groupBy('id_trabajador')
+			->orderBy('total','desc')
+			->limit(10)
+			->get();
+
+		///dd($ausentismos_top_10[0]);
+
+
+		$output = array_merge($clientes_grupo,[
+			'ausentismos_mes'=>$ausentismos_mes,
+			'ausentismos_mes_pasado'=>$ausentismos_mes_pasado,
+			'accidentes_mes'=>$accidentes_mes,
+			'accidentes_mes_pasado'=>$accidentes_mes_pasado,
+
+			'ausentismos_top_10'=>$ausentismos_top_10
+		]);
+
+
+		return view('grupos.resumen_cliente',$output);
 	}
 
 	public function ausentismos_resumen()

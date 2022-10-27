@@ -28,7 +28,7 @@
 							<i class="fas fa-user-md fa-lg blue z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Accidentes mes actual</small></p>
-								<h5 class="font-weight-bold mb-0">xxx</h5>
+								<h5 class="font-weight-bold mb-0">{{$accidentes_mes}}</h5>
 							</div>
 						</div>
 					</div>
@@ -38,7 +38,7 @@
 							<i class="fas fa-user-md fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Accidentes mes pasado</small></p>
-								<h5 class="font-weight-bold mb-0">xxx</h5>
+								<h5 class="font-weight-bold mb-0">{{$accidentes_mes_pasado}}</h5>
 							</div>
 						</div>
 					</div>
@@ -48,7 +48,7 @@
 							<i class="fas fa-user-times fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes actual</small></p>
-								<h5 class="font-weight-bold mb-0">xx</h5>
+								<h5 class="font-weight-bold mb-0">{{$ausentismos_mes}}</h5>
 							</div>
 						</div>
 					</div>
@@ -58,7 +58,7 @@
 							<i class="fas fa-user-times fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes pasado</small></p>
-								<h5 class="font-weight-bold mb-0">xx</h5>
+								<h5 class="font-weight-bold mb-0">{{$ausentismos_mes_pasado}}</h5>
 							</div>
 						</div>
 					</div>
@@ -91,16 +91,16 @@
 								<thead>
 									<tr>
 										<th scope="col">Trabajador</th>
-										<th scope="col">Dias</th>
+										<th scope="col">Días</th>
 									</tr>
 								</thead>
 								<tbody>
-									{{-- @foreach ($top_10_ausentismos as $top) --}}
+									@foreach ($ausentismos_top_10 as $top)
 									<tr>
-										<td>xx</td>
-										<td>xx</td>
+										<td>{{ $top->trabajador->nombre }}</td>
+										<td>{{ $top->total }}</td>
 									</tr>
-									{{-- @endforeach --}}
+									@endforeach
 								</tbody>
 							</table>
 						</div>
