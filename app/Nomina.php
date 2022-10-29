@@ -30,4 +30,5 @@ class Nomina extends Model
     return $this->belongsTo(Cliente::class, 'id_cliente');
   }
 
+
 }
