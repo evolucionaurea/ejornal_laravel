@@ -108,12 +108,18 @@ class GruposResumenController extends Controller
 			selectRaw('count(*) as total, id_tipo')
 			->with('tipo')
 			->where('fecha_inicio','>=',$today->startOfMonth())
-			/*->whereIn('id_trabajador',function($query){
-				$query->select('id')
+			->whereIn('id_trabajador',function($query){
+				$query
+					->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
-			})*/
-			->with(['trabajador'=>function($query){
+					->whereIn('id_cliente',function($query){
+						$query
+							->select('id_cliente')
+							->from('cliente_grupo')
+							->where('id_grupo',auth()->user()->id_grupo);
+					});
+			})
+			/*->with(['trabajador'=>function($query){
 				$query
 					->with(['cliente'=>function($query){
 						$query
@@ -121,31 +127,28 @@ class GruposResumenController extends Controller
 								$query->where('id_grupo',auth()->user()->id_grupo);
 							}]);
 					}]);
-			}])
+			}])*/
 			->groupBy('id_tipo')
 			->get();
 
 		$query = DB::getQueryLog();
 
-		/*"
-			select count(*) as total, id_tipo
-			from `ausentismos`
-			where `fecha_inicio` >= ? and `id_trabajador` in (select `id` from `nominas` where `id_cliente` = ?)
-			group by `id_tipo`"*/
 
 		$ausentismos_anual = Ausentismo::
 			selectRaw('count(*) as total, id_tipo')
 			->with('tipo')
 			->where('fecha_inicio','>=',$today->firstOfYear())
-			->with(['trabajador'=>function($query){
+			->whereIn('id_trabajador',function($query){
 				$query
-					->with(['cliente'=>function($query){
+					->select('id')
+					->from('nominas')
+					->whereIn('id_cliente',function($query){
 						$query
-							->with(['cliente_grupo'=>function($query){
-								$query->where('id_grupo',auth()->user()->id_grupo);
-							}]);
-					}]);
-			}])
+							->select('id_cliente')
+							->from('cliente_grupo')
+							->where('id_grupo',auth()->user()->id_grupo);
+					});
+			})
 			->groupBy('id_tipo')
 			->get();
 
