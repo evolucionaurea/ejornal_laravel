@@ -6,44 +6,92 @@ $(()=>{
 		controller:'/empleados/ausentismos',
 		table:$('.tabla_ausentismos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
-		datatable_options:{order:false},
+		//datatable_options:{order:false},
 		delete_message:'¿Seguro deseas borrar este ausentismo?',
-		render_row:ausentismo=>{
-			return $(`
-				<tr>
-					<td>${ausentismo.nombre}</td>
-					<td>${ausentismo.dni==null ? 'no cargado' : ausentismo.dni}</td>
-					<td>${ausentismo.sector==null ? 'no cargado' : ausentismo.sector}</td>
-					<td>${ausentismo.nombre_ausentismo}</td>
-					<td>${ausentismo.fecha_inicio}</td>
-					<td>${ausentismo.fecha_final}</td>
-					<td>${ausentismo.fecha_regreso_trabajar==null ? 'no cargada' : ausentismo.fecha_regreso_trabajar}</td>
 
-					<td class="acciones_tabla" scope="row">
+		datatable_options:{
+			//ordering:false,
+			columns:[
+				{
+					data:'nombre',
+					name:'nominas.nombre'
+				},
+				{
+					data:row=>row,
+					name:'nominas.dni',
+					render:v=>{
+						return v.dni==null ? '[no cargado]' : v.dni
+					}
+				},
+				{
+					data:row=>row,
+					name:'nominas.sector',
+					render:v=>{
+						return v.sector==null ? '[no cargado]' : v.sector
+					}
+				},
+				{
+					data:'nombre_ausentismo',
+					name:'ausentismo_tipo.nombre'
+				},
 
-						<a title="Comunicaciones" href="comunicaciones/${ausentismo.id}">
-							<i title="Comunicaciones" class="fas fa-bullhorn"></i>
-						</a>
+				{
+					data:'fecha_inicio',
+					name:'fecha_inicio'
+				},
+				{
+					data:'fecha_final',
+					name:'fecha_final',
+					render:v=>{
+						return v==null ? '[no cargada]' : v
+					}
+				},
+				{
+					data:'fecha_regreso_trabajar',
+					name:'fecha_regreso_trabajar',
+					render:v=>{
+						return v==null ? '[no cargada]' : v
+					}
+				},
 
-						<a title="Documentacion" href="documentaciones/${ausentismo.id}">
-							<i title="Documentacion" class="fas fa-files-medical"></i>
-						</a>
+				{
+					data:row=>row,
+					name:'actions',
+					orderable:false,
+					render:(v,type,row,meta)=>{
 
-						<a title="Historial" href="ausentismos/${ausentismo.id_trabajador}">
-							<i title="Historial" class="fas fa-book"></i>
-						</a>
+						if(meta.settings.json.fichada_user!=1) return ''
 
-						<a title="Editar" href="ausentismos/${ausentismo.id}/edit">
-							<i class="fas fa-pencil"></i>
-						</a>
-						<button data-toggle="delete" data-id="${ausentismo.id}" title="Eliminar" type="submit">
-							<i class="fas fa-trash"></i>
-						</button>
+						return `
+							<div class="acciones_tabla">
+								<a title="Comunicaciones" href="comunicaciones/${v.id}">
+									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
+								</a>
 
-					</td>
-				</tr>`
-			)
-		}
+								<a title="Documentacion" href="documentaciones/${v.id}">
+									<i title="Documentacion" class="fas fa-files-medical"></i>
+								</a>
+
+								<a title="Historial" href="ausentismos/${v.id_trabajador}">
+									<i title="Historial" class="fas fa-book"></i>
+								</a>
+
+								<a title="Editar" href="ausentismos/${v.id}/edit">
+									<i class="fas fa-pencil"></i>
+								</a>
+								<button data-toggle="delete" data-id="${v.id}" title="Eliminar" type="submit">
+									<i class="fas fa-trash"></i>
+								</button>
+							</div>
+						`
+
+					}
+				}
+
+			]
+		},
+		server_side:true
+
 	})
 
 })
