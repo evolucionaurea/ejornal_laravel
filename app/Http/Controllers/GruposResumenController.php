@@ -240,12 +240,14 @@ class GruposResumenController extends Controller
 
 
 
+		//DB::enableQueryLog();
 		$ausentismos_top_10_dias = Ausentismo::
 			selectRaw('DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio ) total_dias, id_trabajador')
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
 				$query->select('id','nombre');
@@ -254,8 +256,9 @@ class GruposResumenController extends Controller
 			->orderBy('total_dias','desc')
 			->limit(10)
 			->get();
+		//$query = DB::getQueryLog();
 
-		//dd($ausentismos_top_10);
+		///dd($ausentismos_top_10_dias);
 
 
 		$output = array_merge($clientes_grupo,[
