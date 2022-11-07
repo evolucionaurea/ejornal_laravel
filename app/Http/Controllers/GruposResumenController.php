@@ -112,6 +112,7 @@ class GruposResumenController extends Controller
 				$query
 					->select('id')
 					->from('nominas')
+					->where('deleted_at',null)
 					->whereIn('id_cliente',function($query){
 						$query
 							->select('id_cliente')
@@ -176,7 +177,8 @@ class GruposResumenController extends Controller
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('deleted_at',null);
 			})
 			->count();
 
@@ -187,7 +189,8 @@ class GruposResumenController extends Controller
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('deleted_at',null);
 			})
 			->count();
 
@@ -202,7 +205,8 @@ class GruposResumenController extends Controller
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('deleted_at',null);
 			})
 			->count();
 
@@ -218,7 +222,8 @@ class GruposResumenController extends Controller
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('deleted_at',null);
 			})
 			->count();
 
@@ -228,7 +233,8 @@ class GruposResumenController extends Controller
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',auth()->user()->id_cliente_actual);
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
 				$query->select('id','nombre');
@@ -237,6 +243,8 @@ class GruposResumenController extends Controller
 			->orderBy('total','desc')
 			->limit(10)
 			->get();
+
+		//dd($ausentismos_top_10);
 
 
 
