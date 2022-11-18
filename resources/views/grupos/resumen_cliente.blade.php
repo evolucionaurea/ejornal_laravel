@@ -69,15 +69,19 @@
 
 
 				<div class="row d-flex justify-content-center">
-					<div class="col-lg-5 tarjeta">
-						<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
-						<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
-						<canvas id="chart_ausentismos_mes" height="380"></canvas>
+					<div class="col-lg-6">
+						<div class="tarjeta">
+							<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
+							<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
+							<canvas id="chart_ausentismos_mes" height="380"></canvas>
+						</div>
 					</div>
-					<div class="col-lg-5 tarjeta">
-						<h4 class="text-center">Ausentismos del año</h4>
-						<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
-						<canvas id="chart_ausentismos_anual" height="380"></canvas>
+					<div class="col-lg-6">
+						<div class="tarjeta">
+							<h4 class="text-center">Ausentismos del año</h4>
+							<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
+							<canvas id="chart_ausentismos_anual" height="380"></canvas>
+						</div>
 					</div>
 				</div>
 
@@ -130,12 +134,14 @@
 									</tr>
 								</thead>
 								<tbody>
+									@if ($ausentismos_top_10_dias)
 									@foreach ($ausentismos_top_10_dias as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
 										<td>{{ $top->total_dias }}</td>
 									</tr>
 									@endforeach
+									@endif
 								</tbody>
 							</table>
 						</div>
@@ -152,12 +158,14 @@
 									</tr>
 								</thead>
 								<tbody>
+									@if ($ausentismos_top_10)
 									@foreach ($ausentismos_top_10 as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
 										<td>{{ $top->total }}</td>
 									</tr>
 									@endforeach
+									@endif
 								</tbody>
 							</table>
 						</div>

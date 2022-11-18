@@ -22,9 +22,9 @@ $(()=>{
 				{data:'sector'}
 			]
 		},
-		server_side:true,
+		server_side:true
 
-		render_row:nomina=>{
+		/*render_row:nomina=>{
 			return $(`
 				<tr>
 					<td>${nomina.nombre==null ? 'no cargado' : nomina.nombre}</td>
@@ -37,7 +37,7 @@ $(()=>{
 					<td>${nomina.sector==null ? 'no cargado' : nomina.sector}</td>
 				</tr>`
 			)
-		}
+		}*/
 	})
 
 })

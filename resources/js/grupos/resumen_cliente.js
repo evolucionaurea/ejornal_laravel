@@ -126,7 +126,7 @@ $(()=>{
 			}
 
 
-			// & mensual
+			// % mensual
 			if(response.data.ausentismos_mes.length>0){
 
 				response.data.ausentismos_mes.map(row=>{
@@ -146,7 +146,7 @@ $(()=>{
 				})
 
 			}
-			// & anual
+			// % anual
 			if(response.data.ausentismos_anual.length>0){
 
 				response.data.ausentismos_anual.map(row=>{

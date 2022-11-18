@@ -84,17 +84,63 @@
 
 
 				<div class="row d-flex justify-content-center">
-					<div class="col-lg-5 tarjeta">
-						<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
-						<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
-						<canvas id="chart_ausentismos_mes" height="380"></canvas>
+					<div class="col-lg-6">
+						<div class="tarjeta">
+							<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
+							<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
+							<canvas id="chart_ausentismos_mes" height="380"></canvas>
+						</div>
 					</div>
-					<div class="col-lg-5 tarjeta">
-						<h4 class="text-center">Ausentismos del año</h4>
-						<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
-						<canvas id="chart_ausentismos_anual" height="380"></canvas>
+					<div class="col-lg-6">
+						<div class="tarjeta">
+							<h4 class="text-center">Ausentismos del año</h4>
+							<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
+							<canvas id="chart_ausentismos_anual" height="380"></canvas>
+						</div>
 					</div>
 				</div>
+
+
+
+
+				<div class="row">
+
+					<div class="col-6">
+						<div class="tarjeta">
+							<h4>Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }} en %</h4>
+							<table data-table="ausentismos-mes" class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Trabajador</th>
+										<th scope="col">Porcentaje</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="col-6">
+						<div class="tarjeta">
+							<h4>Ausentismos del año en %</h4>
+							<table data-table="ausentismos-anual" class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Trabajador</th>
+										<th scope="col">Porcentaje</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+
+
+				</div>
+
+
+
+
 
 			</section>
 
