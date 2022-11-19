@@ -177,6 +177,10 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		$consulta = new ConsultaEnfermeria();
 		$consulta->id_nomina = $request->nomina;
 
+		if (isset($request->temperatura_auxiliar) && $request->temperatura_auxiliar != null) {
+			$consulta->temperatura_auxiliar = $request->temperatura_auxiliar;
+		}
+
 		if (isset($request->fecha)) {
 		$consulta->fecha = $fecha;
 		}

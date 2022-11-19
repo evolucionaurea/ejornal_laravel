@@ -159,6 +159,29 @@ class AdminUserController extends Controller
 			$user->id_especialidad = $request->especialidad;
 			$user->id_cliente_actual = $request->clientes[0];
 			$user->onedrive = $request->onedrive;
+
+			if($request->calle != null){
+				$user->calle = $request->calle;
+			}
+			if($request->nro != null){
+				$user->nro = $request->nro;
+			}
+			if($request->entre_calles != null){
+				$user->entre_calles = $request->entre_calles;
+			}
+			if($request->localidad != null){
+				$user->localidad = $request->localidad;
+			}
+			if($request->partido != null){
+				$user->partido = $request->partido;
+			}
+			if($request->cod_postal != null){
+				$user->cod_postal = $request->cod_postal;
+			}
+			if($request->observaciones != null){
+				$user->observaciones = $request->observaciones;
+			}
+			
 		}
 		$user->cuil = $request->cuil;
 		if (isset($request->contratacion) && $request->contratacion != 0) {
@@ -296,6 +319,29 @@ class AdminUserController extends Controller
 				$user->id_cliente_actual = $request->clientes[0];
 			}
 			$user->onedrive = $request->onedrive;
+
+			if($request->calle != null){
+				$user->calle = $request->calle;
+			}
+			if($request->nro != null){
+				$user->nro = $request->nro;
+			}
+			if($request->entre_calles != null){
+				$user->entre_calles = $request->entre_calles;
+			}
+			if($request->localidad != null){
+				$user->localidad = $request->localidad;
+			}
+			if($request->partido != null){
+				$user->partido = $request->partido;
+			}
+			if($request->cod_postal != null){
+				$user->cod_postal = $request->cod_postal;
+			}
+			if($request->observaciones != null){
+				$user->observaciones = $request->observaciones;
+			}
+
 		}
 		$user->cuil = $request->cuil;
 		if (isset($request->contratacion) && $request->contratacion != 0) {

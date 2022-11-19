@@ -12,19 +12,26 @@ $(()=>{
 		{roles:[2],class:'.mostrar_permiso_desplegables'},
 		{roles:[2],class:'.mostrar_especialidades'},
 		{roles:[2],class:'.mostrar_cuil'},
-		{roles:[3],class:'.cliente_original'},
+		{roles:[2],class:'.mostrar_calle'},
+		{roles:[2],class:'.mostrar_nro'},
+		{roles:[2],class:'.mostrar_entre_calles'},
+		{roles:[2],class:'.mostrar_localidad'},
+		{roles:[2],class:'.mostrar_partido'},
+		{roles:[2],class:'.mostrar_cod_postal'},
+		{roles:[2],class:'.mostrar_observaciones'},
 		{roles:[2],class:'.select_contratacion_users'},
 		{roles:[2],class:'.liquidacion_onedrive_creacion_users'},
+		{roles:[3],class:'.cliente_original'},
 		{roles:[4],class:'.grupos'}
 	]
 
 	let mostrar_ocultar_campos = roleid=>{
 		roleid = parseInt(roleid)
 		fields.map(field=>{
+			console.log(field.roles, field.class);
 			if(!field.roles.includes(roleid)){
 				$(field.class).addClass('d-none')
 			}else{
-
 				$(field.class).removeClass('d-none')
 			}
 		})
@@ -36,6 +43,7 @@ $(()=>{
 				$('.mostrar_clientes label').text('¿Este usuario a que Cliente pertenece?');
 				break;
 			default:
+				break
 
 		}
 	}

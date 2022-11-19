@@ -67,10 +67,28 @@
                                         {{'No fue cargado'}}
                                     @endif
                                 </li>
+                                <li class="list-group-item">
+                                    <b>Calle: </b> {{$trabajador->calle}}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Nro: </b> {{$trabajador->nro}}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Entre calles: </b> {{$trabajador->entre_calles}}
+                                </li>
                             </ul>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-12">
                             <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <b>Localidad: </b> {{$trabajador->localidad}}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Partido: </b> {{$trabajador->partido}}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Codigo postal: </b> {{$trabajador->cod_postal}}
+                                </li>
                                 <li class="list-group-item">
                                     <b>DNI: </b> {{$trabajador->dni}}
                                 </li>
@@ -81,6 +99,13 @@
                                     @else
                                     No
                                     @endif
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-12">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <b>Observaciones: </b> {{$trabajador->observaciones}}
                                 </li>
                             </ul>
                         </div>
@@ -158,6 +183,10 @@
                                 {{ (!empty($consulta_medica->fecha)) ? date('d/m/Y',strtotime($consulta_medica->fecha)) : "" }}
                             </li>
                             <li class="list-group-item">
+                                <span style="font-weight: 600;" class="text_black">Temp. auxiliar: </span>
+                                {{ (!empty($consulta_medica->temperatura_auxiliar)) ? $consulta_medica->temperatura_auxiliar : "" }}
+                            </li>
+                            <li class="list-group-item">
                                 <span style="font-weight: 600;" class="text_black">Peso: </span>
                                 {{ (!empty($consulta_medica->peso)) ? $consulta_medica->peso : "" }}
                             </li>
@@ -224,6 +253,10 @@
                             <li class="list-group-item">
                                 <span style="font-weight: 600;" class="text_black">Fecha: </span>
                                 {{ (!empty($consulta_enfermeria->fecha)) ? date('d/m/Y',strtotime($consulta_enfermeria->fecha)) : "" }}
+                            </li>
+                            <li class="list-group-item">
+                                <span style="font-weight: 600;" class="text_black">Temp. auxiliar: </span>
+                                {{ (!empty($consulta_enfermeria->temperatura_auxiliar)) ? $consulta_enfermeria->temperatura_auxiliar : "" }}
                             </li>
                             <li class="list-group-item">
                                 <span style="font-weight: 600;" class="text_black">Peso: </span>

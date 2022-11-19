@@ -37,23 +37,23 @@
                 {{ csrf_field() }}
                 <input name="_method" type="hidden" value="PUT">
                 <div class="form-row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label>Nombre</label>
                         <input name="nombre" type="text" class="form-control form-control-sm" value="{{$trabajador->nombre}}" placeholder="">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label>Email</label>
                         <input name="email" type="email" class="form-control form-control-sm" value="{{$trabajador->email}}" placeholder="">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label>Telefono</label>
                         <input name="telefono" type="text" class="form-control form-control-sm" value="{{$trabajador->telefono}}" placeholder="">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label>DNI</label>
                         <input name="dni" type="text" class="form-control form-control-sm" value="{{$trabajador->dni}}" placeholder="">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label >Estado</label>
                         <select name="estado" class="form-control form-control-sm">
                           @if ($trabajador->estado == 1)
@@ -65,9 +65,33 @@
                           @endif
                         </select>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label>Sector</label>
                         <input name="sector" type="text" class="form-control form-control-sm" value="{{$trabajador->sector}}" placeholder="">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Calle</label>
+                        <input name="calle" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->calle}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Nro</label>
+                        <input name="nro" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->nro}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Entre calles</label>
+                        <input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->entre_calles}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Localidad</label>
+                        <input name="localidad" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->localidad}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Partido</label>
+                        <input name="partido" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->partido}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Codigo postal</label>
+                        <input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->cod_postal}}">
                     </div>
                     <div class="form-group col-md-6">
                       <label>Foto</label>
@@ -84,6 +108,10 @@
                     <div class="form-group col-md-6">
                         <label>Subir/Reemplazar foto</label>
                         <input name="foto" type="file" class="form-control form-control-sm" placeholder="">
+                    </div>
+                    <div class="form-group col-md-12">
+                      <label>Observaciones</label>
+                      <textarea class="form-control form-control-sm" name="observaciones" rows="2" cols="80">{{$trabajador->observaciones}}</textarea>
                     </div>
                     <div class="col-12">
                       <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>

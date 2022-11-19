@@ -94,6 +94,10 @@
 										  {{ (!empty($consulta_medica->created_at)) ? date('d/m/Y H:i:s',strtotime($consulta_medica->created_at)) : "" }}
 										</li>
 										<li class="list-group-item">
+											<span style="font-weight: 600;" class="text_black">Temp. auxiliar: </span>
+											{{ (!empty($consulta_medica->temperatura_auxiliar)) ? $consulta_medica->temperatura_auxiliar : "" }}
+										</li>
+										<li class="list-group-item">
 											<span style="font-weight: 600;" class="text_black">Peso: </span>
 											{{ (!empty($consulta_medica->peso)) ? $consulta_medica->peso : "" }}
 										</li>

@@ -61,7 +61,7 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Fecha <span style="color: red;">*</span></label>
-                    <input required id="data_picker_gral" name="fecha" type="datetime" class="form-control" value="{{ old("fecha") }}">
+                    <input readonly required id="data_picker_gral" name="fecha" type="datetime" class="form-control" value="{{ old("fecha") }}">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Amerita salida <span style="color: red;">*</span></label>
@@ -88,6 +88,10 @@
                 </ul>
             </div>
             <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label>Temperatura auxiliar</label>
+                    <input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("temperatura_auxiliar") }}">
+                </div>
                 <div class="form-group col-md-3">
                     <label>Peso</label>
                     <input name="peso" type="number" class="form-control" value="{{ old("peso") }}">

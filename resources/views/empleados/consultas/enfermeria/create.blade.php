@@ -89,6 +89,10 @@
             </div>
             <div class="form-row">
                 <div class="form-group col-md-3">
+                    <label>Temperatura auxiliar</label>
+                    <input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("temperatura_auxiliar") }}">
+                </div>
+                <div class="form-group col-md-3">
                     <label>Peso</label>
                     <input name="peso" type="number" class="form-control" value="{{ old("peso") }}">
                 </div>

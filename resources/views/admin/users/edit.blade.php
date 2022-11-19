@@ -162,6 +162,34 @@
 					  <label>Cuil</label>
 						<input class="form-control form-control-sm" type="text" name="cuil" value="{{$user->cuil}}">
 					</div>
+					<div class="form-group col-md-3 mostrar_calle">
+						<label>Calle</label>
+						<input class="form-control form-control-sm" type="text" name="calle" value="{{$user->calle}}">
+					</div>
+					<div class="form-group col-md-3 mostrar_nro">
+						<label>Número</label>
+						<input class="form-control form-control-sm" type="text" name="nro" value="{{$user->nro}}">
+					</div>
+					<div class="form-group col-md-3 mostrar_entre_calles">
+						<label>Entre calles</label>
+						<input class="form-control form-control-sm" type="text" name="entre_calles" value="{{$user->entre_calles}}">
+					</div>
+					<div class="form-group col-md-3 mostrar_localidad">
+						<label>Localidad</label>
+						<input class="form-control form-control-sm" type="text" name="localidad" value="{{$user->localidad}}">
+					</div>
+					<div class="form-group col-md-3 mostrar_partido">
+						<label>Partido</label>
+						<input class="form-control form-control-sm" type="text" name="partido" value="{{$user->partido}}">
+					</div>
+					<div class="form-group col-md-3 mostrar_cod_postal">
+						<label>Código postal</label>
+						<input class="form-control form-control-sm" type="text" name="cod_postal" value="{{$user->cod_postal}}">
+					</div>
+					<div class="form-group col-md-12 mostrar_observaciones">
+						<label>observaciones</label>
+						<textarea class="form-control" rows="2" name="observaciones">{{$user->observaciones}}</textarea>
+					</div>
 					<div class="form-group col-md-12 liquidacion_onedrive_creacion_users">
 						<label>Link Liquidación OneDrive
 						  <a href="#" data-toggle="modal" data-target="#question_one_drive">

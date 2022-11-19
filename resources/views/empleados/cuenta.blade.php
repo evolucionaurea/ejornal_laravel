@@ -60,6 +60,34 @@
                         <input disabled name="estado" type="text" class="form-control form-control-sm" value="Inactivo">
                         @endif
                     </div>
+                    <div class="form-group col-md-3">
+                        <label>Calle</label>
+                        <input disabled name="calle" type="text" class="form-control form-control-sm" value="{{auth()->user()->calle}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Número</label>
+                        <input disabled name="nro" type="text" class="form-control form-control-sm" value="{{auth()->user()->nro}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Entre calles</label>
+                        <input disabled name="entre_calles" type="text" class="form-control form-control-sm" value="{{auth()->user()->entre_calles}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Localidad</label>
+                        <input disabled name="localidad" type="text" class="form-control form-control-sm" value="{{auth()->user()->localidad}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Partido</label>
+                        <input disabled name="partido" type="text" class="form-control form-control-sm" value="{{auth()->user()->partido}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Codigo postal</label>
+                        <input disabled name="cod_postal" type="text" class="form-control form-control-sm" value="{{auth()->user()->cod_postal}}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Observaciones</label>
+                        <input disabled name="observaciones" type="text" class="form-control form-control-sm" value="{{auth()->user()->observaciones}}">
+                    </div>
                     {{-- Por el momento no pueden editar sus datos basicos, por tanto se comenta la opcion de hacer submit --}}
                     {{-- <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button> --}}
                 </form>

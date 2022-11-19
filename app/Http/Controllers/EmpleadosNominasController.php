@@ -151,6 +151,27 @@ class EmpleadosNominasController extends Controller
 		if (isset($request->telefono) && !empty($request->telefono)) {
 			$trabajador->telefono = $request->telefono;
 		}
+		if (isset($request->calle) && !empty($request->calle)) {
+			$trabajador->calle = $request->calle;
+		}
+		if (isset($request->nro) && !empty($request->nro)) {
+			$trabajador->nro = $request->nro;
+		}
+		if (isset($request->entre_calles) && !empty($request->entre_calles)) {
+			$trabajador->entre_calles = $request->entre_calles;
+		}
+		if (isset($request->localidad) && !empty($request->localidad)) {
+			$trabajador->localidad = $request->localidad;
+		}
+		if (isset($request->partido) && !empty($request->partido)) {
+			$trabajador->partido = $request->partido;
+		}
+		if (isset($request->cod_postal) && !empty($request->cod_postal)) {
+			$trabajador->cod_postal = $request->cod_postal;
+		}
+		if (isset($request->observaciones) && !empty($request->observaciones)) {
+			$trabajador->observaciones = $request->observaciones;
+		}
 		$trabajador->dni = $request->dni;
 		$trabajador->estado = $request->estado;
 		$trabajador->sector = $request->sector;
@@ -272,12 +293,16 @@ class EmpleadosNominasController extends Controller
 		$trabajador = Nomina::findOrFail($id);
 		$trabajador->nombre = $request->nombre;
 		$trabajador->email = $request->email;
-		if (isset($request->telefono) && !empty($request->telefono)) {
-			$trabajador->telefono = $request->telefono;
-		}
-		if (isset($request->dni) && !empty($request->dni)) {
-			$trabajador->dni = $request->dni;
-		}
+
+		$trabajador->telefono = $request->telefono;
+		$trabajador->dni = $request->dni;
+		$trabajador->calle = $request->calle;
+		$trabajador->nro = $request->nro;
+		$trabajador->entre_calles = $request->entre_calles;
+		$trabajador->localidad = $request->localidad;
+		$trabajador->partido = $request->partido;
+		$trabajador->cod_postal = $request->cod_postal;
+		$trabajador->observaciones = $request->observaciones;
 		$trabajador->estado = $request->estado;
 		$trabajador->sector = $request->sector;
 		if ($request->estado == 0) {
@@ -389,6 +414,27 @@ class EmpleadosNominasController extends Controller
 						case 5:
 							$registro['sector'] = $datos[$icampo];
 							break;
+						case 6:
+							$registro['calle'] = $datos[$icampo];
+							break;
+						case 7:
+							$registro['nro'] = $datos[$icampo];
+							break;
+						case 8:
+							$registro['entre_calles'] = $datos[$icampo];
+							break;
+						case 9:
+							$registro['localidad'] = $datos[$icampo];
+							break;
+						case 10:
+							$registro['partido'] = $datos[$icampo];
+							break;
+						case 11:
+							$registro['cod_postal'] = $datos[$icampo];
+							break;
+						case 12:
+							$registro['observaciones'] = $datos[$icampo];
+							break;
 					}
 				}else {
 					switch ($icampo) {
@@ -409,6 +455,27 @@ class EmpleadosNominasController extends Controller
 							break;
 						case 5:
 							$registro['sector'] = '';
+							break;
+						case 6:
+							$registro['calle'] = '';
+							break;
+						case 7:
+							$registro['nro'] = '';
+							break;
+						case 8:
+							$registro['entre_calles'] = '';
+							break;
+						case 9:
+							$registro['localidad'] = '';
+							break;
+						case 10:
+							$registro['partido'] = '';
+							break;
+						case 11:
+							$registro['cod_postal'] = '';
+							break;
+						case 12:
+							$registro['observaciones'] = '';
 							break;
 					}
 				}
@@ -435,7 +502,7 @@ class EmpleadosNominasController extends Controller
 			$vueltas++;
 		}
 
-		if ($errores)  return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector');
+		if ($errores)  return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');
 
 
 		/// GUARDAR DATOS
@@ -467,6 +534,13 @@ class EmpleadosNominasController extends Controller
 				$nomina->dni = $registro['dni'];
 				$nomina->telefono = $registro['telefono'];
 				$nomina->sector = $registro['sector'];
+				$nomina->calle = $registro['calle'];
+				$nomina->nro = $registro['nro'];
+				$nomina->entre_calles = $registro['entre_calles'];
+				$nomina->localidad = $registro['localidad'];
+				$nomina->partido = $registro['partido'];
+				$nomina->cod_postal = $registro['cod_postal'];
+				$nomina->observaciones = $registro['observaciones'];
 				$nomina->estado = strtolower($registro['estado'])=='activo' ? 1 : 0;
 				$nomina->fecha_baja = strtolower($registro['estado'])=='activo' ? null : Carbon::now();
 				$nomina->save();
