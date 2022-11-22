@@ -135,8 +135,8 @@
 									</tr>
 								</thead>
 								<tbody>
-									@if ($ausentismos_top_10_solicitudes)
-									@foreach ($ausentismos_top_10_solicitudes as $top)
+									@if ($ausentismos_top_10)
+									@foreach ($ausentismos_top_10 as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
 										<td>
@@ -164,8 +164,8 @@
 									</tr>
 								</thead>
 								<tbody>
-									@if ($ausentismos_top_10)
-									@foreach ($ausentismos_top_10 as $top)
+									@if ($ausentismos_top_10_solicitudes)
+									@foreach ($ausentismos_top_10_solicitudes as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
 										<td>{{ $top->total }}</td>

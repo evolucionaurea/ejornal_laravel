@@ -228,7 +228,8 @@ class GruposResumenController extends Controller
 			->count();
 
 
-		$ausentismos_top_10 = Ausentismo::
+		DB::enableQueryLog();
+		$ausentismos_top_10_solicitudes = Ausentismo::
 			selectRaw('count(*) as total, id_trabajador')
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
@@ -237,19 +238,19 @@ class GruposResumenController extends Controller
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
-				$query->selectRaw('id,nombre,(SELECT COUNT(a.id) FROM ausentismos a WHERE a.fecha_regreso_trabajar IS NULL AND a.id_trabajador=nominas.id) as regreso_trabajo');
+				$query->select('id','nombre');
 			}])
 			->groupBy('id_trabajador')
 			->orderBy('total','desc')
 			->limit(10)
 			->get();
-
-		//dd($ausentismos_top_10);
+		$query = DB::getQueryLog();
+		//dd($ausentismos_top_10->toArray());
 
 
 
 		//DB::enableQueryLog();
-		$ausentismos_top_10_solicitudes = Ausentismo::
+		$ausentismos_top_10 = Ausentismo::
 			selectRaw('SUM(DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio )) total_dias, id_trabajador')
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
@@ -258,7 +259,7 @@ class GruposResumenController extends Controller
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
-				$query->select('id','nombre');
+				$query->selectRaw('id,nombre,(SELECT COUNT(a.id) FROM ausentismos a WHERE a.fecha_regreso_trabajar IS NULL AND a.id_trabajador=nominas.id) as regreso_trabajo');
 			}])
 			->groupBy('id_trabajador')
 			->orderBy('total_dias','desc')
