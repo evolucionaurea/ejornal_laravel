@@ -237,7 +237,7 @@ class GruposResumenController extends Controller
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
-				$query->select('id','nombre');
+				$query->selectRaw('id,nombre,(SELECT COUNT(a.id) FROM ausentismos a WHERE a.fecha_regreso_trabajar IS NULL AND a.id_trabajador=nominas.id) as regreso_trabajo');
 			}])
 			->groupBy('id_trabajador')
 			->orderBy('total','desc')

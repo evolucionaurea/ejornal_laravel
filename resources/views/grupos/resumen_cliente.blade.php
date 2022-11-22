@@ -130,6 +130,7 @@
 								<thead>
 									<tr>
 										<th scope="col">Trabajador</th>
+										<th scope="col">Estado Actual</th>
 										<th scope="col">Días</th>
 									</tr>
 								</thead>
@@ -138,6 +139,11 @@
 									@foreach ($ausentismos_top_10_solicitudes as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
+										<td>
+										@if ($top->trabajador->regreso_trabajo)
+											<span class="badge badge-danger">ausente</span>
+										@endif
+										</td>
 										<td>{{ $top->total_dias }}</td>
 									</tr>
 									@endforeach
