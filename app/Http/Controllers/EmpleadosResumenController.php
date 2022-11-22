@@ -92,14 +92,14 @@ class EmpleadosResumenController extends Controller
 		->whereDate('consultas_enfermerias.fecha', '=', Carbon::now()->format('Y-m-d'))
 		->count();
 
-		$vacunados_varias_dosis = CovidVacuna::join('nominas', 'covid_vacunas.id_nomina', 'nominas.id')
+		/*$vacunados_varias_dosis = CovidVacuna::join('nominas', 'covid_vacunas.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->selectRaw('covid_vacunas.id_nomina, count(*)')
 		->groupBy('covid_vacunas.id_nomina')
 		->select('nominas.nombre', DB::raw('count(*) cantidad'))
-		->get();
+		->get();*/
 
-		$cant_vacunados_una_dosis = 0;
+		/*$cant_vacunados_una_dosis = 0;
 		$cant_vacunados_dos_dosis = 0;
 		$cant_vacunados_tres_dosis = 0;
 		if (count($vacunados_varias_dosis) > 0) {
@@ -114,12 +114,12 @@ class EmpleadosResumenController extends Controller
 					$cant_vacunados_tres_dosis++;
 				}
 			}
-		}
+		}*/
 
-		$testeos_positivos = CovidTesteo::where('resultado', 'positivo')
+		/*$testeos_positivos = CovidTesteo::where('resultado', 'positivo')
 		->join('nominas', 'covid_testeos.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->count();
+		->count();*/
 
 		$medicas_mes = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
@@ -143,8 +143,7 @@ class EmpleadosResumenController extends Controller
 		->count();*/
 
 		return view('empleados.resumen', compact('clientes', 'total_nomina', 'ausentes_hoy', 'consultas_medicas',
-		'medicas_mes', 'enfermerias_mes', 'consultas_enfermeria', 'testeos_positivos', 'ausencia_covid',
-		'cant_vacunados_una_dosis', 'cant_vacunados_dos_dosis', 'cant_vacunados_tres_dosis'));
+		'medicas_mes', 'enfermerias_mes', 'consultas_enfermeria','ausencia_covid'));
 	}
 
 

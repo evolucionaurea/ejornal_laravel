@@ -24,6 +24,13 @@ class Nomina extends Model
   {
   	return $this->hasMany(Ausentismo::class,'id_trabajador');
   }
+  public function scopeAusentismoEstado($query)
+  {
+    $query->addSelect(['id'=>Ausentismo::select('fecha_regreso_trabajar')
+      ->whereColumn('id_trabajador','nominas.id')
+      ->where('fecha_regreso_trabajar',null)
+    ]);
+  }
 
   public function cliente()
   {

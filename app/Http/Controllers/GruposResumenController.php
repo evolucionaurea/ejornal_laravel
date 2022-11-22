@@ -249,8 +249,8 @@ class GruposResumenController extends Controller
 
 
 		//DB::enableQueryLog();
-		$ausentismos_top_10_dias = Ausentismo::
-			selectRaw('DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio ) total_dias, id_trabajador')
+		$ausentismos_top_10_solicitudes = Ausentismo::
+			selectRaw('SUM(DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio )) total_dias, id_trabajador')
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
@@ -266,7 +266,6 @@ class GruposResumenController extends Controller
 			->get();
 		//$query = DB::getQueryLog();
 
-		///dd($ausentismos_top_10_dias);
 
 
 		$output = array_merge($clientes_grupo,[
@@ -276,7 +275,7 @@ class GruposResumenController extends Controller
 			'accidentes_mes_pasado'=>$accidentes_mes_pasado,
 
 			'ausentismos_top_10'=>$ausentismos_top_10,
-			'ausentismos_top_10_dias'=>$ausentismos_top_10_dias
+			'ausentismos_top_10_solicitudes'=>$ausentismos_top_10_solicitudes
 		]);
 
 

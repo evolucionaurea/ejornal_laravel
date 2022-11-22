@@ -134,8 +134,8 @@
 									</tr>
 								</thead>
 								<tbody>
-									@if ($ausentismos_top_10_dias)
-									@foreach ($ausentismos_top_10_dias as $top)
+									@if ($ausentismos_top_10_solicitudes)
+									@foreach ($ausentismos_top_10_solicitudes as $top)
 									<tr>
 										<td>{{ $top->trabajador->nombre }}</td>
 										<td>{{ $top->total_dias }}</td>

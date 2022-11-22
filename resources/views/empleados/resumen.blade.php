@@ -69,7 +69,7 @@
 					</div>
 
 					<!-- Ausencias COVID -->
-					<div class="col-md-4 col-lg-4 mb-4">
+					{{-- <div class="col-md-4 col-lg-4 mb-4">
 						<a href="{{ route('/empleados/nominas',['ausentes'=>'covid']) }}" class="card red white-text" >
 							<input type="hidden" name="ausentes" value="covid">
 							<div class="card-body d-flex justify-content-between align-items-center">
@@ -82,7 +82,7 @@
 								</div>
 							</div>
 						</a>
-					</div>
+					</div> --}}
 
 
 					<!-- Consultas Médicas x Mes -->
@@ -131,67 +131,7 @@
 						</div>
 					</div>
 
-					<!-- Testeos Positivos -->
-					<div class="col-md-4 col-lg-3 mb-4">
-						<a href="{{route('empleados.covid.testeos',['filtro'=>'positivos'])}}" class="card secondary-color-dark lighten-1 white-text">
-							<div class="card-body d-flex justify-content-between align-items-center">
-								<div>
-									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$testeos_positivos}}</p>
-									<p class="mb-0">Testeos positivos</p>
-								</div>
-								<div>
-									<i class="fas fa-disease fa-2x text-black-40"></i>
-								</div>
-							</div>
-						</a>
-					</div>
 
-
-					<!-- 1 dosis -->
-					<div class="col-md-4 col-lg-3 mb-4">
-						<a href="{{route('empleados.covid.vacunas',['filtro'=>'dosis_1'])}}" class="card secondary-color-dark accent-2 white-text">
-							<div class="card-body d-flex justify-content-between align-items-center">
-								<div>
-									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_una_dosis}}</p>
-									<p class="mb-0">Con 1 dosis</p>
-								</div>
-								<div>
-									<i class="fas fa-disease fa-2x text-black-40"></i>
-								</div>
-							</div>
-						</a>
-					</div>
-
-
-					<!-- 2 dosis -->
-					<div class="col-md-4 col-lg-3 mb-4">
-						<a href="{{route('empleados.covid.vacunas',['filtro'=>'dosis_2'])}}" class="card secondary-color-dark accent-2 white-text">
-							<div class="card-body d-flex justify-content-between align-items-center">
-								<div>
-									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_dos_dosis}}</p>
-									<p class="mb-0">Con 2 dosis</p>
-								</div>
-								<div>
-									<i class="fas fa-disease fa-2x text-black-40"></i>
-								</div>
-							</div>
-						</a>
-					</div>
-
-					<!-- 3 dosis -->
-					<div class="col-md-4 col-lg-3 mb-4">
-						<a href="{{route('empleados.covid.vacunas',['filtro'=>'dosis_3'])}}" class="card secondary-color-dark accent-2 white-text">
-							<div class="card-body d-flex justify-content-between align-items-center">
-								<div>
-									<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$cant_vacunados_tres_dosis}}</p>
-									<p class="mb-0">Con 3 dosis</p>
-								</div>
-								<div>
-									<i class="fas fa-disease fa-2x text-black-40"></i>
-								</div>
-							</div>
-						</a>
-					</div>
 
 				</div>
 			</section>
