@@ -1,4 +1,4 @@
-import Tablas from '../Tablas.js';
+import Tablas from '../classes/Tablas.js';
 
 $(()=>{
 	new Tablas({
