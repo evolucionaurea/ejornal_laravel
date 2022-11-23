@@ -87,14 +87,14 @@
 					<div class="col-lg-6">
 						<div class="tarjeta">
 							<h4 class="text-center">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
-							<div data-toggle="blank-chart-ausentismos-mes" class="alert alert-info text-center d-none">No hay datos</div>
+							<div data-toggle="blank-chart" class="alert alert-info text-center d-none">No hay datos</div>
 							<canvas id="chart_ausentismos_mes" height="380"></canvas>
 						</div>
 					</div>
 					<div class="col-lg-6">
 						<div class="tarjeta">
 							<h4 class="text-center">Ausentismos del año</h4>
-							<div data-toggle="blank-chart-ausentismos-anual" class="alert alert-info text-center d-none">No hay datos</div>
+							<div data-toggle="blank-chart-ausentismos" class="alert alert-info text-center d-none">No hay datos</div>
 							<canvas id="chart_ausentismos_anual" height="380"></canvas>
 						</div>
 					</div>
@@ -105,36 +105,81 @@
 
 				<div class="row">
 
-					<div class="col-6">
-						<div class="tarjeta">
-							<h4>Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }} en %</h4>
-							<table data-table="ausentismos-mes" class="table table-striped">
+					<!-- Mes Actual -->
+					<div class="col-lg-6">
+						<div class="tarjeta ausentismos_mes_porcentajes">
+							<h4>Ausentismos de {{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h4>
+							<table data-table="ausentismos-mes" class="table table-striped tabla">
 								<thead>
 									<tr>
-										<th scope="col">Trabajador</th>
+										<th scope="col">Tipo</th>
 										<th scope="col">Porcentaje</th>
+										<th scope="col">Cantidad</th>
 									</tr>
 								</thead>
-								<tbody></tbody>
+								<tbody>
+									{{-- Se carga por JS --}}
+								</tbody>
 							</table>
 						</div>
 					</div>
 
-					<div class="col-6">
-						<div class="tarjeta">
-							<h4>Ausentismos del año en %</h4>
+					<!-- Mes Anterior -->
+					<div class="col-lg-6">
+						<div class="tarjeta ausentismos_mes_porcentajes">
+							<h4>Ausentismos de {{ $carbon::now()->subMonth()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h4>
+							<table data-table="ausentismos-mes-anterior" class="table table-striped tabla">
+								<thead>
+									<tr>
+										<th scope="col">Tipo</th>
+										<th scope="col">Porcentaje</th>
+										<th scope="col">Cantidad</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{-- Se carga por JS --}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- Mes Año Anterior -->
+					<div class="col-lg-6">
+						<div class="tarjeta ausentismos_mes_porcentajes">
+							<h4>Ausentismos de {{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->subYear()->formatLocalized('%Y') }}</h4>
+							<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla">
+								<thead>
+									<tr>
+										<th scope="col">Tipo</th>
+										<th scope="col">Porcentaje</th>
+										<th scope="col">Cantidad</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{-- Se carga por JS --}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- Año Actual -->
+					<div class="col-lg-6">
+						<div class="tarjeta ausentismos_anio_porcentajes">
+							<h4>Ausentismos de {{ $carbon::now()->firstOfYear()->formatLocalized('%B') }} a {{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h4>
 							<table data-table="ausentismos-anual" class="table table-striped">
 								<thead>
 									<tr>
-										<th scope="col">Trabajador</th>
+										<th scope="col">Tipo</th>
 										<th scope="col">Porcentaje</th>
+										<th scope="col">Cantidad</th>
 									</tr>
 								</thead>
-								<tbody></tbody>
+								<tbody>
+									{{-- Se carga por JS --}}
+								</tbody>
 							</table>
 						</div>
 					</div>
-
 
 				</div>
 

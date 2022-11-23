@@ -98,70 +98,6 @@ class GruposResumenController extends Controller
 		return view('grupos.resumen',$output);
 	}
 
-	public function index_ajax()
-	{
-		$today = CarbonImmutable::now();
-
-		DB::enableQueryLog();
-
-		$ausentismos_mes = Ausentismo::
-			selectRaw('count(*) as total, id_tipo')
-			->with('tipo')
-			->where('fecha_inicio','>=',$today->startOfMonth())
-			->whereIn('id_trabajador',function($query){
-				$query
-					->select('id')
-					->from('nominas')
-					->where('deleted_at',null)
-					->whereIn('id_cliente',function($query){
-						$query
-							->select('id_cliente')
-							->from('cliente_grupo')
-							->where('id_grupo',auth()->user()->id_grupo);
-					});
-			})
-			/*->with(['trabajador'=>function($query){
-				$query
-					->with(['cliente'=>function($query){
-						$query
-							->with(['cliente_grupo'=>function($query){
-								$query->where('id_grupo',auth()->user()->id_grupo);
-							}]);
-					}]);
-			}])*/
-			->groupBy('id_tipo')
-			->get();
-
-		$query = DB::getQueryLog();
-
-
-		$ausentismos_anual = Ausentismo::
-			selectRaw('count(*) as total, id_tipo')
-			->with('tipo')
-			->where('fecha_inicio','>=',$today->firstOfYear())
-			->whereIn('id_trabajador',function($query){
-				$query
-					->select('id')
-					->from('nominas')
-					->whereIn('id_cliente',function($query){
-						$query
-							->select('id_cliente')
-							->from('cliente_grupo')
-							->where('id_grupo',auth()->user()->id_grupo);
-					});
-			})
-			->groupBy('id_tipo')
-			->get();
-
-		return [
-			'status'=>'ok',
-			'ausentismos_mes'=>$ausentismos_mes,
-			'ausentismos_anual'=>$ausentismos_anual,
-			'query'=>$query
-		];
-
-	}
-
 	public function index_cliente()
 	{
 
@@ -283,6 +219,116 @@ class GruposResumenController extends Controller
 		return view('grupos.resumen_cliente',$output);
 	}
 
+
+
+	public function index_ajax()
+	{
+		$today = CarbonImmutable::now();
+
+		DB::enableQueryLog();
+
+		$ausentismos_mes = Ausentismo::
+			selectRaw('count(*) as total, id_tipo')
+			->with('tipo')
+			->where('fecha_inicio','>=',$today->startOfMonth())
+			->whereIn('id_trabajador',function($query){
+				$query
+					->select('id')
+					->from('nominas')
+					->where('deleted_at',null)
+					->whereIn('id_cliente',function($query){
+						$query
+							->select('id_cliente')
+							->from('cliente_grupo')
+							->where('id_grupo',auth()->user()->id_grupo);
+					});
+			})
+			->groupBy('id_tipo')
+			->get();
+
+		$query = DB::getQueryLog();
+
+
+
+		$ausentismos_mes_anterior = Ausentismo::
+			selectRaw('count(*) as total, id_tipo')
+			->with('tipo')
+			->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+			->where(function($query) use ($today){
+				$query
+					->where('fecha_regreso_trabajar',null)
+					->orwhere('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth());
+			})
+			->whereIn('id_trabajador',function($query){
+				$query
+					->select('id')
+					->from('nominas')
+					->where('deleted_at',null)
+					->whereIn('id_cliente',function($query){
+						$query
+							->select('id_cliente')
+							->from('cliente_grupo')
+							->where('id_grupo',auth()->user()->id_grupo);
+					});
+			})
+			->groupBy('id_tipo')
+			->get();
+
+
+		$ausentismos_mes_anio_anterior = Ausentismo::
+			selectRaw('count(*) as total, id_tipo')
+			->with('tipo')
+			->where('fecha_inicio','>=',$today->subYear()->firstOfYear())
+			->where(function($query) use ($today){
+				$query
+					->where('fecha_regreso_trabajar',null)
+					->orwhere('fecha_regreso_trabajar','<=',$today->subYear()->lastOfYear());
+			})
+			->whereIn('id_trabajador',function($query){
+				$query
+					->select('id')
+					->from('nominas')
+					->where('deleted_at',null)
+					->whereIn('id_cliente',function($query){
+						$query
+							->select('id_cliente')
+							->from('cliente_grupo')
+							->where('id_grupo',auth()->user()->id_grupo);
+					});
+			})
+			->groupBy('id_tipo')
+			->get();
+
+
+		$ausentismos_anual = Ausentismo::
+			selectRaw('count(*) as total, id_tipo')
+			->with('tipo')
+			->where('fecha_inicio','>=',$today->firstOfYear())
+			->whereIn('id_trabajador',function($query){
+				$query
+					->select('id')
+					->from('nominas')
+					->whereIn('id_cliente',function($query){
+						$query
+							->select('id_cliente')
+							->from('cliente_grupo')
+							->where('id_grupo',auth()->user()->id_grupo);
+					});
+			})
+			->groupBy('id_tipo')
+			->get();
+
+		return [
+			'status'=>'ok',
+			'ausentismos_mes'=>$ausentismos_mes,
+			'ausentismos_mes_anterior'=>$ausentismos_mes_anterior,
+			'ausentismos_mes_anio_anterior'=>$ausentismos_mes_anio_anterior,
+			'ausentismos_anual'=>$ausentismos_anual,
+			'query'=>$query
+		];
+
+	}
+
 	public function index_cliente_ajax()
 	{
 
@@ -303,21 +349,58 @@ class GruposResumenController extends Controller
 
 		//$query = DB::getQueryLog();
 
-		$ausentismos_anual = Ausentismo::groupBy('id_tipo')
+
+
+		$ausentismos_mes_anterior = Ausentismo::selectRaw('count(*) as total, id_tipo')
+			->with('tipo')
+			->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+			->where(function($query) use ($today){
+				$query
+					->where('fecha_regreso_trabajar',null)
+					->orwhere('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth());
+			})
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->groupBy('id_tipo')
+			->get();
+
+
+		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw('count(*) as total, id_tipo')
+			->with('tipo')
+			->where('fecha_inicio','>=',$today->subYear()->firstOfYear())
+			->where(function($query) use ($today){
+				$query
+					->where('fecha_regreso_trabajar',null)
+					->orwhere('fecha_regreso_trabajar','<=',$today->subYear()->lastOfYear());
+			})
+			->whereIn('id_trabajador',function($query){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->groupBy('id_tipo')
+			->get();
+
+		$ausentismos_anual = Ausentismo::selectRaw('count(*) as total, id_tipo')
 			->with('tipo')
 			->whereIn('id_trabajador',function($query){
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',auth()->user()->id_cliente_actual);
 			})
-			->selectRaw('count(*) as total, id_tipo')
+			->groupBy('id_tipo')
 			->where('fecha_inicio','>=',$today->firstOfYear())
 			->get();
 
 		return [
 			'status'=>'ok',
 			'ausentismos_mes'=>$ausentismos_mes,
-			'ausentismos_anual'=>$ausentismos_anual,
+			'ausentismos_mes_anterior'=>$ausentismos_mes_anterior,
+			'ausentismos_mes_anio_anterior'=>$ausentismos_mes_anio_anterior,
+			'ausentismos_anual'=>$ausentismos_anual
 			//'query'=>$query
 		];
 	}

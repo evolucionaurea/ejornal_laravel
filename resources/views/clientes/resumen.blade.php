@@ -17,86 +17,89 @@
 
 		@php
 			$newLocale = setlocale(LC_TIME, 'Spanish');
-			$now = \Carbon\Carbon::now();
+			$now = \Carbon\CarbonImmutable::now();
 		@endphp
 
 
-		<div class="container">
-			<section>
 
-				<div class="row">
-					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
-							<i class="fas fa-user-md fa-lg blue z-depth-1 p-4 rounded-left text-white mr-3"></i>
-							<div class="media-body p-1">
-								<p class="text-uppercase text-muted mb-1"><small>Accidentes mes actual</small></p>
-								<h5 class="font-weight-bold mb-0">{{$accidentes_mes_actual}}</h5>
-							</div>
-						</div>
-					</div>
 
-					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
-							<i class="fas fa-user-md fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
-							<div class="media-body p-1">
-								<p class="text-uppercase text-muted mb-1"><small>Accidentes mes pasado</small></p>
-								<h5 class="font-weight-bold mb-0">{{$accidentes_mes_pasado}}</h5>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
-							<i class="fas fa-user-times fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
-							<div class="media-body p-1">
-								<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes actual</small></p>
-								<h5 class="font-weight-bold mb-0">{{$ausentismos_mes_actual}}</h5>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-3 col-md-6 mb-4">
-						<div class="media white z-depth-1 rounded">
-							<i class="fas fa-user-times fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
-							<div class="media-body p-1">
-								<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes pasado</small></p>
-								<h5 class="font-weight-bold mb-0">{{$ausentismos_mes_pasado}}</h5>
-							</div>
-						</div>
+		<div class="row p-4">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="media white z-depth-1 rounded">
+					<i class="fas fa-user-md fa-lg blue z-depth-1 p-4 rounded-left text-white mr-3"></i>
+					<div class="media-body p-1">
+						<p class="text-uppercase text-muted mb-1"><small>Accidentes mes actual</small></p>
+						<h5 class="font-weight-bold mb-0">{{$accidentes_mes_actual}}</h5>
 					</div>
 				</div>
+			</div>
 
-
-
-				<div class="row d-flex justify-content-center">
-					<div class="col-md-5 tarjeta">
-						<h2 class="text-center">Ausentismos de {{ $now->formatLocalized('%B') }}</h2>
-						<div class="alert alert-info resumen_graficos_ausentismos_mes">
-							No hay datos
-						</div>
-						<canvas id="chart_accidentes"></canvas>
-					</div>
-					<div class="col-md-5 tarjeta">
-						<h2 class="text-center">Ausentismos del año</h2>
-						<div class="alert alert-info resumen_graficos_ausentismos_anual">
-							No hay datos
-						</div>
-						<canvas id="chart_accidentes_anual"></canvas>
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="media white z-depth-1 rounded">
+					<i class="fas fa-user-md fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
+					<div class="media-body p-1">
+						<p class="text-uppercase text-muted mb-1"><small>Accidentes mes pasado</small></p>
+						<h5 class="font-weight-bold mb-0">{{$accidentes_mes_pasado}}</h5>
 					</div>
 				</div>
-			</section>
+			</div>
+
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="media white z-depth-1 rounded">
+					<i class="fas fa-user-times fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
+					<div class="media-body p-1">
+						<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes actual</small></p>
+						<h5 class="font-weight-bold mb-0">{{$ausentismos_mes_actual}}</h5>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="media white z-depth-1 rounded">
+					<i class="fas fa-user-times fa-lg pink z-depth-1 p-4 rounded-left text-white mr-3"></i>
+					<div class="media-body p-1">
+						<p class="text-uppercase text-muted mb-1"><small>Ausentismos mes pasado</small></p>
+						<h5 class="font-weight-bold mb-0">{{$ausentismos_mes_pasado}}</h5>
+					</div>
+				</div>
+			</div>
 		</div>
 
 
+
 		<div class="row">
-			<div class="col-6">
+			<div class="col-lg-6 ">
+				<div class="tarjeta">
+					<h2 class="text-center">Ausentismos de {{ $now->formatLocalized('%B') }}</h2>
+					<div class="alert alert-info resumen_graficos_ausentismos_mes">No hay datos</div>
+					<canvas id="chart_ausentismos_mes" height="380"></canvas>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="tarjeta">
+					<h2 class="text-center">Ausentismos del año</h2>
+					<div class="alert alert-info resumen_graficos_ausentismos_anual">No hay datos</div>
+					<canvas id="chart_ausentismos_anual" height="380"></canvas>
+				</div>
+			</div>
+		</div>
+
+
+
+
+		<!-- TABLAS -->
+		<div class="row">
+
+			<!-- Mes Actual -->
+			<div class="col-lg-6">
 				<div class="tarjeta ausentismos_mes_porcentajes">
-					<h4>Ausentismos de {{ $now->formatLocalized('%B') }}</h4>
-					<table class="table table-striped tabla">
+					<h4>Ausentismos de {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<table data-table="ausentismos-mes" class="table table-striped tabla">
 						<thead>
 							<tr>
 								<th scope="col">Tipo</th>
 								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -106,14 +109,54 @@
 				</div>
 			</div>
 
-			<div class="col-6">
-				<div class="tarjeta ausentismos_anio_porcentajes">
-					<h4>Ausentismos del año %</h4>
-					<table class="table table-striped">
+			<!-- Mes Anterior -->
+			<div class="col-lg-6">
+				<div class="tarjeta ausentismos_mes_porcentajes">
+					<h4>Ausentismos de {{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<table data-table="ausentismos-mes-anterior" class="table table-striped tabla">
 						<thead>
 							<tr>
 								<th scope="col">Tipo</th>
 								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{-- Se carga por JS --}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- Mes Año Anterior -->
+			<div class="col-lg-6">
+				<div class="tarjeta ausentismos_mes_porcentajes">
+					<h4>Ausentismos de {{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h4>
+					<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla">
+						<thead>
+							<tr>
+								<th scope="col">Tipo</th>
+								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{-- Se carga por JS --}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- Año Actual -->
+			<div class="col-lg-6">
+				<div class="tarjeta ausentismos_anio_porcentajes">
+					<h4>Ausentismos de {{ $now->firstOfYear()->formatLocalized('%B') }} a {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<table data-table="ausentismos-anual" class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Tipo</th>
+								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -127,7 +170,8 @@
 
 
 		<div class="row">
-			<div class="col-6">
+
+			<div class="col-lg-6">
 				<div class="tarjeta">
 					<h4>Top 10 trabajadores que mas días faltaron</h4>
 					<table data-table="top_10_faltas" class="table table-striped">
@@ -157,7 +201,7 @@
 				</div>
 			</div>
 
-			<div class="col-6">
+			<div class="col-lg-6">
 				<div class="tarjeta">
 					<h4>Top trabajadores que mas veces solicitaron faltar</h4>
 					<table data-table="top_10_solicitudes_faltas" class="table table-striped">

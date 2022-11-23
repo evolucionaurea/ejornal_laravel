@@ -23,8 +23,10 @@ Route::group(['middleware' => 'autenticacion_clientes'], function () {
 	Route::get('clientes/ausentismos', 'ClientesAusentismosController@index')->name('/clientes/ausentismos');
 	Route::post('clientes/ausentismos/busqueda','ClientesAusentismosController@busqueda');
 
-	Route::get('clientes/getAccidentesAnual', 'ClientesResumenController@getAccidentesAnual')->name('/clientes/get_accidentes_anual');
-	Route::get('clientes/getAccidentesMesActual', 'ClientesResumenController@getAccidentesMesActual')->name('/clientes/get_accidentes_mes_actual');
+	//Route::get('clientes/getAccidentesAnual', 'ClientesResumenController@getAccidentesAnual')->name('/clientes/get_accidentes_anual');
+	//Route::get('clientes/getAccidentesMesActual', 'ClientesResumenController@getAccidentesMesActual')->name('/clientes/get_accidentes_mes_actual');
+
+	Route::get('clientes/index_ajax', 'ClientesResumenController@index_ajax');
 
 	Route::get('clientes/api', 'ClientesApiController@index')->name('/clientes/api');
 
