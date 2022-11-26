@@ -185,7 +185,7 @@ class AdminReporteController extends Controller
       ->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
       ->join('clientes', 'nominas.id_cliente', 'clientes.id')
       ->select('nominas.nombre', 'consultas_medicas.fecha', 'consultas_medicas.peso', 'consultas_medicas.altura',
-      'consultas_medicas.derivacion_consulta', DB::raw('diagnostico_consulta.nombre diagnostico'),
+      'consultas_medicas.derivacion_consulta', 'consultas_medicas.temperatura_auxiliar', DB::raw('diagnostico_consulta.nombre diagnostico'),
       DB::raw('clientes.nombre cliente'))
       ->orderBy('consultas_medicas.fecha', 'desc')
       ->get();
@@ -199,7 +199,7 @@ class AdminReporteController extends Controller
       ->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
       ->join('clientes', 'nominas.id_cliente', 'clientes.id')
       ->select('nominas.nombre', 'consultas_enfermerias.fecha', 'consultas_enfermerias.peso', 'consultas_enfermerias.altura',
-      'consultas_enfermerias.derivacion_consulta', DB::raw('diagnostico_consulta.nombre diagnostico'),
+      'consultas_enfermerias.derivacion_consulta', 'consultas_enfermerias.temperatura_auxiliar', DB::raw('diagnostico_consulta.nombre diagnostico'),
       DB::raw('clientes.nombre cliente'))
       ->orderBy('consultas_enfermerias.fecha', 'desc')
       ->get();

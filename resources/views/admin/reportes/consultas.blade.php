@@ -46,6 +46,11 @@
                               Cliente
                           </a>
                       </th>
+                      <th class="th-lg">
+                          <a>
+                              Temp. Auxiliar
+                          </a>
+                      </th>
                         <th class="th-lg">
                             <a>
                                 Peso
@@ -109,6 +114,11 @@
                       <th class="th-lg">
                           <a>
                               Cliente
+                          </a>
+                      </th>
+                      <th class="th-lg">
+                          <a>
+                              Temp. Auxiliar
                           </a>
                       </th>
                         <th class="th-lg">

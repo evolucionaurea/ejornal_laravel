@@ -21,6 +21,11 @@
                     )
                     .append(
                         $('<td>', {
+                            'text': consultas_medicas[i].temperatura_auxiliar
+                        })
+                    )
+                    .append(
+                        $('<td>', {
                             'text': consultas_medicas[i].peso
                         })
                     )
@@ -287,7 +292,12 @@
                     )
                     .append(
                         $('<td>', {
-                            'text': consultas_enfermerias[i].nombre
+                            'text': consultas_enfermerias[i].cliente
+                        })
+                    )
+                    .append(
+                        $('<td>', {
+                            'text': consultas_medicas[i].temperatura_auxiliar
                         })
                     )
                     .append(
