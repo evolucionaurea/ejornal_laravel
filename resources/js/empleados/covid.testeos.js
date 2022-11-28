@@ -3,7 +3,7 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/empleados/covid/testeos',
+		controller:'/empleados/covid/testeos/busqueda',
 		table:$('.tabla_testeos_listado'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:[[ 2, "desc" ]]},

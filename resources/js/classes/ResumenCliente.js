@@ -166,7 +166,6 @@ export default class ResumenCliente {
 
 		// ausentismos año actual
 		this.render_tables({
-			//ausentismos_count:total_ausentismos_anual_count,
 			data:this.data.ausentismos_anual,
 			table:'ausentismos-anual'
 		})

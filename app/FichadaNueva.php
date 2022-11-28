@@ -16,4 +16,10 @@ class FichadaNueva extends Model implements Auditable
   // Campos habilitados para ingresar
   protected $fillable = ['ingreso', 'egreso', 'tiempo_dedicado', 'id_user', 'id_cliente', 'ip', 'dispositivo'];
 
+
+  protected $casts = [
+    'ingreso'=>'date:d/m/Y',
+    'egreso'=>'date:d/m/Y'
+  ];
+
 }

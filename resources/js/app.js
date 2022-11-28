@@ -30,6 +30,8 @@ if(route=='users.edit') require('./admin/users/create.edit')
 
 if(route=='grupos.create') require('./admin/grupos/create.edit')
 if(route=='grupos.edit') require('./admin/grupos/create.edit')
+if(route=='reportes_ausentismos') require('./admin/reportes/ausentismos')
+if(route=='reportes_fichadas_nuevas') require('./admin/reportes/fichadas')
 
 /*const url = location.href;
 const admin = 'admin/users';

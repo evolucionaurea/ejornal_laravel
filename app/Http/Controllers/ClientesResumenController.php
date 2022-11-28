@@ -275,7 +275,7 @@ class ClientesResumenController extends Controller
 		$accidentes_mes_pasado = Ausentismo::
 			whereHas('tipo',function($query){
 				$query
-					->where('nombre','LIKE','%ART%')
+					->where('nombre','=','ART')
 					->orWhere('nombre','LIKE','%accidente%');
 			})
 			->where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
@@ -291,7 +291,7 @@ class ClientesResumenController extends Controller
 		$accidentes_mes_actual = Ausentismo::
 			whereHas('tipo',function($query){
 				$query
-					->where('nombre','LIKE','%ART%')
+					->where('nombre','=','ART')
 					->orWhere('nombre','LIKE','%accidente%');
 			})
 			->where('fecha_inicio','>=',$today->startOfMonth())

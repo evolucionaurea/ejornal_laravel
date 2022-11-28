@@ -2,7 +2,7 @@ import Tablas from '../classes/Tablas.js';
 
 $(()=>{
 	new Tablas({
-		controller:'/empleados/comunicaciones',
+		controller:'/empleados/comunicaciones/busqueda',
 		table:$('.tabla_comunicaciones_listado'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:[[ 3, "desc" ]]},

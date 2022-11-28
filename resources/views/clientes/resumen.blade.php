@@ -87,13 +87,13 @@
 
 
 
-		<!-- TABLAS -->
+		<!-- TABLAS AUSENTISMOS -->
 		<div class="row">
 
 			<!-- Mes Actual -->
 			<div class="col-lg-6">
 				<div class="tarjeta ausentismos_mes_porcentajes">
-					<h4>Ausentismos de {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<h4>Ausentismos en {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
 					<table data-table="ausentismos-mes" class="table table-striped tabla">
 						<thead>
 							<tr>
@@ -112,7 +112,7 @@
 			<!-- Mes Anterior -->
 			<div class="col-lg-6">
 				<div class="tarjeta ausentismos_mes_porcentajes">
-					<h4>Ausentismos de {{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<h4>Ausentismos en {{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
 					<table data-table="ausentismos-mes-anterior" class="table table-striped tabla">
 						<thead>
 							<tr>
@@ -131,7 +131,7 @@
 			<!-- Mes Año Anterior -->
 			<div class="col-lg-6">
 				<div class="tarjeta ausentismos_mes_porcentajes">
-					<h4>Ausentismos de {{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h4>
+					<h4>Ausentismos en {{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h4>
 					<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla">
 						<thead>
 							<tr>
@@ -167,6 +167,92 @@
 			</div>
 
 		</div>
+
+
+		<hr>
+		<!-- TABLAS ACCIDENTESS -->
+		<div class="row">
+
+			<!-- Mes Actual -->
+			<div class="col-lg-6">
+				<div class="tarjeta">
+					<h4>Accidentes en {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<table data-table="accidente-mes" class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Tipo</th>
+								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{-- Se carga por JS --}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+			<!-- Mes Anterior -->
+			<div class="col-lg-6">
+				<div class="tarjeta">
+					<h4>Accidentes en {{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<table data-table="accidentes-mes-anterior" class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Tipo</th>
+								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{-- Se carga por JS --}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+			<!-- Mes Año Anterior -->
+			<div class="col-lg-6">
+				<div class="tarjeta">
+					<h4>Accidentes en {{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h4>
+					<table data-table="accidentes-mes-anio-anterior" class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Tipo</th>
+								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{-- Se carga por JS --}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- Año Actual -->
+			<div class="col-lg-6">
+				<div class="tarjeta">
+					<h4>Accidentes en {{ $now->firstOfYear()->formatLocalized('%B') }} a {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+					<table data-table="accidentes-anual" class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Tipo</th>
+								<th scope="col">Porcentaje</th>
+								<th scope="col">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{-- Se carga por JS --}}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</div>
+		<hr>
 
 
 		<div class="row">

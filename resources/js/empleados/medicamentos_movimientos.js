@@ -3,7 +3,7 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/empleados/medicamentos_movimientos',
+		controller:'/empleados/medicamentos_movimientos/busqueda',
 		table:$('.tabla_medicamentos_movimientos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:[[ 6, "desc" ]]},

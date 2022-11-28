@@ -95,19 +95,19 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}" onclick="javascript:location.href='{{url('/admin/reportes_fichadas_nuevas')}}'">
+					<ol data-route="reportes_fichadas_nuevas" class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}" onclick="javascript:location.href='{{url('/admin/reportes_fichadas_nuevas')}}'">
 						<a href="{{url('/admin/reportes_fichadas_nuevas')}}">Fichadas</a>
 					</ol>
-					<ol class="{{ setActiveSub('/admin/reportes_ausentismos') }}" onclick="javascript:location.href='{{url('/admin/reportes_ausentismos')}}'">
+					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}" onclick="javascript:location.href='{{url('/admin/reportes_ausentismos')}}'">
 						<a href="{{url('/admin/reportes_ausentismos')}}">Ausentismos</a>
 					</ol>
-					<ol class="{{ setActiveSub('/admin/reportes_certificaciones') }}" onclick="javascript:location.href='{{url('/admin/reportes_certificaciones')}}'">
+					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('/admin/reportes_certificaciones') }}" onclick="javascript:location.href='{{url('/admin/reportes_certificaciones')}}'">
 						<a href="{{url('/admin/reportes_certificaciones')}}">Certificaciones</a>
 					</ol>
-					<ol class="{{ setActiveSub('/admin/reportes_consultas') }}" onclick="javascript:location.href='{{url('/admin/reportes_consultas')}}'">
+					<ol data-route="reportes_consultas" class="{{ setActiveSub('/admin/reportes_consultas') }}" onclick="javascript:location.href='{{url('/admin/reportes_consultas')}}'">
 						<a href="{{url('/admin/reportes_consultas')}}">Consultas</a>
 					</ol>
-					<ol class="{{ setActiveSub('/admin/reportes_comunicaciones') }}" onclick="javascript:location.href='{{url('/admin/reportes_comunicaciones')}}'">
+					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('/admin/reportes_comunicaciones') }}" onclick="javascript:location.href='{{url('/admin/reportes_comunicaciones')}}'">
 						<a href="{{url('/admin/reportes_comunicaciones')}}">Comunicaciones</a>
 					</ol>
 				</ul>

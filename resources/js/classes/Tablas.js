@@ -30,7 +30,7 @@ export default class Tablas {
 		this.datatable_options.dom = '<"table-spacer-top"lBf>t<"table-spacer-bottom"ip>'
 
 		this.datatable_options.ajax = {
-			url:`${this.controller}/busqueda`,
+			url:`${this.controller}`,
 			type:'POST',
 			data:d=>{
 				d._token = csfr

@@ -70,22 +70,39 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	// Route::get('admin/reportes/fichadas', 'AdminReporteController@fichadas')->name('reportes.fichadas');
 	// Route::post('admin/reportes/filtrar_fichadas', 'AdminReporteController@filtrarFichadas')->name('reportes.filtrar_fichadas');
 
+
+	/// REPORTES
+
+	// Fichadas
 	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('reportes_fichadas_nuevas');
 	Route::get('admin/reportes/fichadas_nuevas', 'AdminReporteController@fichadas_nuevas')->name('reportes.fichadas_nuevas');
 	Route::post('admin/reportes/filtrar_fichadas_nuevas', 'AdminReporteController@filtrarFichadasNuevas')->name('reportes.filtrar_fichadas_nuevas');
+
+	// Ausentismos
 	Route::get('admin/reportes_ausentismos', 'AdminReporteController@reportes_ausentismos')->name('reportes_ausentismos');
 	Route::get('admin/reportes/ausentismos', 'AdminReporteController@ausentismos')->name('reportes.ausentismos');
 	Route::post('admin/reportes/filtrar_ausentismos', 'AdminReporteController@filtrarAusentismos')->name('reportes.filtrar_ausentismos');
+	Route::post('admin/reportes/fichadas_ajax', 'AdminReporteController@fichadas_ajax');
+	Route::post('admin/reportes/ausentismos_ajax', 'AdminReporteController@ausentismos_ajax');
+
+
+	// Certificaciones
 	Route::get('admin/reportes_certificaciones', 'AdminReporteController@reportes_certificaciones')->name('reportes_certificaciones');
 	Route::get('admin/reportes/certificaciones', 'AdminReporteController@certificaciones')->name('reportes.certificaciones');
 	Route::post('admin/reportes/filtrar_certificaciones', 'AdminReporteController@filtrarCertificaciones')->name('reportes.filtrar_certificaciones');
+
+	// Documentacion
 	Route::get('admin/reportes/descargar_documentacion/{id}', 'AdminReporteController@descargar_documentacion')->name('reportes.descargar_documentacion');
 	Route::get('admin/documentacion_ausentismo/descargar/{id}', 'AdminReporteController@descargar_archivo')->name('documentacion_ausentismo.descargar');
+
+	// Consultas
 	Route::get('admin/reportes_consultas', 'AdminReporteController@reportes_consultas')->name('reportes_consultas');
 	Route::get('admin/reportes/consultas_medicas', 'AdminReporteController@consultas_medicas')->name('reportes.consultas_medicas');
 	Route::post('admin/reportes/filtrar_consultas_medicas', 'AdminReporteController@filtrarConsultasMedicas')->name('reportes.filtrar_consultas_medicas');
 	Route::get('admin/reportes/consultas_enfermeria', 'AdminReporteController@consultas_enfermeria')->name('reportes.consultas_enfermeria');
 	Route::post('admin/reportes/filtrar_consultas_enfermeria', 'AdminReporteController@filtrarConsultasEnfermeria')->name('reportes.filtrar_consultas_enfermeria');
+
+	// Comunicaciones
 	Route::get('admin/reportes_comunicaciones', 'AdminReporteController@reportes_comunicaciones')->name('reportes_comunicaciones');
 	Route::get('admin/reportes/comunicaciones', 'AdminReporteController@comunicaciones')->name('reportes.comunicaciones');
 	Route::post('admin/reportes/filtrar_comunicaciones', 'AdminReporteController@filtrarComunicaciones')->name('reportes.filtrar_comunicaciones');

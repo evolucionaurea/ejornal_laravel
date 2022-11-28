@@ -4,7 +4,7 @@ $(()=>{
 
 
 	new Tablas({
-		controller:'/admin/medicamentos',
+		controller:'/admin/medicamentos/busqueda',
 		table:$('.tabla'),
 		modulo_busqueda:$('[data-toggle="busqueda-filtros"]'),
 		datatable_options:{order:[[0,'asc']]},

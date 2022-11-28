@@ -3,7 +3,7 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/empleados/ausentismos',
+		controller:'/empleados/ausentismos/busqueda',
 		table:$('.tabla_ausentismos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		//datatable_options:{order:false},
