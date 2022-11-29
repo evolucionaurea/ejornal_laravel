@@ -3,7 +3,8 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/clientes/nominas/busqueda',
+		controller:'/clientes/nominas',
+		get_path:'/busqueda',
 		table:$('.tabla_nominas'),
 		modulo_busqueda:$('[data-toggle="busqueda"]'),
 		datatable_options:{order:[[0,'desc']]},

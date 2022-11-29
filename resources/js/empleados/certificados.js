@@ -3,7 +3,8 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/empleados/certificados/busqueda',
+		controller:'/empleados/certificados',
+		get_path:'/busqueda',
 		table:$('.tabla_certificados_ausentismo_listado'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:[[ 4, "desc" ]]},

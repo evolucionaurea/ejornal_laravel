@@ -30,7 +30,7 @@ export default class Tablas {
 		this.datatable_options.dom = '<"table-spacer-top"lBf>t<"table-spacer-bottom"ip>'
 
 		this.datatable_options.ajax = {
-			url:`${this.controller}`,
+			url:`${this.controller}${this.get_path}`,
 			type:'POST',
 			data:d=>{
 				d._token = csfr
@@ -53,14 +53,14 @@ export default class Tablas {
 	get(filters={}){
 		loading()
 		return new Promise((resolve,reject)=>{
-			axios.post(`${this.controller}/busqueda`,this.set_filters())
+			axios.post(`${this.controller}${this.get_path}`,this.set_filters())
 				.then(response=>resolve(response.data))
 				.catch(error=>reject(error))
 		})
 	}
 	delete(id){
 		return new Promise((resolve,reject)=>{
-			axios.post(`${this.controller}/destroy/${id}`,{
+			axios.post(`${this.controller}${this.delete_path}/${id}`,{
 				_method:'DELETE',
 				_token:csfr
 			})

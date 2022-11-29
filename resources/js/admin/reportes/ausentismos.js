@@ -3,7 +3,8 @@ import Tablas from '../../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'reportes/ausentismos_ajax',
+		controller:'/admin/reportes',
+		get_path:'/ausentismos_ajax',
 		table:$('.tabla_reporte_ausentismos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 

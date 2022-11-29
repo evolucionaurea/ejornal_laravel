@@ -3,7 +3,8 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/grupos/ausentismos/busqueda',
+		controller:'/grupos/ausentismos',
+		get_path:'/busqueda'
 		table:$('.tabla_ausentismos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 

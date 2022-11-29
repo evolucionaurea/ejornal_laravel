@@ -3,7 +3,8 @@ import Tablas from '../../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'reportes/fichadas_ajax',
+		controller:'/admin/reportes',
+		get_path:'/fichadas_ajax',
 		table:$('.tabla_reporte_fichadas'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 

@@ -6,7 +6,9 @@ $(()=>{
 	//$('.tabla_user').dataTable(window.datatable_options);
 
 	new Tablas({
-		controller:'/empleados/nominas/busqueda',
+		controller:'/empleados/nominas',
+		get_path:'/busqueda',
+		delete_path:'/destroy',
 		table:$('.tabla_user'),
 		datatable_options:{ordering:false},
 		delete_message:'¿Seguro deseas borrar este empleado?',
