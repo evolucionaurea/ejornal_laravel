@@ -47,7 +47,7 @@ class ClientesAusentismosController extends Controller
 	  ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar);
 
 		if($request->from) $query->whereDate('ausentismos.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->to) $query->whereDate('ausentismos.fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		if($request->tipo) $query->where('ausentismos.id_tipo',$request->tipo);
 
 		return [
