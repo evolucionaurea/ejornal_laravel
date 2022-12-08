@@ -27,8 +27,9 @@ class EmpleadosAusentismosController extends Controller
 		//$fecha_actual = Carbon::now();
 		$clientes = $this->getClientesUser();
 		$tipos = AusentismoTipo::get();
+		$hola = 'hola';
 
-		return view('empleados.ausentismos', compact('clientes','tipos'));
+		return view('empleados.ausentismos', compact('clientes','tipos', 'hola'));
 	}
 	public function busqueda(Request $request)
 	{
@@ -63,7 +64,6 @@ class EmpleadosAusentismosController extends Controller
 			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
-
 
 		return [
 			'draw'=>$request->draw,

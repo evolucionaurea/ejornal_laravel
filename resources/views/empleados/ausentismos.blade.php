@@ -15,15 +15,16 @@
 			<h2>Listado de ausentismos</h2>
 			<p>Aquí puede ver el listado de ausentismos de la empresa</p>
 			@if (auth()->user()->fichada == 1)
-			  <div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('ausentismos.create')}}"><i class="fas fa-plus-circle"></i> Nuevo ausentismo</a>
-			  </div>
+			<div class="cabecera_acciones">
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('ausentismos.create')}}"><i
+						class="fas fa-plus-circle"></i> Nuevo ausentismo</a>
+			</div>
 			@else
 			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo ausentismo</i></div>
 			@endif
 		</div>
 
-		 @include('../mensajes_validacion')
+		@include('../mensajes_validacion')
 
 		<div class="tarjeta">
 
@@ -43,17 +44,21 @@
 
 
 				<div class="col-lg-2 form-group">
-					<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+					<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm"
+						value="{{$fecha_inicio ?? ''}}">
 				</div>
 
 				<div class="col-lg-2 form-group">
-					<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+					<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm"
+						value="{{$fecha_final ?? ''}}">
 				</div>
 
 
 				<div class="col-lg-3 form-group">
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i
+							class="fas fa-search"></i> Buscar</button>
+					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i
+							class="fas fa-list"></i> Mostrar todo</button>
 				</div>
 
 			</div>
@@ -72,6 +77,7 @@
 						<th>Fecha inicio</th>
 						<th>Fecha final</th>
 						<th>Fecha en que regresó</th>
+						<th>Hoy</th>
 
 						<th>Acciones</th>
 

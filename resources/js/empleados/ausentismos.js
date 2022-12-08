@@ -55,6 +55,20 @@ $(()=>{
 						return v==null ? '[no cargada]' : v
 					}
 				},
+				{
+					data:row=>row,
+					render:v=>{
+						if(v.fecha_regreso_trabajar == null){
+							return '[Ausente]'
+						}else{
+							let str = v.fecha_regreso_trabajar;
+							let [dia, mes, anio] = str.split('/');
+							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
+							let hoy = new Date();
+							return regreso_trabajar > hoy  ? '[Ausente]' : ''
+						}
+					}
+				},
 
 				{
 					data:row=>row,
