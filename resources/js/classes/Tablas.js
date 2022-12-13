@@ -40,7 +40,7 @@ export default class Tablas {
 		}
 		datatable_options.fnDrawCallback = settings=>{
 			loading({show:false})
-			//console.log(settings.json)
+			///console.log(settings.json)
 		}
 
 		$.extend(window.datatable_options,this.datatable_options)

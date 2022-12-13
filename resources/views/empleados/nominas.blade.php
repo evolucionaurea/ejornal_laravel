@@ -7,6 +7,7 @@
 <div class="d-flex" id="wrapper">
 	@include('partials.sidebar_empleados')
 	<div id="page-content-wrapper">
+
 		@include('partials.nav_sup')
 
 		{{-- Contenido de la pagina --}}
@@ -96,9 +97,14 @@
 						<th>Sector</th>
 						<th>Hoy</th>
 
-						@if (auth()->user()->fichada == 1)
-						<th>Acciones</th>
-						@endif
+
+						<th>
+							<div>Acciones</div>
+							@if (auth()->user()->fichada != 1)
+							<div class="small text-muted font-italic">debes fichar para ver las acciones</div>
+
+							@endif
+						</th>
 
 					</tr>
 				</thead>
