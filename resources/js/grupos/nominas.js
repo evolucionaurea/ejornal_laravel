@@ -4,7 +4,7 @@ $(()=>{
 
 	new Tablas({
 		controller:'/grupos/nominas',
-		get_path:'/busqueda'
+		get_path:'/busqueda',
 		table:$('.tabla_nominas'),
 		modulo_busqueda:$('[data-toggle="busqueda"]'),
 		datatable_options:{

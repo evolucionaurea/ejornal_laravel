@@ -21,7 +21,7 @@ class Ausentismo extends Model implements Auditable
   protected $casts = [
     'fecha_inicio'=>'date:d/m/Y',
     'fecha_final'=>'date:d/m/Y',
-    'fecha_regreso_trabajar'=>'date:d/m/Y',
+    'fecha_regreso_trabajar'=>'date:d/m/Y'
   ];
 
   public function tipo(){

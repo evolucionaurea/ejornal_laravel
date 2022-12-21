@@ -33,12 +33,19 @@
 
 				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-				<div class="col-lg-3 form-group">
+				<div class="col-lg-2 form-group">
 					<select name="tipo" class="form-control form-control-sm select_2">
 						<option value="">--Todos los tipos--</option>
 						@foreach ($tipos as $tipo)
 						<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
 						@endforeach
+					</select>
+				</div>
+
+				<div class="col-lg-2 form-group">
+					<select name="ausentes" class="form-control form-control-sm">
+						<option value="">--Seleccionar Filtro--</option>
+						<option value="hoy">Ausentes Hoy</option>
 					</select>
 				</div>
 

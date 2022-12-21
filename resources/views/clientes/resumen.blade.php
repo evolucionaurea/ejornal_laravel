@@ -249,17 +249,19 @@
 
 		<div class="row">
 			<div class="col-lg-6 ">
-				<div class="tarjeta">
+				<div class="tarjeta" >
 					<h2 class="text-center">Ausentismos de {{ $now->formatLocalized('%B') }}</h2>
-					<div class="alert alert-info resumen_graficos_ausentismos_mes">No hay datos</div>
-					<canvas id="chart_ausentismos_mes" height="380"></canvas>
+					<hr>
+					<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
+					<canvas id="chart_ausentismos_mes" height="480"></canvas>
 				</div>
 			</div>
 			<div class="col-lg-6">
 				<div class="tarjeta">
 					<h2 class="text-center">Ausentismos del año</h2>
-					<div class="alert alert-info resumen_graficos_ausentismos_anual">No hay datos</div>
-					<canvas id="chart_ausentismos_anual" height="380"></canvas>
+					<hr>
+					<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
+					<canvas id="chart_ausentismos_anual" height="480"></canvas>
 				</div>
 			</div>
 		</div>

@@ -8,6 +8,7 @@ use App\Nomina;
 //use App\Cliente;
 use App\Http\Traits\Clientes;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use App\Ausentismo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
@@ -32,7 +33,16 @@ class EmpleadosNominasController extends Controller
 	{
 
 
-		$query = Nomina::select('*');
+		$today = CarbonImmutable::now();
+
+
+		$query = Nomina::select('*')
+			->with(['ausentismos'=>function($query){
+				$query->with(['tipo'=>function($query){
+					$query->select('id','nombre');
+				}]);
+			}]);
+
 
 		if(auth()->user()->id_cliente_actual) {
 			$query->where('id_cliente',auth()->user()->id_cliente_actual);
@@ -59,6 +69,60 @@ class EmpleadosNominasController extends Controller
 			$query->orderBy($sort,$dir);
 		}
 
+		if($request->ausentes){
+			if($request->ausentes=='hoy'){
+				$query->whereHas(
+					'ausentismos',function($query) use ($today) {
+						$query
+							->where('fecha_regreso_trabajar',null)
+							->orWhere('fecha_regreso_trabajar','>',$today);
+					}
+				);
+			}
+			if($request->ausentes=='covid'){
+				$query->whereHas('ausentismos',function($query) use ($today) {
+						$query
+							->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
+							->where(function($query) use ($today){
+								$query
+									->where('fecha_regreso_trabajar',null)
+									->orWhere('fecha_regreso_trabajar','>',$today);
+							})
+							->where('ausentismo_tipo.nombre','LIKE','%covid%');
+					}
+				);
+			}
+
+			if($request->ausentes=='accidente'){
+				$query->whereHas('ausentismos',function($query) use ($today) {
+						$query
+							->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
+							->where(function($query) use ($today){
+								$query
+									->where('fecha_regreso_trabajar',null)
+									->orWhere('fecha_regreso_trabajar','>',$today);
+							})
+							->where('ausentismo_tipo.nombre','LIKE','%accidente%');
+					}
+				);
+			}
+
+			if($request->ausentes=='incidente'){
+				$query->whereHas('ausentismos',function($query) use ($today) {
+						$query
+							->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
+							->where(function($query) use ($today){
+								$query
+									->where('fecha_regreso_trabajar',null)
+									->orWhere('fecha_regreso_trabajar','>',$today);
+							})
+							->where('ausentismo_tipo.nombre','LIKE','%incidente%');
+					}
+				);
+			}
+
+		}
+
 
 
 		return [
@@ -75,12 +139,7 @@ class EmpleadosNominasController extends Controller
 		////////////////////////////////////////
 		////////////////////////////////////////
 
-
-
-
-
-
-		$query_trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
+		/*$query_trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
 
 		if(isset($request->estado)) $query_trabajadores->where('nominas.estado',$request->estado);
 		$trabajadores = $query_trabajadores->get();
@@ -119,7 +178,7 @@ class EmpleadosNominasController extends Controller
 				unset($trabajadores[$kt]);
 				///$key_remove[] = $kt;
 			}
-		}
+		}*/
 
 		/*if(!empty($key_remove)){
 			$trabajadores = \array_diff_key($trabajadores,$key_remove);
@@ -136,19 +195,14 @@ class EmpleadosNominasController extends Controller
 			'results'=>[]
 		];*/
 
-		return [
+		/*return [
 			'results'=>array_values($trabajadores->toArray()),
 			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
-		];
+		];*/
 
 	}
 
-	public function buscar($params=null)
-	{
-		///dd($ausentismos);
-		return $trabajadores;
-	}
 
 	/*public function listado(Request $request)
 	{

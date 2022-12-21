@@ -297,6 +297,7 @@ class ClientesResumenController extends Controller
 					->where('id_cliente',auth()->user()->id_cliente_relacionar);
 			})
 			->groupBy('id_tipo')
+			->orderBy('total','desc')
 			->get();
 
 		//DB::enableQueryLog();
@@ -345,6 +346,7 @@ class ClientesResumenController extends Controller
 			})
 			->groupBy('id_tipo')
 			->where('fecha_inicio','>=',$today->firstOfYear())
+			->orderBy('total','desc')
 			->get();
 
 		return [

@@ -39,7 +39,9 @@
 					<select name="ausentes" class="form-control form-control-sm w-25 mr-2">
 						<option value="">--Seleccionar Filtro--</option>
 						<option value="hoy" {{Request::get('ausentes')=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
-						<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes COVID</option>
+						<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes Hoy COVID</option>
+						<option value="accidente" {{Request::get('ausentes')=='accidente' ? 'selected' : '' }}>Ausentes Hoy Accidente</option>
+						<option value="incidente" {{Request::get('ausentes')=='incidente' ? 'selected' : '' }}>Ausentes Hoy Incidente</option>
 					</select>
 
 					<select name="estado" class="form-control form-control-sm w-25 mr-2">
@@ -55,33 +57,7 @@
 				</div>
 			</div>
 
-
-			{{-- <form action="{{action('EmpleadosNominasController@listado')}}" class="row" method="POST">
-
-				@csrf
-
-				<div  class="col-lg-2 form-group" >
-					<label for="">Ausentes</label>
-					<select name="ausentes" class="form-control form-control-sm" onchange="this.form.submit()">
-						<option value="">--Seleccionar Filtro--</option>
-						<option value="hoy" {{isset($filtros) && isset($filtros['ausentes']) && $filtros['ausentes']=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
-						<option value="covid" {{isset($filtros) && isset($filtros['ausentes']) && $filtros['ausentes']=='covid' ? 'selected' : '' }}>Ausentes COVID</option>
-					</select>
-				</div>
-
-
-				<div class="col-lg-2 form-group">
-					<label for="">Activos/Inactivos</label>
-					<select name="estado" class="form-control form-control-sm" onchange="this.form.submit()">
-						<option value="">--Seleccionar Filtro--</option>
-						<option value="1" {{isset($filtros) && isset($filtros['estado']) && $filtros['estado']=='1' ? 'selected' : '' }} >Sólo Activos</option>
-						<option value="0" {{isset($filtros) && isset($filtros['estado']) && $filtros['estado']=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
-					</select>
-				</div>
-
-			</form> --}}
 			<hr>
-
 
 
 			<table class="table table-striped table-hover table-sm tabla_user dt-responsive">
@@ -97,12 +73,10 @@
 						<th>Sector</th>
 						<th>Hoy</th>
 
-
 						<th>
 							<div>Acciones</div>
 							@if (auth()->user()->fichada != 1)
 							<div class="small text-muted font-italic">debes fichar para ver las acciones</div>
-
 							@endif
 						</th>
 

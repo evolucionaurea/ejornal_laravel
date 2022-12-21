@@ -59,6 +59,15 @@ class EmpleadosAusentismosController extends Controller
 		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		if($request->tipo) $query->where('id_tipo',$request->tipo);
 
+		if($request->ausentes=='hoy'){
+			$query->where(function($query){
+				$now = Carbon::now();
+				$query
+					->where('ausentismos.fecha_regreso_trabajar',null)
+					->orWhere('ausentismos.fecha_regreso_trabajar','>',$now);
+			});
+		}
+
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
