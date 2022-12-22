@@ -11,29 +11,31 @@ $(()=>{
 		//datatable_options:{order:false},
 		delete_message:'¿Seguro deseas borrar este ausentismo?',
 
+		server_side:true,
+
 		datatable_options:{
 			//ordering:false,
 			columns:[
 				{
-					data:'nombre',
+					data:'trabajador_nombre',
 					name:'nominas.nombre'
 				},
 				{
 					data:row=>row,
 					name:'nominas.dni',
 					render:v=>{
-						return v.dni==null ? '[no cargado]' : v.dni
+						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
 					}
 				},
 				{
 					data:row=>row,
 					name:'nominas.sector',
 					render:v=>{
-						return v.sector==null ? '[no cargado]' : v.sector
+						return v.trabajador_sector==null ? '[no cargado]' : v.trabajador_sector
 					}
 				},
 				{
-					data:'nombre_ausentismo',
+					data:'ausentismo_tipo',
 					name:'ausentismo_tipo.nombre'
 				},
 
@@ -105,8 +107,7 @@ $(()=>{
 				}
 
 			]
-		},
-		server_side:true
+		}
 
 	})
 

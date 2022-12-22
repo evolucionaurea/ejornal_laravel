@@ -342,7 +342,8 @@
 
 	<div class="col-lg-6">
 		<div class="tarjeta">
-			<h4>Top 10 trabajadores que mas días faltaron</h4>
+			<h4 class="mb-2">Top 10 trabajadores que mas días faltaron</h4>
+			<div class="small text-muted font-italic">Se computan los últimos 365 días.</div>
 			<table data-table="top_10_faltas" class="table table-striped">
 				<thead>
 					<tr>
@@ -372,7 +373,8 @@
 
 	<div class="col-lg-6">
 		<div class="tarjeta">
-			<h4>Top trabajadores que mas veces solicitaron faltar</h4>
+			<h4 class="mb-2">Top trabajadores que mas veces solicitaron faltar</h4>
+			<div class="small text-muted font-italic">Se computan los últimos 365 días.</div>
 			<table data-table="top_10_solicitudes_faltas" class="table table-striped">
 				<thead>
 					<tr>

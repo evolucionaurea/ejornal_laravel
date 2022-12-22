@@ -208,23 +208,6 @@ trait Clientes {
 
 
 		/// TOP 10
-		$ausentismos_top_10_solicitudes = Ausentismo::
-			selectRaw('count(*) as total, id_trabajador')
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
-				$query->select('id')
-					->from('nominas')
-					->where('id_cliente',$id_cliente)
-					->where('deleted_at',null);
-			})
-			->with(['trabajador'=>function($query){
-				$query->select('id','nombre');
-			}])
-			->groupBy('id_trabajador')
-			->orderBy('total','desc')
-			->limit(10)
-			->get();
-
-
 		$ausentismos_top_10 = Ausentismo::
 			selectRaw('SUM(DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio )) total_dias, id_trabajador')
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
@@ -236,10 +219,33 @@ trait Clientes {
 			->with(['trabajador'=>function($query){
 				$query->selectRaw('id,nombre,(SELECT COUNT(a.id) FROM ausentismos a WHERE a.fecha_regreso_trabajar IS NULL AND a.id_trabajador=nominas.id) as regreso_trabajo');
 			}])
+			->where('fecha_inicio','>=',$today->subYear())
 			->groupBy('id_trabajador')
 			->orderBy('total_dias','desc')
 			->limit(10)
 			->get();
+
+
+
+
+		$ausentismos_top_10_solicitudes = Ausentismo::
+			selectRaw('count(*) as total, id_trabajador')
+			->whereIn('id_trabajador',function($query) use ($id_cliente){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',$id_cliente)
+					->where('deleted_at',null);
+			})
+			->with(['trabajador'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->where('fecha_inicio','>=',$today->subYear())
+			->groupBy('id_trabajador')
+			->orderBy('total','desc')
+			->limit(10)
+			->get();
+
+
 
 		return compact(
 			'ausentismos_mes_actual',

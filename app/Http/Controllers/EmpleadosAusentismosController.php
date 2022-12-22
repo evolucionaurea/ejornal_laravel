@@ -7,6 +7,7 @@ use App\Ausentismo;
 //use App\Cliente;
 //use App\ClienteUser;
 use App\Http\Traits\Clientes;
+use App\Http\Traits\Ausentismos;
 use App\Nomina;
 use App\AusentismoTipo;
 use App\TipoComunicacion;
@@ -19,7 +20,7 @@ use DateTime;
 class EmpleadosAusentismosController extends Controller
 {
 
-	use Clientes;
+	use Clientes,Ausentismos;
 
 	public function index()
 	{
@@ -33,7 +34,17 @@ class EmpleadosAusentismosController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-	  $query = Ausentismo::select(
+
+		$this->request = $request;
+
+		//Traits > Ausentismos
+		$resultados = $this->search(auth()->user()->id_cliente_actual);
+
+		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
+
+
+
+	  /*$query = Ausentismo::select(
 	  	'ausentismos.*',
 	  	'nominas.nombre',
 	  	'nominas.email',
@@ -81,7 +92,7 @@ class EmpleadosAusentismosController extends Controller
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
-		];
+		];*/
 
 	}
 

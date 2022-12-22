@@ -45,7 +45,7 @@
 				<div class="col-lg-2 form-group">
 					<select name="ausentes" class="form-control form-control-sm">
 						<option value="">--Seleccionar Filtro--</option>
-						<option value="hoy">Ausentes Hoy</option>
+						<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
 					</select>
 				</div>
 
