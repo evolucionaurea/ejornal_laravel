@@ -43,6 +43,7 @@ if (url.includes(admin) || url.includes(cliente)) {
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
+if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas')
 if(route=='/empleados/comunicaciones') require('./empleados/comunicaciones')
 if(route=='/empleados/certificados') require('./empleados/certificados')
 
@@ -60,6 +61,7 @@ if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='/clientes/resumen') require('./clientes/resumen')
 if(route=='/clientes/nominas') require('./clientes/nominas')
 if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
+
 
 //GRUPOS
 if(route=='/grupos/resumen') require('./grupos/resumen')

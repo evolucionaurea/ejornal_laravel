@@ -47,6 +47,20 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 
+	// TAREAS LIVIANAS
+	Route::resource('empleados/tareas_livianas', 'EmpleadoTareasLivianasController', [
+		'names' => [
+			'index' => '/empleados/tareas_livianas'
+		]
+	]);
+	Route::delete('empleados/tareas_livianas/destroy/{id}','EmpleadoTareasLivianasController@destroy');
+	Route::post('empleados/tareas_livianas/busqueda','EmpleadoTareasLivianasController@busqueda');
+	Route::post('empleados/tareas_livianas/tipo', 'EmpleadoTareasLivianasController@tipo')->name('/empleados/tareas_livianas/tipo');
+	Route::delete('empleados/tareas_livianas/tipo_delete/{id_tipo}', 'EmpleadoTareasLivianasController@tipo_destroy')->name('tareas_livianas.tipo_delete');
+	Route::get('empleados/tareas_livianas/archivo/{id}', 'EmpleadoTareasLivianasController@descargar_archivo')->name('tareas_livianas.archivo');
+
+
+
 	// FICHADAS
 	Route::resource('empleados/fichadas', 'EmpleadosFichadasController', [
 		'names' => [
@@ -87,6 +101,21 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/comunicaciones/tipo', 'EmpleadosComunicacionesController@tipo')->name('/empleados/comunicaciones/tipo');
 	Route::delete('empleados/comunicaciones/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesController@tipo_destroy')->name('comunicaciones.tipo_delete');
 	Route::get('empleados/comunicaciones/getComunicacion/{id}', 'EmpleadosComunicacionesController@getComunicacion')->name('comunicaciones.getComunicacion');
+
+
+	// COMUNICACIONES LIVIANAS
+	Route::resource('empleados/comunicaciones_livianas', 'EmpleadosComunicacionesLivianas', [
+		'names' => [
+			'index' => '/empleados/comunicaciones_livianas'
+		]
+	]);
+	Route::delete('empleados/comunicaciones_livianas/destroy/{id}','EmpleadosComunicacionesLivianas@destroy');
+	Route::post('empleados/comunicaciones_livianas/busqueda','EmpleadosComunicacionesLivianas@busqueda');
+	Route::post('empleados/comunicaciones_livianas/tipo', 'EmpleadosComunicacionesLivianas@tipo')->name('/empleados/comunicaciones_livianas/tipo');
+	Route::delete('empleados/comunicaciones_livianas/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesLivianas@tipo_destroy')->name('comunicaciones_livianas.tipo_delete');
+	Route::get('empleados/comunicaciones_livianas/getComunicacion/{id}', 'EmpleadosComunicacionesLivianas@getComunicacion')->name('comunicaciones_livianas.getComunicacion');
+
+		
 
 	// CERTIFICADOS
 	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');

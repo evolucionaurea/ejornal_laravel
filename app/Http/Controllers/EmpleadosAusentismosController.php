@@ -27,9 +27,8 @@ class EmpleadosAusentismosController extends Controller
 		//$fecha_actual = Carbon::now();
 		$clientes = $this->getClientesUser();
 		$tipos = AusentismoTipo::get();
-		$hola = 'hola';
 
-		return view('empleados.ausentismos', compact('clientes','tipos', 'hola'));
+		return view('empleados.ausentismos', compact('clientes','tipos'));
 	}
 	public function busqueda(Request $request)
 	{
