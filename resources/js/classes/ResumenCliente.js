@@ -5,6 +5,7 @@ export default class ResumenCliente {
 
 
 		this.path = obj.path
+
 		axios.get(this.path)
 			.then(response=>{
 				this.data = response.data
@@ -18,27 +19,42 @@ export default class ResumenCliente {
 
 		let data_labels = {
 			labels:[],
-			datasets:[]
+			datasets:[{
+				label:obj.title,
+				backgroundColor:this.colores,
+				borderColor:this.colores_hover,
+				data:[]
+			}]
 		}
 
 
 		if(obj.data.length>0){
 			let count = 0;
+
 			obj.data.map(item=>{
 				if(count>this.colores.length.length) count = 0
-				data_labels.datasets.push({
+
+				/*data_labels.datasets.push({
 					label:item.tipo.nombre,
 					data:[item.total],
 					backgroundColor:this.colores[count],
 					borderColor:this.colores_hover[count],
 					borderWidth:1
-				})
+				})*/
+
+				data_labels.labels.push(item.tipo.nombre)
+				data_labels.datasets[0].data.push(item.total)
+
 				count++
 				//ausentismos_count += item.total
 			})
+
+
+			console.log(data_labels)
+
 			let chart = chart_canvas.getContext("2d");
 			new Chart(chart, {
-				type: 'bar',
+				type: 'horizontalBar',
 				data: data_labels,
 				options: this.chart_options
 			})
@@ -123,7 +139,7 @@ export default class ResumenCliente {
 		this.chart_options = {
 			///cutoutPercentage:40,
 			scales:{
-				yAxes:[{
+				xAxes:[{
 					ticks:{
 						beginAtZero:true
 					}
@@ -134,13 +150,15 @@ export default class ResumenCliente {
 		// chart ausentismos mes actual
 		this.render_chart({
 			chart_canvas:'#chart_ausentismos_mes',
-			data:this.data.ausentismos_mes
+			data:this.data.ausentismos_mes,
+			title:'Ausentismos Mes Actual'
 		})
 
 		// chart ausentismos año actual
 		this.render_chart({
 			chart_canvas:'#chart_ausentismos_anual',
-			data:this.data.ausentismos_anual
+			data:this.data.ausentismos_anual,
+			title:'Ausentismos del Año'
 		})
 
 

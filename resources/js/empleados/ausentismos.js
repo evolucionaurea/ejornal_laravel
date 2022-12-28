@@ -11,29 +11,31 @@ $(()=>{
 		//datatable_options:{order:false},
 		delete_message:'¿Seguro deseas borrar este ausentismo?',
 
+		server_side:true,
+
 		datatable_options:{
-			//ordering:false,
+			order:[[4,'desc']],
 			columns:[
 				{
-					data:'nombre',
+					data:'trabajador_nombre',
 					name:'nominas.nombre'
 				},
 				{
 					data:row=>row,
 					name:'nominas.dni',
 					render:v=>{
-						return v.dni==null ? '[no cargado]' : v.dni
+						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
 					}
 				},
 				{
 					data:row=>row,
 					name:'nominas.sector',
 					render:v=>{
-						return v.sector==null ? '[no cargado]' : v.sector
+						return v.trabajador_sector==null ? '[no cargado]' : v.trabajador_sector
 					}
 				},
 				{
-					data:'nombre_ausentismo',
+					data:'ausentismo_tipo',
 					name:'ausentismo_tipo.nombre'
 				},
 
@@ -59,13 +61,13 @@ $(()=>{
 					data:row=>row,
 					render:v=>{
 						if(v.fecha_regreso_trabajar == null){
-							return '[Ausente]'
+							return '<span class="badge badge-danger">ausente</span>'
 						}else{
 							let str = v.fecha_regreso_trabajar;
 							let [dia, mes, anio] = str.split('/');
 							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							let hoy = new Date();
-							return regreso_trabajar > hoy  ? '[Ausente]' : ''
+							return regreso_trabajar > hoy  ? '<span class="badge badge-danger">ausente</span>' : ''
 						}
 					}
 				},
@@ -105,8 +107,7 @@ $(()=>{
 				}
 
 			]
-		},
-		server_side:true
+		}
 
 	})
 

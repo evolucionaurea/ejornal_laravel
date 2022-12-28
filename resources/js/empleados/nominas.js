@@ -6,11 +6,12 @@ $(()=>{
 		controller:'/empleados/nominas',
 		get_path:'/busqueda',
 		delete_path:'/destroy',
-		table:$('.tabla_user'),
+		table:$('.tabla_nominas'),
 		delete_message:'¿Seguro deseas borrar este empleado?',
 		modulo_busqueda:$('[data-toggle="busqueda-filtros"]'),
 		server_side:true,
 		datatable_options:{
+			order:[[0,'asc']],
 			columns:[
 				{
 					data:'nombre',
@@ -48,17 +49,35 @@ $(()=>{
 					name:'hoy',
 					orderable:false,
 					render:v=>{
-						return ''
 
-						/*if(v.fecha_regreso_trabajar == null){
-							return '[Ausente]'
-						}else{
-							let str = v.fecha_regreso_trabajar;
-							let [dia, mes, anio] = str.split('/');
-							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
-							let hoy = new Date();
-							return regreso_trabajar > hoy  ? '[Ausente]' : ''
-						}*/
+						let label = ''
+						let nombre = ''
+
+						if(v.ausentismos.length==0) return ''
+
+						let ausente = false
+						v.ausentismos.map(ausentismo=>{
+
+							if(ausentismo.fecha_regreso_trabajar==null) {
+								ausente = true
+								nombre = `<div class="small text-muted font-italic">${ausentismo.tipo.nombre}</div>`
+							}else{
+								const fecha_arr = ausentismo.fecha_regreso_trabajar.split('/')
+								const fecha_regreso = new Date(fecha_arr[2],fecha_arr[1],fecha_arr[0],0,0,0)
+								const ahora = new Date
+								if(fecha_regreso>ahora){
+									ausente = true
+									nombre = `<div class="small text-muted font-italic">${ausentismo.tipo.nombre}</div>`
+								}
+							}
+
+						})
+
+						if(ausente){
+							label = '<span class="badge badge-danger">ausente</span>'
+						}
+
+						return `${label} ${nombre}`
 					}
 				},
 
@@ -93,54 +112,5 @@ $(()=>{
 		}
 
 
-
-		/*render_row:trabajador=>{
-
-			let ausentismo = ''
-			if('hoy' in trabajador && trabajador.hoy.estado=='Ausente'){
-				ausentismo = `
-				<a href="ausentismos/${trabajador.hoy.id}/edit" title="Click para editar ausentismo">
-					<span class="tag_ejornal tag_ejornal_danger">Ausente</span>
-				</a>
-				<div class="small mt-3 text-danger">${trabajador.hoy.tipo}</div>`
-			}
-			return `
-				<tr>
-					<td class="d-flex align-items-center">
-						<div class="foto-user-tabla ${'foto' in trabajador && trabajador.foto!='' ? 'has-image' : '' }" style="background-image:url(${'foto' in trabajador && trabajador.foto!=null ? '/storage/nominas/fotos/'+trabajador.id+'/'+trabajador.hash_foto : ''})"></div>
-						${trabajador.nombre}
-					</td>
-					<td class="align-middle">${trabajador.email==null ? 'no cargado' : trabajador.email}</td>
-					<td class="align-middle">
-					${trabajador.telefono==null ? 'no cargado' : trabajador.telefono}
-					</td>
-					<td class="align-middle">${trabajador.dni==null ? 'no cargado' : trabajador.dni}</td>
-					<td class="align-middle">
-						<span class="tag_ejornal tag_ejornal_${trabajador.estado==1 ? 'success' : 'danger'}">${trabajador.estado==1 ? 'Activo' : 'Inactivo'}</span>
-					</td>
-					<td class="align-middle">${trabajador.sector==null ? 'no cargado' : trabajador.sector}</td>
-					<td class="align-middle">
-						${ausentismo}
-					</td>
-
-					<td scope="row" class="d-flex align-items-center">
-
-						<div class="acciones_tabla">
-							<a title="Historial" href="nominas/${trabajador.id}">
-								<i class="fas fa-book"></i>
-							</a>
-							<a title="Editar" href="nominas/${trabajador.id}/edit">
-								<i class="fas fa-pen"></i>
-							</a>
-
-							<button data-toggle="delete" data-id="${trabajador.id}" title="Eliminar" type="submit">
-								<i class="fas fa-trash"></i>
-							</button>
-						</div>
-
-					</td>
-
-				</tr>`
-		}*/
 	})
 })

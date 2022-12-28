@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Ausentismo;
 use Illuminate\Support\Facades\DB;
 use App\Cliente;
 use App\AusentismoTipo;
-use Carbon\Carbon;
+use App\Http\Traits\Ausentismos;
 
 class ClientesAusentismosController extends Controller
 {
+
+	use Ausentismos;
 
 	public function index()
 	{
@@ -21,40 +22,24 @@ class ClientesAusentismosController extends Controller
 
 		$tipos = AusentismoTipo::get();
 
-		/*$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar)
-		->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-		->get();*/
-
 		return view('clientes.ausentismos', compact('cliente','tipos'));
 	}
 
+
 	public function busqueda(Request $request)
 	{
-	  $query = Ausentismo::select(
-	  	'ausentismos.*',
-	  	'nominas.nombre',
-	  	'nominas.email',
-	  	'nominas.telefono',
-	  	'nominas.dni',
-	  	'nominas.estado',
-	  	DB::raw('ausentismo_tipo.nombre nombre_ausentismo'),
-	  	'nominas.sector'
-	  )
-	  ->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-	  ->where('nominas.id_cliente', auth()->user()->id_cliente_relacionar);
 
-		if($request->from) $query->whereDate('ausentismos.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('ausentismos.fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		if($request->tipo) $query->where('ausentismos.id_tipo',$request->tipo);
+		$this->request = $request;
 
-		return [
-			'results'=>$query->get(),
-			'request'=>$request->all()
-		];
+		//Traits > Ausentismos
+		return $this->searchAusentismos(auth()->user()->id_cliente_relacionar);
 
+	}
+
+	public function exportar()
+	{
+		//Traits > Ausentismos
+		return $this->exportAusentismos(auth()->user()->id_cliente_relacionar);
 	}
 
 

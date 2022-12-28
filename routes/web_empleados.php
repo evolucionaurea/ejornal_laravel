@@ -21,9 +21,10 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// NOMINAS (Trabajadores)
+	Route::get('empleados/nominas/exportar','EmpleadosNominasController@exportar');
 	Route::resource('empleados/nominas', 'EmpleadosNominasController', [
 		'names' => [
-			'index' => '/empleados/nominas'
+			'index' => '/empleados/nominas',
 		]
 	]);
 	Route::post('empleados/nominas/cargar_excel', 'EmpleadosNominasController@cargar_excel')->name('/empleados/nominas/cargar_excel');
@@ -32,7 +33,10 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/nominas/destroy/{id}','EmpleadosNominasController@destroy');
 	Route::post('empleados/nominas/busqueda','EmpleadosNominasController@busqueda');
 
+
+
 	// AUSENTISMOS
+	Route::get('empleados/ausentismos/exportar','EmpleadosAusentismosController@exportar');
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
 		'names' => [
 			'index' => '/empleados/ausentismos'

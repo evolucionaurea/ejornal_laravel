@@ -7,7 +7,9 @@ use App\Nomina;
 //use App\ClienteUser;
 //use App\Cliente;
 use App\Http\Traits\Clientes;
+use App\Http\Traits\Nominas;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use App\Ausentismo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
@@ -20,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 class EmpleadosNominasController extends Controller
 {
 
-	use Clientes;
+	use Clientes,Nominas;
 
 	public function index()
 	{
@@ -31,124 +33,25 @@ class EmpleadosNominasController extends Controller
 	public function busqueda(Request $request)
 	{
 
+		$this->request = $request;
 
-		$query = Nomina::select('*');
 
 		if(auth()->user()->id_cliente_actual) {
-			$query->where('id_cliente',auth()->user()->id_cliente_actual);
+			$idcliente = auth()->user()->id_cliente_actual;
 		}else{
+			/// si no tiene cliente actual traigo la lista de clientes que tenga y asigno al primero
 			$clientes = $this->getClientesUser();
-			$query->where('id_cliente',$clientes->first()->id);
-		}
-
-		$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
-			$query->where('nombre','like',$filtro)
-				->orWhere('email','like',$filtro)
-				->orWhere('dni','like',$filtro)
-				->orWhere('telefono','like',$filtro);
-		});
-
-
-		if(!is_null($request->estado)) $query->where('estado','=',(int) $request->estado);
-
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['data'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
+			$idcliente = $clientes->first()->id;
 		}
 
 
+		//Traits > Nominas
+		$resultados = $this->searchNomina($idcliente);
 
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$query->count(),
-			'recordsFiltered'=>$query->count(),
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'cliente_actual'=>auth()->user()->id_cliente_actual,
-			'request'=>$request->all()
-		];
-
-		////////////////////////////////////////
-		////////////////////////////////////////
-		////////////////////////////////////////
-
-
-
-
-
-
-		$query_trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
-
-		if(isset($request->estado)) $query_trabajadores->where('nominas.estado',$request->estado);
-		$trabajadores = $query_trabajadores->get();
-
-		$fecha_actual = Carbon::now();
-		$ausentismos = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-			->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->where('ausentismos.fecha_regreso_trabajar', null)
-			->whereDate('ausentismos.fecha_inicio', '<=', $fecha_actual)
-
-			->select(
-				'ausentismos.*',
-				DB::raw('ausentismo_tipo.nombre ausentismo_tipo')
-			)
-			->latest()
-			->get();
-
-		$key_remove = [];
-		foreach ($trabajadores as $kt=>$trabajador) {
-			foreach ($ausentismos as $ausentismo) {
-				if($ausentismo->id_trabajador == $trabajador->id){
-
-					if(isset($request->ausentes) && $request->ausentes=='covid' && !preg_match('/covid/', $ausentismo->ausentismo_tipo) ) continue;
-
-					$trabajadores[$kt]['hoy'] = [
-						'estado'=>'Ausente',
-						'tipo'=>$ausentismo->ausentismo_tipo,
-						'id'=>$ausentismo->id
-					];
-				}
-			}
-
-			///if(isset($request->ausentes) && ( is_null($trabajador->hoy) || $trabajador->hoy['estado'] != 'Ausente') ) {
-			if(isset($request->ausentes) && !isset($trabajadores[$kt]['hoy']) ) {
-				unset($trabajadores[$kt]);
-				///$key_remove[] = $kt;
-			}
-		}
-
-		/*if(!empty($key_remove)){
-			$trabajadores = \array_diff_key($trabajadores,$key_remove);
-		}*/
-
-		//return datatable server-side
-		/*return [
-			'draw'=>0,
-			'recordsTotal'=>0,
-			'data'=>[],
-
-			'request'=>$request->all(),
-			'fichada_user'=>auth()->user()->fichada,
-			'results'=>[]
-		];*/
-
-		return [
-			'results'=>array_values($trabajadores->toArray()),
-			'fichada_user'=>auth()->user()->fichada,
-			'request'=>$request->all()
-		];
+		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
 
 	}
 
-	public function buscar($params=null)
-	{
-		///dd($ausentismos);
-		return $trabajadores;
-	}
 
 	/*public function listado(Request $request)
 	{
@@ -676,6 +579,22 @@ class EmpleadosNominasController extends Controller
 			if($empleado->dni==$registro['dni'] || $empleado->email==$registro['email']) return true;
 		}
 		return false;
+	}
+
+
+	public function exportar()
+	{
+
+		if(auth()->user()->id_cliente_actual) {
+			$idcliente = auth()->user()->id_cliente_actual;
+		}else{
+			/// si no tiene cliente actual traigo la lista de clientes que tenga y asigno al primero
+			$clientes = $this->getClientesUser();
+			$idcliente = $clientes->first()->id;
+		}
+
+		//Traits > Nominas
+		return $this->exportNomina($idcliente);
 	}
 
 

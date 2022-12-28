@@ -7,6 +7,7 @@ use App\Ausentismo;
 //use App\Cliente;
 //use App\ClienteUser;
 use App\Http\Traits\Clientes;
+use App\Http\Traits\Ausentismos;
 use App\Nomina;
 use App\AusentismoTipo;
 use App\TipoComunicacion;
@@ -19,7 +20,7 @@ use DateTime;
 class EmpleadosAusentismosController extends Controller
 {
 
-	use Clientes;
+	use Clientes,Ausentismos;
 
 	public function index()
 	{
@@ -32,7 +33,17 @@ class EmpleadosAusentismosController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-	  $query = Ausentismo::select(
+
+		$this->request = $request;
+
+		//Traits > Ausentismos
+		$resultados = $this->searchAusentismos(auth()->user()->id_cliente_actual);
+
+		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
+
+
+
+	  /*$query = Ausentismo::select(
 	  	'ausentismos.*',
 	  	'nominas.nombre',
 	  	'nominas.email',
@@ -58,6 +69,15 @@ class EmpleadosAusentismosController extends Controller
 		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		if($request->tipo) $query->where('id_tipo',$request->tipo);
 
+		if($request->ausentes=='hoy'){
+			$query->where(function($query){
+				$now = Carbon::now();
+				$query
+					->where('ausentismos.fecha_regreso_trabajar',null)
+					->orWhere('ausentismos.fecha_regreso_trabajar','>',$now);
+			});
+		}
+
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
@@ -71,7 +91,7 @@ class EmpleadosAusentismosController extends Controller
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
-		];
+		];*/
 
 	}
 
@@ -356,6 +376,13 @@ class EmpleadosAusentismosController extends Controller
 	  return response()->download($ruta);
 	  return back();
 
+	}
+
+
+	public function exportar()
+	{
+		//Traits > Ausentismos
+		return $this->exportAusentismos(auth()->user()->id_cliente_actual);
 	}
 
 

@@ -54,7 +54,7 @@
 
 					<!-- Ausentes -->
 					<div class="col-md-4 col-lg-4 mb-4">
-						<a href="{{ route('/empleados/nominas',['ausentes'=>'hoy']) }}" class="card red white-text" >
+						<a href="{{ route('/empleados/ausentismos',['ausentes'=>'hoy']) }}" class="card red white-text" >
 							<input type="hidden" name="ausentes" value="hoy">
 							<div class="card-body d-flex justify-content-between align-items-center">
 								<div>

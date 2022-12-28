@@ -59,9 +59,13 @@ class EmpleadosResumenController extends Controller
 
 		$ausentes_hoy_q = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
 		->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
+		->where(function($query) use ($fecha_actual){
+			$query
+				->where('ausentismos.fecha_regreso_trabajar',null)
+				->orWhere('ausentismos.fecha_regreso_trabajar','>',$fecha_actual);
+		})
+		->where('ausentismos.fecha_inicio', '<=', $fecha_actual)
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->where('ausentismos.fecha_regreso_trabajar', null)
-		->whereDate('ausentismos.fecha_inicio', '<=', $fecha_actual)
 		//->whereDate('ausentismos.fecha_final', '>=', $fecha_actual)
 		->select(
 			'ausentismos.*',
