@@ -18,7 +18,10 @@ $(()=>{
 			columns:[
 				{
 					data:'trabajador_nombre',
-					name:'nominas.nombre'
+					name:'nominas.nombre',
+					render:v=>{
+						return v.nombre==null ? '[no cargado]' : v.nombre
+					}
 				},
 				{
 					data:row=>row,
