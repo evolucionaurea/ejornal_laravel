@@ -6,11 +6,12 @@ $(()=>{
 		controller:'/empleados/nominas',
 		get_path:'/busqueda',
 		delete_path:'/destroy',
-		table:$('.tabla_user'),
+		table:$('.tabla_nominas'),
 		delete_message:'¿Seguro deseas borrar este empleado?',
 		modulo_busqueda:$('[data-toggle="busqueda-filtros"]'),
 		server_side:true,
 		datatable_options:{
+			order:[[0,'asc']],
 			columns:[
 				{
 					data:'nombre',

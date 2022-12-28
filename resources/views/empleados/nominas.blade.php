@@ -20,76 +20,18 @@
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('nominas.create')}}"><i class="fas fa-plus-circle"></i> Nuevo trabajador</a>
 				<a data-toggle="modal" data-target="#cargar_nominas_excel" class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-file-excel"></i>Carga masiva</a>
 			</div>
+			@else
+			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo trabajador</i></div>
 			@endif
 		</div>
 
 
-		@include('../mensajes_validacion')
+		@include('mensajes_validacion')
 
 
 		<div class="tarjeta">
 
-			<div data-toggle="busqueda-filtros" class="d-flex row">
-
-				<div class="col-md-10 col-lg-7 d-flex">
-
-
-					<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
-
-					<select name="ausentes" class="form-control form-control-sm w-25 mr-2">
-						<option value="">--Seleccionar Filtro--</option>
-						<option value="hoy" {{Request::get('ausentes')=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
-						<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes Hoy COVID</option>
-						<option value="accidente" {{Request::get('ausentes')=='accidente' ? 'selected' : '' }}>Ausentes Hoy Accidente</option>
-						<option value="incidente" {{Request::get('ausentes')=='incidente' ? 'selected' : '' }}>Ausentes Hoy Incidente</option>
-					</select>
-
-					<select name="estado" class="form-control form-control-sm w-25 mr-2">
-						<option value="">--Seleccionar Filtro--</option>
-						<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }} >Sólo Activos</option>
-						<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
-					</select>
-
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
-
-
-				</div>
-			</div>
-
-			<hr>
-
-
-			<table class="table table-striped table-hover table-sm tabla_user dt-responsive">
-
-				<!--Table head-->
-				<thead>
-					<tr>
-						<th>Nombre</th>
-						<th>Email</th>
-						<th>Tel</th>
-						<th>DNI</th>
-						<th>Estado</th>
-						<th>Sector</th>
-						<th>Hoy</th>
-
-						<th>
-							<div>Acciones</div>
-							@if (auth()->user()->fichada != 1)
-							<div class="small text-muted font-italic">debes fichar para ver las acciones</div>
-							@endif
-						</th>
-
-					</tr>
-				</thead>
-				<!--Table head-->
-
-				<!--Table body-->
-				<tbody>
-
-				</tbody>
-				<!--Table body-->
-			</table>
+			@include('modulos.nominas_tabla')
 		</div>
 
 		{{-- Contenido de la pagina --}}
@@ -170,70 +112,4 @@
 </div>
 
 
-
 @endsection
-
-
-{{-- @foreach ($trabajadores as $trabajador)
-					<tr>
-						<td class="align-middle d-flex align-items-center">
-							<div class="foto-user-tabla {{ isset($trabajador->foto) && !empty($trabajador->foto) ? 'has-image' : '' }}" style="background-image:url({{ isset($trabajador->foto) && !empty($trabajador->foto) ? asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto) : ''  }})"></div>
-							{{$trabajador->nombre}}
-						</td>
-						<td class="align-middle">{{$trabajador->email}}</td>
-						<td class="align-middle">{{$trabajador->telefono}}</td>
-						<td class="align-middle">{{$trabajador->dni}}</td>
-						<td class="align-middle">
-							@if ($trabajador->estado == 1)
-							<span class="tag_ejornal tag_ejornal_success">Activo</span>
-							@else
-							<span class="tag_ejornal tag_ejornal_danger">Inactivo</span>
-							@endif
-						</td>
-						<td class="align-middle">{{$trabajador->sector}}</td>
-						<td class="align-middle">
-							<h3>
-
-								@php
-									if(isset($trabajador->hoy['estado']) && !empty($trabajador->hoy['estado']) && $trabajador->hoy['estado'] == 'Ausente'):
-								@endphp
-								<a href="{{route('ausentismos.edit',$trabajador->hoy['id'])}}" title="Click para editar ausentismo">
-									<span class="tag_ejornal tag_ejornal_danger">Ausente</span>
-								</a>
-
-
-								<div class="small mt-3 text-danger">{{$trabajador->hoy['tipo']}}</div>
-
-
-								@php endif; @endphp
-							</h3>
-						</td>
-
-						@if (auth()->user()->fichada == 1)
-						<td class="align-middle" scope="row">
-
-							<div class="acciones_tabla">
-
-								<a title="Historial" href="{{route('nominas.show', $trabajador->id)}}">
-									<i class="fas fa-book"></i>
-								</a>
-
-								<a title="Editar" href="{{route('nominas.edit', $trabajador->id)}}">
-									<i class="fas fa-pen"></i>
-								</a>
-
-								<form class="" action="{{route('nominas.destroy', $trabajador->id)}}" method="post">
-									{{ csrf_field() }}
-									<input type="hidden" name="_method" value="DELETE">
-									<button title="Eliminar" type="submit">
-										<i class="fas fa-trash"></i>
-									</button>
-								</form>
-
-							</div>
-
-						</td>
-						@endif
-
-					</tr>
-					@endforeach --}}

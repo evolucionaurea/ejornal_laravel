@@ -7,10 +7,11 @@ use App\Grupo;
 use App\User;
 use App\Nomina;
 use App\Http\Traits\ClientesGrupo;
+use App\Http\Traits\Nominas;
 
 class GruposNominasController extends Controller
 {
-	use ClientesGrupo;
+	use ClientesGrupo,Nominas;
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -23,34 +24,11 @@ class GruposNominasController extends Controller
 
 	public function busqueda(Request $request)
 	{
-		$query = Nomina::where('id_cliente', auth()->user()->id_cliente_actual);
 
-		if(!is_null($request->estado)) $query->where('estado','=',(int) $request->estado);
+		$this->request = $request;
 
-		$query->where(function($query) use ($request) {
-			$filtro = $request->search['value'].'%';
-			$query->where('nombre','like',$filtro)
-				->orWhere('email','like',$filtro)
-				->orWhere('dni','like',$filtro)
-				->orWhere('telefono','like',$filtro);
-		});
-
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['data'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$query->count(),
-			'recordsFiltered'=>$query->count(),
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-
-			'request'=>$request->all()
-		];
+		//Traits > Nominas
+		return $this->searchNomina(auth()->user()->id_cliente_actual);
 	}
 
 	/**
@@ -118,4 +96,14 @@ class GruposNominasController extends Controller
 	{
 		//
 	}
+
+
+	public function exportar()
+  {
+
+  	//Traits > Nominas
+    return $this->exportNomina(auth()->user()->id_cliente_actual);
+  }
+
+
 }

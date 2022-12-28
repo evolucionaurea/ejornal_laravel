@@ -14,7 +14,7 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			//ordering:false,
+			order:[[4,'desc']],
 			columns:[
 				{
 					data:'trabajador_nombre',

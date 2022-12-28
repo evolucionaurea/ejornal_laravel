@@ -32,8 +32,14 @@ class ClientesAusentismosController extends Controller
 		$this->request = $request;
 
 		//Traits > Ausentismos
-		return $this->search(auth()->user()->id_cliente_relacionar);
+		return $this->searchAusentismos(auth()->user()->id_cliente_relacionar);
 
+	}
+
+	public function exportar()
+	{
+		//Traits > Ausentismos
+		return $this->exportAusentismos(auth()->user()->id_cliente_relacionar);
 	}
 
 

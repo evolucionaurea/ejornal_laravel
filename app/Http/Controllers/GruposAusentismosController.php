@@ -27,9 +27,15 @@ class GruposAusentismosController extends Controller
 		$this->request = $request;
 
 		//Traits > Ausentismos
-		return $this->search(auth()->user()->id_cliente_actual);
+		return $this->searchAusentismos(auth()->user()->id_cliente_actual);
 
 
+	}
+
+	public function exportar()
+	{
+		//Traits > Ausentismos
+		return $this->exportAusentismos(auth()->user()->id_cliente_actual);
 	}
 
 }
