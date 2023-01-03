@@ -56,6 +56,8 @@ class GruposResumenController extends Controller
 					'ausentismos as ausentismos_mes_count'=>function($query) use ($today) {
 						$query
 							->where('fecha_inicio','>=',$today->startOfMonth());
+
+							///corregir y traer los que estuvieron ausentes algún día durante este mes
 					},
 					'ausentismos as ausentismos_mes_pasado_count'=>function($query) use ($today) {
 						$query
