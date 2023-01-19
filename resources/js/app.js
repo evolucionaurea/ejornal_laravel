@@ -16,6 +16,7 @@ require('./nav_sup.js');
 require('./medicamentos.js');
 require('./stock_medicamentos.js');
 require('./documentacion_ausentismo.js');
+require('./documentacion_tarea_liviana.js');
 
 
 //ADMIN
@@ -46,6 +47,8 @@ if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas')
 if(route=='/empleados/comunicaciones') require('./empleados/comunicaciones')
 if(route=='/empleados/certificados') require('./empleados/certificados')
+if(route=='/empleados/comunicaciones_livianas') require('./empleados/comunicaciones_livianas')
+if(route=='/empleados/certificados_livianos') require('./empleados/certificados_livianos')
 
 if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
 if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')

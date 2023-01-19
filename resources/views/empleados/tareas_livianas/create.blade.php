@@ -113,7 +113,7 @@
                         <textarea name="descripcion" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
-                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar ausencia y
+                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar tarea liviana y
                     comunicación</button>
             </form>
         </div>

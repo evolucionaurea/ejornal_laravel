@@ -80,11 +80,11 @@ $(()=>{
 
 						return `
 							<div class="acciones_tabla">
-								<a title="Comunicaciones" href="comunicaciones/${v.id}">
+								<a title="Comunicaciones" href="comunicaciones_livianas/${v.id}">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
 								</a>
 
-								<a title="Documentacion" href="documentaciones/${v.id}">
+								<a title="Documentacion" href="documentaciones_livianas/${v.id}">
 									<i title="Documentacion" class="fas fa-files-medical"></i>
 								</a>
 

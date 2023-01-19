@@ -106,15 +106,16 @@
 							onclick="javascript:location.href='{{url('/empleados/tareas_livianas')}}'">
 							<a href="{{url('/empleados/tareas_livianas')}}">Listado</a>
 						</ol>
-						{{-- <ol data-route="/empleados/comunicaciones"
-							class="{{ setActiveSub('/empleados/comunicaciones') }}"
-							onclick="javascript:location.href='{{url('/empleados/comunicaciones')}}'">
-							<a href="{{url('/empleados/comunicaciones')}}">Comunicaciones</a>
+						<ol data-route="/empleados/comunicaciones_livianas"
+							class="{{ setActiveSub('/empleados/comunicaciones_livianas') }}"
+							onclick="javascript:location.href='{{url('/empleados/comunicaciones_livianas')}}'">
+							<a href="{{url('/empleados/comunicaciones_livianas')}}">Comunicaciones</a>
 						</ol>
-						<ol data-route="/empleados/certificados" class="{{ setActiveSub('/empleados/certificados') }}"
-							onclick="javascript:location.href='{{url('/empleados/certificados')}}'">
-							<a href="{{url('/empleados/certificados')}}">Certificados</a>
-						</ol> --}}
+						<ol data-route="/empleados/certificados_livianos"
+							class="{{ setActiveSub('/empleados/certificados_livianos') }}"
+							onclick="javascript:location.href='{{url('/empleados/certificados_livianos')}}'">
+							<a href="{{url('/empleados/certificados_livianos')}}">Certificados</a>
+						</ol>
 					</ul>
 				</div>
 			</li>

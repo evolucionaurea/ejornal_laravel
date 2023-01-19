@@ -64,6 +64,17 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/tareas_livianas/archivo/{id}', 'EmpleadoTareasLivianasController@descargar_archivo')->name('tareas_livianas.archivo');
 
 
+	// DOCUMENTACIONES LIVIANAS
+	Route::resource('empleados/documentaciones_livianas', 'EmpleadosTareasLivianasDocumentacion', [
+		'names' => [
+			'index' => 'empleados.documentaciones_livianas'
+		]
+	]);
+	Route::get('empleados/documentacion_liviana/archivo/{id}', 'EmpleadosTareasLivianasDocumentacion@descargar_archivo')->name('documentacion_liviana.archivo');
+	Route::get('empleados/documentaciones_livianas/getDocumentacion/{id}', 'EmpleadosTareasLivianasDocumentacion@getDocumentacion')->name('documentaciones_livianas.getDocumentacion');
+	Route::post('empleados/documentaciones_livianas/validarMatricula', 'EmpleadosTareasLivianasDocumentacion@validarMatricula');
+
+
 
 	// FICHADAS
 	Route::resource('empleados/fichadas', 'EmpleadosFichadasController', [
@@ -117,7 +128,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/comunicaciones_livianas/busqueda','EmpleadosComunicacionesLivianas@busqueda');
 	Route::post('empleados/comunicaciones_livianas/tipo', 'EmpleadosComunicacionesLivianas@tipo')->name('/empleados/comunicaciones_livianas/tipo');
 	Route::delete('empleados/comunicaciones_livianas/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesLivianas@tipo_destroy')->name('comunicaciones_livianas.tipo_delete');
-	Route::get('empleados/comunicaciones_livianas/getComunicacion/{id}', 'EmpleadosComunicacionesLivianas@getComunicacion')->name('comunicaciones_livianas.getComunicacion');
+	Route::get('empleados/comunicaciones_livianas/getComunicacionLiviana/{id}', 'EmpleadosComunicacionesLivianas@getComunicacionLiviana')->name('comunicaciones_livianas.getComunicacionLiviana');
 
 		
 
@@ -125,6 +136,10 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');
 	Route::post('empleados/certificados/busqueda','EmpleadosCertificadosController@busqueda');
 
+
+	// CERTIFICADOS LIVIANOS
+	Route::get('empleados/certificados_livianos', 'EmpleadosCertificadosLivianosController@listado')->name('/empleados/certificados_livianos');
+	Route::post('empleados/certificados_livianos/busqueda','EmpleadosCertificadosLivianosController@busqueda');
 
 	// PREOCUPACIONALES
 	Route::resource('empleados/preocupacionales', 'EmpleadosPreocupacionalesController', [

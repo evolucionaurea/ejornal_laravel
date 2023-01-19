@@ -94,6 +94,7 @@ class EmpleadosComunicacionesController extends Controller
 	 */
 	public function show($id)
 	{
+		dd('hola');
 	  $ausencia = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
 	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
 	  ->where('ausentismos.id', $id)

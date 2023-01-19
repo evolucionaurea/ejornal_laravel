@@ -17,6 +17,7 @@ class CreateTareasLivianasTable extends Migration
             $table->bigIncrements('id');
             $table->integer('id_trabajador');
             $table->integer('id_tipo');
+            $table->string('user');
             $table->date('fecha_inicio');
             $table->date('fecha_final')->nullable();
             $table->date('fecha_regreso_trabajar')->nullable();
