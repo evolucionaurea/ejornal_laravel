@@ -13,8 +13,8 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Documentacion de una tarea liviana</h2>
-            <p>Aquí puedes ver y cargar nuevos documentos de esta tarea liviana</p>
+            <h2>Documentacion de una tarea adecuada</h2>
+            <p>Aquí puedes ver y cargar nuevos documentos de esta tarea adecuada</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/tareas_livianas') }}"><i
                         class="fas fa-arrow-circle-left"></i>Volver</a>

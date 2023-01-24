@@ -96,7 +96,7 @@
 			<li class="{{ setActive('/empleados/tareas_livianas') }} dropdownMenu">
 				<div class="dropdownButton">
 					<i class="fas fa-laptop-medical"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Tareas livianas</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Tareas adecuadas</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">

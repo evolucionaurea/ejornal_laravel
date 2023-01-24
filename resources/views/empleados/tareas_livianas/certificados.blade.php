@@ -12,8 +12,8 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Certificados de una tarea liviana</h2>
-            <p>Aquí puede ver el listado de las documentaciones que carga en cada tarea liviana</p>
+            <h2>Certificados de una tarea adecuada</h2>
+            <p>Aquí puede ver el listado de las documentaciones que carga en cada tarea adecuada</p>
         </div>
 
         @include('../mensajes_validacion')

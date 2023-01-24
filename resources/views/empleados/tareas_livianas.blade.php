@@ -12,15 +12,15 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Listado de tareas livianas</h2>
-            <p>Aquí puede ver el listado de tareas livianas de la empresa</p>
+            <h2>Listado de tareas adecuadas</h2>
+            <p>Aquí puede ver el listado de tareas adecuadas de la empresa</p>
             @if (auth()->user()->fichada == 1)
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-base" href="{{route('tareas_livianas.create')}}"><i
-                        class="fas fa-plus-circle"></i> Nueva tarea liviana</a>
+                        class="fas fa-plus-circle"></i> Nueva tarea adecuada</a>
             </div>
             @else
-            <div class="small text-muted"><i>Debe fichar para poder agregar una nueva tarea liviana</i></div>
+            <div class="small text-muted"><i>Debe fichar para poder agregar una nueva tarea adecuada</i></div>
             @endif
         </div>
 

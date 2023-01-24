@@ -13,8 +13,8 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Edición de un tareas livianas</h2>
-            <p>Aquí podrá editar la información referente al tareas livianas de un trabajador</p>
+            <h2>Edición de un tareas adecuadas</h2>
+            <p>Aquí podrá editar la información referente al tareas adecuadas de un trabajador</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/tareas_livianas')}}"><i
                         class="fas fa-arrow-alt-circle-left"></i>Volver</a>

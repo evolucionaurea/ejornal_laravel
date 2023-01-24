@@ -12,8 +12,8 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Listado de comunicaciones livianas</h2>
-            <p>Aquí puede ver el listado de comunicaciones livianas de la empresa</p>
+            <h2>Listado de comunicaciones adecuadas</h2>
+            <p>Aquí puede ver el listado de comunicaciones adecuadas de la empresa</p>
             {{-- @if (auth()->user()->fichada == 1)
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-base" href="{{route('comunicaciones.create')}}"><i

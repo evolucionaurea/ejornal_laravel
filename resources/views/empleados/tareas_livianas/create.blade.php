@@ -13,8 +13,8 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Creación de tareas livianas</h2>
-            <p>Aquí puedes cargar a las tareas livianas que formarán parte de la nómina de la empresa</p>
+            <h2>Creación de tareas adecuadas</h2>
+            <p>Aquí puedes cargar a las tareas adecuadas que formarán parte de la nómina de la empresa</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/tareas_livianas')}}"><i
                         class="fas fa-arrow-alt-circle-left"></i>Volver</a>
@@ -34,7 +34,7 @@
         @endif
 
         <div class="tarjeta">
-            <h4>Tarea liviana</h4>
+            <h4>Tarea adecuada</h4>
             <form action="{{action('EmpleadoTareasLivianasController@store')}}" accept-charset="UTF-8" method="post"
                 enctype="multipart/form-data">
                 @csrf

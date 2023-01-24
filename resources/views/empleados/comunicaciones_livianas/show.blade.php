@@ -13,14 +13,14 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Comunicaciones livianas</h2>
-            <p>Aquí puedes ver y cargar nuevas comunicaciones livianas</p>
+            <h2>Comunicaciones adecuadas</h2>
+            <p>Aquí puedes ver y cargar nuevas comunicaciones adecuadas</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/tareas_livianas') }}"><i
                         class="fas fa-arrow-circle-left"></i>Volver</a>
                 <a data-toggle="modal" data-target="#cargar_comunicaciones_liviana"
                     class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-plus-circle"></i>Crear
-                    comunicación liviana</a>
+                    comunicación adecuada</a>
             </div>
         </div>
 
@@ -153,7 +153,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="cargar_comunicaciones_liviana_titulo">Crear Comunicacion Liviana</h5>
+                <h5 class="modal-title" id="cargar_comunicaciones_liviana_titulo">Crear Comunicacion adecuada</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -167,7 +167,7 @@
                         <input type="hidden" name="id_tarea_liviana" value="{{$tarea_liviana->id}}">
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label>Tipo de comunicación livana</label>
+                                <label>Tipo de comunicación adecuada</label>
                                 <select class="form-control" name="id_tipo">
                                     @foreach ($tipos_comunicaciones_livianas as $tipo)
                                     <option value="{{$tipo->id}}">{{$tipo->nombre}}</option>

@@ -13,8 +13,8 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Historial de tareas livianas</h2>
-            <p>Aquí puedes ver el historial de tareas livianas del trabajador seleccionado</p>
+            <h2>Historial de tareas adecuadas</h2>
+            <p>Aquí puedes ver el historial de tareas adecuadas del trabajador seleccionado</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/tareas_livianas') }}"><i
                         class="fas fa-arrow-circle-left"></i>Volver</a>
@@ -68,7 +68,7 @@
                         <li class="d-flex pl-4">
                             <span class="fa-li"><i class="fas fa-book fa-2x cyan-text"></i></span>
                             <div>
-                                <h5 class="font-weight-bold mb-3">tarea_liviana por:
+                                <h5 class="font-weight-bold mb-3">Tarea Adecuada por:
                                     {{$tarea_liviana->nombre_tarea_liviana}}</h5>
                                 <p class="text-muted">
                                 <ul class="list-group list-group-flush">
