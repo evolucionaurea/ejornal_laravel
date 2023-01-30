@@ -41,7 +41,7 @@ class GruposResumenController extends Controller
 
 			'clientes'=>function($query) use ($today){
 
-			$query->select('clientes.id','clientes.nombre')
+				$query->select('clientes.id','clientes.nombre')
 
 				//total nómina
 				->withCount('nominas')

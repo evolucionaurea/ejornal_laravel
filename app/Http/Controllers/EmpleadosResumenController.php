@@ -125,14 +125,18 @@ class EmpleadosResumenController extends Controller
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->count();*/
 
+		///dd($fecha_actual->month);
+
 		$medicas_mes = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->whereMonth('consultas_medicas.fecha', '=', $fecha_actual->month)
+		->whereYear('consultas_medicas.fecha', '=', $fecha_actual->year)
 		->count();
 
 		$enfermerias_mes = ConsultaEnfermeria::join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->whereMonth('consultas_enfermerias.fecha', '=', $fecha_actual->month)
+		->whereYear('consultas_enfermerias.fecha', '=', $fecha_actual->year)
 		->count();
 
 		/*$ausencia_covid = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')

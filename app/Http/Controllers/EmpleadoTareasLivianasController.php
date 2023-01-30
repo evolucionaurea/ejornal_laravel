@@ -17,24 +17,23 @@ use Illuminate\Support\Facades\Storage;
 class EmpleadoTareasLivianasController extends Controller
 {
 
-    use Clientes;
+  use Clientes;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //$fecha_actual = Carbon::now();
-		$clientes = $this->getClientesUser();
-		$tipos = TareaLivianaTipo::get();
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function index()
+  {
+    //$fecha_actual = Carbon::now();
+	  $clientes = $this->getClientesUser();
+	  $tipos = TareaLivianaTipo::get();
+    return view('empleados.tareas_livianas', compact('clientes','tipos'));
+  }
 
-		return view('empleados.tareas_livianas', compact('clientes','tipos'));
-    }
 
-
-    public function busqueda(Request $request)
+  public function busqueda(Request $request)
 	{
 	  $query = TareaLiviana::select(
 	  	'tareas_livianas.*',
@@ -79,245 +78,255 @@ class EmpleadoTareasLivianasController extends Controller
 
 	}
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
-		$tareas_livianas_tipo = TareaLivianaTipo::orderBy('nombre', 'asc')->get();
-		$clientes = $this->getClientesUser();
-		$tipo_comunicacion_liviana = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();
+  /**
+   * Show the form for creating a new resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function create()
+  {
+    $trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
+    $tareas_livianas_tipo = TareaLivianaTipo::orderBy('nombre', 'asc')->get();
+    $clientes = $this->getClientesUser();
+    $tipo_comunicacion_liviana = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();
 
-		return view('empleados.tareas_livianas.create', compact('trabajadores', 'tareas_livianas_tipo', 'clientes', 'tipo_comunicacion_liviana'));
+    return view('empleados.tareas_livianas.create', compact('trabajadores', 'tareas_livianas_tipo', 'clientes', 'tipo_comunicacion_liviana'));
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    $validatedData = $request->validate([
+      'trabajador' => 'required',
+      'tipo' => 'required',
+      'fecha_inicio' => 'required',
+      'tipo_comunicacion' => 'required',
+      'descripcion' => 'required|string'
+    ]);
+    $fecha_actual = Carbon::now();
+    $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
+
+
+      $dos_dias_adelante = Carbon::now()->addDays(2);
+      $un_anio_atras = Carbon::now()->subYear(1);
+      if ($fecha_inicio > $dos_dias_adelante) {
+        return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a dos dias adelante de la fecha actual');
+      }
+      if ($fecha_inicio->lessThan($un_anio_atras)) {
+        return back()->withInput()->with('error', 'La fecha de inicio puede ser hasta un año atrás, no mas');
+      }
+
+    if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
+      $fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+
+      if ($fecha_inicio->greaterThan($fecha_final)) {
+        return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
+      }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'trabajador' => 'required',
-            'tipo' => 'required',
-            'fecha_inicio' => 'required',
-            'tipo_comunicacion' => 'required',
-            'descripcion' => 'required|string'
-          ]);
-          $fecha_actual = Carbon::now();
-          $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
-    
-    
-            $dos_dias_adelante = Carbon::now()->addDays(2);
-            $un_anio_atras = Carbon::now()->subYear(1);
-            if ($fecha_inicio > $dos_dias_adelante) {
-              return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a dos dias adelante de la fecha actual');
-            }
-            if ($fecha_inicio->lessThan($un_anio_atras)) {
-              return back()->withInput()->with('error', 'La fecha de inicio puede ser hasta un año atrás, no mas');
-            }
-    
-          if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
-            $fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
-    
-            if ($fecha_inicio->greaterThan($fecha_final)) {
-              return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
-            }
-          }
-    
-          if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
-            $fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
-    
-            if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
-                return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
-              }
-    
-            if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
-              return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
-            }
-          }
-    
+    if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
+      $fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
-            //Guardar en base Tarea Liviana
-            $tarea_liviana = new TareaLiviana();
-            $tarea_liviana->id_trabajador = $request->trabajador;
-            $tarea_liviana->id_tipo = $request->tipo;
-            $tarea_liviana->fecha_inicio = $fecha_inicio;
-            if (isset($request->fecha_final) && !empty($request->fecha_final)) {
-              $tarea_liviana->fecha_final = $fecha_final;
-            }else {
-              $tarea_liviana->fecha_final = null;
-            }
-            if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
-              $tarea_liviana->fecha_regreso_trabajar = $fecha_regreso_trabajar;
-            }else {
-              $tarea_liviana->fecha_regreso_trabajar = null;
-            }
-    
-            // Si hay un archivo adjunto
-            if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
-    
-              $archivo = $request->file('archivo');
-              $nombre = $archivo->getClientOriginalName();
-              $tarea_liviana->archivo = $nombre;
-    
-            }
-            $tarea_liviana->user = auth()->user()->nombre;
-            $tarea_liviana->save();
-    
-            // Si hay un archivo adjunto
-            if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
-    
-            Storage::disk('local')->put('tareas_livianas/trabajador/'.$tarea_liviana->id, $archivo);
-    
-            // Completar el base el hasg del archivo guardado
-            $tarea_liviana = TareaLiviana::findOrFail($tarea_liviana->id);
-            $tarea_liviana->hash_archivo = $archivo->hashName();
-            $tarea_liviana->save();
-    
-            }
-    
-    
-            //Guardar en base Comunicacion
-            $comunicacion_liviana = new ComunicacionLiviana();
-            $comunicacion_liviana->id_tarea_liviana = $tarea_liviana->id;
-            $comunicacion_liviana->id_tipo = $request->tipo_comunicacion;
-            $comunicacion_liviana->user = auth()->user()->nombre;
-            $comunicacion_liviana->descripcion = $request->descripcion;
-            $comunicacion_liviana->save();
-    
-    
-          return redirect('empleados/tareas_livianas')->with('success', 'Tarea Liviana y Comunicación guardados con éxito');
+      if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
+          return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
+        }
+
+      if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
+        return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
+      }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-          // Aqui veremos el historial de tareas livianas
-      $tareas_livianas = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
-      ->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
-      ->where('tareas_livianas.id_trabajador', $id)
-      ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-      ->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
-      DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio',
-      'tareas_livianas.fecha_final', 'tareas_livianas.fecha_regreso_trabajar', 'tareas_livianas.archivo',
-      'tareas_livianas.id', DB::raw('tareas_livianas.user user'))
-      ->get();
 
-      $clientes = $this->getClientesUser();
-
-      return view('empleados.tareas_livianas.show', compact('tareas_livianas', 'clientes'));
+    //Guardar en base Tarea Liviana
+    $tarea_liviana = new TareaLiviana();
+    $tarea_liviana->id_trabajador = $request->trabajador;
+    $tarea_liviana->id_tipo = $request->tipo;
+    $tarea_liviana->fecha_inicio = $fecha_inicio;
+    if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+      $tarea_liviana->fecha_final = $fecha_final;
+    }else {
+      $tarea_liviana->fecha_final = null;
+    }
+    if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
+      $tarea_liviana->fecha_regreso_trabajar = $fecha_regreso_trabajar;
+    }else {
+      $tarea_liviana->fecha_regreso_trabajar = null;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $tarea_liviana = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
-	  ->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
-	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-	  ->where('tareas_livianas.id', $id)
-	  ->select('tareas_livianas.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'))
-	  ->first();
+    // Si hay un archivo adjunto
+    if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
 
-	  $clientes = $this->getClientesUser();
+      $archivo = $request->file('archivo');
+      $nombre = $archivo->getClientOriginalName();
+      $tarea_liviana->archivo = $nombre;
 
-	  return view('empleados.tareas_livianas.edit', compact('tarea_liviana', 'clientes'));
+    }
+    $tarea_liviana->user = auth()->user()->nombre;
+    $tarea_liviana->save();
+
+    // Si hay un archivo adjunto
+    if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
+
+    Storage::disk('local')->put('tareas_livianas/trabajador/'.$tarea_liviana->id, $archivo);
+
+    // Completar el base el hasg del archivo guardado
+    $tarea_liviana = TareaLiviana::findOrFail($tarea_liviana->id);
+    $tarea_liviana->hash_archivo = $archivo->hashName();
+    $tarea_liviana->save();
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'fecha_inicio' => 'required'
-          ]);
-    
-          $fecha_actual = Carbon::now();
-          $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
-    
-          if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
-            $fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
-    
-            if ($fecha_inicio->greaterThan($fecha_final)) {
-              return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
+
+    //Guardar en base Comunicacion
+    $comunicacion_liviana = new ComunicacionLiviana();
+    $comunicacion_liviana->id_tarea_liviana = $tarea_liviana->id;
+    $comunicacion_liviana->id_tipo = $request->tipo_comunicacion;
+    $comunicacion_liviana->user = auth()->user()->nombre;
+    $comunicacion_liviana->descripcion = $request->descripcion;
+    $comunicacion_liviana->save();
+
+
+    return redirect('empleados/tareas_livianas')->with('success', 'Tarea Liviana y Comunicación guardados con éxito');
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function show($id)
+  {
+    // Aqui veremos el historial de tareas livianas
+    $tareas_livianas = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
+    ->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
+    ->where('tareas_livianas.id_trabajador', $id)
+    ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+    ->select(
+      'nominas.nombre',
+      'nominas.email',
+      'nominas.estado',
+      'nominas.telefono',
+      DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'),
+      'tareas_livianas.fecha_inicio',
+      'tareas_livianas.fecha_final',
+      'tareas_livianas.fecha_regreso_trabajar',
+      'tareas_livianas.archivo',
+      'tareas_livianas.id',
+      DB::raw('tareas_livianas.user user')
+    )
+    ->get();
+
+    $clientes = $this->getClientesUser();
+
+    return view('empleados.tareas_livianas.show', compact('tareas_livianas', 'clientes'));
+  }
+
+  /**
+   * Show the form for editing the specified resource.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function edit($id)
+  {
+      $tarea_liviana = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
+  ->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
+  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+  ->where('tareas_livianas.id', $id)
+  ->select('tareas_livianas.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'))
+  ->first();
+
+  $clientes = $this->getClientesUser();
+
+  return view('empleados.tareas_livianas.edit', compact('tarea_liviana', 'clientes'));
+  }
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function update(Request $request, $id)
+  {
+      $validatedData = $request->validate([
+          'fecha_inicio' => 'required'
+        ]);
+
+        $fecha_actual = Carbon::now();
+        $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
+
+        if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
+          $fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+
+          if ($fecha_inicio->greaterThan($fecha_final)) {
+            return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
+          }
+        }
+
+        if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
+          $fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
+
+          if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
+              return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
             }
+
+          if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
+            return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
           }
-    
-          if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
-            $fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
-    
-            if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
-                return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
-              }
-    
-            if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
-              return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
-            }
-          }
-    
-          //Actualizar en base
-          $tarea_liviana = TareaLiviana::findOrFail($id);
-          $tarea_liviana->fecha_inicio = $fecha_inicio;
-          if (isset($request->fecha_final) && !empty($request->fecha_final)) {
-            $tarea_liviana->fecha_final = $fecha_final;
-          }else {
-            $tarea_liviana->fecha_final = null;
-          }
-          if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
-            $tarea_liviana->fecha_regreso_trabajar = $fecha_regreso_trabajar;
-          }else {
-            $tarea_liviana->fecha_regreso_trabajar = null;
-          }
-          $tarea_liviana->user = auth()->user()->nombre;
-          $tarea_liviana->save();
-    
-          return redirect('empleados/tareas_livianas')->with('success', 'Tarea liviana actualizada con éxito');
+        }
+
+        //Actualizar en base
+        $tarea_liviana = TareaLiviana::findOrFail($id);
+        $tarea_liviana->fecha_inicio = $fecha_inicio;
+        if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+          $tarea_liviana->fecha_final = $fecha_final;
+        }else {
+          $tarea_liviana->fecha_final = null;
+        }
+        if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
+          $tarea_liviana->fecha_regreso_trabajar = $fecha_regreso_trabajar;
+        }else {
+          $tarea_liviana->fecha_regreso_trabajar = null;
+        }
+        $tarea_liviana->user = auth()->user()->nombre;
+        $tarea_liviana->save();
+
+        return redirect('empleados/tareas_livianas')->with('success', 'Tarea liviana actualizada con éxito');
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy($id)
+  {
+    $tarea_liviana = TareaLiviana::find($id);
+
+    if ($tarea_liviana->archivo != null) {
+    $ruta = storage_path("app/tareas_livianas/trabajador/{$tarea_liviana->id}");
+    $ruta_archivo = storage_path("app/tareas_livianas/trabajador/{$tarea_liviana->id}/{$tarea_liviana->hash_archivo}");
+    unlink($ruta_archivo);
+    rmdir($ruta);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $tarea_liviana = TareaLiviana::find($id);
-
-	  if ($tarea_liviana->archivo != null) {
-		$ruta = storage_path("app/tareas_livianas/trabajador/{$tarea_liviana->id}");
-		$ruta_archivo = storage_path("app/tareas_livianas/trabajador/{$tarea_liviana->id}/{$tarea_liviana->hash_archivo}");
-		unlink($ruta_archivo);
-		rmdir($ruta);
-	  }
-	  $comunicacion = ComunicacionLiviana::where('id_tarea_liviana', $id)->delete();
-	  $tarea_liviana->delete();
+    $comunicacion = ComunicacionLiviana::where('id_tarea_liviana', $id)->delete();
+    $tarea_liviana->delete();
 	  return back()->with('success', 'Tarea liviana y Comunicación asociada eliminados correctamente');
-    }
+
+  }
 
 
 
-    public function tipo(Request $request)
+  public function tipo(Request $request)
 	{
 
 		$validatedData = $request->validate([
@@ -333,7 +342,7 @@ class EmpleadoTareasLivianasController extends Controller
 	}
 
 
-    public function tipo_destroy($id_tipo)
+  public function tipo_destroy($id_tipo)
 	{
 
 	  $tareas_livianas = TareaLiviana::where('id_tipo', $id_tipo)->get();

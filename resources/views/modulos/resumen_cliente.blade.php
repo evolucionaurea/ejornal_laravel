@@ -18,8 +18,9 @@
 		<div class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$ausentismos_mes_actual}}</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($ausentismos_mes_actual*100/$nomina_actual,1) : 0 }}%</div>
 					<div class="mb-0">Mes Actual</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}} - Ausentes: {{$ausentismos_mes_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -34,8 +35,9 @@
 		<div class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$ausentismos_mes_pasado}}</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? round($ausentismos_mes_pasado*100/$nomina_mes_anterior,1) : 0 }}%</div>
 					<div class="mb-0">Mes Anterior</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anterior}} - Ausentes: {{$ausentismos_mes_pasado}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -50,8 +52,9 @@
 		<div class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$ausentismos_mes_anio_anterior}}</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($ausentismos_mes_anio_anterior*100/$nomina_mes_anio_anterior,1) : 0}}</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anio_anterior}} - Ausentes: {{$ausentismos_mes_anio_anterior}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -65,8 +68,9 @@
 		<div class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$ausentismos_anio_actual}}</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($ausentismos_anio_actual*100/$nomina_actual,1) : 0}}%</div>
 					<div class="mb-0">Año actual</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}} - Ausentes: {{$ausentismos_anio_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>

@@ -20,4 +20,9 @@ class ConsultaEnfermeria extends Model
     'id_diagnostico_consulta', 'tension_arterial', 'frec_cardiaca', 'derivacion_consulta', 'observaciones'
   ];
 
+
+  protected $casts = [
+    'fecha'=>'date:d/m/Y'
+  ];
+
 }

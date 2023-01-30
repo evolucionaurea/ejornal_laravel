@@ -113,7 +113,7 @@
                         <textarea name="descripcion" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
-                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar tarea liviana y
+                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar Tarea Adecuada y
                     comunicación</button>
             </form>
         </div>
@@ -132,7 +132,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tipo_tarea_liviana_titulo">Crear tipo de Tarea liviana</h5>
+                <h5 class="modal-title" id="tipo_tarea_liviana_titulo">Crear tipo de Tarea Adecuada</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

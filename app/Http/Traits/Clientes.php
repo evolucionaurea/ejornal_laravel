@@ -3,7 +3,9 @@
 namespace App\Http\Traits;
 use App\ClienteUser;
 use App\Ausentismo;
+use App\Nomina;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 
 trait Clientes {
 
@@ -30,9 +32,12 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
+
+		////dd($ausentismos_mes_actual);
 
 
 		/// Mes pasado
@@ -43,6 +48,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -51,13 +57,19 @@ trait Clientes {
 		$ausentismos_mes_anio_anterior = Ausentismo::
 			where('fecha_inicio','>=',$today->subYear()->startOfMonth())
 			->where('fecha_inicio','<=',$today->subYear()->endOfMonth())
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
+			->whereIn('id_trabajador',function($query) use ($id_cliente,$today){
+
+				///!!!! REVISAR
+
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('created_at','<=',$today->endOfMonth()->subYear()->toDateString())
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
+		//dd($today->subYear()->endOfMonth()->toDateString());
 
 		/// Año actual
 		$ausentismos_anio_actual = Ausentismo::
@@ -66,6 +78,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -84,6 +97,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -101,6 +115,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -119,6 +134,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -135,6 +151,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -153,6 +170,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -169,6 +187,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -186,6 +205,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -201,6 +221,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -208,12 +229,14 @@ trait Clientes {
 
 
 		/// TOP 10
+		//DB::enableQueryLog();
 		$ausentismos_top_10 = Ausentismo::
 			selectRaw('SUM(DATEDIFF( IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio )) total_dias, id_trabajador')
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
@@ -224,6 +247,7 @@ trait Clientes {
 			->orderBy('total_dias','desc')
 			->limit(10)
 			->get();
+		///dd(DB::getQueryLog());
 
 
 
@@ -234,6 +258,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
@@ -244,6 +269,26 @@ trait Clientes {
 			->orderBy('total','desc')
 			->limit(10)
 			->get();
+
+
+		$nomina_actual = Nomina::
+			where('id_cliente',$id_cliente)
+			->where('estado',1)
+			->count();
+
+		$nomina_mes_anterior = Nomina::
+			where('id_cliente',$id_cliente)
+			->whereDate('created_at','<=',$today->endOfMonth()->subMonth()->toDateString())
+			->where('estado',1)
+			->count();
+
+		$nomina_mes_anio_anterior = Nomina::
+			where('id_cliente',$id_cliente)
+			->where('created_at','<=',$today->endOfMonth()->subYear()->toDateString())
+			->where('estado',1)
+			->count();
+
+		///dd($today->endOfMonth()->subYear()->toDateString());
 
 
 
@@ -264,7 +309,11 @@ trait Clientes {
 			'incidentes_anio_actual',
 
 			'ausentismos_top_10',
-			'ausentismos_top_10_solicitudes'
+			'ausentismos_top_10_solicitudes',
+
+			'nomina_actual',
+			'nomina_mes_anterior',
+			'nomina_mes_anio_anterior'
 		);
 
 

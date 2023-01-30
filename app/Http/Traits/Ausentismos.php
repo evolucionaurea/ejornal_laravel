@@ -5,6 +5,7 @@ use App\Ausentismo;
 use App\Cliente;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 trait Ausentismos {
 
@@ -14,6 +15,8 @@ trait Ausentismos {
 
 		$now = Carbon::now();
 
+
+		DB::enableQueryLog();
 
 		$query = Ausentismo::join('nominas','nominas.id','=','ausentismos.id_trabajador')
 			/*whereHas('trabajador',function($query) use ($id_cliente){
@@ -31,6 +34,8 @@ trait Ausentismos {
 				'ausentismo_tipo.nombre as ausentismo_tipo'
 			)
 			->where('nominas.id_cliente',$id_cliente);
+
+		$total = $query->count();
 
 		$query->where(function($query) {
 			$filtro = '%'.$this->request->search['value'].'%';
@@ -62,13 +67,16 @@ trait Ausentismos {
 			$query->orderBy($sort,$dir);
 		}
 
+		$total_filtered = $query->count();
+
 
 		return [
 			'draw'=>$this->request->draw,
-			'recordsTotal'=>$query->count(),
-			'recordsFiltered'=>$query->count(),
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
 			'data'=>$query->skip($this->request->start)->take($this->request->length)->get(),
-			'request'=>$this->request->all()
+			'request'=>$this->request->all(),
+			'queries'=>DB::getQueryLog()
 		];
 
 	}

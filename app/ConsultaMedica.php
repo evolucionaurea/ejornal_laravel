@@ -21,4 +21,9 @@ class ConsultaMedica extends Model
     'observaciones'
   ];
 
+
+  protected $casts = [
+    'fecha'=>'date:d/m/Y'
+  ];
+
 }

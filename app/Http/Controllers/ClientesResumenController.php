@@ -37,6 +37,7 @@ class ClientesResumenController extends Controller
 			->select('clientes.nombre')
 			->first();
 
+		//// Traits > Clientes
 		$output = array_merge(['cliente'=>$cliente],$this->resumen($id_cliente));
 
 		return view('clientes.resumen', $output);

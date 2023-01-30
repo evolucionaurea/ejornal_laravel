@@ -81,6 +81,10 @@
 							onclick="javascript:location.href='{{url('/empleados/ausentismos')}}'">
 							<a href="{{url('/empleados/ausentismos')}}">Listado</a>
 						</ol>
+						<ol data-route="ausentismos.create" class="{{ setActiveSub('ausentismos.create') }}"
+							onclick="javascript:location.href='{{url('/empleados/ausentismos/create')}}'">
+							<a href="{{url('/empleados/ausentismos/create')}}">Agregar Ausentismo</a>
+						</ol>
 						<ol data-route="/empleados/comunicaciones"
 							class="{{ setActiveSub('/empleados/comunicaciones') }}"
 							onclick="javascript:location.href='{{url('/empleados/comunicaciones')}}'">
