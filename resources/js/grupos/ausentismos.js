@@ -13,8 +13,14 @@ $(()=>{
 			order:[[4,'desc']],
 			columns:[
 				{
-					data:'trabajador_nombre',
-					name:'nominas.nombre'
+					data:row=>row,
+					name:'nominas.nombre',
+					render:v=>{
+						return `
+							<div><b>${v.trabajador_nombre}</b></div>
+							<div class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</div>
+						`
+					}
 				},
 				{
 					data:row=>row,

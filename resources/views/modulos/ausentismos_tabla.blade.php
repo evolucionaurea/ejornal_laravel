@@ -15,6 +15,16 @@
 		<select name="ausentes" class="form-control form-control-sm">
 			<option value="">--Seleccionar Filtro--</option>
 			<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
+			<option value="mes" {{ Request::get('ausentes')  == 'mes' ? 'selected' : '' }} >Ausentes Este Mes</option>
+			<option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentes Mes Pasado</option>
+		</select>
+	</div>
+
+	<div class="form-group mr-3" style="max-width:220px">
+		<select name="estado" class="form-control form-control-sm">
+			<option value="">--Seleccionar Filtro--</option>
+			<option value="activo" {{ Request::get('estado')  == 'activo' ? 'selected' : '' }} >Trabajadores Activos</option>
+			<option value="inactivo" {{ Request::get('estado')  == 'inactivo' ? 'selected' : '' }} >Trabajadores Inactivos</option>
 		</select>
 	</div>
 

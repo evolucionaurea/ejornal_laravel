@@ -11,6 +11,7 @@
 
 	<div class="col-lg-12 pb-0">
 		<h5 class="mb-0 font-weight-bold">AUSENTISMOS</h5>
+		<div class="small font-italic text-muted">Los porcentajes se calculan en base al total de trabajadores activos de la nómina.</div>
 	</div>
 
 	<!-- Mes Actual -->
@@ -52,7 +53,7 @@
 		<div class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($ausentismos_mes_anio_anterior*100/$nomina_mes_anio_anterior,1) : 0}}</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($ausentismos_mes_anio_anterior*100/$nomina_mes_anio_anterior,1) : 0}}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
 					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anio_anterior}} - Ausentes: {{$ausentismos_mes_anio_anterior}}</div>
 				</div>
@@ -231,9 +232,10 @@
 </div>
 
 
-
 <hr>
 
+
+<!-- CHARTS -->
 <div class="row">
 	<div class="col-lg-6 ">
 		<div class="tarjeta" >
@@ -254,6 +256,7 @@
 </div>
 
 
+<hr>
 
 
 <!-- TABLAS AUSENTISMOS -->
@@ -262,7 +265,8 @@
 	<!-- Mes Actual -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_mes_porcentajes">
-			<h4>Ausentismos en {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+			<h4 class="mb-0">Ausentismos en este mes</h4>
+			<h6>{{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
 			<table data-table="ausentismos-mes" class="table table-striped tabla">
 				<thead>
 					<tr>
@@ -281,7 +285,8 @@
 	<!-- Mes Anterior -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_mes_porcentajes">
-			<h4>Ausentismos en {{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+			<h4 class="mb-0">Ausentismos en el mes pasado</h4>
+			<h6>{{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
 			<table data-table="ausentismos-mes-anterior" class="table table-striped tabla">
 				<thead>
 					<tr>
@@ -300,7 +305,8 @@
 	<!-- Mes Año Anterior -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_mes_porcentajes">
-			<h4>Ausentismos en {{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h4>
+			<h4 class="mb-0">Ausentismos en el mismo mes del año anterior</h4>
+			<h6>{{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h6>
 			<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla">
 				<thead>
 					<tr>
@@ -341,13 +347,13 @@
 <hr>
 
 
-
+<!-- TOP -->
 <div class="row">
 
 	<div class="col-lg-6">
 		<div class="tarjeta">
 			<h4 class="mb-2">Top 10 trabajadores que mas días faltaron</h4>
-			<div class="small text-muted font-italic">Se computan los últimos 365 días.</div>
+			<div class="small text-muted font-italic">Se computan los últimos 365 días. Si la fecha de regreso aún no ha sido guardada se computa como ausente hasta el día de la fecha.</div>
 			<table data-table="top_10_faltas" class="table table-striped">
 				<thead>
 					<tr>

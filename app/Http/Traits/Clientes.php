@@ -26,6 +26,7 @@ trait Clientes {
 
 		/// AUSENTISMOS
 		/// Mes actual
+		//DB::enableQueryLog();
 		$ausentismos_mes_actual = Ausentismo::
 			where('fecha_inicio','>=',$today->startOfMonth())
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
@@ -36,14 +37,13 @@ trait Clientes {
 					->where('deleted_at',null);
 			})
 			->count();
-
-		////dd($ausentismos_mes_actual);
+		///dd(DB::getQueryLog());
 
 
 		/// Mes pasado
 		$ausentismos_mes_pasado = Ausentismo::
-			where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
-			->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
+			where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+			->where('fecha_inicio','<=',$today->subMonth()->endOfMonth())
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -58,18 +58,14 @@ trait Clientes {
 			where('fecha_inicio','>=',$today->subYear()->startOfMonth())
 			->where('fecha_inicio','<=',$today->subYear()->endOfMonth())
 			->whereIn('id_trabajador',function($query) use ($id_cliente,$today){
-
-				///!!!! REVISAR
-
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('created_at','<=',$today->endOfMonth()->subYear()->toDateString())
+					->where('created_at','<=',$today->subYear()->endOfMonth()->toDateString())
 					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
-		//dd($today->subYear()->endOfMonth()->toDateString());
 
 		/// Año actual
 		$ausentismos_anio_actual = Ausentismo::
@@ -109,8 +105,8 @@ trait Clientes {
 					->where('nombre','=','ART')
 					->orWhere('nombre','LIKE','%accidente%');
 			})
-			->where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
-			->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
+			->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+			->where('fecha_inicio','<=',$today->subMonth()->endOfMonth())
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -130,10 +126,11 @@ trait Clientes {
 			})
 			->where('fecha_inicio','>=',$today->subYear()->startOfMonth())
 			->where('fecha_inicio','<=',$today->subYear()->endOfMonth())
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
+			->whereIn('id_trabajador',function($query) use ($id_cliente,$today){
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('created_at','<=',$today->subYear()->endOfMonth()->toDateString())
 					->where('estado',1)
 					->where('deleted_at',null);
 			})
@@ -181,8 +178,8 @@ trait Clientes {
 				$query
 					->where('nombre','LIKE','%incidente%');
 			})
-			->where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
-			->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
+			->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+			->where('fecha_inicio','<=',$today->subMonth()->endOfMonth())
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -201,10 +198,11 @@ trait Clientes {
 			})
 			->where('fecha_inicio','>=',$today->subYear()->startOfMonth())
 			->where('fecha_inicio','<=',$today->subYear()->endOfMonth())
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
+			->whereIn('id_trabajador',function($query) use ($id_cliente,$today){
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
+					->where('created_at','<=',$today->subYear()->endOfMonth()->toDateString())
 					->where('estado',1)
 					->where('deleted_at',null);
 			})
@@ -247,7 +245,7 @@ trait Clientes {
 			->orderBy('total_dias','desc')
 			->limit(10)
 			->get();
-		///dd(DB::getQueryLog());
+		//dd(DB::getQueryLog());
 
 
 
@@ -269,6 +267,7 @@ trait Clientes {
 			->orderBy('total','desc')
 			->limit(10)
 			->get();
+
 
 
 		$nomina_actual = Nomina::

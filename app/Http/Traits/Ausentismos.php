@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 use App\Ausentismo;
 use App\Cliente;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +14,7 @@ trait Ausentismos {
 	{
 
 
-		$now = Carbon::now();
+		$now = CarbonImmutable::now();
 
 
 		DB::enableQueryLog();
@@ -29,8 +30,9 @@ trait Ausentismos {
 				'nominas.nombre as trabajador_nombre',
 				'nominas.dni as trabajador_dni',
 				'nominas.sector as trabajador_sector',
-
 				'nominas.id_cliente',
+				'nominas.estado as trabajador_estado',
+
 				'ausentismo_tipo.nombre as ausentismo_tipo'
 			)
 			->where('nominas.id_cliente',$id_cliente);
@@ -54,10 +56,25 @@ trait Ausentismos {
 			});
 			$query->where('ausentismos.fecha_inicio','<=',$now);
 		}
+		if($this->request->ausentes=='mes'){
+			$query->where('ausentismos.fecha_inicio','>=',$now->startOfMonth());
+			$query->where('ausentismos.fecha_inicio','<=',$now->endOfMonth());
+		}
+		if($this->request->ausentes=='mes-pasado'){
+			$query->where('ausentismos.fecha_inicio','>=',$now->subMonth()->startOfMonth());
+			$query->where('ausentismos.fecha_inicio','<=',$now->subMonth()->endOfMonth());
+		}
+
+
+
+		if($this->request->estado){
+			$query->where('nominas.estado','=',$this->request->estado=='activo' ? 1 : 0);
+		}
 
 
 		if($this->request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $this->request->from)->format('Y-m-d'));
-		if($this->request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $this->request->to)->format('Y-m-d'));
+		if($this->request->to) $query->whereDate('fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $this->request->to)->format('Y-m-d'));
+
 		if($this->request->tipo) $query->where('id_tipo',$this->request->tipo);
 
 
@@ -82,15 +99,15 @@ trait Ausentismos {
 	}
 
 
-	public function exportAusentismos($idcliente=null)
+	public function exportAusentismos($id_cliente=null)
 	{
 
-		if(!$idcliente) dd('Faltan parámetros');
-		$cliente = Cliente::findOrFail($idcliente);
+		if(!$id_cliente) dd('Faltan parámetros');
+		$cliente = Cliente::findOrFail($id_cliente);
 
 		$ausentismos = Ausentismo::join('nominas','nominas.id','=','ausentismos.id_trabajador')
 		->join('ausentismo_tipo','ausentismo_tipo.id','=','ausentismos.id_tipo')
-		->where('nominas.id_cliente',$idcliente)
+		->where('nominas.id_cliente',$id_cliente)
 		->select(
 			'ausentismos.*',
 
@@ -150,6 +167,97 @@ trait Ausentismos {
 
 
 
+	}
+
+	public function ausentismosAjax($id_cliente=null)
+	{
+
+		$today = CarbonImmutable::now();
+
+		//DB::enableQueryLog();
+		$ausentismos_mes = Ausentismo::selectRaw('count(*) as total, id_tipo')
+			->with(['tipo'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->where('fecha_inicio','>=',$today->startOfMonth())
+			->whereIn('id_trabajador',function($query) use ($id_cliente){
+				$query->select('id')
+					->from('nominas')
+					->where('estado',1)
+					->where('deleted_at',null)
+					->where('id_cliente',$id_cliente);
+			})
+			->groupBy('id_tipo')
+			->orderBy('total','desc')
+			->get();
+		//dd($ausentismos_mes->toArray());
+		//$query = DB::getQueryLog();
+
+		$ausentismos_mes_anterior = Ausentismo::selectRaw('count(*) as total, id_tipo')
+			->with(['tipo'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+			->where(function($query) use ($today){
+				$query
+					->where('fecha_regreso_trabajar',null)
+					->orwhere('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth());
+			})
+			->whereIn('id_trabajador',function($query) use ($id_cliente){
+				$query->select('id')
+					->from('nominas')
+					->where('estado',1)
+					->where('deleted_at',null)
+					->where('id_cliente',$id_cliente);
+			})
+			->groupBy('id_tipo')
+			->get();
+
+		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw('count(*) as total, id_tipo')
+			->with(['tipo'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->where('fecha_inicio','>=',$today->subYear()->firstOfYear())
+			->where(function($query) use ($today){
+				$query
+					->where('fecha_regreso_trabajar',null)
+					->orwhere('fecha_regreso_trabajar','<=',$today->subYear()->lastOfYear());
+			})
+			->whereIn('id_trabajador',function($query) use ($id_cliente){
+				$query->select('id')
+					->from('nominas')
+					->where('estado',1)
+					->where('deleted_at',null)
+					->where('id_cliente',$id_cliente);
+			})
+			->groupBy('id_tipo')
+			->get();
+
+		$ausentismos_anual = Ausentismo::selectRaw('count(*) as total, id_tipo')
+			->with(['tipo'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->whereIn('id_trabajador',function($query) use ($id_cliente){
+				$query->select('id')
+					->from('nominas')
+					->where('estado',1)
+					->where('deleted_at',null)
+					->where('id_cliente',$id_cliente);
+			})
+			->groupBy('id_tipo')
+			->where('fecha_inicio','>=',$today->firstOfYear())
+			->orderBy('total','desc')
+			->get();
+
+		$status = 'ok';
+
+		return compact(
+			'ausentismos_mes',
+			'ausentismos_mes_anterior',
+			'ausentismos_mes_anio_anterior',
+			'ausentismos_anual',
+			'status'
+		);
 	}
 
 
