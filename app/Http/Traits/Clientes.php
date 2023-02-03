@@ -41,6 +41,7 @@ trait Clientes {
 
 
 		/// Mes pasado
+		/// Traer los que figuren ausentes en este mes..
 		$ausentismos_mes_pasado = Ausentismo::
 			where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
 			->where('fecha_inicio','<=',$today->subMonth()->endOfMonth())
