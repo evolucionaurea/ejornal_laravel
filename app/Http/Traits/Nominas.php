@@ -21,17 +21,20 @@ trait Nominas
 				$query->with(['tipo'=>function($query){
 					$query->select('id','nombre');
 				}]);
-			}]);
+			}])
+			->where('id_cliente',$idcliente);
 
+		$total = $query->count();
 
-		$query->where(function($query) {
-			$filtro = '%'.$this->request->search['value'].'%';
-			$query->where('nombre','like',$filtro)
-				->orWhere('email','like',$filtro)
-				->orWhere('dni','like',$filtro)
-				->orWhere('telefono','like',$filtro);
-		})
-		->where('id_cliente',$idcliente);
+		if($this->request->search){
+			$query->where(function($query) {
+				$filtro = '%'.$this->request->search['value'].'%';
+				$query->where('nombre','like',$filtro)
+					->orWhere('email','like',$filtro)
+					->orWhere('dni','like',$filtro)
+					->orWhere('telefono','like',$filtro);
+			});
+		}
 
 
 		if(!is_null($this->request->estado)) $query->where('estado','=',(int) $this->request->estado);
@@ -69,11 +72,13 @@ trait Nominas
 
 		}
 
+		//$query->onlyTrashed();
+
 
 
 		return [
 			'draw'=>$this->request->draw,
-			'recordsTotal'=>$query->count(),
+			'recordsTotal'=>$total,
 			'recordsFiltered'=>$query->count(),
 			'data'=>$query->skip($this->request->start)->take($this->request->length)->get(),
 			'request'=>$this->request->all()

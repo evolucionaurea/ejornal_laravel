@@ -56,6 +56,8 @@ trait Ausentismos {
 			});
 			$query->where('ausentismos.fecha_inicio','<=',$now);
 		}
+
+
 		if($this->request->ausentes=='mes'){
 			$query->where('ausentismos.fecha_inicio','>=',$now->startOfMonth());
 			$query->where('ausentismos.fecha_inicio','<=',$now->endOfMonth());
@@ -83,6 +85,8 @@ trait Ausentismos {
 			$dir  = $this->request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
+
+		$query->where('nominas.deleted_at',null);
 
 		$total_filtered = $query->count();
 

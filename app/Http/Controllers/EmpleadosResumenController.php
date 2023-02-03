@@ -66,6 +66,8 @@ class EmpleadosResumenController extends Controller
 		})
 		->where('ausentismos.fecha_inicio', '<=', $fecha_actual)
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->where('nominas.deleted_at', null)
+		->where('nominas.estado',1)
 		//->whereDate('ausentismos.fecha_final', '>=', $fecha_actual)
 		->select(
 			'ausentismos.*',
