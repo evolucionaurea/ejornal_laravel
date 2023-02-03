@@ -159,6 +159,15 @@ class EmpleadosAusentismosController extends Controller
 		}
 	  }
 
+	  $buscar_ausentismos_trabajador = Ausentismo::where('id_trabajador', $request->trabajador)
+	  ->where('fecha_regreso_trabajar', null)
+	  ->count();
+
+	  if ($buscar_ausentismos_trabajador > 0) {
+		return back()->withInput()->with('error', 'Este trabajador tiene ausentismos sin fecha de regreso cargada. No podras
+		cargar nuevos ausentismos hasta en tanto dicha fecha sea cargada');
+	  }
+
 
 		//Guardar en base Ausentismo
 		$ausentismo = new Ausentismo();
