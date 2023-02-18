@@ -44,6 +44,7 @@ if (url.includes(admin) || url.includes(cliente)) {
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
+if(route=='/empleados/ausentismos') require('./empleados/ausentismos_extension_licencia')
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas')
 if(route=='/empleados/comunicaciones') require('./empleados/comunicaciones')
 if(route=='/empleados/certificados') require('./empleados/certificados')

@@ -41,13 +41,26 @@ class EmpleadosAusentismoDocumentacionController extends Controller
      */
     public function store(Request $request)
     {
-
       $validatedData = $request->validate([
         'institucion' => 'required',
         'medico' => 'required',
         'diagnostico' => 'required',
         'fecha_documento' => 'required'
       ]);
+
+      // Si viene de Extension de Ausentismo (icono listado de ausentismos), validar fechas
+      if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+        $ausentismo = Ausentismo::findOrFail($request->id_ausentismo);
+        $fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+        if ($fecha_final->lessThan($ausentismo->fecha_inicio)) {
+          return back()->with('error', 'La fecha final es menor a la de inicio');
+        }
+        if ($ausentismo->fecha_regreso_trabajar != null) {
+          if ($fecha_final->greaterThan($ausentismo->fecha_regreso_trabajar)) {
+            return back()->with('error', 'La fecha final es mayor a la de regreso');
+          }
+        }
+      }
 
       $fecha_documento = Carbon::createFromFormat('d/m/Y', $request->fecha_documento);
       // Carbon\Carbon::createFromFormat('d/m/Y', '10/01/2019')->toDateTimeString();
@@ -91,12 +104,18 @@ class EmpleadosAusentismoDocumentacionController extends Controller
           $documentacion->hash_archivo = $archivo->hashName();
           $documentacion->save();
 
+          // Si es una documentacion de ausentismo extendida (se carga en el listado de ausentismos)
+          if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+            $ausentismo->fecha_final = $fecha_final;
+            $ausentismo->save();
+          }
+
 
         }else {
           return back()->with('error', 'Debes adjuntar un archivo');
         }
 
-        return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Documentacion guardada con éxito');
+        return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
 
     }
 

@@ -88,6 +88,15 @@ $(()=>{
 
 						return `
 							<div class="acciones_tabla">
+								<a href="!#" 
+								class="extension_de_licencia"
+								title="extension de licencia" 
+								data-toggle="modal" 
+								data-target="#extensionLicenciaModal" 
+								data-info="${v.id}">
+									<i title="extension de licencia" class="fas fa-forward"></i>
+								</a>
+
 								<a title="Comunicaciones" href="comunicaciones/${v.id}">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
 								</a>
@@ -116,5 +125,6 @@ $(()=>{
 		}
 
 	})
+
 
 })
