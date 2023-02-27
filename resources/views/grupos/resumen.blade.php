@@ -33,8 +33,6 @@
 								<th class="text-right">Ausentismos {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</th>
 								<th class="text-right">Ausentismos Mes Pasado</th>
 								<th class="text-right">Ausentismos del año</th>
-								<th class="text-right">Accidentes Mes Actual</th>
-								<th class="text-right">Accidentes Mes Pasado</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -44,8 +42,6 @@
 								$ausentismos_mes_count_total = 0;
 								$ausentismos_mes_pasado_count_total = 0;
 								$ausentismos_year_count_total = 0;
-								$accidentes_mes_count_total = 0;
-								$accidentes_mes_pasado_count_total = 0;
 							 @endphp
 							@foreach ($clientes_nominas->clientes as $cliente)
 							@php
@@ -54,8 +50,6 @@
 								$ausentismos_mes_count_total += $cliente->ausentismos_mes_count;
 								$ausentismos_mes_pasado_count_total += $cliente->ausentismos_mes_pasado_count;
 								$ausentismos_year_count_total += $cliente->ausentismos_year_count;
-								$accidentes_mes_count_total += $cliente->accidentes_mes_count;
-								$accidentes_mes_pasado_count_total += $cliente->accidentes_mes_pasado_count;
 							@endphp
 							<tr>
 								<td>{{$cliente->nombre}}</td>
@@ -64,8 +58,6 @@
 								<td class="text-right">{{$cliente->ausentismos_mes_count}}</td>
 								<td class="text-right">{{$cliente->ausentismos_mes_pasado_count}}</td>
 								<td class="text-right">{{$cliente->ausentismos_year_count}}</td>
-								<td class="text-right">{{$cliente->accidentes_mes_count}}</td>
-								<td class="text-right">{{$cliente->accidentes_mes_pasado_count}}</td>
 							</tr>
 							@endforeach
 						</tbody>
@@ -77,8 +69,6 @@
 								<th class="text-right">{{$ausentismos_mes_count_total}}</th>
 								<th class="text-right">{{$ausentismos_mes_pasado_count_total}}</th>
 								<th class="text-right">{{$ausentismos_year_count_total}}</th>
-								<th class="text-right">{{$accidentes_mes_count_total}}</th>
-								<th class="text-right">{{$accidentes_mes_pasado_count_total}}</th>
 							</tr>
 						</tfoot>
 					</table>

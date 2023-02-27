@@ -183,7 +183,17 @@ trait Ausentismos {
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre');
 			}])
-			->where('fecha_inicio','>=',$today->startOfMonth())
+
+			->where(function($query) use ($today){
+				$query->where('fecha_inicio','>=',$today->startOfMonth())
+					->orWhere(function($query) use ($today){
+
+						$query->where('fecha_inicio','<',$today->startOfMonth())
+						->where('fecha_regreso_trabajar',null);
+
+					});
+			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')

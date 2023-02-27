@@ -91,7 +91,7 @@ class GruposResumenController extends Controller
 							});
 					},
 
-					//accidentes mes actual
+					/*//accidentes mes actual
 					'ausentismos as accidentes_mes_count'=>function($query) use ($today) {
 						$query
 							->where('fecha_inicio','>=',$today->startOfMonth())
@@ -118,7 +118,7 @@ class GruposResumenController extends Controller
 							->whereHas('trabajador',function($query){
 								$query->where('estado',1);
 							});
-					}
+					}*/
 				]);
 
 			}
@@ -143,7 +143,17 @@ class GruposResumenController extends Controller
 		$ausentismos_mes = Ausentismo::
 			selectRaw('count(*) as total, id_tipo')
 			->with('tipo')
-			->where('fecha_inicio','>=',$today->startOfMonth())
+
+			->where(function($query) use ($today){
+
+				$query->where('fecha_inicio','>=',$today->startOfMonth())
+					->orWhere(function($query) use ($today){
+						$query->where('fecha_inicio','<',$today->startOfMonth())
+							->where('fecha_regreso_trabajar',null);
+					});
+
+			})
+
 			->whereIn('id_trabajador',function($query){
 				$query
 					->select('id')

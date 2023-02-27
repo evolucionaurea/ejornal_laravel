@@ -27,8 +27,20 @@ trait Clientes {
 		/// AUSENTISMOS
 		/// Mes actual
 		//DB::enableQueryLog();
+
+		///traer también las personas que sigan ausentes desde antes del mes actual
 		$ausentismos_mes_actual = Ausentismo::
-			where('fecha_inicio','>=',$today->startOfMonth())
+			where(function($query) use ($today){
+
+				$query->where('fecha_inicio','>=',$today->startOfMonth())
+				->orWhere(function($query) use ($today){
+
+					$query->where('fecha_inicio','<',$today->startOfMonth())
+					->where('fecha_regreso_trabajar',null);
+
+				});
+
+			})
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -89,7 +101,20 @@ trait Clientes {
 					->where('nombre','=','ART')
 					->orWhere('nombre','LIKE','%accidente%');
 			})
-			->where('fecha_inicio','>=',$today->startOfMonth())
+
+
+			->where(function($query) use ($today){
+
+				$query->where('fecha_inicio','>=',$today->startOfMonth())
+				->orWhere(function($query) use ($today){
+
+					$query->where('fecha_inicio','<',$today->startOfMonth())
+					->where('fecha_regreso_trabajar',null);
+
+				});
+
+			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -163,7 +188,19 @@ trait Clientes {
 				$query
 					->where('nombre','LIKE','%incidente%');
 			})
-			->where('fecha_inicio','>=',$today->startOfMonth())
+
+			->where(function($query) use ($today){
+
+				$query->where('fecha_inicio','>=',$today->startOfMonth())
+				->orWhere(function($query) use ($today){
+
+					$query->where('fecha_inicio','<',$today->startOfMonth())
+					->where('fecha_regreso_trabajar',null);
+
+				});
+
+			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
