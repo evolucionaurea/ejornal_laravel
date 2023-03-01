@@ -23,7 +23,7 @@
 	<div class="form-group mr-3" style="max-width:220px">
 		<select name="estado" class="form-control form-control-sm">
 			<option value="">--Seleccionar Filtro--</option>
-			<option value="activo" {{ Request::get('estado')  == 'activo' ? 'selected' : '' }} >Trabajadores Activos</option>
+			<option value="activo" {{ Request::get('estado')  == 'activo' || Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Trabajadores Activos</option>
 			<option value="inactivo" {{ Request::get('estado')  == 'inactivo' ? 'selected' : '' }} >Trabajadores Inactivos</option>
 		</select>
 	</div>

@@ -80,21 +80,29 @@ trait TareasLivianas {
 		if(!$idcliente) dd('Faltan parámetros');
 		$cliente = Cliente::findOrFail($idcliente);
 
-		$tareas_livianas = TareaLiviana::join('nominas','nominas.id','=','tareas_livianas.id_trabajador')
-		->join('tareas_livianas_tipo','tareas_livianas_tipo.id','=','tareas_livianas.id_tipo')
-		->where('nominas.id_cliente',$idcliente)
-		->select(
-			'tareas_livianas.*',
 
-			'nominas.nombre as trabajador_nombre',
-			'nominas.dni as trabajador_dni',
-			'nominas.sector as trabajador_sector',
 
-			'nominas.id_cliente',
-			'tareas_livianas_tipo.nombre as tareas_livianas_tipo'
-		)
-		->orderBy('fecha_inicio','desc')
-		->get();
+		$tareas_livianas = TareaLiviana::select(
+				'tareas_livianas.*',
+
+				'nominas.nombre as trabajador_nombre',
+				'nominas.dni as trabajador_dni',
+				'nominas.sector as trabajador_sector',
+
+				'nominas.id_cliente',
+			)
+			->join('nominas','nominas.id','=','tareas_livianas.id_trabajador')
+			//->join('tareas_livianas_tipo','tareas_livianas_tipo.id','=','tareas_livianas.id_tipo')
+			->with(['tipo'=>function($query){
+				$query->select('id','nombre');
+			}])
+			->where('nominas.id_cliente',$idcliente)
+				//'tareas_livianas_tipo.nombre as tareas_livianas_tipo'
+			->orderBy('fecha_inicio','desc')
+			->get();
+
+		//dd($tareas_livianas);
+
 
 		$now = Carbon::now();
 		$file_name = 'tareas_livianas-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';
@@ -125,7 +133,7 @@ trait TareasLivianas {
 				$tarea_liviana->trabajador_nombre,
 				$tarea_liviana->trabajador_dni,
 				$tarea_liviana->trabajador_sector,
-				$tarea_liviana->tarea_liviana_tipo,
+				$tarea_liviana->tipo->nombre,
 				$tarea_liviana->fecha_inicio,
 				$tarea_liviana->fecha_final??'[no cargada]',
 				$tarea_liviana->fecha_regreso_trabajar??'[no cargada]',

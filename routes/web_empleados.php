@@ -52,6 +52,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// TAREAS LIVIANAS
+	Route::get('empleados/tareas_livianas/exportar','EmpleadoTareasLivianasController@exportar');
 	Route::resource('empleados/tareas_livianas', 'EmpleadoTareasLivianasController', [
 		'names' => [
 			'index' => '/empleados/tareas_livianas'
@@ -130,7 +131,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/comunicaciones_livianas/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesLivianas@tipo_destroy')->name('comunicaciones_livianas.tipo_delete');
 	Route::get('empleados/comunicaciones_livianas/getComunicacionLiviana/{id}', 'EmpleadosComunicacionesLivianas@getComunicacionLiviana')->name('comunicaciones_livianas.getComunicacionLiviana');
 
-		
+
 
 	// CERTIFICADOS
 	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');
@@ -200,6 +201,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// CONSULTAS MEDICAS
+	Route::get('empleados.consultas.medicas/exportar','EmpleadoConsultaMedicaController@exportar');
 	Route::resource('empleados/consultas/medicas', 'EmpleadoConsultaMedicaController', [
 		'names' => [
 			'index' => 'empleados.consultas.medicas'
@@ -212,6 +214,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// CONSULTAS ENFERMERIA
+	Route::get('empleados.consultas.enfermeria/exportar','EmpleadoConsultaEnfermeriaController@exportar');
 	Route::resource('empleados/consultas/enfermeria', 'EmpleadoConsultaEnfermeriaController', [
 		'names' => [
 			'index' => 'empleados.consultas.enfermeria'

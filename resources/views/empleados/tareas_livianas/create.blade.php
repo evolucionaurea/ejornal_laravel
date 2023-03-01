@@ -78,7 +78,7 @@
                             class="form-control" value="{{ old(" fecha_final") }}">
                     </div>
                     <div class="form-group col-md-3">
-                        <label>Fecha en que regresó</label>
+                        <label>Fecha de retorno a tareas habituales</label>
                         <input readonly id="tarea_liviana_fecha_regreso" name="fecha_regreso_trabajar" type="datetime"
                             class="form-control" value="{{ old(" fecha_regreso") }}">
                     </div>

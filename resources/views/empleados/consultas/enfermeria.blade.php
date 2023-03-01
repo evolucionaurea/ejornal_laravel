@@ -25,6 +25,10 @@
 
 		<div class="tarjeta">
 
+			@php
+			$export = true;
+			@endphp
+
 			@include('../../modulos.busqueda_fecha')
 
 
@@ -36,9 +40,9 @@
 						<th>Trabajador</th>
 						<th>Fecha</th>
 						<th>Derivación</th>
-						@if (auth()->user()->fichada == 1)
+
 						<th>Acciones</th>
-						@endif
+
 					</tr>
 				</thead>
 				<!--Table head-->

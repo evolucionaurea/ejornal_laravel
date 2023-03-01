@@ -7,23 +7,43 @@ $(()=>{
 		get_path:'/busqueda',
 		table:$('.tabla_consultas_enfermeria'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
-		datatable_options:{order:[[ 1, "desc" ]]},
 
-		render_row:consulta=>{
-			return $(`
-				<tr>
-				<td>${consulta.nombre}</td>
-				<td>${consulta.fecha}</td>
-				<td>${consulta.derivacion_consulta}</td>
+		server_side:true,
 
-				<td class="acciones_tabla" scope="row">
-					<a title="Ver" href="enfermeria/${consulta.id}">
-						<i class="fas fa-eye"></i>
-					</a>
-				</td>
-			</tr>`
-			)
-		}
+		datatable_options:{
+			order:[[ 1, "desc" ]],
+			columns:[
+				{
+					name:'nombre',
+					data:'nombre'
+				},
+
+				{
+					name:'fecha',
+					data:'fecha'
+				},
+
+				{
+					name:'derivacion_consulta',
+					data:'derivacion_consulta'
+				},
+
+				{
+					name:'acciones',
+					data:row=>row,
+					render:(v,type,row,meta)=>{
+						if(meta.settings.json.fichada_user!=1) return ''
+						return `
+						<div class="acciones_tabla">
+							<a title="Ver" href="medicas/${v.id}">
+								<i class="fas fa-eye"></i>
+							</a>
+						</div>`
+					}
+				}
+			]
+		},
+
 	})
 
 })

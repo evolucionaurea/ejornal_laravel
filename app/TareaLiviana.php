@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\TareaLivianaTipo;
+
 
 class TareaLiviana extends Model
 {
@@ -17,5 +19,11 @@ class TareaLiviana extends Model
   	'fecha_inicio'=>'date:d/m/Y',
     'fecha_final'=>'date:d/m/Y',
   ];
+
+
+  public function tipo()
+  {
+  	return $this->belongsTo(TareaLivianaTipo::class,'id_tipo');
+  }
 
 }

@@ -33,7 +33,7 @@
 
                 <input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-                <div class="col-lg-3 form-group">
+                <div class="col-lg-2 form-group">
                     <select name="tipo" class="form-control form-control-sm select_2">
                         <option value="">--Todos los tipos--</option>
                         @foreach ($tipos as $tipo)
@@ -54,11 +54,14 @@
                 </div>
 
 
-                <div class="col-lg-3 form-group">
-                    <button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i
-                            class="fas fa-search"></i> Buscar</button>
-                    <button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i
-                            class="fas fa-list"></i> Mostrar todo</button>
+                <div class="col-lg-6 form-group">
+                    <button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!">
+                        <i class="fas fa-list"></i> Mostrar todo
+                    </button>
+                    <a href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar Todo</a>
                 </div>
 
             </div>
@@ -76,7 +79,7 @@
                         <th>Tipo</th>
                         <th>Fecha inicio</th>
                         <th>Fecha final</th>
-                        <th>Fecha en que regresó</th>
+                        <th>Fecha retorno a tareas habituales</th>
                         <th>Hoy</th>
 
                         <th>Acciones</th>

@@ -13,6 +13,7 @@ use App\StockMedicamento;
 use App\ConsultaMedicacion;
 use App\StockMedicamentoHistorial;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Input;
 
 class EmpleadoConsultaMedicaController extends Controller
@@ -47,6 +48,7 @@ class EmpleadoConsultaMedicaController extends Controller
 
 	public function busqueda(Request $request)
 	{
+
 		$query = ConsultaMedica::select(
 			'nominas.nombre',
 			'consultas_medicas.*',
@@ -57,11 +59,16 @@ class EmpleadoConsultaMedicaController extends Controller
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->orderBy('consultas_medicas.fecha', 'desc');
 
+		$total = $query->count();
+
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
 		return [
-			'results'=>$query->get(),
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$query->count(),
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
@@ -347,6 +354,76 @@ class EmpleadoConsultaMedicaController extends Controller
 			//Eliminar en base
 			$tipo_diagnostico_consulta = DiagnosticoConsulta::find($id_tipo)->delete();
 			return back()->with('success', 'Tipo de diagnostico de consulta eliminado correctamente');
+	}
+
+
+	public function exportar(){
+
+
+		if(!auth()->user()->id_cliente_actual) dd('Debes fichar para utilizar esta funcionalidad.');
+
+		$consultas = ConsultaMedica::select('consultas_medicas.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
+		->join('nominas','nominas.id','consultas_medicas.id_nomina')
+		->join('diagnostico_consulta','diagnostico_consulta.id','consultas_medicas.id_diagnostico_consulta')
+		->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_medicas.fecha', 'desc')->get();
+
+		if(!$consultas) dd('No se han encontrado consultas');
+
+		$hoy = Carbon::now();
+		$file_name = 'consultas-medicas-'.$hoy->format('YmdHis').'.csv';
+
+		//dd($consultas);
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp,[
+			'Trabajador',
+			'Email',
+			'Fecha',
+			'Diagnóstico',
+			'Derivación',
+			'Amerita Salida',
+			'Peso',
+			'Altura',
+			'IMC',
+			'Glucemia',
+			'Saturación Oxígeno',
+			'Tensión Arterial',
+			'Frec. Cardíaca',
+			'Anamnesis',
+			'Tratamiento',
+			'Observaciones',
+		],';');
+
+		foreach($consultas as $consulta){
+
+			fputcsv($fp,[
+				$consulta->nombre,
+				$consulta->email,
+				$consulta->fecha,
+				$consulta->diagnostico,
+				$consulta->derivacion_consulta,
+				($consulta->amerita_salida ? 'Si' : 'No'),
+				$consulta->peso,
+				$consulta->altura,
+				$consulta->imc,
+				$consulta->glucemia,
+				$consulta->saturacion_oxigeno,
+				$consulta->tension_arterial,
+				$consulta->frec_cardiaca,
+				$consulta->anamnesis,
+				$consulta->tratamiento,
+				$consulta->observaciones
+			],';');
+		}
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+
+		return;
+
 	}
 
 
