@@ -110,7 +110,11 @@ class EmpleadoTareasLivianasController extends Controller
 		]);
 		$fecha_actual = Carbon::now();
 		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
-
+		
+		$buscar_tarea_liviana = TareaLiviana::where('id_trabajador', $request->trabajador)->where('fecha_regreso_trabajar', null)->get();
+		if (count($buscar_tarea_liviana) != 0) {
+			return back()->withInput()->with('error', 'No puedes crear una tarea liviana nueva mientras exista una sin terminar');
+		}
 
 			$dos_dias_adelante = Carbon::now()->addDays(2);
 			$un_anio_atras = Carbon::now()->subYear(1);
