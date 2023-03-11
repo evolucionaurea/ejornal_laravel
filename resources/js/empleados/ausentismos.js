@@ -85,17 +85,43 @@ $(()=>{
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
+						
+						let regreso_trabajar = null;
+						let hoy;
+						let mostrar_extension;
+						if(v.fecha_regreso_trabajar == null){
+							regreso_trabajar = null;
+							mostrar_extension = true;
+						}else{
+							let str = v.fecha_regreso_trabajar;
+							let [dia, mes, anio] = str.split('/');
+							regreso_trabajar = new Date(+anio, mes - 1, +dia);
+							hoy = new Date();
+							if (regreso_trabajar > hoy) {
+								mostrar_extension = true
+							}else{
+								mostrar_extension = false;
+							}
+						}
 
 						return `
 							<div class="acciones_tabla">
-								<a href="!#" 
-								class="extension_de_licencia"
-								title="extension de licencia" 
-								data-toggle="modal" 
-								data-target="#extensionLicenciaModal" 
-								data-info="${v.id}">
-									<i title="extension de licencia" class="fas fa-forward"></i>
-								</a>
+								${
+									(mostrar_extension == true)
+									? 
+									`
+									 <a href="!#" 
+									 class="extension_de_licencia"
+									 title="extension de licencia" 
+									 data-toggle="modal" 
+									 data-target="#extensionLicenciaModal" 
+									 data-info="${v.id}">
+										 <i title="extension de licencia" class="fas fa-forward"></i>
+									 </a>
+									 `
+									 : 
+									 ''
+								}
 
 								<a title="Comunicaciones" href="comunicaciones/${v.id}">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
