@@ -13,8 +13,15 @@ $(()=>{
 			order:[[4,'desc']],
 			columns:[
 				{
-					data:'trabajador_nombre',
-					name:'nominas.nombre'
+					data:row=>row,
+					name:'nominas.nombre',
+					render:v=>{
+						const estado = v.trabajador_estado == '1' ? `<span class="badge badge-success">activo</span>` : `<span class="badge badge-danger">inactivo</span>`
+						return `
+							<div>${v.trabajador_nombre}</div>
+							${estado}
+						`
+					}
 				},
 				{
 					data:row=>row,

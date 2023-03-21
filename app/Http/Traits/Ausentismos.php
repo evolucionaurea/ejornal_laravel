@@ -59,6 +59,11 @@ trait Ausentismos {
 
 
 		if($this->request->ausentes=='mes'){
+			/*$query->where(function($query) use ($now) {
+				$query
+					->where('ausentismos.fecha_regreso_trabajar',null)
+					->orWhere('ausentismos.fecha_regreso_trabajar','>',$now->startOfMonth());
+			});*/
 			$query->where('ausentismos.fecha_inicio','>=',$now->startOfMonth());
 			$query->where('ausentismos.fecha_inicio','<=',$now->endOfMonth());
 		}
