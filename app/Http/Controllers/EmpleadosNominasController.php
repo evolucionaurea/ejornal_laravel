@@ -174,6 +174,7 @@ class EmpleadosNominasController extends Controller
 		'consultas_medicas.altura', 'consultas_medicas.imc', 'consultas_medicas.glucemia', 'consultas_medicas.saturacion_oxigeno',
 		'consultas_medicas.tension_arterial', 'consultas_medicas.frec_cardiaca', 'consultas_medicas.derivacion_consulta', 'consultas_medicas.anamnesis',
 		'consultas_medicas.tratamiento', 'consultas_medicas.observaciones', DB::raw('diagnostico_consulta.nombre diagnostico'), 'consultas_medicas.created_at')
+		->orderBy('consultas_medicas.fecha', 'desc')
 		->get();
 
 
@@ -183,28 +184,33 @@ class EmpleadosNominasController extends Controller
 		'consultas_enfermerias.altura', 'consultas_enfermerias.imc', 'consultas_enfermerias.glucemia', 'consultas_enfermerias.saturacion_oxigeno',
 		'consultas_enfermerias.tension_arterial', 'consultas_enfermerias.frec_cardiaca', 'consultas_enfermerias.derivacion_consulta',
 		'consultas_enfermerias.observaciones', DB::raw('diagnostico_consulta.nombre diagnostico'), 'consultas_enfermerias.created_at')
+		->orderBy('consultas_enfermerias.fecha', 'desc')
 		->get();
 
 		$ausentismos = Ausentismo::join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
 		->where('ausentismos.id_trabajador', $id)
 		->select('ausentismos.id', 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar',
 		'ausentismos.archivo', 'ausentismos.hash_archivo', DB::raw('ausentismo_tipo.nombre tipo'), 'ausentismos.created_at')
+		->orderBy('ausentismos.fecha_inicio', 'desc')
 		->get();
 
 		$testeos = CovidTesteo::where('id_nomina', $id)
 		->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
 		->select('covid_testeos_tipo.nombre', 'covid_testeos.resultado', 'covid_testeos.laboratorio', 'covid_testeos.fecha')
+		->orderBy('covid_testeos.fecha', 'desc')
 		->get();
 
 		$vacunas = CovidVacuna::where('id_nomina', $id)
 		->join('covid_vacunas_tipo', 'covid_vacunas.id_tipo', 'covid_vacunas_tipo.id')
 		->select('covid_vacunas_tipo.nombre', 'covid_vacunas.institucion', 'covid_vacunas.fecha')
+		->orderBy('covid_vacunas.fecha', 'desc')
 		->get();
 
 		$preocupacionales = Preocupacional::join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->select('preocupacionales.id', 'nominas.nombre', 'preocupacionales.observaciones', 'preocupacionales.archivo',
 		'preocupacionales.hash_archivo', 'preocupacionales.created_at', 'preocupacionales.fecha')
+		->orderBy('preocupacionales.fecha', 'desc')
 		->get();
 
 		return view('empleados.nominas.show', compact('trabajador', 'consultas_medicas',
