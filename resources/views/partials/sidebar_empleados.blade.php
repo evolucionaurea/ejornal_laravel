@@ -144,7 +144,7 @@
 					</ul>
 				</div>
 			</li>
-			<li class="{{ setActive('/empleados/covid') }} dropdownMenu">
+			{{-- <li class="{{ setActive('/empleados/covid') }} dropdownMenu">
 				<div class="dropdownButton">
 					<i class="fas fa-clinic-medical"></i>
 					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Covid 19</a>
@@ -162,7 +162,7 @@
 						</ol>
 					</ul>
 				</div>
-			</li>
+			</li> --}}
 			<li class="{{ setActive('/empleados/medicamentos') }} dropdownMenu">
 				<div class="dropdownButton">
 					<i class="fas fa-syringe"></i>

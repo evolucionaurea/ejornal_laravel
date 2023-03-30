@@ -154,6 +154,16 @@ export default class Tablas {
 				}
 			})
 
+			/*Exportar*/
+			this.modulo_busqueda.find('[data-toggle="export"]').click(async btn=>{
+				const href = $(btn.currentTarget).attr('data-href')
+				const filters = this.set_filters()
+				const query_string = Object.keys(filters).map(key=>{
+					return `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`
+				}).join('&')
+				window.open(`${href}?${query_string}`,'_blank')
+			})
+
 			if(!('server_side' in this)) {
 				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 			}

@@ -23,20 +23,15 @@ class ClientesNominasController extends Controller
 
   public function busqueda(Request $request)
   {
-
-    $this->request = $request;
-
     //Traits > Nominas
-    return $this->searchNomina(auth()->user()->id_cliente_relacionar);
-
-
+    return $this->searchNomina(auth()->user()->id_cliente_relacionar,$request);
   }
 
-  public function exportar()
+  public function exportar(Request $request)
   {
 
     //Traits > Nominas
-    return $this->exportNomina(auth()->user()->id_cliente_relacionar);
+    return $this->exportNomina(auth()->user()->id_cliente_relacionar,$request);
   }
 
 }

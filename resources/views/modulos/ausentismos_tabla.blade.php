@@ -15,8 +15,8 @@
 		<select name="ausentes" class="form-control form-control-sm">
 			<option value="">--Seleccionar Filtro--</option>
 			<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
-			<option value="mes" {{ Request::get('ausentes')  == 'mes' ? 'selected' : '' }} >Ausentismos Este Mes</option>
-			<option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos Mes Pasado</option>
+			<option value="mes" {{ Request::get('ausentes')  == 'mes' ? 'selected' : '' }} >Ausentismos Cargados Mes Actual</option>
+			<option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos Cargados Mes Pasado</option>
 		</select>
 	</div>
 
@@ -46,8 +46,10 @@
 	<div class="form-group mr-3">
 		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
 	</div>
-	<div class="form-group mr-3">
-		<a href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar Todo</a>
+
+
+	<div class="form-group mr-3" >
+		<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar</button>
 	</div>
 
 

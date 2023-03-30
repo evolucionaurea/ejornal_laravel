@@ -28,11 +28,8 @@ class ClientesAusentismosController extends Controller
 
 	public function busqueda(Request $request)
 	{
-
-		$this->request = $request;
-
 		//Traits > Ausentismos
-		return $this->searchAusentismos(auth()->user()->id_cliente_relacionar);
+		return $this->searchAusentismos(auth()->user()->id_cliente_relacionar,$request);
 
 	}
 

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Traits;
+
+use Illuminate\Http\Request;
 use App\Ausentismo;
 use App\Cliente;
 use Carbon\Carbon;
@@ -10,13 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 trait Ausentismos {
 
-	public function searchAusentismos($id_cliente=null)
+	public function searchAusentismos($id_cliente=null,Request $request)
 	{
 
+		//dd($request->toArray());
 
 		$now = CarbonImmutable::now();
-
-
 		DB::enableQueryLog();
 
 		$query = Ausentismo::join('nominas','nominas.id','=','ausentismos.id_trabajador')
@@ -39,8 +40,8 @@ trait Ausentismos {
 
 		$total = $query->count();
 
-		$query->where(function($query) {
-			$filtro = '%'.$this->request->search['value'].'%';
+		$query->where(function($query) use($request) {
+			$filtro = '%'.$request->search['value'].'%';
 			$query->where('nominas.nombre','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
@@ -48,7 +49,7 @@ trait Ausentismos {
 		});
 
 
-		if($this->request->ausentes=='hoy'){
+		if($request->ausentes=='hoy'){
 			$query->where(function($query) use ($now) {
 				$query
 					->where('ausentismos.fecha_regreso_trabajar',null)
@@ -58,7 +59,7 @@ trait Ausentismos {
 		}
 
 
-		if($this->request->ausentes=='mes'){
+		if($request->ausentes=='mes'){
 			/*$query->where(function($query) use ($now) {
 				$query
 					->where('ausentismos.fecha_regreso_trabajar',null)
@@ -67,27 +68,27 @@ trait Ausentismos {
 			$query->where('ausentismos.fecha_inicio','>=',$now->startOfMonth());
 			$query->where('ausentismos.fecha_inicio','<=',$now->endOfMonth());
 		}
-		if($this->request->ausentes=='mes-pasado'){
+		if($request->ausentes=='mes-pasado'){
 			$query->where('ausentismos.fecha_inicio','>=',$now->subMonth()->startOfMonth());
 			$query->where('ausentismos.fecha_inicio','<=',$now->subMonth()->endOfMonth());
 		}
 
 
 
-		if($this->request->estado){
-			$query->where('nominas.estado','=',$this->request->estado=='activo' ? 1 : 0);
+		if($request->estado){
+			$query->where('nominas.estado','=',$request->estado=='activo' ? 1 : 0);
 		}
 
 
-		if($this->request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $this->request->from)->format('Y-m-d'));
-		if($this->request->to) $query->whereDate('fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $this->request->to)->format('Y-m-d'));
+		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-		if($this->request->tipo) $query->where('id_tipo',$this->request->tipo);
+		if($request->tipo) $query->where('id_tipo',$request->tipo);
 
 
-		if($this->request->order){
-			$sort = $this->request->columns[$this->request->order[0]['column']]['name'];
-			$dir  = $this->request->order[0]['dir'];
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
 
@@ -97,24 +98,31 @@ trait Ausentismos {
 
 
 		return [
-			'draw'=>$this->request->draw,
+			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
 			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($this->request->start)->take($this->request->length)->get(),
-			'request'=>$this->request->all(),
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all(),
 			'queries'=>DB::getQueryLog()
 		];
 
 	}
 
 
-	public function exportAusentismos($id_cliente=null)
+	public function exportAusentismos($id_cliente=null,Request $request)
 	{
 
 		if(!$id_cliente) dd('Faltan parámetros');
 		$cliente = Cliente::findOrFail($id_cliente);
 
-		$ausentismos = Ausentismo::join('nominas','nominas.id','=','ausentismos.id_trabajador')
+		$request->search = ['value'=>null];
+		$request->start = 0;
+		$request->length = 5000;
+		$results = $this->searchAusentismos($id_cliente,$request);
+		$ausentismos = $results['data'];
+		//dd($ausentismos);
+
+		/*$ausentismos = Ausentismo::join('nominas','nominas.id','=','ausentismos.id_trabajador')
 		->join('ausentismo_tipo','ausentismo_tipo.id','=','ausentismos.id_tipo')
 		->where('nominas.id_cliente',$id_cliente)
 		->select(
@@ -128,7 +136,9 @@ trait Ausentismos {
 			'ausentismo_tipo.nombre as ausentismo_tipo'
 		)
 		->orderBy('fecha_inicio','desc')
-		->get();
+		->get();*/
+
+
 
 		$now = Carbon::now();
 		$file_name = 'ausentismos-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';

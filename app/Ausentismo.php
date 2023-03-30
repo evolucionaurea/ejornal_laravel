@@ -3,14 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+//use OwenIt\Auditing\Contracts\Auditable;
 use App\AusentismoTipo;
 use App\Nomina;
 
-class Ausentismo extends Model implements Auditable
+class Ausentismo extends Model
 {
 
-  use \OwenIt\Auditing\Auditable;
+  //use \OwenIt\Auditing\Auditable;
 
   // Nombre de la tabla
   protected $table = 'ausentismos';

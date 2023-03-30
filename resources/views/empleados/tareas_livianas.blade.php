@@ -61,7 +61,7 @@
                     <button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!">
                         <i class="fas fa-list"></i> Mostrar todo
                     </button>
-                    <a href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar Todo</a>
+                    <button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar</button>
                 </div>
 
             </div>

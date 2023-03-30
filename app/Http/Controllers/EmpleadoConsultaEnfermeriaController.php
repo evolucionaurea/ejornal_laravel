@@ -360,16 +360,20 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 	}
 
 
-	public function exportar(){
+	public function exportar(Request $request){
 
 
 		if(!auth()->user()->id_cliente_actual) dd('Debes fichar para utilizar esta funcionalidad.');
 
-		$consultas = ConsultaEnfermeria::select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
+		$query = ConsultaEnfermeria::select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
 		->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
 		->join('diagnostico_consulta','diagnostico_consulta.id','consultas_enfermerias.id_diagnostico_consulta')
-		->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_enfermerias.fecha', 'desc')->get();
+		->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_enfermerias.fecha', 'desc');
 
+		if($request->from) $query->whereDate('consultas_enfermerias.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+
+		$consultas = $query->get();
 		if(!$consultas) dd('No se han encontrado consultas');
 
 		$hoy = Carbon::now();

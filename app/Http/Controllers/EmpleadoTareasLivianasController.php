@@ -110,7 +110,7 @@ class EmpleadoTareasLivianasController extends Controller
 		]);
 		$fecha_actual = Carbon::now();
 		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
-		
+
 		$buscar_tarea_liviana = TareaLiviana::where('id_trabajador', $request->trabajador)->where('fecha_regreso_trabajar', null)->get();
 		if (count($buscar_tarea_liviana) != 0) {
 			return back()->withInput()->with('error', 'No puedes crear una tarea liviana nueva mientras exista una sin terminar');
@@ -372,10 +372,10 @@ class EmpleadoTareasLivianasController extends Controller
 	}
 
 
-	public function exportar()
+	public function exportar(Request $request)
 	{
 		//Traits > Tareas Livianas
-		return $this->exportTareasLivianas(auth()->user()->id_cliente_actual);
+		return $this->exportTareasLivianas(auth()->user()->id_cliente_actual,$request);
 	}
 
 

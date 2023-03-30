@@ -6,15 +6,15 @@ use App\Cliente;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 trait Nominas
 {
 
-	public function searchNomina($idcliente=null)
+	public function searchNomina($idcliente=null, Request $request)
 	{
 
 		$today = CarbonImmutable::now();
-
 
 		$query = Nomina::select('*')
 			->with(['ausentismos'=>function($query){
@@ -26,9 +26,9 @@ trait Nominas
 
 		$total = $query->count();
 
-		if($this->request->search){
-			$query->where(function($query) {
-				$filtro = '%'.$this->request->search['value'].'%';
+		if($request->search){
+			$query->where(function($query) use($request){
+				$filtro = '%'.$request->search['value'].'%';
 				$query->where('nombre','like',$filtro)
 					->orWhere('email','like',$filtro)
 					->orWhere('dni','like',$filtro)
@@ -36,19 +36,18 @@ trait Nominas
 			});
 		}
 
+		if(!is_null($request->estado)) $query->where('estado','=',(int) $request->estado);
 
-		if(!is_null($this->request->estado)) $query->where('estado','=',(int) $this->request->estado);
 
-
-		if($this->request->order){
-			$sort = $this->request->columns[$this->request->order[0]['column']]['data'];
-			$dir  = $this->request->order[0]['dir'];
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['data'];
+			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
 
-		if($this->request->ausentes){
+		if($request->ausentes){
 
-			if($this->request->ausentes=='hoy'){
+			if($request->ausentes=='hoy'){
 				$query->whereHas(
 					'ausentismos',function($query) use ($today) {
 						$query
@@ -57,7 +56,7 @@ trait Nominas
 					}
 				);
 			}else{
-				$query->whereHas('ausentismos',function($query) use ($today) {
+				$query->whereHas('ausentismos',function($query) use ($today,$request) {
 						$query
 							->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
 							->where(function($query) use ($today){
@@ -65,7 +64,7 @@ trait Nominas
 									->where('fecha_regreso_trabajar',null)
 									->orWhere('fecha_regreso_trabajar','>',$today);
 							})
-							->where('ausentismo_tipo.nombre','LIKE','%'.$this->request->ausentes.'%');
+							->where('ausentismo_tipo.nombre','LIKE','%'.$request->ausentes.'%');
 					}
 				);
 			}
@@ -74,29 +73,32 @@ trait Nominas
 
 		//$query->onlyTrashed();
 
-
-
 		return [
-			'draw'=>$this->request->draw,
+			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
 			'recordsFiltered'=>$query->count(),
-			'data'=>$query->skip($this->request->start)->take($this->request->length)->get(),
-			'request'=>$this->request->all()
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
 		];
 
 
 	}
 
-	public function exportNomina($idcliente=null)
+	public function exportNomina($idcliente=null, Request $request)
 	{
 
 		if(!$idcliente) dd('Faltan parámetros');
 
 		$cliente = Cliente::findOrFail($idcliente);
 
-		$nominas = Nomina::where('id_cliente',$idcliente)->orderBy('nombre','asc')->get();
+		$request->search = ['value'=>null];
+		$request->start = 0;
+		$request->length = 5000;
+		$results = $this->searchNomina($idcliente,$request);
+		$nominas = $results['data'];
 
-		if(!$nominas) dd('No se han encontrado trabajadores');
+		///$nominas = Nomina::where('id_cliente',$idcliente)->orderBy('nombre','asc')->get();
+		///if(!$nominas) dd('No se han encontrado trabajadores');
 
 		$hoy = Carbon::now();
 		$file_name = 'nomina-'.Str::slug($cliente->nombre).'-'.$hoy->format('YmdHis').'.csv';

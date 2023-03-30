@@ -3,12 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+//use OwenIt\Auditing\Contracts\Auditable;
 
-class FichadaNueva extends Model implements Auditable
+class FichadaNueva extends Model
 {
 
-  use \OwenIt\Auditing\Auditable;
+  //use \OwenIt\Auditing\Auditable;
 
   // Nombre de la tabla
   protected $table = 'fichadas_nuevas';

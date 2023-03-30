@@ -33,9 +33,6 @@ class EmpleadosNominasController extends Controller
 	public function busqueda(Request $request)
 	{
 
-		$this->request = $request;
-
-
 		if(auth()->user()->id_cliente_actual) {
 			$idcliente = auth()->user()->id_cliente_actual;
 		}else{
@@ -44,9 +41,8 @@ class EmpleadosNominasController extends Controller
 			$idcliente = $clientes->first()->id;
 		}
 
-
 		//Traits > Nominas
-		$resultados = $this->searchNomina($idcliente);
+		$resultados = $this->searchNomina($idcliente,$request);
 
 		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
 
@@ -588,7 +584,7 @@ class EmpleadosNominasController extends Controller
 	}
 
 
-	public function exportar()
+	public function exportar(Request $request)
 	{
 
 		if(auth()->user()->id_cliente_actual) {
@@ -600,7 +596,7 @@ class EmpleadosNominasController extends Controller
 		}
 
 		//Traits > Nominas
-		return $this->exportNomina($idcliente);
+		return $this->exportNomina($idcliente,$request);
 	}
 
 

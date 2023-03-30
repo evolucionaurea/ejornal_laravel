@@ -168,7 +168,7 @@
 
                 <div class="col-md-12 d-flex flex-wrap justify-content-between">
                     <div class="card_consultas flex-fill m-4">
-                        <h4>Consultas medicas</h4>
+                        <h4>Consultas médicas</h4>
                         @if (count($consultas_medicas) > 0)
                         @foreach ($consultas_medicas as $consulta_medica)
                         <div class="card_consultas_titulo">

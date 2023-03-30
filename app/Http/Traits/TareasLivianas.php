@@ -4,16 +4,15 @@ namespace App\Http\Traits;
 use App\TareaLiviana;
 use App\Cliente;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 trait TareasLivianas {
 
-	public function searchTareasLivianas($id_cliente=null)
+	public function searchTareasLivianas($id_cliente=null, Request $request)
 	{
 
-
 		$now = Carbon::now();
-
 
 		$query = TareaLiviana::join('nominas','nominas.id','=','tareas_livianas.id_trabajador')
 			/*whereHas('trabajador',function($query) use ($id_cliente){
@@ -32,8 +31,8 @@ trait TareasLivianas {
 			)
 			->where('nominas.id_cliente',$id_cliente);
 
-		$query->where(function($query) {
-			$filtro = '%'.$this->request->search['value'].'%';
+		$query->where(function($query) use($request) {
+			$filtro = '%'.$request->search['value'].'%';
 			$query->where('nominas.nombre','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
@@ -41,7 +40,7 @@ trait TareasLivianas {
 		});
 
 
-		if($this->request->ausentes=='hoy'){
+		if($request->ausentes=='hoy'){
 			$query->where(function($query) use ($now) {
 				$query
 					->where('tareas_livianas.fecha_regreso_trabajar',null)
@@ -51,30 +50,30 @@ trait TareasLivianas {
 		}
 
 
-		if($this->request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $this->request->from)->format('Y-m-d'));
-		if($this->request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $this->request->to)->format('Y-m-d'));
-		if($this->request->tipo) $query->where('id_tipo',$this->request->tipo);
+		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->tipo) $query->where('id_tipo',$request->tipo);
 
 
-		if($this->request->order){
-			$sort = $this->request->columns[$this->request->order[0]['column']]['name'];
-			$dir  = $this->request->order[0]['dir'];
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
 
 
 		return [
-			'draw'=>$this->request->draw,
+			'draw'=>$request->draw,
 			'recordsTotal'=>$query->count(),
 			'recordsFiltered'=>$query->count(),
-			'data'=>$query->skip($this->request->start)->take($this->request->length)->get(),
-			'request'=>$this->request->all()
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
 		];
 
 	}
 
 
-	public function exportTareasLivianas($idcliente=null)
+	public function exportTareasLivianas($idcliente=null,Request $request)
 	{
 
 		if(!$idcliente) dd('Faltan parámetros');
@@ -82,7 +81,7 @@ trait TareasLivianas {
 
 
 
-		$tareas_livianas = TareaLiviana::select(
+		/*$tareas_livianas = TareaLiviana::select(
 				'tareas_livianas.*',
 
 				'nominas.nombre as trabajador_nombre',
@@ -99,9 +98,14 @@ trait TareasLivianas {
 			->where('nominas.id_cliente',$idcliente)
 				//'tareas_livianas_tipo.nombre as tareas_livianas_tipo'
 			->orderBy('fecha_inicio','desc')
-			->get();
+			->get();*/
 
-		//dd($tareas_livianas);
+		$request->search = ['value'=>null];
+		$request->start = 0;
+		$request->length = 5000;
+		$results = $this->searchTareasLivianas($idcliente,$request);
+		$tareas_livianas = $results['data'];
+		///dd($tareas_livianas);
 
 
 		$now = Carbon::now();

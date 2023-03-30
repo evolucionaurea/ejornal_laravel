@@ -35,10 +35,9 @@ class EmpleadosAusentismosController extends Controller
 	public function busqueda(Request $request)
 	{
 
-		$this->request = $request;
-
+		///$this->request = $request;
 		//Traits > Ausentismos
-		$resultados = $this->searchAusentismos(auth()->user()->id_cliente_actual);
+		$resultados = $this->searchAusentismos(auth()->user()->id_cliente_actual,$request);
 
 		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
 
@@ -389,10 +388,10 @@ class EmpleadosAusentismosController extends Controller
 	}
 
 
-	public function exportar()
+	public function exportar(Request $request)
 	{
 		//Traits > Ausentismos
-		return $this->exportAusentismos(auth()->user()->id_cliente_actual);
+		return $this->exportAusentismos(auth()->user()->id_cliente_actual,$request);
 	}
 
 
