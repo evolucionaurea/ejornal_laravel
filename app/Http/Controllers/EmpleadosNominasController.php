@@ -205,6 +205,7 @@ class EmpleadosNominasController extends Controller
 
 		$preocupacionales = Preocupacional::join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->where('preocupacionales.id_nomina', $id)
 		->select('preocupacionales.id', 'nominas.nombre', 'preocupacionales.observaciones', 'preocupacionales.archivo',
 		'preocupacionales.hash_archivo', 'preocupacionales.created_at', 'preocupacionales.fecha')
 		->orderBy('preocupacionales.fecha', 'desc')
