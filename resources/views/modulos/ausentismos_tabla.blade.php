@@ -1,12 +1,12 @@
 <div data-toggle="busqueda-fecha" class="d-flex align-items-center flex-wrap">
 
-	<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
+	<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}" >
 
 	<div class="form-group mr-3" style="max-width:220px">
 		<select name="tipo" class="form-control form-control-sm select_2">
 			<option value="">--Todos los tipos--</option>
 			@foreach ($tipos as $tipo)
-			<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+			<option value="{{$tipo->id}}" {{ Request::get('tipo') == $tipo->id ? 'selected' : '' }} >{{$tipo->nombre}}</option>
 			@endforeach
 		</select>
 	</div>
@@ -31,12 +31,12 @@
 
 	<div class="form-group mr-3" style="max-width:220px">
 		<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm"
-			value="{{$fecha_inicio ?? ''}}">
+			value="{{Request::get('from')}}">
 	</div>
 
 	<div class="form-group mr-3" style="max-width:220px">
 		<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm"
-			value="{{$fecha_final ?? ''}}">
+			value="{{Request::get('to')}}">
 	</div>
 
 

@@ -7,7 +7,6 @@ export default class Tablas {
 
 		this.init()
 
-
 	}
 
 	set_filters(){
@@ -21,6 +20,16 @@ export default class Tablas {
 
 		return filters
 	}
+
+	filters_params(){
+		const filters = this.set_filters()
+		const query_string = Object.keys(filters).map(key=>{
+			return `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`
+		}).join('&')
+
+		return query_string
+	}
+
 
 	dt_server_side(){
 
@@ -167,6 +176,21 @@ export default class Tablas {
 			if(!('server_side' in this)) {
 				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 			}
+
+
+
+			/*Inputs listeners*/
+			/*this.modulo_busqueda.on('change','[name]',el=>{
+				const value = $(el.currentTarget).val()
+				console.log(value)
+			})*/
+
+			/* Intercepto el click de los botones y le agrego parametros a la url para mantener la búsqueda al volver */
+			this.table.on('click','a',btn=>{
+				btn.preventDefault()
+				const url = $(btn.currentTarget).attr('href')
+				window.location.href = `${url}?${this.filters_params()}`
+			})
 
 		}else{
 

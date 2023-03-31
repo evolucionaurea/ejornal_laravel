@@ -563,6 +563,11 @@ class EmpleadosNominasController extends Controller
 
 		}*/
 
+
+		/////// Registrar cantidad de empleados en cada carga
+
+
+
 		// Mostrar registro de empleados modificados, borrados y agregados.
 		return redirect('empleados/nominas')->with([
 			'success'=>'Carga masiva de trabajadores de la nómina exitosa'

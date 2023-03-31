@@ -237,6 +237,7 @@ class EmpleadosAusentismosController extends Controller
 		DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio',
 		'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo',
 		'ausentismos.id', DB::raw('ausentismos.user user'))
+		->orderBy('ausentismos.fecha_inicio', 'desc')
 		->get();
 
 		$clientes = $this->getClientesUser();
@@ -284,42 +285,42 @@ class EmpleadosAusentismosController extends Controller
 	  $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
 
 	  if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
-		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+			$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
 
-		if ($fecha_inicio->greaterThan($fecha_final)) {
-		  return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
-		}
+			if ($fecha_inicio->greaterThan($fecha_final)) {
+				return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
+			}
 	  }
 
 	  if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
-		$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
+			$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
-		if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
-			return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
-		  }
+			if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
+				return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
+			}
 
-		if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
-		  return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
-		}
+			if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
+			  return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
+			}
 	  }
 
 	  //Actualizar en base
 	  $ausentismo = Ausentismo::findOrFail($id);
 	  $ausentismo->fecha_inicio = $fecha_inicio;
 	  if (isset($request->fecha_final) && !empty($request->fecha_final)) {
-		$ausentismo->fecha_final = $fecha_final;
+			$ausentismo->fecha_final = $fecha_final;
 	  }else {
-		$ausentismo->fecha_final = null;
+			$ausentismo->fecha_final = null;
 	  }
 	  if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
-		$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
+			$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
 	  }else {
-		$ausentismo->fecha_regreso_trabajar = null;
+			$ausentismo->fecha_regreso_trabajar = null;
 	  }
 	  $ausentismo->user = auth()->user()->nombre;
 	  $ausentismo->save();
 
-	  return redirect('empleados/ausentismos')->with('success', 'Ausentismo actualizado con éxito');
+	  return redirect('empleados/ausentismos?'.$_SERVER['QUERY_STRING'])->with('success', 'Ausentismo actualizado con éxito');
 
 
 	}

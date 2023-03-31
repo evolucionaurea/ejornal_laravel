@@ -16,7 +16,7 @@
             <h2>Comunicaciones de un ausentismo</h2>
             <p>Aquí puedes ver y cargar nuevas comunicaciones de ausentismo</p>
             <div class="cabecera_acciones">
-                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
                 <a data-toggle="modal" data-target="#cargar_comunicaciones_ausentismo" class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-plus-circle"></i>Crear comunicación</a>
             </div>
         </div>

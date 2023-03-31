@@ -11210,7 +11210,7 @@ select {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 15px !important;
+  margin-right: 8px !important;
 }
 
 .acciones_tabla a i {
@@ -11224,6 +11224,7 @@ select {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 8px !important;
 }
 
 .acciones_tabla button i {

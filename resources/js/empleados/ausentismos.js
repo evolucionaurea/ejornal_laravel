@@ -85,7 +85,7 @@ $(()=>{
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
-						
+
 						let regreso_trabajar = null;
 						let hoy;
 						let mostrar_extension;
@@ -105,21 +105,22 @@ $(()=>{
 						}
 
 						return `
-							<div class="acciones_tabla">
+							<div class="acciones_tabla justify-content-end">
 								${
 									(mostrar_extension == true)
-									? 
+									?
 									`
-									 <a href="!#" 
-									 class="extension_de_licencia"
-									 title="extension de licencia" 
-									 data-toggle="modal" 
-									 data-target="#extensionLicenciaModal" 
-									 data-info="${v.id}">
-										 <i title="extension de licencia" class="fas fa-forward"></i>
-									 </a>
+									 <button
+										class="extension_de_licencia"
+										title="extension de licencia"
+										data-toggle="modal"
+										data-target="#extensionLicenciaModal"
+										data-info="${v.id}"
+									 >
+										<i title="extension de licencia" class="fas fa-forward"></i>
+									 </button>
 									 `
-									 : 
+									 :
 									 ''
 								}
 

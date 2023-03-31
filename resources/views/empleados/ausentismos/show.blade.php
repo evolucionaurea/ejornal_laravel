@@ -16,7 +16,7 @@
             <h2>Historial de ausencias</h2>
             <p>Aquí puedes ver el historial de ausencias del trabajador seleccionado</p>
             <div class="cabecera_acciones">
-                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
             </div>
         </div>
 
