@@ -58,7 +58,7 @@
 					<h5 class="card-header">Paso 1 | Descargar modelo de excel</h5>
 					<div class="card-body">
 						<p class="card-text">Descarge este excel modelo. Completelo con los campos solicitados y subalo en el paso 2</p>
-						<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/nominas_carga_masiva.csv')}}" download target="_blank">Descargar excel</a>
+						<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/nominas_carga_masiva.csv')}}" download target="_blank"><i class="fa fa-fw fa-download"></i> Descargar excel</a>
 					</div>
 				</div>
 				<div class="card mb-4">
@@ -66,9 +66,13 @@
 					<div class="card-body">
 
 						<form action="{{action('EmpleadosNominasController@cargar_excel')}}" enctype="multipart/form-data" accept-charset="UTF-8" method="post">
-						{{ csrf_field() }}
-							<div class="form-group mb-4">
-								<input name="archivo" type="file" class="form-control-file form-control-sm">
+							{{ csrf_field() }}
+
+							<div class="input-group">
+								<div class="custom-file">
+									<input name="archivo" id="input_file" type="file" class="custom-file-input" accept="*.csv,*.xls,*.xlsx">
+									<label for="input_file" class="custom-file-label">Subir Archivo</label>
+								</div>
 							</div>
 
 							<hr>
@@ -99,8 +103,11 @@
 							<hr>
 
 
-							<button type="submit" class="btn-ejornal btn-ejornal-success">Subir excel</button>
-							<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal"><i class="fa fa-fw fa-times"></i> Cerrar</button>
+
+							<button type="submit" class="btn-ejornal btn-ejornal-success"><i class="fa fa-fw fa-save"></i> Comenzar Importación</button>
+
+
 						</form>
 					</div>
 				</div>

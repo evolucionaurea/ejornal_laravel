@@ -11010,7 +11010,7 @@ a.text-dark:focus {
 }
 
 .card:hover {
-  opacity: .75;
+  border-color: #b4b4b4;
   text-decoration: none;
 }
 

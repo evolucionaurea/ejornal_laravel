@@ -13,10 +13,11 @@ use Carbon\CarbonImmutable;
 use App\Ausentismo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
-use Illuminate\Support\Facades\DB;
 use App\CovidVacuna;
 use App\CovidTesteo;
 use App\Preocupacional;
+use App\NominaImportacion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class EmpleadosNominasController extends Controller
@@ -328,7 +329,6 @@ class EmpleadosNominasController extends Controller
 	public function cargar_excel(Request $request)
 	{
 
-
 		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo');
 
 		$file = $request->file('archivo');
@@ -339,7 +339,6 @@ class EmpleadosNominasController extends Controller
 		$nombres_campos = fgetcsv($fichero, 0 , ";" , '"');
 		$num_campos = count($nombres_campos);
 		$registros = [];
-
 
 
 		// Lee los registros
@@ -463,15 +462,16 @@ class EmpleadosNominasController extends Controller
 		/// GUARDAR DATOS
 
 		// Traigo todos los empleados de la nómina
-		$empleados_existentes = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+		$nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
 
 		$empleados_borrables = [];
 		$empleados_inexistentes = [];
 		$empleados_actualizados = [];
+		$empleados_existentes = [];
 
 
 		foreach ($registros as $kr=>$registro){
-			if(!$empleado_id = $this->buscar_en_dbb($empleados_existentes,$registro)){
+			if(!$empleado_id = $this->buscar_en_dbb($nomina_actual,$registro)){
 				// Crear empleado inexistente
 				$nomina = new Nomina;
 				$nomina->id_cliente = auth()->user()->id_cliente_actual;
@@ -479,6 +479,8 @@ class EmpleadosNominasController extends Controller
 			}else{
 				$nomina = Nomina::find($empleado_id);
 				if($request->coincidencia==1) $empleados_actualizados[] = $registro;
+
+				$empleados_existentes[] = $registro;
 			}
 
 
@@ -502,7 +504,7 @@ class EmpleadosNominasController extends Controller
 
 			}
 		}
-		foreach ($empleados_existentes as $ke=>$empleado){
+		foreach ($nomina_actual as $ke=>$empleado){
 			if(!$this->buscar_en_csv($registros,$empleado)){
 				$empleados_borrables[] = $empleado->id;
 			}
@@ -513,60 +515,33 @@ class EmpleadosNominasController extends Controller
 		}
 
 
-		//dd($empleados_actualizados);
+		// Registrar cantidad de empleados en cada carga
+		$now = CarbonImmutable::now();
 
-		/*foreach ($registros as $registro) {
+		$values = [
+			'total'=>count($registros),
+			'nuevos'=>count($empleados_inexistentes),
+			'existentes'=>count($empleados_existentes),
+			'actualizados'=>count($empleados_actualizados),
+			'borrados'=>$request->borrar==1 ? count($empleados_borrables) : 0,
+			'year_month'=>(int) $now->format('Ym'),
+			'filename'=>$file->getClientOriginalName(),
+			'user_id'=>auth()->user()->id,
+			'cliente_id'=>auth()->user()->id_cliente_actual,
+			'updated_at'=>$now
+		];
 
+		///dd($now->startOfMonth()->subMonth());
+		//dd($values);
+		NominaImportacion::updateOrCreate(
+			[
+				'year_month'=>$now->format('Ym'),
+				'cliente_id'=>auth()->user()->id_cliente_actual
+			],
+			$values
+		);
 
-			if ($buscar_coincidencia == null) {
-				//Guardar en base
-				$nomina = new Nomina();
-				$nomina->id_cliente = auth()->user()->id_cliente_actual;
-				$nomina->nombre = $registro['nombre'];
-				if (isset($registro['email']) && !empty($registro['email'])) {
-					$nomina->email = $registro['email'];
-				}
-				$nomina->telefono = $registro['telefono'];
-				if (isset($registro['dni']) && !empty($registro['dni'])) {
-					$nomina->dni = $registro['dni'];
-				}
-				$nomina->sector = $registro['sector'];
-				if ($registro['estado'] == 'Activo') {
-					$nomina->estado = 1;
-					$nomina->fecha_baja =  null;
-				}else {
-					$nomina->estado = 0;
-					$nomina->fecha_baja =  Carbon::now();
-				}
-				$nomina->save();
-
-			}else {
-				// 1 es actualizar los datos completos / 2 Es no subirlo y dejar el actual
-				if ($request->coincidencia == 1) {
-					$buscar_coincidencia->id_cliente = auth()->user()->id_cliente_actual;
-					$buscar_coincidencia->nombre = $registro['nombre'];
-					$buscar_coincidencia->telefono = $registro['telefono'];
-					if (isset($registro['dni']) && !empty($registro['dni'])) {
-						$buscar_coincidencia->dni = $registro['dni'];
-					}
-					$buscar_coincidencia->sector = $registro['sector'];
-					if ($registro['estado'] == 'Activo') {
-						$buscar_coincidencia->estado = 1;
-						$buscar_coincidencia->fecha_baja =  null;
-					}else {
-						$buscar_coincidencia->estado = 0;
-						$buscar_coincidencia->fecha_baja =  Carbon::now();
-					}
-					$buscar_coincidencia->save();
-				}
-			}
-
-		}*/
-
-
-		/////// Registrar cantidad de empleados en cada carga
-
-
+		//dd($values);
 
 		// Mostrar registro de empleados modificados, borrados y agregados.
 		return redirect('empleados/nominas')->with([
