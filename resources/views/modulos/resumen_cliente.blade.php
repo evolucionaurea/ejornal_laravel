@@ -19,9 +19,9 @@
 		<div class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($ausentismos_mes_actual/($nomina_actual*$now->endOfMonth()->format('d')),4))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($ausentismos_mes_actual/($nomina_actual*$now->format('d')),4))*100 : 0 }}%</div>
 					<div class="mb-0">Mes Actual</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}} - Ausentes: {{$ausentismos_mes_actual}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}} - Ausentimos en días: {{$ausentismos_mes_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>

@@ -26,17 +26,32 @@ trait Clientes {
 
 		/// AUSENTISMOS
 		/// Mes actual
-		//DB::enableQueryLog();
+		DB::enableQueryLog();
 
 		///traer también las personas que sigan ausentes desde antes del mes actual
-		$ausentismos_mes_actual = Ausentismo::
-			where(function($query) use ($today){
+		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
+		$ausentismos_mes_actual = Ausentismo::selectRaw("SUM( DATEDIFF(IFNULL(fecha_regreso_trabajar,DATE(NOW())), IF(fecha_inicio>='{$inicio_mes}',fecha_inicio,'{$inicio_mes}') )+1 ) dias")
 
-				$query->where('fecha_inicio','>=',$today->startOfMonth())
+			->where(function($query) use ($today){
+
+				$query->where(function($query) use ($today){
+					$query
+					->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
+					->where(function($query) use($today){
+						$query->where('fecha_regreso_trabajar','<=',$today->startOfMonth())
+							->orWhere('fecha_regreso_trabajar',null);
+					});
+
+				})
+
 				->orWhere(function($query) use ($today){
 
+					// los que siguen ausentes fuera del mes actual
 					$query->where('fecha_inicio','<',$today->startOfMonth())
-					->where('fecha_regreso_trabajar',null);
+					->where(function($query) use($today){
+						$query->where('fecha_regreso_trabajar','>=',$today->startOfMonth())
+							->orWhere('fecha_regreso_trabajar',null);
+					});
 
 				});
 
@@ -48,15 +63,42 @@ trait Clientes {
 					->where('estado',1)
 					->where('deleted_at',null);
 			})
-			->count();
-		///dd(DB::getQueryLog());
+			->first();
+
+		//dd($ausentismos_mes_actual->toArray());
+		//dd(DB::getQueryLog());
+		$ausentismos_mes_actual = $ausentismos_mes_actual->dias;
 
 
 		/// Mes pasado
-		/// Traer los que figuren ausentes en este mes..
-		$ausentismos_mes_pasado = Ausentismo::
-			where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
-			->where('fecha_inicio','<=',$today->subMonth()->endOfMonth())
+		$inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
+		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
+		DB::enableQueryLog();
+		$ausentismos_mes_pasado = Ausentismo::selectRaw("SUM(DATEDIFF('{$fin_mes_pasado}', IF(fecha_inicio<'{$inicio_mes_pasado}','{$inicio_mes_pasado}', fecha_inicio) )) dias")
+
+			->where(function($query) use ($today){
+
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+
+
+				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				->orWhere(function($query) use ($today){
+					$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','>',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
+
+			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -64,7 +106,11 @@ trait Clientes {
 					->where('estado',1)
 					->where('deleted_at',null);
 			})
-			->count();
+			->first();
+		$ausentismos_mes_pasado = $ausentismos_mes_pasado->dias;
+		///dd(DB::getQueryLog());
+
+
 
 		/// Mes año anterior
 		$ausentismos_mes_anio_anterior = Ausentismo::
