@@ -33,10 +33,10 @@ class ClientesAusentismosController extends Controller
 
 	}
 
-	public function exportar()
+	public function exportar(Request $request)
 	{
 		//Traits > Ausentismos
-		return $this->exportAusentismos(auth()->user()->id_cliente_relacionar);
+		return $this->exportAusentismos(auth()->user()->id_cliente_relacionar,$request);
 	}
 
 

@@ -60,7 +60,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->first();
@@ -74,7 +74,9 @@ trait Clientes {
 		$inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
 		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
 		DB::enableQueryLog();
-		$ausentismos_mes_pasado = Ausentismo::selectRaw("SUM(DATEDIFF('{$fin_mes_pasado}', IF(fecha_inicio<'{$inicio_mes_pasado}','{$inicio_mes_pasado}', fecha_inicio) )) dias")
+
+		///SUM(DATEDIFF('{$fin_mes_pasado}', IF(fecha_inicio<'{$inicio_mes_pasado}','{$inicio_mes_pasado}', fecha_inicio) )) dias
+		$ausentismos_mes_pasado = Ausentismo::selectRaw("SUM(DATEDIFF( IF(fecha_regreso_trabajar<'{$fin_mes_pasado}', fecha_regreso_trabajar, '{$fin_mes_pasado}') , IF(fecha_inicio<'{$inicio_mes_pasado}','{$inicio_mes_pasado}', fecha_inicio) )+1) dias")
 
 			->where(function($query) use ($today){
 
@@ -103,40 +105,102 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->first();
+		//dd($ausentismos_mes_pasado->toArray());
 		$ausentismos_mes_pasado = $ausentismos_mes_pasado->dias;
 		///dd(DB::getQueryLog());
 
 
 
 		/// Mes año anterior
-		$ausentismos_mes_anio_anterior = Ausentismo::
-			where('fecha_inicio','>=',$today->subYear()->startOfMonth())
-			->where('fecha_inicio','<=',$today->subYear()->endOfMonth())
-			->whereIn('id_trabajador',function($query) use ($id_cliente,$today){
-				$query->select('id')
-					->from('nominas')
-					->where('id_cliente',$id_cliente)
-					->where('created_at','<=',$today->subYear()->endOfMonth()->toDateString())
-					->where('estado',1)
-					->where('deleted_at',null);
-			})
-			->count();
+		$inicio_mes_anio_anterior = $today->subYear()->startOfMonth()->format('Y-m-d');
+		$fin_mes_anio_anterior = $today->subYear()->endOfMonth()->format('Y-m-d');
+		///id, fecha_inicio, fecha_regreso_trabajar,
+		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw("SUM(DATEDIFF( IF(fecha_regreso_trabajar<'{$fin_mes_anio_anterior}', fecha_regreso_trabajar, '{$fin_mes_anio_anterior}') , IF(fecha_inicio<'{$inicio_mes_anio_anterior}','{$inicio_mes_anio_anterior}', fecha_inicio) )+1) dias")
+			->where(function($query) use ($today){
 
-		/// Año actual
-		$ausentismos_anio_actual = Ausentismo::
-			where('fecha_inicio','>=',$today->firstOfYear())
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+
+
+				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				->orWhere(function($query) use ($today){
+					$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','>',$today->subYear()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
+
+			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
-			->count();
+			->first();
+
+		///dd( $ausentismos_mes_anio_anterior->toArray()  );
+		$ausentismos_mes_anio_anterior = $ausentismos_mes_anio_anterior->dias;
+
+
+		/// Mes año anterior
+		$inicio_anio = $today->format('Y-01-01');
+		///id, fecha_inicio, fecha_regreso_trabajar,
+		$ausentismos_anio_actual = Ausentismo::selectRaw("SUM(DATEDIFF( IF(fecha_regreso_trabajar<DATE(NOW()), fecha_regreso_trabajar, DATE(NOW())) , IF(fecha_inicio<'{$inicio_anio}','{$inicio_anio}', fecha_inicio) )+1) dias")
+			->where(function($query) use ($today){
+
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','<=',$today)
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+
+
+				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				->orWhere(function($query) use ($today){
+					$query->where('fecha_inicio','<',$today->startOfYear())
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','>',$today->startOfYear())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
+
+			})
+
+			->whereIn('id_trabajador',function($query) use ($id_cliente){
+				$query->select('id')
+					->from('nominas')
+					->where('id_cliente',$id_cliente)
+					//->where('estado',1)
+					->where('deleted_at',null);
+			})
+			->first();
+
+			///dd($ausentismos_anio_actual->toArray());
+			$ausentismos_anio_actual = $ausentismos_anio_actual->dias;
+
+
+
+
+
+
+
 
 
 		/// ACCIDENTES
@@ -165,7 +229,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -183,7 +247,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -203,7 +267,7 @@ trait Clientes {
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
 					->where('created_at','<=',$today->subYear()->endOfMonth()->toDateString())
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -220,7 +284,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -251,7 +315,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -268,7 +332,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -287,7 +351,7 @@ trait Clientes {
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
 					->where('created_at','<=',$today->subYear()->endOfMonth()->toDateString())
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -303,7 +367,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->count();
@@ -318,7 +382,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
@@ -340,7 +404,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
@@ -356,20 +420,22 @@ trait Clientes {
 
 		$nomina_actual = Nomina::
 			where('id_cliente',$id_cliente)
-			->where('estado',1)
+			//->where('estado',1)
 			->count();
 
 		$nomina_mes_anterior = Nomina::
 			where('id_cliente',$id_cliente)
 			->whereDate('created_at','<=',$today->endOfMonth()->subMonth()->toDateString())
-			->where('estado',1)
+			//->where('estado',1)
 			->count();
 
 		$nomina_mes_anio_anterior = Nomina::
 			where('id_cliente',$id_cliente)
 			->where('created_at','<=',$today->endOfMonth()->subYear()->toDateString())
-			->where('estado',1)
+			//->where('estado',1)
 			->count();
+
+		//$nomina_mes_anio_anterior = !$nomina_mes_anio_anterior ? $nomina_actual : $nomina_mes_anio_anterior;
 
 		///dd($today->endOfMonth()->subYear()->toDateString());
 
