@@ -34,7 +34,7 @@
 		@endif
 
 		<div class="tarjeta">
-			@if ($consulta_medica)
+			@if (!empty($consulta_medica))
 			<div class="d-flex flex-wrap">
 				<div class="col-md-12">
 					<div class="d-flex bd-highlight mb-3">
