@@ -80,8 +80,27 @@ trait Ausentismos {
 		}
 
 
-		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->from) {
+			$query->where(function($query) use ($request){
+				$query->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from))
+					// los que siguen ausentes fuera rango actual
+					->orWhere(function($query) use ($request) {
+							$query->where('fecha_regreso_trabajar','>=',Carbon::createFromFormat('d/m/Y', $request->from))
+								->orWhere('fecha_regreso_trabajar',null);
+					});
+			});
+		}
+		if($request->to) {
+			//$query->whereDate('fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$query->where(function($query) use ($request){
+				$query->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->to))
+					// los que siguen ausentes fuera rango actual
+					->orWhere(function($query) use ($request) {
+							$query->where('fecha_regreso_trabajar','>=',Carbon::createFromFormat('d/m/Y', $request->to))
+								->orWhere('fecha_regreso_trabajar',null);
+					});
+			});
+		}
 
 		if($request->tipo) $query->where('id_tipo',$request->tipo);
 
