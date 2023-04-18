@@ -81,25 +81,25 @@ trait Ausentismos {
 
 
 		if($request->from) {
-			$query->where(function($query) use ($request){
-				$query->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from))
-					// los que siguen ausentes fuera rango actual
-					->orWhere(function($query) use ($request) {
-							$query->where('fecha_regreso_trabajar','>=',Carbon::createFromFormat('d/m/Y', $request->from))
-								->orWhere('fecha_regreso_trabajar',null);
-					});
-			});
+			$from = Carbon::createFromFormat('d/m/Y',$request->from);
+			$query->whereRaw("'{$from->toDateString()}' BETWEEN fecha_inicio AND IFNULL(fecha_regreso_trabajar,NOW())");
+			//$query->where(function($query) use ($request){
+				//->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $from))
+				// los que siguen ausentes fuera rango actual
+				/*->orWhere(function($query) use ($request) {
+						$query->where('fecha_regreso_trabajar','>=',Carbon::createFromFormat('d/m/Y', $request->from))
+							->orWhere('fecha_regreso_trabajar',null);
+				});*/
+			//});
 		}
 		if($request->to) {
-			//$query->whereDate('fecha_inicio','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-			$query->where(function($query) use ($request){
-				$query->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->to))
-					// los que siguen ausentes fuera rango actual
-					->orWhere(function($query) use ($request) {
-							$query->where('fecha_regreso_trabajar','>=',Carbon::createFromFormat('d/m/Y', $request->to))
-								->orWhere('fecha_regreso_trabajar',null);
-					});
-			});
+			$from = $request->from ? Carbon::createFromFormat('d/m/Y',$request->from) : $now;
+			$to = Carbon::createFromFormat('d/m/Y',$request->to);
+			$query->whereRaw("IFNULL(fecha_regreso_trabajar,DATE(NOW())) BETWEEN '{$from->toDateString()}' AND '{$to->toDateString()}'");
+			/*$query->where(function($query) use ($request){
+				$query->where('fecha_regreso_trabajar','<=',$to)
+					->orWhere('fecha_regreso_trabajar',null);
+			});*/
 		}
 
 		if($request->tipo) $query->where('id_tipo',$request->tipo);
@@ -126,8 +126,6 @@ trait Ausentismos {
 		];
 
 	}
-
-
 	public function exportAusentismos($id_cliente=null,Request $request)
 	{
 
@@ -140,24 +138,6 @@ trait Ausentismos {
 		$results = $this->searchAusentismos($id_cliente,$request);
 		$ausentismos = $results['data'];
 		//dd($ausentismos);
-
-		/*$ausentismos = Ausentismo::join('nominas','nominas.id','=','ausentismos.id_trabajador')
-		->join('ausentismo_tipo','ausentismo_tipo.id','=','ausentismos.id_tipo')
-		->where('nominas.id_cliente',$id_cliente)
-		->select(
-			'ausentismos.*',
-
-			'nominas.nombre as trabajador_nombre',
-			'nominas.dni as trabajador_dni',
-			'nominas.sector as trabajador_sector',
-
-			'nominas.id_cliente',
-			'ausentismo_tipo.nombre as ausentismo_tipo'
-		)
-		->orderBy('fecha_inicio','desc')
-		->get();*/
-
-
 
 		$now = Carbon::now();
 		$file_name = 'ausentismos-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';
@@ -175,7 +155,6 @@ trait Ausentismos {
 			'Fecha en que Regresó',
 			'Hoy ('.$now->format('d/m/Y').')'
 		],';');
-
 
 		foreach($ausentismos as $ausentismo){
 			$hoy = '';
@@ -200,10 +179,7 @@ trait Ausentismos {
 		header('Content-Disposition: attachment; filename="'.$file_name.'";');
 		fpassthru($fp);
 
-
 		return;
-
-
 
 	}
 

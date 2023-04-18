@@ -9,6 +9,7 @@ window.SwalWarning = window.Swal.mixin({
 $('body').on('click','[data-swal]',btn=>{
 	let text = $(btn.currentTarget).attr('data-swal');
 	Swal.fire({
-		text:text
+		icon:'info',
+		title:text
 	});
 });

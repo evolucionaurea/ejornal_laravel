@@ -26,107 +26,36 @@ class GruposResumenController extends Controller
 	{
 		setlocale(LC_TIME, 'Spanish');
 
-		//DB::enableQueryLog();
-
 		// el metodo getClientesGrupo heredada de App\Http\Traits\ClientesGrupo
+		// todos las empresas del grupo
 		$clientes_grupo = $this->getClientesGrupo();
 		$today = CarbonImmutable::now();
 
-		// todos las empresas del grupo
 
-		DB::enableQueryLog();
 		$clientes_nominas = $clientes_grupo['grupo']->fresh([
-
 
 			'clientes'=>function($query) use ($today){
 
 				$query->select('clientes.id','clientes.nombre')
 
-				//total nómina
-				->withCount(['nominas'=>function($query){
-					$query->where('estado',1);
+				//total nóminas
+				->withCount('nominas')
+				->withCount(['nominas as nominas_mes_anterior'=>function($query) use ($today){
+						$query->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString());
 				}])
-
-				->withCount([
-
-					//ausentes hoy
-					'ausentismos'=>function($query) use ($today) {
-
-						$query->where(function($query) use ($today) {
-							$query->
-								where('fecha_regreso_trabajar',null)
-								->orWhere('fecha_regreso_trabajar','>',$today);
-						})
-						->whereHas('trabajador',function($query){
-							$query->where('estado',1);
-						});
-
-					},
-
-					//ausentes mes
-					'ausentismos as ausentismos_mes_count'=>function($query) use ($today) {
-						$query
-							->where('fecha_inicio','>=',$today->startOfMonth())
-							->whereHas('trabajador',function($query){
-								$query->where('estado',1);
-							});
-					},
-
-					//ausentes mes pasado
-					'ausentismos as ausentismos_mes_pasado_count'=>function($query) use ($today) {
-						$query
-							->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
-							->where('fecha_inicio','<=',$today->subMonth()->endOfMonth())
-							->whereHas('trabajador',function($query){
-								$query->where('estado',1);
-							});
-					},
-
-					//ausentes año actual
-					'ausentismos as ausentismos_year_count'=>function($query) use ($today) {
-						$query
-							->where('fecha_inicio','>=',$today->firstOfYear())
-							->whereHas('trabajador',function($query){
-								$query->where('estado',1);
-							});
-					},
-
-					/*//accidentes mes actual
-					'ausentismos as accidentes_mes_count'=>function($query) use ($today) {
-						$query
-							->where('fecha_inicio','>=',$today->startOfMonth())
-							->whereHas('tipo',function($query){
-								$query
-									->where('nombre','LIKE','%ART%')
-									->orWhere('nombre','LIKE','%accidente%');
-							})
-							->whereHas('trabajador',function($query){
-								$query->where('estado',1);
-							});
-					},
-
-					//accidentes mes pasado
-					'ausentismos as accidentes_mes_pasado_count'=>function($query) use ($today) {
-						$query
-							->where('fecha_inicio','>=',$today->startOfMonth()->subMonth())
-							->where('fecha_inicio','<=',$today->endOfMonth()->subMonth())
-							->whereHas('tipo',function($query){
-								$query
-									->where('nombre','LIKE','%ART%')
-									->orWhere('nombre','LIKE','%accidente%');
-							})
-							->whereHas('trabajador',function($query){
-								$query->where('estado',1);
-							});
-					}*/
-				]);
+				->withCount(['nominas as nominas_mes_anio_anterior'=>function($query) use ($today){
+						$query->whereDate('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString());
+				}]);
 
 			}
 		]);
-		//dd(DB::getQueryLog());
 
-		//dd( $clientes_nominas->clientes[0]->toArray() );
 
+		//DB::enableQueryLog();
+		foreach($clientes_nominas->clientes as $kc=>$cliente){
+			$clientes_nominas->clientes[$kc]->ausentismos = (object) $this->resumen($cliente->id);
+		}
+		//dd( $clientes_nominas->clientes[0]->ausentismos );
 		$output = array_merge($clientes_grupo,[
 			'clientes_nominas'=>$clientes_nominas
 		]);

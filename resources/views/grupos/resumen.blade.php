@@ -22,55 +22,35 @@
 
 				<div class="tarjeta">
 					<h4 class="mb-1">Empresas del grupo: {{$grupo->clientes->count()}}</h4>
-					<h6 class="small">Se muestran valores en base a trabajadores activos solamente.</h6>
+					{{-- <h6 class="small">Se muestran valores en base a trabajadores activos solamente.</h6> --}}
 
 					<table data-table="ausentismos" class="table table-striped table-sm">
 						<thead>
 							<tr>
 								<th scope="col"> <b>Nombre</b></th>
 								<th class="text-right">Total Nómina</th>
-								<th class="text-right">Ausentes hoy</th>
-								<th class="text-right">Ausentismos {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</th>
-								<th class="text-right">Ausentismos Mes Pasado</th>
-								<th class="text-right">Ausentismos del año</th>
+								{{-- <th class="text-right">Ausentes hoy <i class="fa fa-question-circle fa-fw" data-swal="Se contabilizan sólamente los trabajadores activos."></i></th> --}}
+								<th class="text-right">Ausentismos Mes Actual <i class="fa fa-question-circle fa-fw" data-swal="Porcentaje de ausentismos en relación a la nómina actual."></i></th>
+								<th class="text-right">Ausentismos Mes Anterior</th>
+								<th class="text-right">Ausentismos Mismo Mes Año Anterior</th>
+								<th class="text-right">Ausentismos del Año</th>
 							</tr>
 						</thead>
 						<tbody>
-							@php
-							 	$nominas_count_total = 0;
-								$ausentismos_count_total = 0;
-								$ausentismos_mes_count_total = 0;
-								$ausentismos_mes_pasado_count_total = 0;
-								$ausentismos_year_count_total = 0;
-							 @endphp
+
 							@foreach ($clientes_nominas->clientes as $cliente)
-							@php
-								$nominas_count_total += $cliente->nominas_count;
-								$ausentismos_count_total += $cliente->ausentismos_count;
-								$ausentismos_mes_count_total += $cliente->ausentismos_mes_count;
-								$ausentismos_mes_pasado_count_total += $cliente->ausentismos_mes_pasado_count;
-								$ausentismos_year_count_total += $cliente->ausentismos_year_count;
-							@endphp
+
 							<tr>
 								<td>{{$cliente->nombre}}</td>
 								<td class="text-right">{{$cliente->nominas_count}}</td>
-								<td class="text-right">{{$cliente->ausentismos_count}}</td>
-								<td class="text-right">{{$cliente->ausentismos_mes_count}}</td>
-								<td class="text-right">{{$cliente->ausentismos_mes_pasado_count}}</td>
-								<td class="text-right">{{$cliente->ausentismos_year_count}}</td>
+								{{-- <td class="text-right">{{$cliente->ausentismos_count}}</td> --}}
+								<td class="text-right">{{$cliente->ausentismos->ausentismos_mes_actual}}%</td>
+								<td class="text-right">{{$cliente->ausentismos->ausentismos_mes_pasado}}%</td>
+								<td class="text-right">{{$cliente->ausentismos->ausentismos_mes_anio_anterior}}%</td>
+								<td class="text-right">{{$cliente->ausentismos->ausentismos_anio_actual}}%</td>
 							</tr>
 							@endforeach
 						</tbody>
-						<tfoot>
-							<tr class="alert-success">
-								<th>Total</th>
-								<th class="text-right">{{$nominas_count_total}}</th>
-								<th class="text-right">{{$ausentismos_count_total}}</th>
-								<th class="text-right">{{$ausentismos_mes_count_total}}</th>
-								<th class="text-right">{{$ausentismos_mes_pasado_count_total}}</th>
-								<th class="text-right">{{$ausentismos_year_count_total}}</th>
-							</tr>
-						</tfoot>
 					</table>
 				</div>
 

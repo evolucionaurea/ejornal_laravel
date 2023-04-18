@@ -11333,6 +11333,10 @@ div.dataTables_wrapper .table-spacer-top {
   font-size: 1.675rem;
 }
 
+[data-swal] {
+  cursor: pointer;
+}
+
 .select2-container {
   width: 100% !important;
 }

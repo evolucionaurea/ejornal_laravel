@@ -24,6 +24,24 @@ trait Clientes {
 		$today = CarbonImmutable::now();
 
 
+		$nomina_actual = Nomina::
+			where('id_cliente',$id_cliente)
+			//->where('estado',1)
+			->count();
+		$nomina_mes_anterior = Nomina::
+			where('id_cliente',$id_cliente)
+			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
+			//->where('estado',1)
+			->count();
+		$nomina_mes_anio_anterior = Nomina::
+			where('id_cliente',$id_cliente)
+			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
+			//->where('estado',1)
+			->count();
+
+
+
+
 		/// AUSENTISMOS
 		/// MES ACTUAL
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
@@ -73,7 +91,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		});
-		$ausentismos_mes_actual = $q_ausentismos_mes_actual->first()->dias;
+		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),4)*100) : 0;
 
 
 		/// MES PASADO
@@ -124,7 +142,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null); ////consultar
 		});
-		$ausentismos_mes_pasado = $q_ausentismos_mes_pasado->first()->dias;
+		$ausentismos_mes_pasado = $nomina_mes_anterior ? (round($q_ausentismos_mes_pasado->first()->dias/($nomina_mes_anterior*$today->firstOfMonth()->subMonth()->endOfMonth()->format('d')),4)*100) : 0;
 
 
 
@@ -176,7 +194,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		});
-		$ausentismos_mes_anio_anterior = $q_ausentismos_mes_anio_anterior->first()->dias;
+		$ausentismos_mes_anio_anterior = $nomina_mes_anio_anterior ? (round($q_ausentismos_mes_anio_anterior->first()->dias/($nomina_mes_anio_anterior*$today->firstOfMonth()->subYear()->endOfMonth()->format('d')),4)*100) : 0;
 
 
 		/// AÑO ACTUAL
@@ -228,7 +246,7 @@ trait Clientes {
 				->where('deleted_at',null);
 		});
 		//dd(DB::getQueryLog());
-		$ausentismos_anio_actual = $q_ausentismos_anio_actual->first()->dias;
+		$ausentismos_anio_actual = $nomina_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_actual*$today->dayOfYear()),4)*100) : 0;
 
 
 
@@ -341,22 +359,6 @@ trait Clientes {
 			->limit(10)
 			->get();
 
-
-
-		$nomina_actual = Nomina::
-			where('id_cliente',$id_cliente)
-			//->where('estado',1)
-			->count();
-		$nomina_mes_anterior = Nomina::
-			where('id_cliente',$id_cliente)
-			->whereDate('created_at','<=',$today->endOfMonth()->subMonth()->toDateString())
-			//->where('estado',1)
-			->count();
-		$nomina_mes_anio_anterior = Nomina::
-			where('id_cliente',$id_cliente)
-			->where('created_at','<=',$today->endOfMonth()->subYear()->toDateString())
-			//->where('estado',1)
-			->count();
 
 		//$nomina_mes_anio_anterior = !$nomina_mes_anio_anterior ? $nomina_actual : $nomina_mes_anio_anterior;
 
