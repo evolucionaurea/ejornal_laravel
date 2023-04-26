@@ -5,6 +5,7 @@ namespace App\Http\Traits;
 use Illuminate\Http\Request;
 use App\Ausentismo;
 use App\Cliente;
+use App\Nomina;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
@@ -188,26 +189,73 @@ trait Ausentismos {
 
 		$today = CarbonImmutable::now();
 
+		$nomina_actual = Nomina::
+			where('id_cliente',$id_cliente)
+			//->where('estado',1)
+			->count();
+		$nomina_mes_anterior = Nomina::
+			where('id_cliente',$id_cliente)
+			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
+			//->where('estado',1)
+			->count();
+		$nomina_mes_anio_anterior = Nomina::
+			where('id_cliente',$id_cliente)
+			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
+			//->where('estado',1)
+			->count();
+
+
 		//DB::enableQueryLog();
-		$ausentismos_mes = Ausentismo::selectRaw('count(*) as total, id_tipo')
+		/// MES ACTUAL
+		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
+		$ausentismos_mes = Ausentismo::selectRaw("
+				SUM(
+					DATEDIFF(
+						IFNULL(
+							fecha_regreso_trabajar,
+							DATE(NOW())
+						),
+						IF(
+							fecha_inicio>='{$inicio_mes}',
+							fecha_inicio,
+							'{$inicio_mes}'
+						)
+					)+1
+				) dias,
+
+				count(*) as total,
+				id_tipo"
+		)
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre');
 			}])
 
 			->where(function($query) use ($today){
-				$query->where('fecha_inicio','>=',$today->startOfMonth())
-					->orWhere(function($query) use ($today){
-
-						$query->where('fecha_inicio','<',$today->startOfMonth())
-						->where('fecha_regreso_trabajar',null);
-
-					});
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
+						->where(function($query) use($today){
+							$query
+								->where('fecha_regreso_trabajar','<=',$today->startOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+				->orWhere(function($query) use ($today){
+					// los que siguen ausentes fuera del mes actual
+					$query
+						->where('fecha_inicio','<',$today->startOfMonth())
+						->where(function($query) use($today){
+							$query
+								->where('fecha_regreso_trabajar','>=',$today->startOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
 			})
 
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
@@ -217,69 +265,204 @@ trait Ausentismos {
 		//dd($ausentismos_mes->toArray());
 		//$query = DB::getQueryLog();
 
-		$ausentismos_mes_anterior = Ausentismo::selectRaw('count(*) as total, id_tipo')
+
+
+
+		/// MES PASADO
+		$inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
+		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
+		$ausentismos_mes_anterior = Ausentismo::selectRaw("
+			SUM(
+				DATEDIFF(
+					IF(
+						fecha_regreso_trabajar<'{$fin_mes_pasado}',
+						fecha_regreso_trabajar,
+						'{$fin_mes_pasado}'
+					),
+					IF(
+						fecha_inicio<'{$inicio_mes_pasado}',
+						'{$inicio_mes_pasado}',
+						fecha_inicio
+					)
+				)+1
+			) dias,
+			count(*) as total,
+			id_tipo
+		")
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre');
 			}])
-			->where('fecha_inicio','>=',$today->subMonth()->startOfMonth())
+
 			->where(function($query) use ($today){
-				$query
-					->where('fecha_regreso_trabajar',null)
-					->orwhere('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth());
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				->orWhere(function($query) use ($today){
+					$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
+						->where(function($query) use ($today){
+							$query->where('fecha_regreso_trabajar','>',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
 			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
 			->groupBy('id_tipo')
 			->get();
 
-		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw('count(*) as total, id_tipo')
+		///dd($ausentismos_mes_anterior->toArray());
+
+
+		/// MES AÑO ANTERIOR
+		$inicio_mes_anio_anterior = $today->subYear()->startOfMonth()->format('Y-m-d');
+		$fin_mes_anio_anterior = $today->subYear()->endOfMonth()->format('Y-m-d');
+		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw("
+			SUM(
+				DATEDIFF(
+					IF(
+						fecha_regreso_trabajar<'{$fin_mes_anio_anterior}',
+						fecha_regreso_trabajar,
+						'{$fin_mes_anio_anterior}'
+					),
+					IF(
+						fecha_inicio<'{$inicio_mes_anio_anterior}',
+						'{$inicio_mes_anio_anterior}',
+						fecha_inicio
+					)
+				)+1
+			) dias,
+			count(*) as total,
+			id_tipo"
+		)
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre');
 			}])
-			->where('fecha_inicio','>=',$today->subYear()->firstOfYear())
+
 			->where(function($query) use ($today){
-				$query
-					->where('fecha_regreso_trabajar',null)
-					->orwhere('fecha_regreso_trabajar','<=',$today->subYear()->lastOfYear());
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
+						->where(function($query) use ($today){
+							$query
+								->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				->orWhere(function($query) use ($today){
+					$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
+						->where(function($query) use ($today){
+							$query
+								->where('fecha_regreso_trabajar','>',$today->subYear()->endOfMonth())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
 			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
 			->groupBy('id_tipo')
 			->get();
 
-		$ausentismos_anual = Ausentismo::selectRaw('count(*) as total, id_tipo')
+
+		/// AÑO ACTUAL
+		$inicio_anio = $today->format('Y-01-01');
+		$ausentismos_anual = Ausentismo::selectRaw("
+			SUM(
+				DATEDIFF(
+					IF(
+						fecha_regreso_trabajar<DATE(NOW()),
+						fecha_regreso_trabajar,
+						DATE(NOW())
+					),
+					IF(
+						fecha_inicio<'{$inicio_anio}',
+						'{$inicio_anio}',
+						fecha_inicio
+					)
+				)+1
+			) dias,
+			count(*) as total,
+			id_tipo
+		")
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre');
 			}])
+
+			->where(function($query) use ($today){
+				$query->where(function($query) use ($today){
+					$query
+						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
+						->where(function($query) use ($today){
+							$query
+								->where('fecha_regreso_trabajar','<=',$today)
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				})
+				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				->orWhere(function($query) use ($today){
+					$query
+						->where('fecha_inicio','<',$today->startOfYear())
+						->where(function($query) use ($today){
+							$query
+								->where('fecha_regreso_trabajar','>',$today->startOfYear())
+								->orWhere('fecha_regreso_trabajar',null);
+						});
+				});
+			})
+
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					->where('estado',1)
+					//->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
 			->groupBy('id_tipo')
-			->where('fecha_inicio','>=',$today->firstOfYear())
 			->orderBy('total','desc')
 			->get();
 
 		$status = 'ok';
+
+
+		$cant_dias_mes = (int) $today->format('d');
+		$cant_dias_mes_anterior = (int) $today->firstOfMonth()->subMonth()->endOfMonth()->format('d');
+		$cant_dias_mes_anio_anterior = (int) $today->firstOfMonth()->subYear()->endOfMonth()->format('d');
+		$cant_dias_anio = (int) $today->dayOfYear();
 
 		return compact(
 			'ausentismos_mes',
 			'ausentismos_mes_anterior',
 			'ausentismos_mes_anio_anterior',
 			'ausentismos_anual',
+
+			'nomina_actual',
+			'nomina_mes_anterior',
+			'nomina_mes_anio_anterior',
+
+			'cant_dias_mes',
+			'cant_dias_mes_anterior',
+			'cant_dias_mes_anio_anterior',
+			'cant_dias_anio',
+
+
 			'status'
 		);
 	}

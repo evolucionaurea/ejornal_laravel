@@ -66,6 +66,72 @@ class AdminReporteController extends Controller
 		];
 
 	}
+	public function exportar_fichadas($id_cliente=null,Request $request)
+	{
+
+
+		$request->search = ['value'=>null];
+		$request->start = 0;
+		$request->length = 5000;
+
+		$filtro = '%'.$request->search['value'].'%';
+		$query = FichadaNueva::selectRaw('
+				fichadas_nuevas.*,
+				users.nombre user_nombre,
+				clientes.nombre cliente_nombre
+			')
+			->join('users','users.id','fichadas_nuevas.id_user')
+			->join('clientes','clientes.id','fichadas_nuevas.id_cliente')
+			->where(function($query) use ($request) {
+				$filtro = '%'.$request->search['value'].'%';
+				$query
+					->where('users.nombre','like',$filtro)
+					->orWhere('clientes.nombre','like',$filtro);
+			});
+
+		if($request->from) $query->whereDate('ingreso','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('egreso','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+
+
+		$fichadas = $query->get();
+
+		//dd($fichadas);
+
+		$now = Carbon::now();
+		$file_name = 'fichadas-'.$now->format('YmdHis').'.csv';
+
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp,[
+			'Empleado',
+			'Empresa',
+			'Ingreso/Egreso',
+			'Tiempo trabajado',
+			'IP'
+		],';');
+
+		foreach($fichadas as $fichada){
+			fputcsv($fp,[
+				$fichada->user_nombre,
+				$fichada->cliente_nombre,
+				$fichada->ingreso.' al '.($fichada->egreso??'aún trabajando'),
+				$fichada->tiempo_dedicado,
+				$fichada->ip
+			],';');
+		}
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+		return;
+
+	}
+
+
+
+
 
 
 	public function reportes_ausentismos()

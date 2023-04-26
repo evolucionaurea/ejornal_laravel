@@ -23,6 +23,9 @@
 
 		<div class="tarjeta">
 
+			@php
+				$export = true;
+			@endphp
 			@include('../../modulos.busqueda_fecha')
 
 

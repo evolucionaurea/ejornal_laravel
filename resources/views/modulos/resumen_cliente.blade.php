@@ -11,7 +11,7 @@
 
 	<div class="col-lg-12 pb-0">
 		<h5 class="mb-0 font-weight-bold">AUSENTISMOS</h5>
-		<div class="small font-italic text-muted">Los porcentajes se calculan en base al total de trabajadores activos de la nómina.</div>
+		<div class="small font-italic text-muted">Los porcentajes se calculan en base al total de días ausentes según el período seleccionado.</div>
 	</div>
 
 	<!-- Mes Actual -->
@@ -21,7 +21,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_actual }}%</div>
 					<div class="mb-0">Mes Actual</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}} - Ausentimos en días: {{$ausentismos_mes_actual}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -38,7 +38,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_pasado }}%</div>
 					<div class="mb-0">Mes Anterior</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anterior}} - Ausentimos en días: {{$ausentismos_mes_pasado}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anterior}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -55,7 +55,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_anio_anterior }}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anio_anterior}} - Ausentimos en días: {{$ausentismos_mes_anio_anterior}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anio_anterior}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -71,7 +71,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_anio_actual }}%</div>
 					<div class="mb-0">Año actual</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}} - Ausentimos en días: {{$ausentismos_anio_actual}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -278,13 +278,20 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Porcentaje</th>
 						<th scope="col">Cantidad</th>
+						<th scope="col">Porcentaje</th>
 					</tr>
 				</thead>
 				<tbody>
 					{{-- Se carga por JS --}}
 				</tbody>
+				<tfoot>
+					<tr class="alert-info">
+						<th>Total</th>
+						<th data-content="total-ausentismos"></th>
+						<th data-content="total-percent"></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
@@ -298,13 +305,20 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Porcentaje</th>
 						<th scope="col">Cantidad</th>
+						<th scope="col">Porcentaje</th>
 					</tr>
 				</thead>
 				<tbody>
 					{{-- Se carga por JS --}}
 				</tbody>
+				<tfoot>
+					<tr class="alert-info">
+						<th>Total</th>
+						<th data-content="total-ausentismos"></th>
+						<th data-content="total-percent"></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
@@ -318,13 +332,20 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Porcentaje</th>
 						<th scope="col">Cantidad</th>
+						<th scope="col">Porcentaje</th>
 					</tr>
 				</thead>
 				<tbody>
 					{{-- Se carga por JS --}}
 				</tbody>
+				<tfoot>
+					<tr class="alert-info">
+						<th>Total</th>
+						<th data-content="total-ausentismos"></th>
+						<th data-content="total-percent"></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
@@ -332,18 +353,25 @@
 	<!-- Año Actual -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_anio_porcentajes">
-			<h4>Ausentismos de {{ $now->firstOfYear()->formatLocalized('%B') }} a {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h4>
+			<h4>Ausentismos del año actual ({{ $now->firstOfYear()->formatLocalized('%B') }} - {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }})</h4>
 			<table data-table="ausentismos-anual" class="table table-striped">
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Porcentaje</th>
 						<th scope="col">Cantidad</th>
+						<th scope="col">Porcentaje</th>
 					</tr>
 				</thead>
 				<tbody>
 					{{-- Se carga por JS --}}
 				</tbody>
+				<tfoot>
+					<tr class="alert-info">
+						<th>Total</th>
+						<th data-content="total-ausentismos"></th>
+						<th data-content="total-percent"></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
@@ -366,7 +394,7 @@
 					<tr>
 						<th scope="col">Trabajador</th>
 						<th scope="col">Estado Actual</th>
-						<th scope="col">Dias</th>
+						<th scope="col">Días</th>
 					</tr>
 				</thead>
 				<tbody>

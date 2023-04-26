@@ -9,6 +9,7 @@ export default class ResumenCliente {
 		axios.get(this.path)
 			.then(response=>{
 				this.data = response.data
+				///return console.log(response)
 				this.init()
 			})
 	}
@@ -50,7 +51,7 @@ export default class ResumenCliente {
 			})
 
 
-			console.log(data_labels)
+			///console.log(data_labels)
 
 			let chart = chart_canvas.getContext("2d");
 			new Chart(chart, {
@@ -66,31 +67,89 @@ export default class ResumenCliente {
 
 	}
 
-	render_tables(obj){
+	render_tables(){
 
-		if(obj.data.length>0){
-			let total_count = obj.data.reduce((partial,current)=>partial+current.total,0)
+		////let total_count = obj.data.reduce((partial,current)=>partial+current.total,0)
 
-			obj.data.map(row=>{
+
+		const datos = [
+			{
+				tabla:'ausentismos-mes',
+				data:'ausentismos_mes',
+				nomina:'nomina_actual',
+				dias_periodo:'cant_dias_mes'
+			},
+			{
+				tabla:'ausentismos-mes-anterior',
+				data:'ausentismos_mes_anterior',
+				nomina:'nomina_mes_anterior',
+				dias_periodo:'cant_dias_mes_anterior'
+			},
+			{
+				tabla:'ausentismos-mes-anio-anterior',
+				data:'ausentismos_mes_anio_anterior',
+				nomina:'nomina_mes_anio_anterior',
+				dias_periodo:'cant_dias_mes_anio_anterior'
+			},
+			{
+				tabla:'ausentismos-anual',
+				data:'ausentismos_anual',
+				nomina:'nomina_actual',
+				dias_periodo:'cant_dias_anio'
+			}
+		]
+
+		//return console.log( this.data[datos[0].data] )
+
+
+
+		datos.map(dt=>{
+
+			let total_dias = 0
+			let total_percent = 0
+			let total_ausentismos = 0
+
+			this.data[dt.data].map(row=>{
+
 				const tr = dom('tr')
 				const td_nombre = dom('td')
 				const td_percent = dom('td')
 				const td_value = dom('td')
-				const percent = (row.total/total_count*100)
-				td_nombre.text(row.tipo.nombre)
+
+				//const percent = (row.total/total_count*100)
+				//const percent = nomina_actual*
+
+
+				td_nombre.text( row.tipo.nombre )
+				td_value.text( row.total )
+
+				total_ausentismos += row.total
+
+				const percent = this.data[dt.nomina]!= 0 ? ((parseInt(row.dias)/(this.data[dt.nomina]*this.data[dt.dias_periodo]))*100) : 0
 				td_percent.text(`${percent.toFixed(2)} %`)
-				td_value.text(row.total)
-				tr.append(td_nombre,td_percent,td_value)
-				$(`[data-table="${obj.table}"]`).append(tr)
+				total_dias += parseInt(row.dias)
+				total_percent += percent
+
+				tr.append(td_nombre,td_value,td_percent)
+				$(`[data-table="${dt.tabla}"]`).append(tr)
+
 			})
 
-		}
+			//console.log(dt.data,total_dias,this.data[dt.nomina],this.data[dt.dias_periodo],total_percent)
+
+			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-ausentismos"]').text(total_ausentismos)
+			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-percent"]').text(`${total_percent.toFixed(2)} %`)
 
 
-		$(`[data-table="${obj.table}"]`).dataTable({
-			order:[[1,'desc']],
-			dom:'t'
+			$(`[data-table="${dt.tabla}"]`).dataTable({
+				order:[[1,'desc']],
+				dom:'t'
+			})
+
 		})
+
+
+
 
 
 	}
@@ -98,7 +157,7 @@ export default class ResumenCliente {
 
 	init(){
 
-		console.log(this.data)
+		//console.log(this.data)
 
 
 		this.colores = [
@@ -164,29 +223,7 @@ export default class ResumenCliente {
 
 
 		// ausentismos mes actual
-		this.render_tables({
-			data:this.data.ausentismos_mes,
-			table:'ausentismos-mes'
-		})
-
-		// ausentismos mes anterior
-		this.render_tables({
-			data:this.data.ausentismos_mes_anterior,
-			table:'ausentismos-mes-anterior'
-		})
-
-
-		// ausentismos mes año anterior
-		this.render_tables({
-			data:this.data.ausentismos_mes_anio_anterior,
-			table:'ausentismos-mes-anio-anterior'
-		})
-
-		// ausentismos año actual
-		this.render_tables({
-			data:this.data.ausentismos_anual,
-			table:'ausentismos-anual'
-		})
+		this.render_tables()
 
 
 	}

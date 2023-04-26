@@ -61,7 +61,6 @@ trait Clientes {
 			) dias"
 		)
 		->where(function($query) use ($today){
-
 			$query->where(function($query) use ($today){
 				$query
 				->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
@@ -69,21 +68,17 @@ trait Clientes {
 					$query->where('fecha_regreso_trabajar','<=',$today->startOfMonth())
 						->orWhere('fecha_regreso_trabajar',null);
 				});
-
 			})
-
 			->orWhere(function($query) use ($today){
-
 				// los que siguen ausentes fuera del mes actual
 				$query->where('fecha_inicio','<',$today->startOfMonth())
 				->where(function($query) use($today){
 					$query->where('fecha_regreso_trabajar','>=',$today->startOfMonth())
 						->orWhere('fecha_regreso_trabajar',null);
 				});
-
 			});
-
 		})
+
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -92,6 +87,7 @@ trait Clientes {
 				->where('deleted_at',null);
 		});
 		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),4)*100) : 0;
+
 
 
 		/// MES PASADO
@@ -114,7 +110,6 @@ trait Clientes {
 			) dias"
 		)
 		->where(function($query) use ($today){
-
 			$query->where(function($query) use ($today){
 				$query
 					->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
@@ -123,8 +118,6 @@ trait Clientes {
 							->orWhere('fecha_regreso_trabajar',null);
 					});
 			})
-
-
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
 				$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
@@ -133,8 +126,8 @@ trait Clientes {
 							->orWhere('fecha_regreso_trabajar',null);
 					});
 			});
-
 		})
+
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -165,28 +158,28 @@ trait Clientes {
 				)+1
 			) dias"
 		)
-		->where(function($query) use ($today){
 
+		->where(function($query) use ($today){
 			$query->where(function($query) use ($today){
 				$query
 					->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
 					->where(function($query) use ($today){
-						$query->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
+						$query
+							->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
 							->orWhere('fecha_regreso_trabajar',null);
 					});
 			})
-
-
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
 				$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
 					->where(function($query) use ($today){
-						$query->where('fecha_regreso_trabajar','>',$today->subYear()->endOfMonth())
+						$query
+							->where('fecha_regreso_trabajar','>',$today->subYear()->endOfMonth())
 							->orWhere('fecha_regreso_trabajar',null);
 					});
 			});
-
 		})
+
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -216,28 +209,29 @@ trait Clientes {
 				)+1
 			) dias"
 		)
-		->where(function($query) use ($today){
 
+		->where(function($query) use ($today){
 			$query->where(function($query) use ($today){
 				$query
 					->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
 					->where(function($query) use ($today){
-						$query->where('fecha_regreso_trabajar','<=',$today)
+						$query
+							->where('fecha_regreso_trabajar','<=',$today)
 							->orWhere('fecha_regreso_trabajar',null);
 					});
 			})
-
-
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
-				$query->where('fecha_inicio','<',$today->startOfYear())
+				$query
+					->where('fecha_inicio','<',$today->startOfYear())
 					->where(function($query) use ($today){
-						$query->where('fecha_regreso_trabajar','>',$today->startOfYear())
+						$query
+							->where('fecha_regreso_trabajar','>',$today->startOfYear())
 							->orWhere('fecha_regreso_trabajar',null);
 					});
 			});
-
 		})
+
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -247,6 +241,7 @@ trait Clientes {
 		});
 		//dd(DB::getQueryLog());
 		$ausentismos_anio_actual = $nomina_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_actual*$today->dayOfYear()),4)*100) : 0;
+		///dd($q_ausentismos_anio_actual->first()->dias);
 
 
 
