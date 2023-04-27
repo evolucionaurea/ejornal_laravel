@@ -22,5 +22,9 @@ class AdminFichadasNuevasController extends Controller
     return view('admin.fichadas', compact('fichadas'));
   }
 
+  public function fichadas_ajax(){
+
+  }
+
 
 }

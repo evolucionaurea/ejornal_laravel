@@ -21,10 +21,14 @@ $(()=>{
 					name:'cliente_nombre'
 				},
 				{
-					data:row=>row,
-					name:'ingreso',
+					data:'ingreso',
+					name:'ingreso'
+				},
+				{
+					data:'egreso',
+					name:'egreso',
 					render:v=>{
-						return `${v.ingreso} al ${v.egreso==null ? '<i class="text-muted">[aún trabajando]</i>' : v.egreso}`
+						return v ?? '<i class="text-muted">[aún trabajando]</i>'
 					}
 				},
 				{

@@ -40,13 +40,16 @@ class AdminReporteController extends Controller
 				clientes.nombre cliente_nombre
 			')
 			->join('users','users.id','fichadas_nuevas.id_user')
-			->join('clientes','clientes.id','fichadas_nuevas.id_cliente')
-			->where(function($query) use ($request) {
-				$filtro = '%'.$request->search['value'].'%';
-				$query
-					->where('users.nombre','like',$filtro)
-					->orWhere('clientes.nombre','like',$filtro);
-			});
+			->join('clientes','clientes.id','fichadas_nuevas.id_cliente');
+
+		$total_records = $query->count();
+
+		$query->where(function($query) use ($request) {
+			$filtro = '%'.$request->search['value'].'%';
+			$query
+				->where('users.nombre','like',$filtro)
+				->orWhere('clientes.nombre','like',$filtro);
+		});
 
 		if($request->from) $query->whereDate('ingreso','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('egreso','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -59,7 +62,7 @@ class AdminReporteController extends Controller
 
 		return [
 			'draw'=>$request->draw,
-			'recordsTotal'=>$query->count(),
+			'recordsTotal'=>$total_records,
 			'recordsFiltered'=>$query->count(),
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'request'=>$request->all()
@@ -152,13 +155,16 @@ class AdminReporteController extends Controller
 			)
 			->join('nominas','nominas.id','ausentismos.id_trabajador')
 			->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
-			->join('clientes','clientes.id','nominas.id_cliente')
-			->where(function($query) use ($request) {
-				$filtro = '%'.$request->search['value'].'%';
-				$query
-					->where('nominas.nombre','like',$filtro)
-					->orWhere('clientes.nombre','like',$filtro);
-			});
+			->join('clientes','clientes.id','nominas.id_cliente');
+
+		$total_records = $query->count();
+
+		$query->where(function($query) use ($request) {
+			$filtro = '%'.$request->search['value'].'%';
+			$query
+				->where('nominas.nombre','like',$filtro)
+				->orWhere('clientes.nombre','like',$filtro);
+		});
 
 		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -172,7 +178,7 @@ class AdminReporteController extends Controller
 
 		return [
 			'draw'=>$request->draw,
-			'recordsTotal'=>$query->count(),
+			'recordsTotal'=>$total_records,
 			'recordsFiltered'=>$query->count(),
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'request'=>$request->all()
