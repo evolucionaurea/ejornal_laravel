@@ -11517,24 +11517,46 @@ div.dataTables_wrapper .table-spacer-top {
   }
 }
 
-.card_consultas {
-  padding: 20px;
-  border-radius: 27px 27px 27px 27px;
-  -moz-border-radius: 27px 27px 27px 27px;
-  -webkit-border-radius: 27px 27px 27px 27px;
-  border: 1px solid #e8e8e8;
+.cabecera_consultas_historial h2 i {
+  font-size: 20px;
+  margin-top: 10px;
 }
 
-.card_consultas h4 {
+.cabecera_consultas_historial h2 button h6:hover {
+  color: white;
+}
+
+.cabecera_consultas_historial h2 button h6:focus-visible {
+  color: white;
+}
+
+.cabecera_consultas_historial h2 button:focus-visible {
+  color: white;
+}
+
+.cabecera_consultas_historial h2 button:focus {
+  color: white;
+}
+
+.card_consultas {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card_consultas .card_consulta {
+  margin-right: 20px;
+}
+
+.card_consultas .card_consulta h4 {
   color: #2e87b8;
 }
 
-.card_consultas .card_consultas_titulo {
+.card_consultas .card_consulta .card_consultas_titulo {
   background: #ebebeb;
   padding: 10px 20px 10px 20px;
 }
 
-.card_consultas .card_consultas_titulo h6 {
+.card_consultas .card_consulta .card_consultas_titulo h6 {
   color: black;
 }
 

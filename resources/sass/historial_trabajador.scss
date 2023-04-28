@@ -1,23 +1,52 @@
-.card_consultas{
-  padding: 20px;
-  border-radius: 27px 27px 27px 27px;
--moz-border-radius: 27px 27px 27px 27px;
--webkit-border-radius: 27px 27px 27px 27px;
-  border: 1px solid #e8e8e8;
+.cabecera_consultas_historial{
 
-  & h4{
-    color: $ejornal;
+  & h2 i{
+    font-size: 20px;
+    margin-top: 10px;
   }
 
-  & .card_consultas_titulo{
-    background: #ebebeb;
-    padding: 10px 20px 10px 20px;
+  & h2 button h6:hover{
+    color: white;
+  }
 
-    & h6{
-      color: black;
+  & h2 button h6:focus-visible {
+    color: white;
+  }
+
+  & h2 button:focus-visible {
+    color: white;
+  }
+
+  & h2 button:focus {
+    color: white;
+  }
+
+
+}
+
+.card_consultas{
+  display: flex;
+  flex-wrap: wrap;
+
+  & .card_consulta{
+    margin-right: 20px;
+
+    & h4{
+      color: $ejornal;
+    }
+  
+    & .card_consultas_titulo{
+      background: #ebebeb;
+      padding: 10px 20px 10px 20px;
+  
+      & h6{
+        color: black;
+      }
+  
     }
 
   }
+
 }
 
 
