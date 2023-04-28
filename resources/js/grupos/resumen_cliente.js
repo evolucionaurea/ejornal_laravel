@@ -1,5 +1,7 @@
 import ResumenCliente from '../classes/ResumenCliente.js'
 $(()=>{
+
+	//GruposResumenController > index_cliente_ajax
 	new ResumenCliente({
 		path:'index_cliente_ajax'
 	})

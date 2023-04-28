@@ -30,9 +30,9 @@
 					<ol class="{{ setActiveSub('/admin/users/create') }}" onclick="javascript:location.href='{{url('admin/users/create')}}'">
 						<a href="{{url('admin/users/create')}}">Crear usuario</a>
 					</ol>
-					<ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}" onclick="javascript:location.href='{{url('admin/users_fichadas_nuevas')}}'">
+					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}" onclick="javascript:location.href='{{url('admin/users_fichadas_nuevas')}}'">
 						<a href="{{url('admin/users_fichadas_nuevas')}}">Fichadas</a>
-					</ol>
+					</ol> --}}
 				</ul>
 			</div>
 		</li>

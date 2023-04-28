@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto);/*!
+@import url(https://fonts.googleapis.com/css?family=Roboto|Open+Sans|Nunito);/*!
  * Bootstrap v4.5.0 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
  * Copyright 2011-2020 Twitter, Inc.
@@ -10926,6 +10926,10 @@ a.text-dark:focus {
   }
 }
 
+body {
+  font-family: 'Nunito', sans-serif !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11294,6 +11298,10 @@ div.dataTables_wrapper .table-spacer-top {
 
 .pagination .page-item .page-link:focus {
   background-color: #4285f4 !important;
+}
+
+table th {
+  font-weight: 600 !important;
 }
 
 .error_404 {

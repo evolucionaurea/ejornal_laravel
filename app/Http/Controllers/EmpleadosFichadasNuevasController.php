@@ -68,7 +68,7 @@ class EmpleadosFichadasNuevasController extends Controller
         $f_ingreso = new DateTime($fichada->ingreso);
         $f_egreso = new DateTime();
         $time = $f_ingreso->diff($f_egreso);
-        $tiempo_dedicado = $time->days . ' dias ' . $time->format('%H horas %i minutos %s segundos');
+        $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
 
         $fichada->id_user = $request->id_user;
         $fichada->id_cliente = auth()->user()->id_cliente_actual;

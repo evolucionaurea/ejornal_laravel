@@ -24,6 +24,7 @@ if(route=='/admin/clientes') require('./admin/admin_tablas')
 if(route=='/admin/medicamentos') require('./admin/medicamentos')
 if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
 if(route=='/admin/resumen') require('./admin/resumen')
+if(route=='/admin/reportes_fichadas_nuevas') require('./admin/reportes/fichadas')
 
 if(route=='/admin/users') require('./admin/users')
 if(route=='users.create') require('./admin/users/create.edit')
@@ -32,7 +33,6 @@ if(route=='users.edit') require('./admin/users/create.edit')
 if(route=='grupos.create') require('./admin/grupos/create.edit')
 if(route=='grupos.edit') require('./admin/grupos/create.edit')
 if(route=='reportes_ausentismos') require('./admin/reportes/ausentismos')
-if(route=='reportes_fichadas_nuevas') require('./admin/reportes/fichadas')
 
 /*const url = location.href;
 const admin = 'admin/users';

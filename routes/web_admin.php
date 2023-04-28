@@ -74,7 +74,8 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	/// REPORTES
 
 	// Fichadas
-	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('reportes_fichadas_nuevas');
+	Route::get('admin/reportes_fichadas_nuevas/exportar','AdminReporteController@exportar_fichadas');
+	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('/admin/reportes_fichadas_nuevas');
 	Route::get('admin/reportes/fichadas_nuevas', 'AdminReporteController@fichadas_nuevas')->name('reportes.fichadas_nuevas');
 	Route::post('admin/reportes/filtrar_fichadas_nuevas', 'AdminReporteController@filtrarFichadasNuevas')->name('reportes.filtrar_fichadas_nuevas');
 

@@ -88,13 +88,20 @@
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
-										<th scope="col">Porcentaje</th>
 										<th scope="col">Cantidad</th>
+										<th scope="col">Porcentaje</th>
 									</tr>
 								</thead>
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
+								<tfoot>
+									<tr class="alert-info">
+										<th>Total</th>
+										<th data-content="total-ausentismos"></th>
+										<th data-content="total-percent"></th>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 					</div>
@@ -108,13 +115,20 @@
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
-										<th scope="col">Porcentaje</th>
 										<th scope="col">Cantidad</th>
+										<th scope="col">Porcentaje</th>
 									</tr>
 								</thead>
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
+								<tfoot>
+									<tr class="alert-info">
+										<th>Total</th>
+										<th data-content="total-ausentismos"></th>
+										<th data-content="total-percent"></th>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 					</div>
@@ -128,13 +142,20 @@
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
-										<th scope="col">Porcentaje</th>
 										<th scope="col">Cantidad</th>
+										<th scope="col">Porcentaje</th>
 									</tr>
 								</thead>
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
+								<tfoot>
+									<tr class="alert-info">
+										<th>Total</th>
+										<th data-content="total-ausentismos"></th>
+										<th data-content="total-percent"></th>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 					</div>
@@ -148,13 +169,20 @@
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
-										<th scope="col">Porcentaje</th>
 										<th scope="col">Cantidad</th>
+										<th scope="col">Porcentaje</th>
 									</tr>
 								</thead>
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
+								<tfoot>
+									<tr class="alert-info">
+										<th>Total</th>
+										<th data-content="total-ausentismos"></th>
+										<th data-content="total-percent"></th>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 					</div>

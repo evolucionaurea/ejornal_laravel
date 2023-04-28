@@ -23,6 +23,9 @@
 
 		<div class="tarjeta">
 
+			@php
+				$export = true;
+			@endphp
 			@include('../../modulos.busqueda_fecha')
 
 
@@ -33,7 +36,8 @@
 					<tr>
 						<th>Empleado</th>
 						<th>Empresa</th>
-						<th>Ingreso / Egreso</th>
+						<th>Ingreso</th>
+						<th>Egreso</th>
 						<th>Tiempo trabajado</th>
 						<th>IP</th>
 					</tr>
