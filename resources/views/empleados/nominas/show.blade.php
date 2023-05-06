@@ -198,18 +198,13 @@
                                         <div class="card_consulta">
                                             <div class="card_consultas_titulo">
                                                 <h6>
-                                                    Creado el:
-                                                    {{ (!empty($consulta_medica->created_at)) ?
-                                                    date('d/m/Y',strtotime($consulta_medica->created_at)) : "" }}
-                                                </h6>
-                                            </div>
-                                            <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">
-                                                    <span style="font-weight: 600;" class="text_black">Fecha: </span>
+                                                    Fecha
                                                     {{ (!empty($consulta_medica->fecha)) ?
                                                     date('d/m/Y',strtotime($consulta_medica->fecha))
                                                     : "" }}
-                                                </li>
+                                                </h6>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
                                                 <li class="list-group-item">
                                                     <span style="font-weight: 600;" class="text_black">Temp. auxiliar:
                                                     </span>
@@ -314,17 +309,12 @@
                                         <div class="card_consulta">
                                             <div class="card_consultas_titulo">
                                                 <h6>
-                                                    Creado el:
-                                                    {{ (!empty($consulta_enfermeria->created_at)) ?
-                                                    date('d/m/Y',strtotime($consulta_enfermeria->created_at)) : "" }}
+                                                    Fecha:
+                                                    {{ (!empty($consulta_enfermeria->fecha)) ?
+                                                    date('d/m/Y',strtotime($consulta_enfermeria->fecha)) : "" }}
                                                 </h6>
                                             </div>
                                             <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">
-                                                    <span style="font-weight: 600;" class="text_black">Fecha: </span>
-                                                    {{ (!empty($consulta_enfermeria->fecha)) ?
-                                                    date('d/m/Y',strtotime($consulta_enfermeria->fecha)) : "" }}
-                                                </li>
                                                 <li class="list-group-item">
                                                     <span style="font-weight: 600;" class="text_black">Temp. auxiliar:
                                                     </span>
@@ -423,30 +413,24 @@
                                         <div class="card_consulta">
                                             <div class="card_consultas_titulo">
                                                 <h6>
-                                                    Creado el:
-                                                    {{ (!empty($preocupacional->created_at)) ?
-                                                    date('d/m/Y',strtotime($preocupacional->created_at)) : "" }}
-                                                </h6>
-                                            </div>
-                                            <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">
-                                                    <span style="font-weight: 600;" class="text_black">Trabajador:
-                                                    </span>
-                                                    {{ (!empty($preocupacional->nombre)) ? $preocupacional->nombre : ""
-                                                    }}
-                                                </li>
-                                                <li class="list-group-item">
-                                                    <span style="font-weight: 600;" class="text_black">Fecha inicio:
-                                                    </span>
+                                                    Fecha inicio:
                                                     {{ (!empty($preocupacional->fecha)) ?
                                                     date('d/m/Y',strtotime($preocupacional->fecha)) :
                                                     "" }}
-                                                </li>
+                                                </h6>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
                                                 <li class="list-group-item">
                                                     <span style="font-weight: 600;" class="text_black">Fecha final:
                                                     </span>
                                                     {{ (!empty($preocupacional->observaciones)) ?
                                                     date('d/m/Y',strtotime($preocupacional->observaciones)) : "" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Trabajador:
+                                                    </span>
+                                                    {{ (!empty($preocupacional->nombre)) ? $preocupacional->nombre : ""
+                                                    }}
                                                 </li>
                                                 <li class="list-group-item">
                                                     <span style="font-weight: 600;" class="text_black">Archivo: </span>
@@ -494,23 +478,12 @@
                                         <div class="card_consulta">
                                             <div class="card_consultas_titulo">
                                                 <h6>
-                                                    Creado el:
-                                                    {{ (!empty($ausentismo->created_at)) ?
-                                                    date('d/m/Y',strtotime($ausentismo->created_at))
-                                                    : "" }}
+                                                    Fecha inicio:
+                                                    {{ (!empty($ausentismo->fecha_inicio)) ?
+                                                    date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}
                                                 </h6>
                                             </div>
                                             <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">
-                                                    <span style="font-weight: 600;" class="text_black">Tipo: </span>
-                                                    {{ (!empty($ausentismo->tipo)) ? $ausentismo->tipo : "" }}
-                                                </li>
-                                                <li class="list-group-item">
-                                                    <span style="font-weight: 600;" class="text_black">Fecha inicio:
-                                                    </span>
-                                                    {{ (!empty($ausentismo->fecha_inicio)) ?
-                                                    date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}
-                                                </li>
                                                 <li class="list-group-item">
                                                     <span style="font-weight: 600;" class="text_black">Fecha final:
                                                     </span>
@@ -523,6 +496,10 @@
                                                     </span>
                                                     {{ (!empty($ausentismo->fecha_regreso_trabajar)) ?
                                                     date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Tipo: </span>
+                                                    {{ (!empty($ausentismo->tipo)) ? $ausentismo->tipo : "" }}
                                                 </li>
                                                 <li class="list-group-item">
                                                     <span style="font-weight: 600;" class="text_black">Archivo: </span>
