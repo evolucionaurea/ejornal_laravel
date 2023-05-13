@@ -580,5 +580,5 @@ class EmpleadosNominasController extends Controller
 		return $this->exportNomina($idcliente,$request);
 	}
 
-
+	
 }
