@@ -65,6 +65,7 @@ $(()=>{
 				},
 				{
 					data:row=>row,
+					name:'fecha_regreso_trabajar',
 					render:v=>{
 						if(v.fecha_regreso_trabajar == null){
 							return '<span class="badge badge-danger">ausente</span>'

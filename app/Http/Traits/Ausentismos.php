@@ -138,7 +138,7 @@ trait Ausentismos {
 		$request->length = 5000;
 		$results = $this->searchAusentismos($id_cliente,$request);
 		$ausentismos = $results['data'];
-		//dd($ausentismos);
+		//dd($ausentismos[0]->fecha_inicio->format('d/m/Y'));
 
 		$now = Carbon::now();
 		$file_name = 'ausentismos-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';
@@ -169,9 +169,9 @@ trait Ausentismos {
 				$ausentismo->trabajador_dni,
 				$ausentismo->trabajador_sector,
 				$ausentismo->ausentismo_tipo,
-				$ausentismo->fecha_inicio,
-				$ausentismo->fecha_final??'[no cargada]',
-				$ausentismo->fecha_regreso_trabajar??'[no cargada]',
+				$ausentismo->fecha_inicio->format('d/m/Y'),
+				$ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]',
+				$ausentismo->fecha_regreso_trabajar ?? '[no cargada]',
 				$hoy
 			],';');
 		}
