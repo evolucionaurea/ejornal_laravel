@@ -6,10 +6,14 @@ use Illuminate\Http\Request;
 use App\Cliente;
 use App\Nomina;
 use App\ClienteUser;
+use App\FichadaNueva;
 use App\User;
+use Jenssegers\Agent\Agent;
+use DateTime;
 use App\Grupo;
 use App\ClienteGrupo;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class AdminClientesController extends Controller
 {
@@ -20,7 +24,8 @@ class AdminClientesController extends Controller
      */
     public function index()
     {
-        $clientes = Cliente::all();
+        $clientes = Cliente::withTrashed()
+        ->get();
         return view('admin.clientes', compact('clientes'));
     }
 
@@ -146,8 +151,43 @@ class AdminClientesController extends Controller
      */
     public function destroy($id)
     {
-      $cliente = Cliente::find($id)->delete();
+
+      $agent = new Agent();
+      $device = $agent->platform();
+      $egreso = Carbon::now();
+
+      $buscar_users_fichados = User::where('id_cliente_actual', $id)->where('fichada', 1)->get();
+      foreach ($buscar_users_fichados as $user) {
+        $user->fichada = 0;
+        $user->save();
+
+        $fichada = FichadaNueva::where('id_user', $user->id)->latest()->first();
+        $fichada->egreso = $egreso;
+  
+        $f_ingreso = new DateTime($fichada->ingreso);
+        $f_egreso = new DateTime();
+        $time = $f_ingreso->diff($f_egreso);
+        $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
+  
+        $fichada->id_user = $user->id;
+        $fichada->id_cliente = $user->id_cliente_actual;
+        $fichada->ip = \Request::ip();
+        $fichada->dispositivo = $device;
+        $fichada->tiempo_dedicado = $tiempo_dedicado;
+        $fichada->save();
+      }
+
+
+      Cliente::find($id)->delete();
       return redirect('admin/clientes')->with('success', 'Cliente eliminado correctamente');
+    }
+
+
+    public function restaurarCliente(Request $request)
+    {
+
+        Cliente::onlyTrashed()->where('id', $request->id_cliente)->restore();
+		    return redirect('admin/clientes')->with('success', 'Cliente restaurado con exito');
     }
 
 

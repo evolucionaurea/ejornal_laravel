@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Nomina;
 use App\Ausentismo;
 use App\ClienteGrupo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
+
+  use SoftDeletes;
 
   // Nombre de la tabla
   protected $table = 'clientes';

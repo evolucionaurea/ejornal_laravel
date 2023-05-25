@@ -13,6 +13,7 @@ trait Clientes {
 
 		return ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
 		->where('cliente_user.id_user', '=', auth()->user()->id)
+		->where('clientes.deleted_at', '=', null)
 		->select('clientes.nombre', 'clientes.id')
 		->get();
 

@@ -30,111 +30,122 @@
         @endif
 
         <div class="tarjeta">
-            <form id="form_guardar_consulta_enfermeria" action="{{action('EmpleadoConsultaEnfermeriaController@store')}}" accept-charset="UTF-8" method="post">
-            @csrf
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label>Trabajador: <span style="color: red;">*</span></label>
-                    <select name="nomina" class="form-control form-control-sm select_2">
-                        @foreach ($nominas as $nomina)
-                        <option value="{{$nomina->id}}">{{$nomina->nombre}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>
-                        Diagnóstico:
-                        @if (auth()->user()->permiso_desplegables == 1)
-                          <a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal" data-target="#crear_diagnostico" href="#">
-                            <i class="fas fa-plus-circle"></i>
-                          </a>
-                          <a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_diagnostico" href="#">
-                            <i class="fas fa-eye"></i>
-                          </a>
-                        @endif
-                    </label>
-                    <select name="tipo" class="form-control form-control-sm">
-                        @foreach ($diagnostico_consultas as $tipo)
-                        <option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Fecha <span style="color: red;">*</span> </label>
-                    <input required id="data_picker_gral" name="fecha" type="datetime" class="form-control" value="{{ old("fecha") }}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Amerita salida <span style="color: red;">*</span></label>
-                    <select name="amerita_salida" class="form-control form-control-sm">
-                        <option value="1">Si</option>
-                        <option value="0">No</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group col-md-12">
-                <ul class="list-group">
-                    <label>
-                        Medicación:
-                        <a id="cargar_medicacion" style="color: #6f9eab; margin-right: 10px;" href="#">
-                            <i class="fas fa-plus-circle"></i>
-                        </a>
-                    </label>
-                    <div class="listado_medicaciones">
-
+            <form id="form_guardar_consulta_enfermeria"
+                action="{{action('EmpleadoConsultaEnfermeriaController@store')}}" accept-charset="UTF-8" method="post">
+                @csrf
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label>Trabajador: <span style="color: red;">*</span></label>
+                        <select name="nomina" class="form-control form-control-sm select_2">
+                            @foreach ($nominas as $nomina)
+                            <option value="{{$nomina->id}}">{{$nomina->nombre}}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="listado_medicaciones_inputs_ocultos">
-
+                    <div class="form-group col-md-3">
+                        <label>
+                            Diagnóstico:
+                            @if (auth()->user()->permiso_desplegables == 1)
+                            <a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
+                                data-target="#crear_diagnostico" href="#">
+                                <i class="fas fa-plus-circle"></i>
+                            </a>
+                            <a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_diagnostico" href="#">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            @endif
+                        </label>
+                        <select name="tipo" class="form-control form-control-sm">
+                            @foreach ($diagnostico_consultas as $tipo)
+                            <option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+                            @endforeach
+                        </select>
                     </div>
-                </ul>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label>Temperatura auxiliar</label>
-                    <input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("temperatura_auxiliar") }}">
+                    <div class="form-group col-md-3">
+                        <label>Fecha <span style="color: red;">*</span> </label>
+                        <input required id="data_picker_gral" name="fecha" type="datetime" class="form-control"
+                            value="{{ old(" fecha") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Amerita salida <span style="color: red;">*</span></label>
+                        <select name="amerita_salida" class="form-control form-control-sm">
+                            <option value="" hidden>Seleccione</option>
+                            <option value="1">Si</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label>Peso</label>
-                    <input name="peso" type="number" class="form-control" value="{{ old("peso") }}">
+                <div class="form-group col-md-12">
+                    <ul class="list-group">
+                        <label>
+                            Medicación:
+                            <a id="cargar_medicacion" style="color: #6f9eab; margin-right: 10px;" href="#">
+                                <i class="fas fa-plus-circle"></i>
+                            </a>
+                        </label>
+                        <div class="listado_medicaciones">
+
+                        </div>
+                        <div class="listado_medicaciones_inputs_ocultos">
+
+                        </div>
+                    </ul>
                 </div>
-                <div class="form-group col-md-3">
-                    <label>Altura</label>
-                    <input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label>Temperatura auxiliar</label>
+                        <input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("
+                            temperatura_auxiliar") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Peso</label>
+                        <input name="peso" type="number" class="form-control" value="{{ old(" peso") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Altura</label>
+                        <input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>IMC</label>
+                        <input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
+                        <input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Glucemia</label>
+                        <input name="glucemia" type="number" class="form-control" value="{{ old(" glucemia") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Saturacion oxígeno</label>
+                        <input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("
+                            saturacion_oxigeno") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Tension arterial</label>
+                        <input name="tension_arterial" type="text" class="form-control" value="{{ old("
+                            tension_arterial") }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Frecuencia Cardíaca</label>
+                        <input name="frec_cardiaca" type="number" class="form-control" value="{{ old(" frec_cardiaca")
+                            }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Derivación consulta <span style="color: red;">*</span></label>
+                        <select name="derivacion_consulta" class="form-control form-control-sm">
+                            <option value="" hidden>Seleccione</option>
+                            <option value="Sanatorio">Sanatorio</option>
+                            <option value="ART">ART</option>
+                            <option value="Vuelve a trabajar">Vuelve a trabajar</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Observaciones <span style="color: red;">*</span></label>
+                        <textarea name="observaciones" required class="form-control"
+                            rows="3">{{ old("observaciones") }}</textarea>
+                    </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label>IMC</label>
-                    <input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
-                    <input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Glucemia</label>
-                    <input name="glucemia" type="number" class="form-control" value="{{ old("glucemia") }}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Saturacion oxígeno</label>
-                    <input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("saturacion_oxigeno") }}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tension arterial</label>
-                    <input name="tension_arterial" type="text" class="form-control" value="{{ old("tension_arterial") }}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Frecuencia Cardíaca</label>
-                    <input name="frec_cardiaca" type="number" class="form-control" value="{{ old("frec_cardiaca") }}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Derivación consulta <span style="color: red;">*</span></label>
-                    <select name="derivacion_consulta" class="form-control form-control-sm">
-                        <option value="Sanatorio">Sanatorio</option>
-                        <option value="ART">ART</option>
-                        <option value="Vuelve a trabajar">Vuelve a trabajar</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-4">
-                    <label>Observaciones <span style="color: red;">*</span></label>
-                    <textarea name="observaciones" required class="form-control" rows="3">{{ old("observaciones") }}</textarea>
-                </div>
-            </div>
-            <button id="guarda_consulta" class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar consulta de enfermería</button>
+                <button id="guarda_consulta" class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar
+                    consulta de enfermería</button>
             </form>
         </div>
 
@@ -160,14 +171,16 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <form action="{{action('EmpleadoConsultaEnfermeriaController@tipo')}}" accept-charset="UTF-8" method="post">
-                        {{ csrf_field() }}
-                        <div class="form-group">
-                            <label>Nombre</label>
-                            <input name="nombre" type="text" class="form-control form-control-sm" placeholder="">
-                        </div>
-                        <button type="submit" class="btn-ejornal btn-ejornal-success">Crear tipo</button>
-                        <button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
+                        <form action="{{action('EmpleadoConsultaEnfermeriaController@tipo')}}" accept-charset="UTF-8"
+                            method="post">
+                            {{ csrf_field() }}
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input name="nombre" type="text" class="form-control form-control-sm" placeholder="">
+                            </div>
+                            <button type="submit" class="btn-ejornal btn-ejornal-success">Crear tipo</button>
+                            <button type="button" class="btn-ejornal btn-ejornal-gris-claro"
+                                data-dismiss="modal">Cerrar</button>
                         </form>
                     </div>
                 </div>
@@ -180,7 +193,8 @@
 
 
 <!-- Modal Ver tipo Diagnostico consulta -->
-<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1" aria-labelledby="ver_tipo_diagnostico_titulo" aria-hidden="true">
+<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1" aria-labelledby="ver_tipo_diagnostico_titulo"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -216,7 +230,8 @@
                                 <tr>
                                     <td>{{$tipo->nombre}}</td>
                                     <td class="acciones_tabla" scope="row">
-                                        <form class="" action="{{route('consultas.enfermeria.tipo_delete', $tipo->id)}}" method="post">
+                                        <form class="" action="{{route('consultas.enfermeria.tipo_delete', $tipo->id)}}"
+                                            method="post">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="_method" value="DELETE">
                                             <button title="Eliminar" type="submit">
@@ -241,7 +256,8 @@
 
 
 <!-- Modal Cargar tipo de medicacion -->
-<div class="modal fade" id="cargar_medicacion_abrir" tabindex="-1" aria-labelledby="cargar_medicacion_titulo" aria-hidden="true">
+<div class="modal fade" id="cargar_medicacion_abrir" tabindex="-1" aria-labelledby="cargar_medicacion_titulo"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -262,12 +278,15 @@
                                     <div class="input-group-prepend">
                                         <div class="input-group-text">En stock: {{$medicamento->stock}}</div>
                                     </div>
-                                    <input name="{{$medicamento->id}}" type="text" class="form-control" placeholder="" value="">
+                                    <input name="{{$medicamento->id}}" type="text" class="form-control" placeholder=""
+                                        value="">
                                 </div>
                             </div>
                             @endforeach
-                            <button id="aceptar_suministrar_medicamentos" type="button" class="btn-ejornal btn-ejornal-success">Aceptar</button>
-                            <button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
+                            <button id="aceptar_suministrar_medicamentos" type="button"
+                                class="btn-ejornal btn-ejornal-success">Aceptar</button>
+                            <button type="button" class="btn-ejornal btn-ejornal-gris-claro"
+                                data-dismiss="modal">Cerrar</button>
                         </form>
                     </div>
                 </div>
@@ -281,7 +300,8 @@
 
 
 <!-- Modal confirmación Final -->
-<div class="modal fade" id="consulta_confirmacion_final" tabindex="-1" aria-labelledby="consulta_confirmacion_final_Titulo" aria-hidden="true">
+<div class="modal fade" id="consulta_confirmacion_final" tabindex="-1"
+    aria-labelledby="consulta_confirmacion_final_Titulo" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -295,9 +315,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="alert alert-light" role="alert">
-                            <p>Una vez creada la consulta no podrá editarse. Presione Aceptar para continuar o cancelar para revisar la consulta.</p>
+                            <p>Una vez creada la consulta no podrá editarse. Presione Aceptar para continuar o cancelar
+                                para revisar la consulta.</p>
                             <hr>
-                            <a id="consulta_enfermeria_crear_ok" type="button" class="btn-ejornal btn-ejornal-success">Aceptar</a>
+                            <a id="consulta_enfermeria_crear_ok" type="button"
+                                class="btn-ejornal btn-ejornal-success">Aceptar</a>
                             <a type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</a>
                         </div>
                     </div>

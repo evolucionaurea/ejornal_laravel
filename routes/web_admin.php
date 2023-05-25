@@ -35,6 +35,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	]);
 	Route::post('admin/clientes/cargar_excel', 'AdminClientesController@cargar_excel')->name('/admin/clientes/cargar_excel');
 	Route::post('admin/generar_token', 'AdminClientesController@generarToken')->name('/admin/generar_token');
+	Route::post('admin/clientes/restaurar', 'AdminClientesController@restaurarCliente')->name('admin/clientes/restaurar');
 
 	// GRUPOS
 	Route::resource('admin/grupos', 'AdminGruposController', [

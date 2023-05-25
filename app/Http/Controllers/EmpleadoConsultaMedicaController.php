@@ -106,7 +106,14 @@ class EmpleadoConsultaMedicaController extends Controller
 	 */
 	public function store(Request $request)
 	{
-
+		
+		if ($request->amerita_salida == null || $request->derivacion_consulta == null) {
+			return back()->withInput($request->input())->with(
+				'error', 
+				'Amerita salida y Derivacion consulta no pueden estar sin completar. Revisa los campos obligatorios (*)'
+			);
+		}
+		
 		// Si existen medicaciones se validan aqui
 		$suministrados = [];
 		if (isset($request->medicaciones) && !empty($request->medicaciones)) {
