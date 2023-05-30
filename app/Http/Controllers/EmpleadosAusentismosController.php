@@ -43,21 +43,21 @@ class EmpleadosAusentismosController extends Controller
 
 
 
-	  /*$query = Ausentismo::select(
-	  	'ausentismos.*',
-	  	'nominas.nombre',
-	  	'nominas.email',
-	  	'nominas.telefono',
-	  	'nominas.dni',
-	  	'nominas.estado',
-	  	'nominas.sector',
-	  	'ausentismo_tipo.nombre as nombre_ausentismo'
-	  )
-	  ->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		/*$query = Ausentismo::select(
+			'ausentismos.*',
+			'nominas.nombre',
+			'nominas.email',
+			'nominas.telefono',
+			'nominas.dni',
+			'nominas.estado',
+			'nominas.sector',
+			'ausentismo_tipo.nombre as nombre_ausentismo'
+		)
+		->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
-	  $query->where(function($query) use ($request) {
+		$query->where(function($query) use ($request) {
 			$filtro = '%'.$request->search['value'].'%';
 			$query->where('nominas.nombre','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
@@ -118,54 +118,81 @@ class EmpleadosAusentismosController extends Controller
 	 */
 	public function store(Request $request)
 	{
-	  $validatedData = $request->validate([
-		'trabajador' => 'required',
-		'tipo' => 'required',
-		'fecha_inicio' => 'required',
-		'tipo_comunicacion' => 'required',
-		'descripcion' => 'required|string'
-	  ]);
-	  $fecha_actual = Carbon::now();
-	  $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
+
+		$validatedData = $request->validate([
+			'trabajador' => 'required',
+			'tipo' => 'required',
+			'fecha_inicio' => 'required',
+			'fecha_final' => 'required',
+			'tipo_comunicacion' => 'required',
+			'descripcion' => 'required|string'
+		]);
+
+		$fecha_actual = Carbon::now();
+		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
+		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
 
 
 		$dos_dias_adelante = Carbon::now()->addDays(2);
 		$un_anio_atras = Carbon::now()->subYear(1);
+
 		if ($fecha_inicio > $dos_dias_adelante) {
-		  return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a dos dias adelante de la fecha actual');
+			return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a dos días adelante de la fecha actual.');
 		}
 		if ($fecha_inicio->lessThan($un_anio_atras)) {
-		  return back()->withInput()->with('error', 'La fecha de inicio puede ser hasta un año atrás, no mas');
+			return back()->withInput()->with('error', 'La fecha de inicio puede ser hasta un año atrás, no más.');
 		}
-
-	  if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
-		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
 
 		if ($fecha_inicio->greaterThan($fecha_final)) {
-		  return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
+			return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío.');
 		}
-	  }
 
-	  if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
-		$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
-		if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
-			return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final');
-		  }
+		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
+			$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
-		if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
-		  return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
+			if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
+				return back()->withInput()->with('error', 'No puedes ingresar una fecha de regreso al trabajo sin cargar una fecha final.');
+			}
+
+			if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
+				return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo.');
+			}
+		}else{
+
 		}
-	  }
 
-	  $buscar_ausentismos_trabajador = Ausentismo::where('id_trabajador', $request->trabajador)
-	  ->where('fecha_regreso_trabajar', null)
-	  ->count();
+		$buscar_ausentismos_trabajador = Ausentismo::where('id_trabajador', $request->trabajador)
+		->where('fecha_regreso_trabajar', null)
+		->count();
 
-	  if ($buscar_ausentismos_trabajador > 0) {
-		return back()->withInput()->with('error', 'Este trabajador tiene ausentismos sin fecha de regreso cargada. No podras
-		cargar nuevos ausentismos hasta en tanto dicha fecha sea cargada');
-	  }
+		if ($buscar_ausentismos_trabajador > 0) {
+			return back()->withInput()->with('error', 'Este trabajador tiene ausentismos sin fecha de regreso cargada. No podrás cargar nuevos ausentismos hasta en tanto dicha fecha sea cargada.');
+		}
+
+		$ausentismos_solapamientos = Ausentismo::where('id_trabajador', $request->trabajador)
+		->where(function($query) use ($fecha_inicio,$fecha_final){
+			$query
+				->where(function($query) use ($fecha_inicio){
+					/// busco si se solapa la fecha de inicio
+					$query
+						->whereRaw("'{$fecha_inicio}' >= fecha_inicio AND '{$fecha_inicio}' < fecha_final");
+				})
+				->orWhere(function($query) use ($fecha_final){
+					/// busco si se solapa la fecha del final
+					$query
+						->whereRaw( "'{$fecha_final}' >= fecha_inicio AND '{$fecha_final}' <= fecha_final");
+
+				});
+		})
+		->count();
+
+		if($ausentismos_solapamientos){
+			return back()->withInput()->with('error','Las fechas seleccionadas se superponen con otra fecha de un ausentismo ya cargado.');
+		}
+
+		///chequear solapamiento de fechas
+
 
 
 		//Guardar en base Ausentismo
@@ -173,23 +200,20 @@ class EmpleadosAusentismosController extends Controller
 		$ausentismo->id_trabajador = $request->trabajador;
 		$ausentismo->id_tipo = $request->tipo;
 		$ausentismo->fecha_inicio = $fecha_inicio;
-		if (isset($request->fecha_final) && !empty($request->fecha_final)) {
-		  $ausentismo->fecha_final = $fecha_final;
-		}else {
-		  $ausentismo->fecha_final = null;
-		}
+		$ausentismo->fecha_final = $fecha_final;
+
 		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
-		  $ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
+			$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
 		}else {
-		  $ausentismo->fecha_regreso_trabajar = null;
+			$ausentismo->fecha_regreso_trabajar = $fecha_final;
 		}
 
 		// Si hay un archivo adjunto
 		if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
 
-		  $archivo = $request->file('archivo');
-		  $nombre = $archivo->getClientOriginalName();
-		  $ausentismo->archivo = $nombre;
+			$archivo = $request->file('archivo');
+			$nombre = $archivo->getClientOriginalName();
+			$ausentismo->archivo = $nombre;
 
 		}
 		$ausentismo->user = auth()->user()->nombre;
@@ -216,7 +240,7 @@ class EmpleadosAusentismosController extends Controller
 		$comunicacion->save();
 
 
-	  return redirect('empleados/ausentismos')->with('success', 'Ausentismo y Comunicación guardados con éxito');
+		return redirect('empleados/ausentismos')->with('success', 'Ausentismo y Comunicación guardados con éxito');
 
 	}
 
@@ -255,16 +279,16 @@ class EmpleadosAusentismosController extends Controller
 	public function edit($id)
 	{
 
-	  $ausentismo = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-	  ->where('ausentismos.id', $id)
-	  ->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-	  ->first();
+		$ausentismo = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->where('ausentismos.id', $id)
+		->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
+		->first();
 
-	  $clientes = $this->getClientesUser();
+		$clientes = $this->getClientesUser();
 
-	  return view('empleados.ausentismos.edit', compact('ausentismo', 'clientes'));
+		return view('empleados.ausentismos.edit', compact('ausentismo', 'clientes'));
 	}
 
 	/**
@@ -277,22 +301,22 @@ class EmpleadosAusentismosController extends Controller
 	public function update(Request $request, $id)
 	{
 
-	  $validatedData = $request->validate([
+		$validatedData = $request->validate([
 		'fecha_inicio' => 'required'
-	  ]);
+		]);
 
-	  $fecha_actual = Carbon::now();
-	  $fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
+		$fecha_actual = Carbon::now();
+		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
 
-	  if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
+		if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {
 			$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
 
 			if ($fecha_inicio->greaterThan($fecha_final)) {
 				return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a la fecha final o quizás lo dejó vacío');
 			}
-	  }
+		}
 
-	  if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
+		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
 			$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
 			if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
@@ -300,27 +324,27 @@ class EmpleadosAusentismosController extends Controller
 			}
 
 			if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
-			  return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
+				return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
 			}
-	  }
+		}
 
-	  //Actualizar en base
-	  $ausentismo = Ausentismo::findOrFail($id);
-	  $ausentismo->fecha_inicio = $fecha_inicio;
-	  if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+		//Actualizar en base
+		$ausentismo = Ausentismo::findOrFail($id);
+		$ausentismo->fecha_inicio = $fecha_inicio;
+		if (isset($request->fecha_final) && !empty($request->fecha_final)) {
 			$ausentismo->fecha_final = $fecha_final;
-	  }else {
+		}else {
 			$ausentismo->fecha_final = null;
-	  }
-	  if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
+		}
+		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
 			$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
-	  }else {
+		}else {
 			$ausentismo->fecha_regreso_trabajar = null;
-	  }
-	  $ausentismo->user = auth()->user()->nombre;
-	  $ausentismo->save();
+		}
+		$ausentismo->user = auth()->user()->nombre;
+		$ausentismo->save();
 
-	  return redirect('empleados/ausentismos?'.$_SERVER['QUERY_STRING'])->with('success', 'Ausentismo actualizado con éxito');
+		return redirect('empleados/ausentismos?'.$_SERVER['QUERY_STRING'])->with('success', 'Ausentismo actualizado con éxito');
 
 
 	}
@@ -333,17 +357,17 @@ class EmpleadosAusentismosController extends Controller
 	 */
 	public function destroy($id)
 	{
-	  $ausentismo = Ausentismo::find($id);
+		$ausentismo = Ausentismo::find($id);
 
-	  if ($ausentismo->archivo != null) {
+		if ($ausentismo->archivo != null) {
 		$ruta = storage_path("app/ausentismos/trabajador/{$ausentismo->id}");
 		$ruta_archivo = storage_path("app/ausentismos/trabajador/{$ausentismo->id}/{$ausentismo->hash_archivo}");
 		unlink($ruta_archivo);
 		rmdir($ruta);
-	  }
-	  $comunicacion = Comunicacion::where('id_ausentismo', $id)->delete();
-	  $ausentismo->delete();
-	  return back()->with('success', 'Ausentismo y Comunicación asociada eliminados correctamente');
+		}
+		$comunicacion = Comunicacion::where('id_ausentismo', $id)->delete();
+		$ausentismo->delete();
+		return back()->with('success', 'Ausentismo y Comunicación asociada eliminados correctamente');
 	}
 
 
@@ -351,7 +375,7 @@ class EmpleadosAusentismosController extends Controller
 	{
 
 		$validatedData = $request->validate([
-		  'nombre' => 'required|string'
+			'nombre' => 'required|string'
 		]);
 
 		//Guardar en base
@@ -366,11 +390,11 @@ class EmpleadosAusentismosController extends Controller
 	public function tipo_destroy($id_tipo)
 	{
 
-	  $ausentismos = Ausentismo::where('id_tipo', $id_tipo)->get();
+		$ausentismos = Ausentismo::where('id_tipo', $id_tipo)->get();
 
-	  if (!empty($ausentismos) && count($ausentismos) > 0) {
+		if (!empty($ausentismos) && count($ausentismos) > 0) {
 		return back()->with('error', 'Existen ausencias creadas con este tipo de ausencia. No puedes eliminarla');
-	  }
+		}
 
 		//Eliminar en base
 		$tipo_ausentismo = AusentismoTipo::find($id_tipo)->delete();
@@ -381,10 +405,10 @@ class EmpleadosAusentismosController extends Controller
 	public function descargar_archivo($id)
 	{
 
-	  $ausentismo = Ausentismo::find($id);
-	  $ruta = storage_path("app/ausentismos/trabajador/{$ausentismo->id}/{$ausentismo->hash_archivo}");
-	  return response()->download($ruta);
-	  return back();
+		$ausentismo = Ausentismo::find($id);
+		$ruta = storage_path("app/ausentismos/trabajador/{$ausentismo->id}/{$ausentismo->hash_archivo}");
+		return response()->download($ruta);
+		return back();
 
 	}
 

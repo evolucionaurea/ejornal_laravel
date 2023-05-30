@@ -1,254 +1,37 @@
+$.datepicker.regional['es'] = {closeText:'Cerrar',prevText:'<Ant',nextText:'Sig>',currentText:'Hoy',monthNames:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],monthNamesShort:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],dayNames:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],dayNamesShort:['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],dayNamesMin:['Do','Lu','Ma','Mi','Ju','Vi','Sá'],weekHeader: 'Sm',dateFormat:'dd/mm/yy',firstDay:1,isRTL:false,showMonthAfterYear:false,yearSuffix:''};
+$.datepicker.setDefaults($.datepicker.regional['es']);
+
 $(document).ready(function($){
 
-  $("#data_picker_gral").datepicker(
-      {
-          dateFormat: "dd/mm/yy",
-          dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-          dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-          firstDay: 1,
-          gotoCurrent: true,
-          monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-      }
-  );
+	$(`
+		#data_picker_gral,
+		#ausentismo_fecha_inicio,
+		#ausentismo_fecha_final,
+		#ausentismo_fecha_regreso,
+		#data_picker_edit_doc_ausentismo,
+		#reporte_fichadas_desde,
+		#reporte_fichadas_hasta,
+		#reporte_ausentismos_desde,
+		#reporte_ausentismos_hasta,
+		#reporte_certificaciones_desde,
+		#reporte_certificaciones_hasta,
+		#reporte_consultas_medicas_desde,
+		#reporte_consultas_medicas_hasta,
+		#reporte_consultas_enfermerias_desde,
+		#reporte_consultas_enfermerias_hasta,
+		#reporte_comunicaciones_desde,
+		#reporte_comunicaciones_hasta,
+		#fecha_vencimiento_matricula,
+		#tarea_liviana_fecha_inicio,
+		#tarea_liviana_fecha_final,
+		#tarea_liviana_fecha_regreso
+	`).datepicker()
+
+	const today = new Date()
+	let mes = today.getMonth()+1
+	mes = mes<10 ? `0${mes}` : mes
+	$('#data_picker_edit_doc_ausentismo_ult_modif').val(`${today.getDate()}/${mes}/${today.getFullYear()}`)
 
 
-    $("#ausentismo_fecha_inicio").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#ausentismo_fecha_final").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#ausentismo_fecha_regreso").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-
-    $("#data_picker_edit_doc_ausentismo").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-
-    $("#data_picker_edit_doc_ausentismo_ult_modif").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    ).datepicker("setDate", new Date());
-
-
-
-    $("#reporte_fichadas_desde").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_fichadas_hasta").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-
-    $("#reporte_ausentismos_desde").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_ausentismos_hasta").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-
-    $("#reporte_certificaciones_desde").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_certificaciones_hasta").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_consultas_medicas_desde").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_consultas_medicas_hasta").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-
-    $("#reporte_consultas_enfermerias_desde").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_consultas_enfermerias_hasta").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-
-    $("#reporte_comunicaciones_desde").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#reporte_comunicaciones_hasta").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#fecha_vencimiento_matricula").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#tarea_liviana_fecha_inicio").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#tarea_liviana_fecha_final").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
-
-    $("#tarea_liviana_fecha_regreso").datepicker(
-        {
-            dateFormat: "dd/mm/yy",
-            dayNames: [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" ],
-            dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-            firstDay: 1,
-            gotoCurrent: true,
-            monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre" ]
-        }
-    );
 
 })

@@ -41,13 +41,17 @@ trait Ausentismos {
 
 		$total = $query->count();
 
-		$query->where(function($query) use($request) {
-			$filtro = '%'.$request->search['value'].'%';
-			$query->where('nominas.nombre','like',$filtro)
-				->orWhere('nominas.email','like',$filtro)
-				->orWhere('nominas.dni','like',$filtro)
-				->orWhere('nominas.telefono','like',$filtro);
-		});
+
+		if(isset($request->search['value'])){
+			$query->where(function($query) use($request) {
+				$filtro = '%'.$request->search['value'].'%';
+				$query->where('nominas.nombre','like',$filtro)
+					->orWhere('nominas.email','like',$filtro)
+					->orWhere('nominas.dni','like',$filtro)
+					->orWhere('nominas.telefono','like',$filtro);
+			});
+		}
+
 
 
 		if($request->ausentes=='hoy'){

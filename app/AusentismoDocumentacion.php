@@ -16,4 +16,10 @@ class AusentismoDocumentacion extends Model
   // Campos habilitados para ingresar
   protected $fillable = ['id_ausentismo', 'user', 'institucion', 'medico', 'matricula_provincial', 'matricula_nacional', 'fecha_documento', 'diagnostico', 'observaciones', 'archivo'];
 
+
+
+  protected $casts = [
+  	'fecha_documento'=>'date:d/m/Y'
+  ];
+
 }

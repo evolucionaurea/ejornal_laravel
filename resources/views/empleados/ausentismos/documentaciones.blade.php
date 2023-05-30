@@ -318,8 +318,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Fecha documento original</label>
-                                <input disabled name="fecha_documento" required id="data_picker_edit_doc_ausentismo"
-                                    type="datetime" class="form-control" placeholder="">
+                                <input disabled name="fecha_documento" required type="datetime" class="form-control" placeholder="">
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Fecha en que lo estas modificando</label>

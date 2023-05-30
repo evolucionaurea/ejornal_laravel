@@ -124,8 +124,9 @@ export default class Tablas {
 			.then(async swal=>{
 				if(swal.value){
 					await this.delete(id)
-					let data = await this.get()
-					this.render_table(data)
+					//let data = await this.get()
+					//this.render_table(data)
+					window.location.reload()
 
 				}
 			})
