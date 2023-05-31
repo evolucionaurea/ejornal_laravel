@@ -5,7 +5,10 @@
 
 		<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-		<select name="ausentes" class="form-control form-control-sm mr-2" style="max-width:220px">
+		<input name="search" class="form-control form-control-sm mr-2" style="max-width:240px" placeholder="Filtrar..." value="{{ Request::get('search') }}"></input>
+
+
+		<select name="ausentes" class="form-control form-control-sm mr-2" style="max-width:240px">
 			<option value="">--Seleccionar Filtro--</option>
 			<option value="hoy" {{Request::get('ausentes')=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
 			<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes Hoy COVID</option>
@@ -13,11 +16,13 @@
 			<option value="incidente" {{Request::get('ausentes')=='incidente' ? 'selected' : '' }}>Ausentes Hoy Incidente</option>
 		</select>
 
-		<select name="estado" class="form-control form-control-sm mr-2" style="max-width:220px">
+		<select name="estado" class="form-control form-control-sm mr-2" style="max-width:240px">
 			<option value="">--Seleccionar Filtro--</option>
 			<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }} >Sólo Activos</option>
 			<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
 		</select>
+
+
 
 		<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
 		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar Todo</button>

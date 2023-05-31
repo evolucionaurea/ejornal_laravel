@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Nomina;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
 //use App\ClienteUser;
 //use App\Cliente;
+use App\Nomina;
 use App\Http\Traits\Clientes;
 use App\Http\Traits\Nominas;
 use Carbon\Carbon;
@@ -17,13 +22,15 @@ use App\CovidVacuna;
 use App\CovidTesteo;
 use App\Preocupacional;
 use App\NominaImportacion;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+
 
 class EmpleadosNominasController extends Controller
 {
 
 	use Clientes,Nominas;
+
+	private $error_message;
 
 	public function index()
 	{
@@ -117,23 +124,15 @@ class EmpleadosNominasController extends Controller
 			$trabajador->fecha_baja =  null;
 		}
 
+		$trabajador->save();
 
-		// Si hay un archivo adjunto
-		if ($request->hasFile('foto') && $request->file('foto') > 0) {
-			$foto = $request->file('foto');
-			$nombre = $foto->getClientOriginalName();
-			$trabajador->foto = $nombre;
-			$trabajador->hash_foto = $foto->hashName();
-			$trabajador->save();
 
-			// Guardar foto
-			Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
-			// Completar el base el hash del foto guardado
-			///$trabajador->save();
-		}else {
+		if ($request->hasFile('foto')) {
+			if(!$trabajador = $this->procesar_foto($request,$trabajador)){
+				return back()->with('error',$this->error_message);
+			}
 			$trabajador->save();
 		}
-
 
 
 		return redirect('empleados/nominas')->with('success', 'Trabajador asignado con éxito a la nómina');
@@ -255,46 +254,83 @@ class EmpleadosNominasController extends Controller
 		}
 
 
+
 		// Si hay un archivo adjunto
 		if ($request->hasFile('foto') && $request->file('foto') > 0) {
 
-			//Saber si ya hay una foto guardada
-			if (isset($trabajador->foto) && !empty($trabajador->foto)) {
-				$foto = $request->file('foto');
-				$nombre = $foto->getClientOriginalName();
-				$trabajador->foto = $nombre;
-				$trabajador->save();
 
-				$ruta_archivo = public_path("storage/nominas/fotos/{$trabajador->id}/{$trabajador->hash_foto}");
-				unlink($ruta_archivo);
-				Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
+			/// Si tenía una imagen la busca y la borro
+			if (isset($trabajador->foto)) {
+				$ruta_foto = public_path("storage/nominas/fotos/{$trabajador->id}/{$trabajador->hash_foto}");
+				if(file_exists($ruta_foto)) unlink($ruta_foto);
 
-
-				// Completar en base el hash de la foto guardada
-				$trabajador = Nomina::findOrFail($trabajador->id);
-				$trabajador->hash_foto = $foto->hashName();
-				$trabajador->save();
-			} else {
-				$foto = $request->file('foto');
-				$nombre = $foto->getClientOriginalName();
-				$trabajador->foto = $nombre;
-				$trabajador->save();
-
-				// Guardar foto
-				Storage::disk('public')->put('nominas/fotos/'.$trabajador->id, $foto);
-
-				// Completar el base el hash del foto guardado
-				$trabajador->hash_foto = $foto->hashName();
-				$trabajador->save();
+			}
+			if (isset($trabajador->thumbnail)) {
+				$ruta_th = public_path("storage/nominas/fotos/{$trabajador->id}/{$trabajador->hash_thumbnail}");
+				if(file_exists($ruta_th)) unlink($ruta_th);
 			}
 
-		}else {
-			$trabajador->save();
+			if(!$trabajador = $this->procesar_foto($request,$trabajador)){
+				return back()->with('error',$this->error_message);
+			}
 		}
+
+
+		$trabajador->save();
 
 
 		return redirect('empleados/nominas')->with('success', 'Trabajador de la nómina actualizado correctamente');
 
+	}
+
+	public function procesar_foto(Request $request,$trabajador){
+
+		$foto = $request->file('foto');
+
+		/// Chequeo que sea una imagen
+		if( !str_starts_with( $foto->getMimeType(), 'image/' ) ){
+			$this->error_message = 'Debes subir solamente imágenes.';
+			return false;
+		}
+
+		// Me fijo si existe el directorio, sino lo creo
+		if(!File::exists(public_path("storage/nominas/fotos/{$trabajador->id}"))){
+
+			if(!File::makeDirectory(public_path("storage/nominas/fotos/{$trabajador->id}"), 0777, true)){
+				$this->error_message = 'No se pudo guardar la imagen en la carpeta.';
+				return false;
+			}
+
+		}
+
+		$hash_foto = Str::random(40);
+		$hash_thumbnail = Str::random(40);
+
+		// Achico la imagen
+		Image::make($foto->path())
+			->resize(800,800,function($constraint){
+				$constraint->aspectRatio();
+				$constraint->upsize();
+			})
+			->save('storage/nominas/fotos/'.$trabajador->id.'/'.$hash_foto.'.'.$foto->getClientOriginalExtension());
+		$trabajador->foto = $foto->getClientOriginalName();
+		$trabajador->hash_foto = $hash_foto.'.'.$foto->getClientOriginalExtension();
+
+		// Genero Thumbnail
+		///$hash_th = Str::random(40);
+		Image::make($foto->path())
+			->resize(150,150,function($constraint){
+				$constraint->aspectRatio();
+				$constraint->upsize();
+			})
+			->save('storage/nominas/fotos/'.$trabajador->id.'/'.$hash_thumbnail.'.'.$foto->getClientOriginalExtension());
+
+		// Guardo la imagen
+		$trabajador->thumbnail = pathinfo($foto->getClientOriginalName(), PATHINFO_FILENAME).'-t.'.$foto->getClientOriginalExtension();
+		$trabajador->hash_thumbnail = $hash_thumbnail.'.'.$foto->getClientOriginalExtension();
+
+
+		return $trabajador;
 	}
 
 	/**

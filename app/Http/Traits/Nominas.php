@@ -28,7 +28,7 @@ trait Nominas
 
 		if($request->search){
 			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search['value'].'%';
+				$filtro = '%'.$request->search.'%';
 				$query->where('nombre','like',$filtro)
 					->orWhere('email','like',$filtro)
 					->orWhere('dni','like',$filtro)
@@ -51,18 +51,20 @@ trait Nominas
 				$query->whereHas(
 					'ausentismos',function($query) use ($today) {
 						$query
-							->where('fecha_regreso_trabajar',null)
-							->orWhere('fecha_regreso_trabajar','>',$today);
+							->where('fecha_final',null)
+							->orWhere('fecha_final','>',$today);
 					}
 				);
 			}else{
-				$query->whereHas('ausentismos',function($query) use ($today,$request) {
+				$query->whereHas(
+					'ausentismos',function($query) use ($today,$request) {
+
 						$query
 							->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
 							->where(function($query) use ($today){
 								$query
-									->where('fecha_regreso_trabajar',null)
-									->orWhere('fecha_regreso_trabajar','>',$today);
+									->where('fecha_final',null)
+									->orWhere('fecha_final','>',$today);
 							})
 							->where('ausentismo_tipo.nombre','LIKE','%'.$request->ausentes.'%');
 					}
@@ -72,15 +74,17 @@ trait Nominas
 		}
 
 		//$query->onlyTrashed();
+		$records_filtered = $query->count();
 		$nominas = $query->skip($request->start)->take($request->length)->get();
 		foreach($nominas as $k=>$nomina){
 			$nominas[$k]->photo_url = $nomina->photo_url;
+			$nominas[$k]->thumb_url = $nomina->thumbnail_url;
 		}
 
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
-			'recordsFiltered'=>$query->count(),
+			'recordsFiltered'=>$records_filtered,
 			'data'=>$nominas,
 			'request'=>$request->all()
 		];
@@ -95,7 +99,7 @@ trait Nominas
 
 		$cliente = Cliente::findOrFail($idcliente);
 
-		$request->search = ['value'=>null];
+		//$request->search = ['value'=>null];
 		$request->start = 0;
 		$request->length = 5000;
 		$results = $this->searchNomina($idcliente,$request);

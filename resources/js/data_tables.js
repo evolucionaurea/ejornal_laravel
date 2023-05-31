@@ -1,6 +1,6 @@
 
 window.datatable_options = {
-	scrollY: 480,
+	//scrollY: 780,
 	dom: 'Bfrtip',
 	buttons: [
 		{

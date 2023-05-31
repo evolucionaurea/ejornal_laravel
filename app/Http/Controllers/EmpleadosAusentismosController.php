@@ -35,63 +35,10 @@ class EmpleadosAusentismosController extends Controller
 	public function busqueda(Request $request)
 	{
 
-		///$this->request = $request;
 		//Traits > Ausentismos
 		$resultados = $this->searchAusentismos(auth()->user()->id_cliente_actual,$request);
 
 		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
-
-
-
-		/*$query = Ausentismo::select(
-			'ausentismos.*',
-			'nominas.nombre',
-			'nominas.email',
-			'nominas.telefono',
-			'nominas.dni',
-			'nominas.estado',
-			'nominas.sector',
-			'ausentismo_tipo.nombre as nombre_ausentismo'
-		)
-		->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
-
-		$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
-			$query->where('nominas.nombre','like',$filtro)
-				->orWhere('nominas.email','like',$filtro)
-				->orWhere('nominas.dni','like',$filtro)
-				->orWhere('nominas.telefono','like',$filtro);
-		});
-
-		if($request->from) $query->whereDate('ausentismos.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		if($request->tipo) $query->where('id_tipo',$request->tipo);
-
-		if($request->ausentes=='hoy'){
-			$query->where(function($query){
-				$now = Carbon::now();
-				$query
-					->where('ausentismos.fecha_regreso_trabajar',null)
-					->orWhere('ausentismos.fecha_regreso_trabajar','>',$now);
-			});
-		}
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$query->count(),
-			'recordsFiltered'=>$query->count(),
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'request'=>$request->all()
-		];*/
 
 	}
 
@@ -302,7 +249,7 @@ class EmpleadosAusentismosController extends Controller
 	{
 
 		$validatedData = $request->validate([
-		'fecha_inicio' => 'required'
+			'fecha_inicio' => 'required'
 		]);
 
 		$fecha_actual = Carbon::now();

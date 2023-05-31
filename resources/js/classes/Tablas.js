@@ -36,7 +36,7 @@ export default class Tablas {
 		this.datatable_options.serverSide = true
 		this.datatable_options.processing = true
 		this.datatable_options.deferRender = true
-		this.datatable_options.dom = '<"table-spacer-top"lf>t<"table-spacer-bottom"ip>'
+		if(('dom' in this.datatable_options)==false) this.datatable_options.dom = '<"table-spacer-top"lf>t<"table-spacer-bottom"ip>'
 
 		this.datatable_options.ajax = {
 			url:`${this.controller}${this.get_path}`,
@@ -161,6 +161,9 @@ export default class Tablas {
 				}else{
 					this.datatable_instance.ajax.reload()
 				}
+			})
+			this.modulo_busqueda.on('keyup','[name="search"]',input=>{
+				if(input.keyCode==13) this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 			})
 
 			/*Exportar*/

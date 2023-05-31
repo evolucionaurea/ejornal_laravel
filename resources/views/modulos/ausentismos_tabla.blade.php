@@ -1,56 +1,71 @@
-<div data-toggle="busqueda-fecha" class="d-flex align-items-center flex-wrap">
+<div data-toggle="busqueda-fecha" class="d-flex flex-wrap">
 
 	<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}" >
 
-	<div class="form-group mr-3" style="max-width:220px">
-		<select name="tipo" class="form-control form-control-sm select_2">
-			<option value="">--Todos los tipos--</option>
-			@foreach ($tipos as $tipo)
-			<option value="{{$tipo->id}}" {{ Request::get('tipo') == $tipo->id ? 'selected' : '' }} >{{$tipo->nombre}}</option>
-			@endforeach
-		</select>
+
+	<div class="d-flex flex-wrap col-md-8 align-items-center">
+
+		<div class="mb-1 col-md-4">
+			<input name="search" class="form-control form-control-sm" placeholder="Buscar..." value="{{ Request::get('search') }}"></input>
+		</div>
+
+
+		<div class="mb-1 col-md-4">
+			<select name="tipo" class="form-control form-control-sm select_2">
+				<option value="">--Todos los tipos--</option>
+				@foreach ($tipos as $tipo)
+				<option value="{{$tipo->id}}" {{ Request::get('tipo') == $tipo->id ? 'selected' : '' }} >{{$tipo->nombre}}</option>
+				@endforeach
+			</select>
+		</div>
+
+		<div class="mb-1 col-md-4">
+			<select name="ausentes" class="form-control form-control-sm">
+				<option value="">--Seleccionar Filtro--</option>
+				<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
+				<option value="mes" {{ Request::get('ausentes')  == 'mes' ? 'selected' : '' }} >Ausentismos Cargados Mes Actual</option>
+				<option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos Cargados Mes Pasado</option>
+			</select>
+		</div>
+
+		<div class="mb-1 col-md-4" >
+			<select name="estado" class="form-control form-control-sm">
+				<option value="">--Seleccionar Filtro--</option>
+				<option value="activo" {{ Request::get('estado')  == 'activo' || Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Trabajadores Activos</option>
+				<option value="inactivo" {{ Request::get('estado')  == 'inactivo' ? 'selected' : '' }} >Trabajadores Inactivos</option>
+			</select>
+		</div>
+
+		<div class="mb-1 col-md-4" >
+			<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm"
+				value="{{Request::get('from')}}">
+		</div>
+
+		<div class="mb-1 col-md-4" >
+			<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm"
+				value="{{Request::get('to')}}">
+		</div>
+
 	</div>
 
-	<div class="form-group mr-3" style="max-width:220px">
-		<select name="ausentes" class="form-control form-control-sm">
-			<option value="">--Seleccionar Filtro--</option>
-			<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
-			<option value="mes" {{ Request::get('ausentes')  == 'mes' ? 'selected' : '' }} >Ausentismos Cargados Mes Actual</option>
-			<option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos Cargados Mes Pasado</option>
-		</select>
-	</div>
+	<div class="d-flex col-md-4 border-left align-items-center">
 
-	<div class="form-group mr-3" style="max-width:220px">
-		<select name="estado" class="form-control form-control-sm">
-			<option value="">--Seleccionar Filtro--</option>
-			<option value="activo" {{ Request::get('estado')  == 'activo' || Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Trabajadores Activos</option>
-			<option value="inactivo" {{ Request::get('estado')  == 'inactivo' ? 'selected' : '' }} >Trabajadores Inactivos</option>
-		</select>
-	</div>
+		<div class="mr-2 mb-2">
+			<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i class="fas fa-search"></i> Buscar</button>
+		</div>
+		<div class="mr-2 mb-2">
+			<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+		</div>
 
+		<div class="mr-2 mb-2" >
+			<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar</button>
+		</div>
 
-	<div class="form-group mr-3" style="max-width:220px">
-		<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm"
-			value="{{Request::get('from')}}">
-	</div>
-
-	<div class="form-group mr-3" style="max-width:220px">
-		<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm"
-			value="{{Request::get('to')}}">
 	</div>
 
 
-	<div class="form-group mr-3">
-		<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i class="fas fa-search"></i> Buscar</button>
-	</div>
-	<div class="form-group mr-3">
-		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
-	</div>
 
 
-	<div class="form-group mr-3" >
-		<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar</button>
-	</div>
 
 
 

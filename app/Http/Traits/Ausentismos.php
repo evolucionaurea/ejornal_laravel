@@ -42,9 +42,9 @@ trait Ausentismos {
 		$total = $query->count();
 
 
-		if(isset($request->search['value'])){
+		if(isset($request->search)){
 			$query->where(function($query) use($request) {
-				$filtro = '%'.$request->search['value'].'%';
+				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('nominas.email','like',$filtro)
 					->orWhere('nominas.dni','like',$filtro)
@@ -57,8 +57,8 @@ trait Ausentismos {
 		if($request->ausentes=='hoy'){
 			$query->where(function($query) use ($now) {
 				$query
-					->where('ausentismos.fecha_regreso_trabajar',null)
-					->orWhere('ausentismos.fecha_regreso_trabajar','>',$now);
+					->where('ausentismos.fecha_final',null)
+					->orWhere('ausentismos.fecha_final','>',$now);
 			});
 			$query->where('ausentismos.fecha_inicio','<=',$now);
 		}
@@ -137,7 +137,7 @@ trait Ausentismos {
 		if(!$id_cliente) dd('Faltan parámetros');
 		$cliente = Cliente::findOrFail($id_cliente);
 
-		$request->search = ['value'=>null];
+		//$request->search = ['value'=>null];
 		$request->start = 0;
 		$request->length = 5000;
 		$results = $this->searchAusentismos($id_cliente,$request);

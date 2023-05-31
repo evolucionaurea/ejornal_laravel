@@ -43,6 +43,9 @@ class Nomina extends Model
   public function getPhotoUrlAttribute(){
     return $this->foto ? asset('storage/nominas/fotos/'.$this->id.'/'.$this->hash_foto) : '';
   }
+  public function getThumbnailUrlAttribute(){
+    return $this->foto ? asset('storage/nominas/fotos/'.$this->id.'/'.$this->hash_thumbnail) : '';
+  }
 
 
 }
