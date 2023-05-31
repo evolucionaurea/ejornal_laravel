@@ -40,5 +40,9 @@ class Nomina extends Model
     return $this->belongsTo(Cliente::class, 'id_cliente');
   }
 
+  public function getPhotoUrlAttribute(){
+    return $this->foto ? asset('storage/nominas/fotos/'.$this->id.'/'.$this->hash_foto) : '';
+  }
+
 
 }

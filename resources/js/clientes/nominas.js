@@ -10,8 +10,19 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			order:[[0,'asc']],
+			order:[[1,'asc']],
 			columns:[
+				{
+					data:row=>row,
+					name:'foto',
+					orderable:false,
+					render:v=>{
+						return `
+							<div class="table-thumbnail">
+								<div class="image" style="background-image:url(${v.photo_url})"></div>
+							</div>`
+					}
+				},
 				{
 					data:'nombre',
 					name:'nombre'

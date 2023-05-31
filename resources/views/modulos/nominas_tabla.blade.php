@@ -36,6 +36,7 @@
 	<!--Table head-->
 	<thead>
 		<tr>
+			<th>Foto</th>
 			<th>Nombre</th>
 			<th>Email</th>
 			<th>Tel</th>

@@ -49,20 +49,6 @@ class EmpleadosNominasController extends Controller
 
 	}
 
-
-	/*public function listado(Request $request)
-	{
-
-		//Sin filtros
-		///return redirect()->action('EmpleadosNominasController@index'); //Sin filtros
-
-		//Con filtros
-		$trabajadores = $this->buscar($request);
-		$filtros = $request->all();
-		$clientes = $this->getClientesUser();
-		return view('empleados.nominas', compact('trabajadores', 'clientes', 'filtros'));
-	}*/
-
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -330,24 +316,74 @@ class EmpleadosNominasController extends Controller
 	public function cargar_excel(Request $request)
 	{
 
-		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo');
+		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo.');
 
 		$file = $request->file('archivo');
 
 		// $registros = array();
-		$fichero = fopen($file, "r");
-		// Lee los nombres de los campos
-		$nombres_campos = fgetcsv($fichero, 0 , ";" , '"');
-		$num_campos = count($nombres_campos);
-		$registros = [];
+		if(($fichero = fopen($file, "r"))===false) return back()->with('error','No se pudo leer el archivo. Intenta nuevamente.');
 
+		// Lee los nombres de los campos
+		$nombres_campos = [];
+		$registros = [];
+		///$num_campos = count($nombres_campos);
+		$indice = 0;
+		$error = false;
 
 		// Lee los registros
-		while (($datos = fgetcsv($fichero, 0 , ";" , '"')) !== FALSE) {
+		while (($fila = fgetcsv($fichero, 0, ";", '"')) !== false) {
 
-			$registro = [];
+
+			if($indice!==0){
+
+				if(
+					empty($fila[0]) ||
+					empty($fila[1]) ||
+					empty($fila[4]) ||
+					empty($fila[5])
+				){
+					$error = true;
+					break;
+				}
+
+				$registros[] = (object) [
+					'nombre'=>$fila[0],
+					'email'=>$fila[1],
+					'telefono'=>$fila[2],
+					'dni'=>$fila[3],
+					'estado'=>$fila[4],
+					'sector'=>$fila[5],
+
+					'calle'=>isset($fila[6]) ? $fila[6] : null,
+					'nro'=>isset($fila[7]) ? $fila[7] : null,
+					'entre_calles'=>isset($fila[8]) ? $fila[8] : null,
+					'localidad'=>isset($fila[9]) ? $fila[9] : null,
+					'partido'=>isset($fila[10]) ? $fila[10] : null,
+					'cod_postal'=>isset($fila[11]) ? $fila[11] : null,
+					'observaciones'=>isset($fila[12]) ? $fila[12] : null
+
+				];
+			}else{
+
+
+				if(
+					!isset($fila[0]) ||
+					!isset($fila[1]) ||
+					!isset($fila[3]) ||
+					!isset($fila[4]) ||
+					!isset($fila[5])
+				){
+					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');
+					break;
+
+				}
+
+
+			}
+
+			///$registro = [];
 			// Crea un array asociativo con los nombres y valores de los campos
-			for ($icampo = 0; $icampo < $num_campos; $icampo++) {
+			/*for ($icampo = 0; $icampo < $num_campos; $icampo++) {
 
 				if ($datos[$icampo] !== '') {
 					switch ($icampo) {
@@ -434,13 +470,24 @@ class EmpleadosNominasController extends Controller
 							break;
 					}
 				}
-			}
+			}*/
 			// Añade el registro leido al array de registros
-			$registros[] = $registro;
+
+
+			$indice++;
 		}
 		fclose($fichero);
 
-		$errores = false;
+		if($error){
+			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, email, estado y sector son obligatorios.');
+		}
+
+
+
+		///dd($registros[0]);
+
+
+		/*$errores = false;
 		$vueltas = 1;
 		foreach ($registros as $registro) {
 			if ($registro['nombre'] == null || $registro['nombre'] == '' || $registro['estado'] == null ||
@@ -457,12 +504,12 @@ class EmpleadosNominasController extends Controller
 			$vueltas++;
 		}
 
-		if ($errores)  return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');
+		if ($errores)  return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');*/
 
 
 		/// GUARDAR DATOS
 
-		// Traigo todos los empleados de la nómina
+		// Traigo todos los empleados de la nómina actual
 		$nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
 
 		$empleados_borrables = [];
@@ -487,20 +534,20 @@ class EmpleadosNominasController extends Controller
 
 			// Actualizar empleado existente
 			if(!$empleado_id || ($empleado_id && $request->coincidencia==1)){
-				$nomina->nombre = $registro['nombre'];
-				$nomina->email = $registro['email'];
-				$nomina->dni = $registro['dni'];
-				$nomina->telefono = $registro['telefono'];
-				$nomina->sector = $registro['sector'];
-				$nomina->calle = $registro['calle'];
-				$nomina->nro = $registro['nro'];
-				$nomina->entre_calles = $registro['entre_calles'];
-				$nomina->localidad = $registro['localidad'];
-				$nomina->partido = $registro['partido'];
-				$nomina->cod_postal = $registro['cod_postal'];
-				$nomina->observaciones = $registro['observaciones'];
-				$nomina->estado = strtolower($registro['estado'])=='activo' ? 1 : 0;
-				$nomina->fecha_baja = strtolower($registro['estado'])=='activo' ? null : Carbon::now();
+				$nomina->nombre = $registro->nombre;
+				$nomina->email = strtolower($registro->email);
+				$nomina->dni = $registro->dni;
+				$nomina->telefono = $registro->telefono;
+				$nomina->sector = $registro->sector;
+				$nomina->calle = $registro->calle;
+				$nomina->nro = $registro->nro;
+				$nomina->entre_calles = $registro->entre_calles;
+				$nomina->localidad = $registro->localidad;
+				$nomina->partido = $registro->partido;
+				$nomina->cod_postal = $registro->cod_postal;
+				$nomina->observaciones = $registro->observaciones;
+				$nomina->estado = strtolower($registro->estado)=='activo' ? 1 : 0;
+				$nomina->fecha_baja = strtolower($registro->estado)=='activo' ? null : Carbon::now();
 				$nomina->save();
 
 			}
@@ -553,13 +600,13 @@ class EmpleadosNominasController extends Controller
 
 	public function buscar_en_dbb($empleados,$registro){
 		foreach($empleados as $ke=>$empleado){
-			if($empleado->dni==$registro['dni'] || $empleado->email==$registro['email']) return $empleado->id;
+			if($empleado->dni==$registro->dni || $empleado->email==$registro->email) return $empleado->id;
 		}
 		return false;
 	}
 	public function buscar_en_csv($registros,$empleado){
 		foreach($registros as $kr=>$registro){
-			if($empleado->dni==$registro['dni'] || $empleado->email==$registro['email']) return true;
+			if($empleado->dni==$registro->dni || $empleado->email==$registro->email) return true;
 		}
 		return false;
 	}
@@ -580,5 +627,5 @@ class EmpleadosNominasController extends Controller
 		return $this->exportNomina($idcliente,$request);
 	}
 
-	
+
 }

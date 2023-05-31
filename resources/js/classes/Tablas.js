@@ -131,7 +131,6 @@ export default class Tablas {
 				}
 			})
 		})
-
 		$.extend(window.datatable_options,this.datatable_options)
 
 

@@ -72,12 +72,16 @@ trait Nominas
 		}
 
 		//$query->onlyTrashed();
+		$nominas = $query->skip($request->start)->take($request->length)->get();
+		foreach($nominas as $k=>$nomina){
+			$nominas[$k]->photo_url = $nomina->photo_url;
+		}
 
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
 			'recordsFiltered'=>$query->count(),
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'data'=>$nominas,
 			'request'=>$request->all()
 		];
 

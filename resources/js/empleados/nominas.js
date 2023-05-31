@@ -11,23 +11,38 @@ $(()=>{
 		modulo_busqueda:$('[data-toggle="busqueda-filtros"]'),
 		server_side:true,
 		datatable_options:{
-			order:[[0,'asc']],
+			order:[[1,'asc']],
 			columns:[
 				{
+					data:row=>row,
+					name:'foto',
+					orderable:false,
+					render:v=>{
+						return `
+							<div class="table-thumbnail">
+								<div class="image" style="background-image:url(${v.photo_url})"></div>
+							</div>`
+					}
+				},
+				{
 					data:'nombre',
-					name:'nombre'
+					name:'nombre',
+					className:'align-middle'
 				},
 				{
 					data:'email',
-					name:'email'
+					name:'email',
+					className:'align-middle'
 				},
 				{
 					data:'telefono',
-					name:'telefono'
+					name:'telefono',
+					className:'align-middle'
 				},
 				{
 					data:row=>row,
 					name:'dni',
+					className:'align-middle',
 					render:v=>{
 						return v.dni==null ? '[no cargado]' : v.dni
 					}
@@ -35,19 +50,22 @@ $(()=>{
 				{
 					data:'estado',
 					name:'estado',
+					className:'align-middle',
 					render:v=>{
 						return `<span class="badge badge-${v==1 ? 'success' : 'danger'}">${v==1 ? 'activo' : 'inactivo'}</span>`
 					}
 				},
 				{
 					data:'sector',
-					name:'sector'
+					name:'sector',
+					className:'align-middle'
 				},
 
 				{
 					data:row=>row,
 					name:'hoy',
 					orderable:false,
+					className:'align-middle',
 					render:v=>{
 
 						let label = ''
@@ -85,6 +103,7 @@ $(()=>{
 					data:row=>row,
 					name:'actions',
 					orderable:false,
+					className:'align-middle',
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
