@@ -10,14 +10,11 @@ $(()=>{
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		//datatable_options:{order:false},
 		delete_message:'¿Seguro deseas borrar este ausentismo?',
-
 		server_side:true,
-
 		datatable_options:{
 			order:[[4,'desc']],
 
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
-
 
 			columns:[
 				{

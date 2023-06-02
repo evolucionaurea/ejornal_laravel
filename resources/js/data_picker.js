@@ -2,7 +2,6 @@ $.datepicker.regional['es'] = {closeText:'Cerrar',prevText:'<Ant',nextText:'Sig>
 $.datepicker.setDefaults($.datepicker.regional['es']);
 
 $(document).ready(function($){
-
 	$(`
 		#data_picker_gral,
 		#ausentismo_fecha_inicio,
@@ -31,7 +30,5 @@ $(document).ready(function($){
 	let mes = today.getMonth()+1
 	mes = mes<10 ? `0${mes}` : mes
 	$('#data_picker_edit_doc_ausentismo_ult_modif').val(`${today.getDate()}/${mes}/${today.getFullYear()}`)
-
-
 
 })
