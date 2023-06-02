@@ -39,6 +39,8 @@ trait Ausentismos {
 			)
 			->where('nominas.id_cliente',$id_cliente);
 
+		$query->where('nominas.deleted_at',null);
+
 		$total = $query->count();
 
 
@@ -116,7 +118,7 @@ trait Ausentismos {
 			$query->orderBy($sort,$dir);
 		}
 
-		$query->where('nominas.deleted_at',null);
+
 
 		$total_filtered = $query->count();
 

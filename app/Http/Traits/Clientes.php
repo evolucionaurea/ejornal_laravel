@@ -45,6 +45,7 @@ trait Clientes {
 
 		/// AUSENTISMOS
 		/// MES ACTUAL
+		///DB::enableQueryLog();
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$q_ausentismos_mes_actual = Ausentismo::selectRaw("
 			SUM(
@@ -87,8 +88,10 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		});
+
 		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),4)*100) : 0;
 
+		///dd(DB::getQueryLog());
 
 
 		/// MES PASADO
