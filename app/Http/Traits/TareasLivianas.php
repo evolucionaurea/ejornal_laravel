@@ -43,8 +43,8 @@ trait TareasLivianas {
 		if($request->ausentes=='hoy'){
 			$query->where(function($query) use ($now) {
 				$query
-					->where('tareas_livianas.fecha_regreso_trabajar',null)
-					->orWhere('tareas_livianas.fecha_regreso_trabajar','>',$now);
+					->where('tareas_livianas.fecha_final',null)
+					->orWhere('tareas_livianas.fecha_final','>',$now);
 			});
 			$query->where('tareas_livianas.fecha_inicio','<=',$now);
 		}
@@ -128,10 +128,10 @@ trait TareasLivianas {
 
 		foreach($tareas_livianas as $tarea_liviana){
 			$hoy = '';
-			if(is_null($tarea_liviana->fecha_regreso_trabajar)){
+			if(is_null($tarea_liviana->fecha_final)){
 				$hoy = 'ausente';
 			}else{
-				if($tarea_liviana->fecha_regreso_trabajar > $now) $hoy = 'ausente';
+				if($tarea_liviana->fecha_final > $now) $hoy = 'ausente';
 			}
 			fputcsv($fp,[
 				$tarea_liviana->trabajador_nombre,

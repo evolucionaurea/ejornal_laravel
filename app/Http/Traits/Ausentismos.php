@@ -89,7 +89,7 @@ trait Ausentismos {
 
 		if($request->from) {
 			$from = Carbon::createFromFormat('d/m/Y',$request->from);
-			$query->whereRaw("'{$from->toDateString()}' BETWEEN fecha_inicio AND IFNULL(fecha_regreso_trabajar,NOW())");
+			$query->whereRaw("'{$from->toDateString()}' BETWEEN fecha_inicio AND IFNULL(fecha_final,NOW())");
 			//$query->where(function($query) use ($request){
 				//->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $from))
 				// los que siguen ausentes fuera rango actual
@@ -102,7 +102,7 @@ trait Ausentismos {
 		if($request->to) {
 			$from = $request->from ? Carbon::createFromFormat('d/m/Y',$request->from) : $now;
 			$to = Carbon::createFromFormat('d/m/Y',$request->to);
-			$query->whereRaw("IFNULL(fecha_regreso_trabajar,DATE(NOW())) BETWEEN '{$from->toDateString()}' AND '{$to->toDateString()}'");
+			$query->whereRaw("IFNULL(fecha_final,DATE(NOW())) BETWEEN '{$from->toDateString()}' AND '{$to->toDateString()}'");
 			/*$query->where(function($query) use ($request){
 				$query->where('fecha_regreso_trabajar','<=',$to)
 					->orWhere('fecha_regreso_trabajar',null);
@@ -165,10 +165,10 @@ trait Ausentismos {
 
 		foreach($ausentismos as $ausentismo){
 			$hoy = '';
-			if(is_null($ausentismo->fecha_regreso_trabajar)){
+			if(is_null($ausentismo->fecha_final)){
 				$hoy = 'ausente';
 			}else{
-				if($ausentismo->fecha_regreso_trabajar > $now) $hoy = 'ausente';
+				if($ausentismo->fecha_final > $now) $hoy = 'ausente';
 			}
 			fputcsv($fp,[
 				$ausentismo->trabajador_nombre,
@@ -177,7 +177,7 @@ trait Ausentismos {
 				$ausentismo->ausentismo_tipo,
 				$ausentismo->fecha_inicio->format('d/m/Y'),
 				$ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]',
-				$ausentismo->fecha_regreso_trabajar ?? '[no cargada]',
+				$ausentismo->fecha_final ?? '[no cargada]',
 				$hoy
 			],';');
 		}
@@ -218,7 +218,7 @@ trait Ausentismos {
 				SUM(
 					DATEDIFF(
 						IFNULL(
-							fecha_regreso_trabajar,
+							fecha_final,
 							DATE(NOW())
 						),
 						IF(
@@ -242,8 +242,8 @@ trait Ausentismos {
 						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
 						->where(function($query) use($today){
 							$query
-								->where('fecha_regreso_trabajar','<=',$today->startOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','<=',$today->startOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				})
 				->orWhere(function($query) use ($today){
@@ -252,8 +252,8 @@ trait Ausentismos {
 						->where('fecha_inicio','<',$today->startOfMonth())
 						->where(function($query) use($today){
 							$query
-								->where('fecha_regreso_trabajar','>=',$today->startOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','>=',$today->startOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -281,8 +281,8 @@ trait Ausentismos {
 			SUM(
 				DATEDIFF(
 					IF(
-						fecha_regreso_trabajar<'{$fin_mes_pasado}',
-						fecha_regreso_trabajar,
+						fecha_final<'{$fin_mes_pasado}',
+						fecha_final,
 						'{$fin_mes_pasado}'
 					),
 					IF(
@@ -304,16 +304,16 @@ trait Ausentismos {
 					$query
 						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
 						->where(function($query) use ($today){
-							$query->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+							$query->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
 						->where(function($query) use ($today){
-							$query->where('fecha_regreso_trabajar','>',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+							$query->where('fecha_final','>',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -338,8 +338,8 @@ trait Ausentismos {
 			SUM(
 				DATEDIFF(
 					IF(
-						fecha_regreso_trabajar<'{$fin_mes_anio_anterior}',
-						fecha_regreso_trabajar,
+						fecha_final<'{$fin_mes_anio_anterior}',
+						fecha_final,
 						'{$fin_mes_anio_anterior}'
 					),
 					IF(
@@ -362,8 +362,8 @@ trait Ausentismos {
 						->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
@@ -371,8 +371,8 @@ trait Ausentismos {
 					$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','>',$today->subYear()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','>',$today->subYear()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -394,8 +394,8 @@ trait Ausentismos {
 			SUM(
 				DATEDIFF(
 					IF(
-						fecha_regreso_trabajar<DATE(NOW()),
-						fecha_regreso_trabajar,
+						fecha_final<DATE(NOW()),
+						fecha_final,
 						DATE(NOW())
 					),
 					IF(
@@ -418,8 +418,8 @@ trait Ausentismos {
 						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','<=',$today)
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
@@ -428,8 +428,8 @@ trait Ausentismos {
 						->where('fecha_inicio','<',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','>',$today->startOfYear())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','>',$today->startOfYear())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
