@@ -11065,6 +11065,17 @@ select {
   cursor: pointer;
 }
 
+.click_fichada_huella {
+  align-items: center;
+  display: flex;
+  transform: translateY(2px);
+}
+
+.click_fichada_huella:hover {
+  text-decoration: none;
+  opacity: .65;
+}
+
 .btn-ejornal {
   color: white !important;
   cursor: pointer;

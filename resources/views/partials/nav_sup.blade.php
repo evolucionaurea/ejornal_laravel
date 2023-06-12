@@ -10,16 +10,15 @@
       @if (auth()->user()->id_rol == 2)
         <li class="nav-item" style="margin-right: 15px;">
           <a class="click_fichada_huella" data-toggle="modal" data-target="#fichada_huella" class="nav-link" href="#">
-            <i class="fas fa-fingerprint fa-lg @php
-            if (auth()->user()->fichada == 0) {
-              echo "text-danger";
-            }else {
-              echo "text-success";
-            }
-            @endphp "></i>
+            @if(auth()->user()->fichada == 0)
+            <i class="fas fa-fingerprint fa-lg text-danger mr-1"></i> <small class="text-danger">fichar ingreso</small>
+            @else
+            <i class="fas fa-fingerprint fa-lg text-success mr-1"></i> <small class="text-success">fichar salida</small>
+            @endif
           </a>
         </li>
       @endif
+      <li>|</li>
       <li class="nav-item">
         <a class="nav-link" href="{{route('logout')}}"><i class="fas fa-sign-out-alt"></i></i>Salir</a>
       </li>
