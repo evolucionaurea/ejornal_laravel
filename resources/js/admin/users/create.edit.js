@@ -28,7 +28,7 @@ $(()=>{
 	let mostrar_ocultar_campos = roleid=>{
 		roleid = parseInt(roleid)
 		fields.map(field=>{
-			console.log(field.roles, field.class);
+			///console.log(field.roles, field.class);
 			if(!field.roles.includes(roleid)){
 				$(field.class).addClass('d-none')
 			}else{

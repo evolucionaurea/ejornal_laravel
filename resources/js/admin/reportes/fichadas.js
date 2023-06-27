@@ -7,6 +7,7 @@ $(()=>{
 		get_path:'/fichadas_ajax',
 		table:$('.tabla_reporte_fichadas'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
+		server_side:true,
 
 		datatable_options:{
 			//ordering:false,
@@ -45,8 +46,7 @@ $(()=>{
 				}
 
 			]
-		},
-		server_side:true
+		}
 
 	})
 

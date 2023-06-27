@@ -8,26 +8,26 @@ $(()=>{
 		delete_path:'/destroy',
 		table:$('.tabla'),
 		modulo_busqueda:$('[data-toggle="busqueda-filtros"]'),
-		datatable_options:{order:false},
+		//datatable_options:{order:false},
 		delete_message:'¿Seguro deseas borrar este usuario?',
 		render_row:user=>{
 
 			let clientes = [];
 			let grupo = '';
 
-			console.log(user)
+			///console.log(user)
 
 			user.clientes_user.map(cliente=>{
 				clientes.push(cliente.nombre)
 			})
+
 			if(user.rol=='empleado' && user.clientes_user.length==0)
 			{
 				clientes = ['[sin cliente asignado]']
 			}
-			if(user.rol=='cliente')
+			if(user.rol=='cliente' && 'cliente_relacionar' in user)
 			{
 				clientes = [user.cliente_relacionar.nombre]
-
 			}
 			/*if(user.rol=='cliente'){
 

@@ -14,7 +14,7 @@
 
 		<div class="cabecera">
 			<h2>Listado de medicamentos</h2>
-			<p>Aquí puede ver el listado de los medicamentos del sistema</p>
+			<p>Aquí puedes ver el listado de los medicamentos del sistema</p>
 			<div class="cabecera_acciones">
 				<a data-toggle="modal" data-target="#crear_medicamento" class="btn-ejornal btn-ejornal-base" href="#"><i class="fas fa-plus-circle"></i>Nuevo medicamento</a>
 			</div>

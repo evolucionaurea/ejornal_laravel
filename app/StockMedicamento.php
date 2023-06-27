@@ -18,6 +18,10 @@ class StockMedicamento extends Model
 	// Campos habilitados para ingresar
 	protected $fillable = ['id_medicamento', 'id_user', 'id_cliente', 'ingreso', 'suministrados', 'egreso', 'fecha_ingreso', 'stock', 'motivo'];
 
+	protected $casts = [
+    'created_at'=>'date:d/m/Y - H:i \h\s.'
+  ];
+
 	public function medicamento()
 	{
 		return $this->belongsTo(Medicamento::class);

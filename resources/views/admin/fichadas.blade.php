@@ -14,7 +14,7 @@
 
 		<div class="cabecera">
 			<h2>Listado de fichadas</h2>
-			<p>Aquí puede ver el listado de los fichadas de todos sus empleados</p>
+			<p>Aquí puedes ver el listado de los fichadas de todos sus empleados.</p>
 		</div>
 
 		@include('../mensajes_validacion')

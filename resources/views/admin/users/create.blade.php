@@ -63,7 +63,7 @@
 					<div class="form-group col-md-4 select_contratacion_users">
 					  <label>Contratación</label>
 					  <select name="contratacion" class="form-control form-control-sm">
-						<option value="0">--Seleccione--</option>
+						<option value="0">--Seleccionar--</option>
 						<option value="1">Efectivo</option>
 						<option value="2">Eventual</option>
 					  </select>
@@ -79,7 +79,7 @@
 					</div>
 
 					<div class="form-group col-md-3 cliente_original">
-					  <label>Seleccione el cliente</label>
+					  <label>Selecciona el cliente</label>
 					  <br>
 					  <select class="form-control form-control-sm" id="select_cliente_original" name="id_cliente_original">
 						@foreach ($clientes as $cliente)
@@ -96,7 +96,7 @@
 					</div>
 					@if (count($clientes) > 0 && !empty($clientes))
 					  <div class="form-group col-md-3 mostrar_clientes">
-						<label>¿Para quien trabajará?</label>
+						<label>¿Para quién trabajará?</label>
 						<br>
 						<select style="max-width: 500px; min-width: 300px;" id="cliente_select_multiple" multiple="multiple" name="clientes[]">
 						  @foreach ($clientes as $cliente)
@@ -105,9 +105,9 @@
 						</select>
 					  </div>
 					  <div class="form-group col-md-2 mostrar_permiso_desplegables">
-						  <label>Permiso edicion desplegables</label>
+						  <label>Permiso edición desplegables</label>
 						  <select name="permiso_desplegables" class="form-control form-control-sm">
-							  <option value="1">Si puede</option>
+							  <option value="1">Sí puede</option>
 							  <option value="0">No puede</option>
 						  </select>
 					  </div>
@@ -148,7 +148,7 @@
 						  <input class="form-control form-control-sm" type="text" name="cod_postal" value="">
 					  </div>
 						<div class="form-group col-md-12 mostrar_observaciones">
-							<label>observaciones</label>
+							<label>Observaciones</label>
 							<textarea class="form-control" rows="2" name="observaciones"></textarea>
 					  </div>
 					  <div class="form-group col-md-12 liquidacion_onedrive_creacion_users">
@@ -209,8 +209,8 @@
 		<br>
 		<img width="100%;" src="{{asset('img/admin/onedrive_guia.png')}}" alt="">
 		<p class="mt-2">
-		  De click derecho en la carpeta que desea compartir y dele al boton de "compartir."
-		  Allí siga los pasos para obtener el link para compartir.
+		  Click derecho en la carpeta que desea compartir y hacer click al boton de "compartir."
+		  Allí sigue los pasos para obtener el link para compartir.
 		</p>
 	  </div>
 	  <div class="modal-footer">

@@ -17,9 +17,12 @@ use App\Ausentismo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Comunicacion;
+use App\Http\Traits\Ausentismos;
 
 class AdminReporteController extends Controller
 {
+
+	use Ausentismos;
 
 	// public function reportes_fichadas()
 	// {
@@ -134,9 +137,6 @@ class AdminReporteController extends Controller
 
 
 
-
-
-
 	public function reportes_ausentismos()
 	{
 		$tipos = AusentismoTipo::get();
@@ -147,24 +147,61 @@ class AdminReporteController extends Controller
 
 		$filtro = '%'.$request->search['value'].'%';
 		$query = Ausentismo::selectRaw(
-				'ausentismos.*,
-				nominas.nombre trabajador_nombre,
-				clientes.nombre cliente_nombre,
-				ausentismo_tipo.nombre ausentismo_tipo_nombre,
-				(DATEDIFF(IFNULL(fecha_regreso_trabajar,DATE(NOW())),fecha_inicio)) as dias_ausente'
-			)
-			->join('nominas','nominas.id','ausentismos.id_trabajador')
-			->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
-			->join('clientes','clientes.id','nominas.id_cliente');
+			'ausentismos.*,
+			(DATEDIFF(IFNULL(fecha_final,DATE(NOW())),fecha_inicio)) as dias_ausente'
+		)
+		->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
+		->join('nominas','nominas.id','ausentismos.id_trabajador')
+		->join('clientes','clientes.id','nominas.id_cliente');
 
 		$total_records = $query->count();
 
-		$query->where(function($query) use ($request) {
+		$filtro = '%'.$request->search['value'].'%';
+		$query
+			->with(['tipo'=>function($query){
+				$query
+					->select('id','nombre');
+			}])
+			->with(['trabajador'=>function($query){
+				$query
+					->select('id','nombre','id_cliente')
+					->with(['cliente'=>function($query){
+						$query->select('id','nombre');
+					}]);
+			}])
+			->with('documentaciones');
+
+
+
+		/*$query->where(function($query) use ($request) {
 			$filtro = '%'.$request->search['value'].'%';
 			$query
 				->where('nominas.nombre','like',$filtro)
 				->orWhere('clientes.nombre','like',$filtro);
-		});
+		});*/
+		$query
+			->whereIn('id_trabajador',function($query) use ($filtro){
+
+				$query->select('id')
+					->from('nominas')
+					->where(function($query) use ($filtro){
+						$query
+							->where('deleted_at',null)
+							->where('nombre','like',$filtro);
+					})
+					->orWhereIn('id_cliente',function($query) use ($filtro){
+						$query->select('id')
+							->from('clientes')
+							->where('nombre','like',$filtro);
+					});
+			})
+			->orWhereIn('id_tipo',function($query) use ($filtro){
+				$query->select('id')
+					->from('ausentismo_tipo')
+					->where('nombre','like',$filtro);
+			});
+
+
 
 		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -173,6 +210,7 @@ class AdminReporteController extends Controller
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
+			$relations = ['trabajador','tipo'];
 			$query->orderBy($sort,$dir);
 		}
 
@@ -202,75 +240,6 @@ class AdminReporteController extends Controller
 		return view('admin.reportes.comunicaciones');
 	}
 
-	// public function fichadas()
-	// {
-	//
-	//   $results =  Fichada::join('users', 'fichadas.id_user', 'users.id')
-	//   ->join('clientes', 'fichadas.id_cliente', 'clientes.id')
-	//   ->select('fichadas.*', DB::raw('clientes.nombre cliente'), DB::raw('users.nombre user'))
-	//   ->orderBy('fichadas.id_user', 'desc')
-	//   ->orderBy('fichadas.created_at', 'desc')
-	//   ->get();
-	//
-	//   $fichadas = [];
-	//
-	//   $modelo = 'App\Fichada';
-	//   foreach ($results as $resultado) {
-	//     $audits_fichadas = DB::table('audits')->where('auditable_type', $modelo)->get();
-	//       if (!empty($audits_fichadas) && count($audits_fichadas) > 0) {
-	//       foreach ($audits_fichadas as $audit) {
-	//         if ($resultado->id == json_decode($audit->new_values)->id) {
-	//           $resultado['ip'] = $audit->ip_address;
-	//         }
-	//       }
-	//     }
-	//   }
-	//
-	//   foreach ($results as $key => $result) {
-	//
-	//       $egreso_hallado = null;
-	//       $ingreso_hallago = null;
-	//
-	//       if ($result->horario_ingreso != null) {
-	//         $ingreso_hallago = $result->created_at;
-	//         if (isset($results[$key-1]->id_user) && $results[$key-1]->id_user == $result->id_user) {
-	//           // Cargar el egreso
-	//           $egreso_hallado = $results[$key-1]->created_at;
-	//         }else {
-	//           $egreso_hallado = null;
-	//         }
-	//
-	//         $fecha_ingreso = Carbon::createFromFormat('Y-m-d H:i:s', $ingreso_hallago)->format('d-m-Y H:i:s');
-	//
-	//         if ($egreso_hallado != null) {
-	//           $fecha_egreso = Carbon::createFromFormat('Y-m-d H:i:s', $egreso_hallado)->format('d-m-Y H:i:s');
-	//           $f_ingreso = new DateTime($result->created_at);
-	//           $f_egreso = new DateTime($egreso_hallado);
-	//           $time = $f_ingreso->diff($f_egreso);
-	//           $tiempo_dedicado = $time->days . ' dias ' . $time->format('%H horas %i minutos %s segundos');
-	//         }
-	//
-	//         $fichadas[] = [
-	//           'id' => $result->id,
-	//           'fecha_actual' => $result->fecha_actual,
-	//           'created_at' => $result->created_at,
-	//           'cliente' => $result->cliente,
-	//           'id_user' => $result->id_user,
-	//           'user' => $result->user,
-	//           'tiempo_dedicado' => (isset($tiempo_dedicado) && !empty($tiempo_dedicado)) ? $tiempo_dedicado : 'Aún trabajando',
-	//           'fecha_ingreso' => $fecha_ingreso,
-	//           'fecha_egreso' => ($egreso_hallado != null) ? $fecha_egreso : 'Aún trabajando',
-	//           'ip' => $result->ip
-	//         ];
-	//
-	//       }
-	//
-	//
-	//     }
-	//
-	//   return $fichadas;
-	// }
-
 
 
 	public function fichadas_nuevas()
@@ -286,7 +255,7 @@ class AdminReporteController extends Controller
 
 
 
-	public function ausentismos()
+	/*public function ausentismos(Request $request)
 	{
 		$results = Ausentismo::join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
 		->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
@@ -295,6 +264,9 @@ class AdminReporteController extends Controller
 		'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.updated_at', 'ausentismos.user')
 		->get();
 		$ausentismos = [];
+
+
+
 
 		foreach ($results as $resultado) {
 			$fecha1 = date_create($resultado->fecha_inicio);
@@ -318,11 +290,11 @@ class AdminReporteController extends Controller
 			];
 		}
 		return $ausentismos;
-	}
+	}*/
 
-	public function certificaciones()
+	public function certificaciones(Request $request)
 	{
-		$certificaciones = $this->ausentismos();
+		$certificaciones = $this->ausentismos_ajax($request);
 		return $certificaciones;
 	}
 
@@ -382,40 +354,6 @@ class AdminReporteController extends Controller
 	}
 
 
-	// public function filtrarFichadas(Request $request)
-	// {
-	//   if ($request->ajax()) {
-	//
-	//   $fichadas = $this->fichadas();
-	//   $fichadas_filtradas = [];
-	//   $fecha_inicio = new DateTime($request->input('fichadas_desde'));
-	//   $fecha_final = new DateTime($request->input('fichadas_hasta'));
-	//
-	//   foreach ($fichadas as $fichada) {
-	//   $fichada_inicio = new DateTime($fichada['fecha_ingreso']);
-	//   if ($fichada['fecha_egreso'] == 'Aún trabajando') {
-	//     $fichada_final = false;
-	//   }else {
-	//     $fichada_final = new DateTime($fichada['fecha_egreso']);
-	//   }
-	//   if ($fichada_final != false) {
-	//     if ($fichada_inicio >= $fecha_inicio && $fichada_inicio <= $fecha_final
-	//     && $fichada_final >= $fichada_inicio && $fichada_final <= $fecha_final) {
-	//       $fichadas_filtradas[] = $fichada;
-	//     }
-	//   }else {
-	//     if ($fichada_inicio >= $fecha_inicio && $fichada_inicio <= $fecha_final) {
-	//       $fichadas_filtradas[] = $fichada;
-	//     }
-	//   }
-	//   }
-	//
-	//   return $fichadas_filtradas;
-	//   }
-	//
-	// }
-
-
 	public function filtrarFichadasNuevas(Request $request)
 	{
 
@@ -451,7 +389,7 @@ class AdminReporteController extends Controller
 	}
 
 
-	public function filtrarAusentismos(Request $request)
+	/*public function filtrarAusentismos(Request $request)
 	{
 		if ($request->ajax()) {
 
@@ -476,7 +414,7 @@ class AdminReporteController extends Controller
 		return $ausentismos_filtrados;
 		}
 
-	}
+	}*/
 
 
 	public function descargar_archivo($id)
@@ -488,7 +426,7 @@ class AdminReporteController extends Controller
 	}
 
 
-	public function filtrarCertificaciones(Request $request)
+	/*public function filtrarCertificaciones(Request $request)
 	{
 
 		if ($request->ajax()) {
@@ -515,7 +453,7 @@ class AdminReporteController extends Controller
 
 		}
 
-	}
+	}*/
 
 
 
