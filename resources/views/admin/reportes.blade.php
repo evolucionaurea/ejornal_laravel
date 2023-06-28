@@ -223,7 +223,8 @@
     </div>
 </div>
 
-@endsection
 
 @include("../scripts_reportes")
 @include("../modal_reportes")
+
+@endsection

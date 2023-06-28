@@ -67,7 +67,7 @@ $(()=>{
 
 							docs.push( `
 							<div class="mb-3">
-								<div class="mb-2 small">
+								<div class="mb-1 small">
 									<b>Institución</b>: ${doc.institucion} -
 									<b>Médico</b>: ${doc.medico} -
 									<b>Matrícula Nacional</b>: ${doc.matricula_nacional} -
@@ -75,7 +75,7 @@ $(()=>{
 									<b>Fecha documento</b>: ${doc.fecha_documento}
 								</div>
 
-								<a class="btn-ejornal btn-ejornal-gris-claro small" target="_blank" href="documentacion_ausentismo/descargar/${doc.id}"><i class="fa fa-download fa-fw"></i> ${doc.archivo}</a>
+								<a class="small text-success" target="_blank" href="documentacion_ausentismo/descargar/${doc.id}"><i class="fa fa-download fa-fw"></i> ${doc.archivo}</a>
 							</div>`)
 						})
 						return docs.join('')

@@ -36,12 +36,6 @@ if(route=='grupos.edit') require('./admin/grupos/create.edit')
 if(route=='reportes_ausentismos') require('./admin/reportes/ausentismos')
 if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones')
 
-/*const url = location.href;
-const admin = 'admin/users';
-const cliente = 'admin/clientes';
-if (url.includes(admin) || url.includes(cliente)) {
-  require('./admin/admin_tablas');
-}*/
 
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
@@ -63,6 +57,8 @@ if(route=='empleados.covid.vacunas') require('./empleados/covid.vacunas')
 if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
 if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
+if(route=='medicas.create') require('./empleados/consultas.medicas.create')
+if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
 
 //CLIENTES
 if(route=='/clientes/resumen') require('./clientes/resumen')

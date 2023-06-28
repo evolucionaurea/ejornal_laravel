@@ -191,7 +191,7 @@ window.onload = function() {
 
   let token = $("input[name='token']").val();
 
-// Ausentismos del mes actual //
+  // Ausentismos del mes actual //
   $( ".click_api_ausentismos_mes" ).click(function() {
     let url = '/api/ausentismos_mes_actual/';
 
@@ -200,20 +200,19 @@ window.onload = function() {
     .then(data =>{
       $('.mostrar_api_ausentismos_mes').html(JSON.stringify(data, undefined, 2))
       $('.api_ausentismos_mes_results').html(' ( ' + data.length + ' resultados )')
-    }
-    );
-api_ausentismos_mes_results
-});
+    });
+    //api_ausentismos_mes_results
+  });
 
-$( ".limpiar_api_ausentismos_mes" ).click(function() {
-  $('.mostrar_api_ausentismos_mes').empty();
-  $('.api_ausentismos_mes_results').empty();
-});
-// Ausentismos del mes actual //
-
+  $( ".limpiar_api_ausentismos_mes" ).click(function() {
+    $('.mostrar_api_ausentismos_mes').empty();
+    $('.api_ausentismos_mes_results').empty();
+  });
+  // Ausentismos del mes actual //
 
 
-// Ausentismos de hoy //
+
+  // Ausentismos de hoy //
   $( ".click_api_ausentismos_hoy" ).click(function() {
     let url = '/api/ausentismos_hoy/';
 
@@ -222,19 +221,18 @@ $( ".limpiar_api_ausentismos_mes" ).click(function() {
     .then(data =>{
       $('.mostrar_api_ausentismos_hoy').html(JSON.stringify(data, undefined, 2))
       $('.api_ausentismos_hoy_results').html(' ( ' + data.length + ' resultados )')
-    }
-    );
+    });
 
-});
+  });
 
-$( ".limpiar_api_ausentismos_hoy" ).click(function() {
-  $('.mostrar_api_ausentismos_hoy').empty();
-  $('.api_ausentismos_hoy_results').empty();
-});
-// Ausentismos de hoy //
+  $( ".limpiar_api_ausentismos_hoy" ).click(function() {
+    $('.mostrar_api_ausentismos_hoy').empty();
+    $('.api_ausentismos_hoy_results').empty();
+  });
+  // Ausentismos de hoy //
 
 
-// Get Nominas //
+  // Get Nominas //
   $( ".click_api_get_nominas" ).click(function() {
     let url = '/api/get_nominas/';
 
@@ -243,82 +241,81 @@ $( ".limpiar_api_ausentismos_hoy" ).click(function() {
     .then(data =>{
       $('.mostrar_api_get_nominas').html(JSON.stringify(data, undefined, 2))
       $('.api_nominas_results').html(' ( ' + data.length + ' resultados )')
-    }
-    );
+    });
 
-});
+  });
 
-$( ".limpiar_api_get_nominas" ).click(function() {
-  $('.mostrar_api_get_nominas').empty();
-  $('.api_nominas_results').empty();
-});
-// Get Nominas //
-
+  $( ".limpiar_api_get_nominas" ).click(function() {
+    $('.mostrar_api_get_nominas').empty();
+    $('.api_nominas_results').empty();
+  });
+  // Get Nominas //
 
 
 
-// Post Nominas //
 
-// $( ".click_api_set_nominas" ).click(function() {
-// let url = '/api/set_nominas';
-//
-// axios.post(url, {
-//     token: token,
-//     nombre: 'Persona Omega',
-//     email: 'omega@prueba.com',
-//     telefono: '25617854',
-//     dni: '203251587',
-//     estado: 1,
-//     sector: 'GERENCIA DE  LOGISTICA'
-//   })
-//   .then(function (response) {
-//     console.log(response);
-//   })
-//   .catch(function (error) {
-//     console.log(error);
-//   });
-//
-// });
-//
-//
-// $( ".limpiar_api_set_nominas" ).click(function() {
-//   $('.mostrar_api_set_nominas').empty();
-//   $('.api_set_nominas_results').empty();
-// });
+  // Post Nominas //
 
-
-// Post Nominas //
+  // $( ".click_api_set_nominas" ).click(function() {
+  // let url = '/api/set_nominas';
+  //
+  // axios.post(url, {
+  //     token: token,
+  //     nombre: 'Persona Omega',
+  //     email: 'omega@prueba.com',
+  //     telefono: '25617854',
+  //     dni: '203251587',
+  //     estado: 1,
+  //     sector: 'GERENCIA DE  LOGISTICA'
+  //   })
+  //   .then(function (response) {
+  //     console.log(response);
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+  //
+  // });
+  //
+  //
+  // $( ".limpiar_api_set_nominas" ).click(function() {
+  //   $('.mostrar_api_set_nominas').empty();
+  //   $('.api_set_nominas_results').empty();
+  // });
 
 
-
-// Delete Nominas //
-
-// $( ".click_api_delete_nominas" ).click(function() {
-// let url = '/api/delete_nominas';
-//
-// axios.delete(url, {
-//     data: {
-//       token: token,
-//       id_nomina: 5047
-//     }
-//   })
-//   .then(function (response) {
-//     console.log(response);
-//   })
-//   .catch(function (error) {
-//     console.log(error);
-//   });
-//
-// });
-//
-//
-// $( ".limpiar_api_set_nominas" ).click(function() {
-//   $('.mostrar_api_set_nominas').empty();
-//   $('.api_set_nominas_results').empty();
-// });
+  // Post Nominas //
 
 
-// Delete Nominas //
+
+  // Delete Nominas //
+
+  // $( ".click_api_delete_nominas" ).click(function() {
+  // let url = '/api/delete_nominas';
+  //
+  // axios.delete(url, {
+  //     data: {
+  //       token: token,
+  //       id_nomina: 5047
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     console.log(response);
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+  //
+  // });
+  //
+  //
+  // $( ".limpiar_api_set_nominas" ).click(function() {
+  //   $('.mostrar_api_set_nominas').empty();
+  //   $('.api_set_nominas_results').empty();
+  // });
+
+
+  // Delete Nominas //
 
 
 };
