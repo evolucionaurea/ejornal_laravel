@@ -7,26 +7,38 @@ $(()=>{
 		get_path:'/ausentismos_ajax',
 		table:$('.tabla_reporte_ausentismos'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
+		server_side:true,
 
 		datatable_options:{
-			//ordering:false,
 			order:[[4,'desc']],
 			columns:[
 				{
-					data:'cliente_nombre',
-					name:'cliente_nombre'
+					data:'trabajador',
+					name:'clientes.nombre',
+					render:v=>{
+
+						if(v==null) return '<span class="text-muted font-italic">[sin asociar]</span>'
+						return v.cliente.nombre
+					}
 				},
 				{
-					data:'trabajador_nombre',
-					name:'trabajador_nombre'
+					data:'trabajador',
+					name:'nominas.nombre',
+					render:v=>{
+						if(v==null) return '<span class="text-muted font-italic">[sin asociar]</span>'
+						return v.nombre
+					}
 				},
 				{
 					data:'user',
 					name:'user'
 				},
 				{
-					data:'ausentismo_tipo_nombre',
-					name:'ausentismo_tipo_nombre'
+					data:'tipo',
+					name:'ausentismo_tipo.nombre',
+					render:v=>{
+						return v.nombre
+					}
 				},
 				{
 					data:'fecha_inicio',
@@ -43,11 +55,8 @@ $(()=>{
 					data:'dias_ausente',
 					name:'dias_ausente'
 				}
-
 			]
-		},
-		server_side:true
-
+		}
 	})
 
 })

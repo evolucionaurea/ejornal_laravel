@@ -163,7 +163,8 @@
     </div>
 </div>
 
-@endsection
 
 @include("../scripts_reportes_consultas")
 @include("../modal_reportes")
+
+@endsection

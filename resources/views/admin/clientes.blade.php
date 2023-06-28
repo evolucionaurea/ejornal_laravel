@@ -14,7 +14,7 @@
 
 		<div class="cabecera">
 			<h2>Listado de clientes</h2>
-			<p>Aquí puede ver el listado de los clientes del sistema</p>
+			<p>Aquí puedes ver el listado de los clientes del sistema.</p>
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('clientes.create')}}"><i
 						class="fas fa-plus-circle"></i> Nuevo cliente</a>
@@ -36,33 +36,13 @@
 		@endif
 
 		<div class="tarjeta">
-			<table class="table table-striped table-hover table-sm tabla">
+			<table data-table="clientes" class="table table-striped table-hover table-sm">
 				<thead>
 					<tr>
-						<th class="th-lg">
-							<a>
-								Nombre
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
-						<th class="th-lg">
-							<a href="">
-								Direccion
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
-						<th class="th-lg">
-							<a href="">
-								Borrado logico
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
-						<th class="th-lg">
-							<a href="">
-								Acciones
-								<i class="fas fa-sort ml-1"></i>
-							</a>
-						</th>
+						<th>Nombre</th>
+						<th>Dirección</th>
+						<th>Borrado Lógico</th>
+						<th>Acciones</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -128,13 +108,13 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<p class="alert alert-info">
-								Estas seguro que quieres restaurar a este cliente?
+								¿Estás seguro que quieres restaurar a este cliente?
 							</p>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-12">
-							<button class="btn btn-success btn-sm mt-4">Si, Restaurar</button>
+							<button class="btn btn-success btn-sm mt-4">Sí, Restaurar</button>
 						</div>
 					</div>
 				</form>
@@ -162,8 +142,7 @@
 					<h5 class="card-header">Paso 1</h5>
 					<div class="card-body">
 						<h5 class="card-title">Descargar modelo de excel</h5>
-						<p class="card-text">Descarge este excel modelo. Completelo con los campos solicitados y subalo
-							en el paso 2</p>
+						<p class="card-text">Descarge este excel modelo. Complétalo con los campos solicitados y súbelo en el paso 2</p>
 						<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/clientes_carga_masiva.csv')}}"
 							download target="_blank">Descargar excel</a>
 					</div>
@@ -192,15 +171,6 @@
 </div>
 
 
-<script>
-	$(document).ready(() => {
-  
-  $( ".restaurar_cliente" ).on( "click", function() {
-    $("input[name='id_cliente']").val($(this).attr('data-info'));
-  } );
 
-});
-
-</script>
 
 @endsection

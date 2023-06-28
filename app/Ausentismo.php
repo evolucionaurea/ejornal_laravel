@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 //use OwenIt\Auditing\Contracts\Auditable;
 use App\AusentismoTipo;
 use App\Nomina;
+use App\Cliente;
+use App\AusentismoDocumentacion;
 
 class Ausentismo extends Model
 {
@@ -29,6 +31,14 @@ class Ausentismo extends Model
   }
   public function trabajador(){
   	return $this->belongsTo(Nomina::class,'id_trabajador');
+  }
+
+  public function cliente(){
+    return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');
+  }
+
+  public function documentaciones(){
+    return $this->hasMany(AusentismoDocumentacion::class,'id_ausentismo');
   }
 
 }

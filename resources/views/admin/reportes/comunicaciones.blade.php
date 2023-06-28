@@ -87,7 +87,9 @@
     </div>
 </div>
 
-@endsection
 
 @include("../scripts_reportes_comunicaciones")
 @include("../modal_reportes")
+
+
+@endsection

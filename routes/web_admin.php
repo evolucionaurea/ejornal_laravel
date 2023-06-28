@@ -90,7 +90,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	// Certificaciones
 	Route::get('admin/reportes_certificaciones', 'AdminReporteController@reportes_certificaciones')->name('reportes_certificaciones');
-	Route::get('admin/reportes/certificaciones', 'AdminReporteController@certificaciones')->name('reportes.certificaciones');
+	Route::post('admin/reportes/certificaciones', 'AdminReporteController@certificaciones')->name('reportes.certificaciones');
 	Route::post('admin/reportes/filtrar_certificaciones', 'AdminReporteController@filtrarCertificaciones')->name('reportes.filtrar_certificaciones');
 
 	// Documentacion

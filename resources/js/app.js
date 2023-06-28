@@ -20,7 +20,7 @@ require('./documentacion_tarea_liviana.js');
 
 
 //ADMIN
-if(route=='/admin/clientes') require('./admin/admin_tablas')
+if(route=='/admin/clientes') require('./admin/clientes')
 if(route=='/admin/medicamentos') require('./admin/medicamentos')
 if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
 if(route=='/admin/resumen') require('./admin/resumen')
@@ -30,16 +30,12 @@ if(route=='/admin/users') require('./admin/users')
 if(route=='users.create') require('./admin/users/create.edit')
 if(route=='users.edit') require('./admin/users/create.edit')
 
+if(route=='/admin/grupos') require('./admin/grupos')
 if(route=='grupos.create') require('./admin/grupos/create.edit')
 if(route=='grupos.edit') require('./admin/grupos/create.edit')
 if(route=='reportes_ausentismos') require('./admin/reportes/ausentismos')
+if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones')
 
-/*const url = location.href;
-const admin = 'admin/users';
-const cliente = 'admin/clientes';
-if (url.includes(admin) || url.includes(cliente)) {
-  require('./admin/admin_tablas');
-}*/
 
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
@@ -61,6 +57,8 @@ if(route=='empleados.covid.vacunas') require('./empleados/covid.vacunas')
 if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
 if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
+if(route=='medicas.create') require('./empleados/consultas.medicas.create')
+if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
 
 //CLIENTES
 if(route=='/clientes/resumen') require('./clientes/resumen')
@@ -74,5 +72,4 @@ if(route=='/grupos/resumen_cliente') require('./grupos/resumen_cliente')
 if(route=='/grupos/nominas') require('./grupos/nominas')
 if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
 
-console.log('app')
 console.log(route)

@@ -15,7 +15,7 @@
 
 		<div class="cabecera">
 			<h2>Reportes</h2>
-			<p>Aquí puede ver los reportes de las fichadas</p>
+			<p>Aquí puedes ver los reportes de las fichadas.</p>
 		</div>
 
 		@include('../mensajes_validacion')

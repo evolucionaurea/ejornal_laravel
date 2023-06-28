@@ -14,7 +14,7 @@
 
 		<div class="cabecera">
 			<h2>Listado de grupos empresarios</h2>
-			<p>Aquí puede ver el listado de los grupos empresarios del sistema</p>
+			<p>Aquí puedes ver el listado de los grupos empresarios del sistema</p>
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('grupos.create')}}"><i class="fas fa-plus-circle"></i> Nuevo grupo</a>
 			</div>
@@ -33,11 +33,11 @@
 		@endif
 
 		<div class="tarjeta">
-			<table class="table table-striped table-hover table-sm tabla">
+			<table data-table="grupos" class="table table-striped table-hover table-sm tabla">
 				<thead>
 					<tr>
 						<th>Nombre</th>
-						<th>Direccion</th>
+						<th>Dirección</th>
 						<th>Clientes asociados</th>
 						<th>Acciones</th>
 					</tr>
@@ -54,13 +54,6 @@
 							<a title="Editar" href="{{route('grupos.edit', $grupo->id)}}">
 								<i class="fas fa-pen"></i>
 							</a>
-							{{-- <form class="" action="{{route('grupos.destroy', $grupo->id)}}" method="post">
-								{{ csrf_field() }}
-								<input type="hidden" name="_method" value="DELETE">
-								<button title="Eliminar" type="submit">
-									<i class="fas fa-trash"></i>
-								</button>
-							</form> --}}
 						</td>
 					</tr>
 					@endforeach
