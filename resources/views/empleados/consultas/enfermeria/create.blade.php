@@ -38,7 +38,7 @@
 					<div class="form-group col-md-3">
 						<label>Trabajador: <span style="color: red;">*</span></label>
 						<select name="nomina" class="form-control select_2" required>
-							<option value="" >--Seleccionar--</option>
+							<option value="">--Seleccionar--</option>
 							@foreach ($nominas as $nomina)
 							<option value="{{$nomina->id}}">{{$nomina->nombre}}</option>
 							@endforeach
@@ -58,7 +58,7 @@
 							@endif
 						</label>
 						<select name="tipo" class="form-control" required>
-							<option value="" >--Seleccionar--</option>
+							<option value="">--Seleccionar--</option>
 							@foreach ($diagnostico_consultas as $tipo)
 							<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
 							@endforeach
@@ -66,13 +66,13 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>Fecha <span style="color: red;">*</span> </label>
-						<input required id="data_picker_gralx" name="fecha" type="date" class="form-control"
+						<input required id="data_picker_gral" name="fecha" type="date" class="form-control"
 							value="{{ old(" fecha") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Amerita salida <span style="color: red;">*</span></label>
 						<select name="amerita_salida" class="form-control" required>
-							<option value="" >--Seleccionar--</option>
+							<option value="">--Seleccionar--</option>
 							<option value="1">Si</option>
 							<option value="0">No</option>
 						</select>
@@ -140,7 +140,7 @@
 					<div class="form-group col-md-3">
 						<label>Derivación consulta <span style="color: red;">*</span></label>
 						<select name="derivacion_consulta" class="form-control" required>
-							<option value="" >--Seleccionar--</option>
+							<option value="">--Seleccionar--</option>
 							<option value="Sanatorio">Sanatorio</option>
 							<option value="ART">ART</option>
 							<option value="Vuelve a trabajar">Vuelve a trabajar</option>

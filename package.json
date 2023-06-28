@@ -14,12 +14,12 @@
         "@mdi/font": "^5.3.45",
         "axios": "^0.19",
         "bootstrap": "^4.4.1",
-        "browser-sync": "^2.26.12",
+        "browser-sync": "^2.29.3",
         "browser-sync-webpack-plugin": "^2.2.2",
         "cross-env": "^5.1",
         "jquery": "^3.4.1",
         "laravel-mix": "^4.0.7",
-        "lodash": "^4.17.20",
+        "lodash": "^4.17.21",
         "node-sass": "^4.14.1",
         "popper.js": "^1.14.4",
         "resolve-url-loader": "^2.3.1",
@@ -29,12 +29,12 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "chart.js": "^2.9.3",
+        "chart.js": "^2.9.4",
         "laravel-echo": "^1.8.1",
-        "moment": "^2.29.1",
+        "moment": "^2.29.4",
         "pusher-js": "^7.0.0",
         "sweetalert2": "^11.4.8",
-        "vuetify": "^2.3.1",
+        "vuetify": "^2.6.15",
         "yarn": "^1.22.4"
     }
 }
