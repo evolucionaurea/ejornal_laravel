@@ -65,7 +65,7 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>Fecha <span style="color: red;">*</span></label>
-						<input readonly required id="data_picker_gral" name="fecha" type="datetime" class="form-control"
+						<input readonly required id="data_picker_gral" name="fecha" type="text" class="form-control"
 							value="{{ old(" fecha") }}">
 					</div>
 					<div class="form-group col-md-3">
