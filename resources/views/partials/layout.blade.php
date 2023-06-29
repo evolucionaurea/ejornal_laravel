@@ -44,6 +44,13 @@
 	<link rel="stylesheet" href="{{asset('css/lib/select2.min.css')}}">
 
 
+
+	{{-- <script defer type="text/javascript" src="{{asset('js/lib/chart.min.js')}}"></script> --}}
+	{{-- Graficos con Chart JS --}}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" type="text/javascript"></script>
+	{{-- Graficos con Chart JS --}}
+
+
 </head>
 <body>
 
@@ -67,7 +74,7 @@
 	<script type="text/javascript" src="{{asset('js/lib/pdfmake.min.js')}}"></script>
 	<script type="text/javascript" src="{{asset('js/lib/vfs_fonts.js')}}"></script>
 	<script defer type="text/javascript" src="{{asset('js/lib/datatables.min.js')}}"></script>
-	<script defer type="text/javascript" src="{{asset('js/lib/chart.min.js')}}"></script>
+
 
 
 	{{-- Este es el JS de MDB (Material Design Bootstrap). Funciona solo si se carga desde aquí, luego compilar todo el Mix de JS --}}
@@ -87,9 +94,7 @@
 	{{-- Select 2 --}}
 
 
-	{{-- Graficos con Chart JS --}}
-	{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" type="text/javascript"></script> --}}
-	{{-- Graficos con Chart JS --}}
+
 
 
 	<script>
