@@ -45,6 +45,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/ausentismos/destroy/{id}','EmpleadosAusentismosController@destroy');
 	Route::post('empleados/ausentismos/busqueda','EmpleadosAusentismosController@busqueda');
 	//Route::get('empleados/getAusentismos', 'EmpleadosAusentismosController@getAusentismos')->name('ausentismos.get_ausentismos');
+	Route::post('empleados/ausentismos/editar_tipo/', 'EmpleadosAusentismosController@editarTipo')->name('/empleados/ausentismos/tipo/edit');
 	Route::post('empleados/ausentismos/tipo', 'EmpleadosAusentismosController@tipo')->name('/empleados/ausentismos/tipo');
 	Route::delete('empleados/ausentismos/tipo_delete/{id_tipo}', 'EmpleadosAusentismosController@tipo_destroy')->name('ausentismos.tipo_delete');
 	Route::get('empleados/ausentismos/archivo/{id}', 'EmpleadosAusentismosController@descargar_archivo')->name('ausentismos.archivo');

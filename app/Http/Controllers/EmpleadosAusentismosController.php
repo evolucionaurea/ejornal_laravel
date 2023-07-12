@@ -106,7 +106,7 @@ class EmpleadosAusentismosController extends Controller
 				return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo.');
 			}
 		}else{
-
+			return back()->withInput()->with('error', 'La fecha de regreso es obligatoria.');
 		}
 
 		$buscar_ausentismos_trabajador = Ausentismo::where('id_trabajador', $request->trabajador)
@@ -331,6 +331,19 @@ class EmpleadosAusentismosController extends Controller
 		$tipo_ausentismo->save();
 
 		return back()->with('success', 'Tipo de ausentismo creado con éxito');
+	}
+
+
+	public function editarTipo(Request $request)
+	{
+		if ($request->tipo_editado == null || $request->id_tipo == null) {
+			return back()->with('error', 'No puede enviar el campo vacío');
+		}
+		$tipo_ausentismo = AusentismoTipo::find($request->id_tipo);
+		$tipo_ausentismo->nombre = $request->tipo_editado;
+		$tipo_ausentismo->save();
+
+		return back()->with('success', 'Tipo de ausentismo editado con éxito');
 	}
 
 

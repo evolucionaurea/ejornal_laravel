@@ -19,4 +19,13 @@ $(()=>{
 
 	$('.select_2').trigger('change')
 
+
+	$('.btn_editar_tipo_ausentismo').on('click', function(event) {
+		let id_tipo = $(this).data("id")
+		let tipo_actual = $(this).data("text")
+		$('#editar_tipo_ausentismo [name="tipo_editado"]').val(tipo_actual)
+		$('#editar_tipo_ausentismo [name="id_tipo"]').val(id_tipo)
+
+	});
+
 })
