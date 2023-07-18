@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 trait Ausentismos {
 
+	/* Búsqueda para DataTable */
 	public function searchAusentismos($id_cliente=null,Request $request)
 	{
 
@@ -66,16 +67,40 @@ trait Ausentismos {
 		}
 
 
-		if($request->ausentes=='mes'){
-			/*$query->where(function($query) use ($now) {
+		if($request->ausentes=='mes-actual'){
+
+			$query->where(function($query) use ($now){
+
 				$query
-					->where('ausentismos.fecha_regreso_trabajar',null)
-					->orWhere('ausentismos.fecha_regreso_trabajar','>',$now->startOfMonth());
-			});*/
+					->where(function($query) use ($now){
+						$query
+							->whereBetween('fecha_inicio',[$now->startOfMonth(),$now])
+							->where(function($query) use($now){
+								$query->where('fecha_final','<=',$now)
+									->orWhere('fecha_final',null);
+							});
+					})
+					->orWhere(function($query) use ($now){
+						// los que siguen ausentes fuera del mes actual
+						$query
+							->where('fecha_inicio','<=',$now->startOfMonth())
+							->where(function($query) use($now){
+								$query->where('fecha_final','>=',$now->startOfMonth())
+									->orWhere('fecha_final',null);
+							});
+					});
+
+			});
+
+		}
+
+
+		if($request->ausentes=='mes-actual-carga'){
 			$query->where('ausentismos.fecha_inicio','>=',$now->startOfMonth());
 			$query->where('ausentismos.fecha_inicio','<=',$now->endOfMonth());
 		}
-		if($request->ausentes=='mes-pasado'){
+
+		if($request->ausentes=='mes-pasado-carga'){
 			$query->where('ausentismos.fecha_inicio','>=',$now->subMonth()->startOfMonth());
 			$query->where('ausentismos.fecha_inicio','<=',$now->subMonth()->endOfMonth());
 		}
