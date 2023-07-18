@@ -12,7 +12,7 @@ $(()=>{
 		delete_message:'¿Seguro deseas borrar este ausentismo?',
 		server_side:true,
 		datatable_options:{
-			order:[[4,'desc']],
+			order:[[5,'desc']],
 
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 
@@ -66,12 +66,12 @@ $(()=>{
 				},
 				{
 					data:row=>row,
-					name:'fecha_regreso_trabajar',
+					name:'fecha_final',
 					render:v=>{
-						if(v.fecha_regreso_trabajar == null){
+						if(v.fecha_final == null){
 							return '<span class="badge badge-danger">ausente</span>'
 						}else{
-							let str = v.fecha_regreso_trabajar;
+							let str = v.fecha_final;
 							let [dia, mes, anio] = str.split('/');
 							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							let hoy = new Date();
@@ -91,11 +91,11 @@ $(()=>{
 						let regreso_trabajar = null;
 						let hoy;
 						let mostrar_extension;
-						if(v.fecha_regreso_trabajar == null){
+						if(v.fecha_final == null){
 							regreso_trabajar = null;
 							mostrar_extension = true;
 						}else{
-							let str = v.fecha_regreso_trabajar;
+							let str = v.fecha_final;
 							let [dia, mes, anio] = str.split('/');
 							regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							hoy = new Date();

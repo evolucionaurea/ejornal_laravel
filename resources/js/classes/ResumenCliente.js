@@ -18,6 +18,8 @@ export default class ResumenCliente {
 
 		const chart_canvas = document.querySelector(`${obj.chart_canvas}`)
 
+		///console.log(obj)
+
 		let data_labels = {
 			labels:[],
 			datasets:[{
@@ -35,25 +37,24 @@ export default class ResumenCliente {
 			obj.data.map(item=>{
 				if(count>this.colores.length.length) count = 0
 
-				/*data_labels.datasets.push({
-					label:item.tipo.nombre,
-					data:[item.total],
-					backgroundColor:this.colores[count],
-					borderColor:this.colores_hover[count],
-					borderWidth:1
-				})*/
-
 				data_labels.labels.push(item.tipo.nombre)
-				data_labels.datasets[0].data.push(item.total)
+				data_labels.datasets[0].data.push(item.dias)
 
 				count++
 				//ausentismos_count += item.total
 			})
 
-
 			///console.log(data_labels)
 
 			let chart = chart_canvas.getContext("2d");
+			this.chart_options.tooltips = {
+				callbacks:{
+					label:(tooltipItem,data)=>{
+						const indx = tooltipItem.index
+						return `Cant. días: ${data.datasets[0].data[indx]}`
+					}
+				}
+			}
 			new Chart(chart, {
 				type: 'horizontalBar',
 				data: data_labels,
@@ -115,6 +116,7 @@ export default class ResumenCliente {
 				const td_nombre = dom('td')
 				const td_percent = dom('td')
 				const td_value = dom('td')
+				const td_dias = dom('td')
 
 				//const percent = (row.total/total_count*100)
 				//const percent = nomina_actual*
@@ -122,6 +124,7 @@ export default class ResumenCliente {
 
 				td_nombre.text( row.tipo.nombre )
 				td_value.text( row.total )
+				td_dias.text(row.dias)
 
 				total_ausentismos += row.total
 
@@ -130,7 +133,7 @@ export default class ResumenCliente {
 				total_dias += parseInt(row.dias)
 				total_percent += percent
 
-				tr.append(td_nombre,td_value,td_percent)
+				tr.append(td_nombre,td_value,td_dias,td_percent)
 				$(`[data-table="${dt.tabla}"]`).append(tr)
 
 			})
@@ -138,6 +141,7 @@ export default class ResumenCliente {
 			//console.log(dt.data,total_dias,this.data[dt.nomina],this.data[dt.dias_periodo],total_percent)
 
 			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-ausentismos"]').text(total_ausentismos)
+			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-dias"]').text(total_dias)
 			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-percent"]').text(`${total_percent.toFixed(2)} %`)
 
 

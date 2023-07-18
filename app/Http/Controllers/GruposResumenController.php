@@ -68,7 +68,6 @@ class GruposResumenController extends Controller
 	{
 		$today = CarbonImmutable::now();
 
-		//DB::enableQueryLog();
 
 		$nomina_actual = Nomina::
 			whereIn('id_cliente',function($query){
@@ -102,28 +101,41 @@ class GruposResumenController extends Controller
 			//->where('estado',1)
 			->count();
 
+		///echo_json(auth()->user()->rol);
+
 		/***********************************************************************************************/
 		/*** Unificar queries desde Traits/Ausentismos ya son las mismas pero cambia un solo where  ****/
 		/***********************************************************************************************/
 		/// MES ACTUAL
+		/*IFNULL(
+			fecha_regreso_trabajar,
+			DATE(NOW())
+		),*/
+		DB::enableQueryLog();
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$ausentismos_mes = Ausentismo::selectRaw("
-				SUM(
-					DATEDIFF(
-						IFNULL(
-							fecha_regreso_trabajar,
-							DATE(NOW())
-						),
-						IF(
-							fecha_inicio>='{$inicio_mes}',
-							fecha_inicio,
-							'{$inicio_mes}'
-						)
-					)+1
-				) dias,
+			SUM(
+				DATEDIFF(
 
-				count(*) as total,
-				id_tipo"
+					IF(
+						IFNULL(
+							fecha_final,
+							DATE(NOW())
+						) >= DATE(NOW()),
+						DATE(NOW()),
+						fecha_final
+					),
+
+					IF(
+						fecha_inicio>='{$inicio_mes}',
+						fecha_inicio,
+						'{$inicio_mes}'
+					)
+				)+1
+			) dias,
+
+			count(*) as total,
+			id_tipo"
 		)
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre');
@@ -135,18 +147,18 @@ class GruposResumenController extends Controller
 						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
 						->where(function($query) use($today){
 							$query
-								->where('fecha_regreso_trabajar','<=',$today->startOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final',null);
 						});
 				})
 				->orWhere(function($query) use ($today){
 					// los que siguen ausentes fuera del mes actual
 					$query
-						->where('fecha_inicio','<',$today->startOfMonth())
+						->where('fecha_inicio','<=',$today->startOfMonth())
 						->where(function($query) use($today){
 							$query
-								->where('fecha_regreso_trabajar','>=',$today->startOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','>=',$today->startOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -155,7 +167,7 @@ class GruposResumenController extends Controller
 				$query
 					->select('id')
 					->from('nominas')
-					//->where('deleted_at',null)
+					->where('deleted_at',null)
 					///->where('estado',1)
 					->whereIn('id_cliente',function($query){
 						$query
@@ -165,10 +177,11 @@ class GruposResumenController extends Controller
 					});
 			})
 			->groupBy('id_tipo')
-			->orderBy('total','desc')
+			->orderBy('dias','desc')
 			->get();
 
-		//$query_log = DB::getQueryLog();
+
+		$query_log = DB::getQueryLog();
 
 
 
@@ -179,8 +192,8 @@ class GruposResumenController extends Controller
 			SUM(
 				DATEDIFF(
 					IF(
-						fecha_regreso_trabajar<'{$fin_mes_pasado}',
-						fecha_regreso_trabajar,
+						fecha_final<'{$fin_mes_pasado}',
+						fecha_final,
 						'{$fin_mes_pasado}'
 					),
 					IF(
@@ -202,16 +215,16 @@ class GruposResumenController extends Controller
 					$query
 						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
 						->where(function($query) use ($today){
-							$query->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+							$query->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
 						->where(function($query) use ($today){
-							$query->where('fecha_regreso_trabajar','>',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+							$query->where('fecha_final','>',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -240,8 +253,8 @@ class GruposResumenController extends Controller
 			SUM(
 				DATEDIFF(
 					IF(
-						fecha_regreso_trabajar<'{$fin_mes_anio_anterior}',
-						fecha_regreso_trabajar,
+						fecha_final<'{$fin_mes_anio_anterior}',
+						fecha_final,
 						'{$fin_mes_anio_anterior}'
 					),
 					IF(
@@ -264,8 +277,8 @@ class GruposResumenController extends Controller
 						->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','<=',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
@@ -273,8 +286,8 @@ class GruposResumenController extends Controller
 					$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','>',$today->subYear()->endOfMonth())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','>',$today->subYear()->endOfMonth())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -301,11 +314,16 @@ class GruposResumenController extends Controller
 		$ausentismos_anual = Ausentismo::selectRaw("
 			SUM(
 				DATEDIFF(
+
 					IF(
-						fecha_regreso_trabajar<DATE(NOW()),
-						fecha_regreso_trabajar,
+						IFNULL(
+							fecha_final,
+							DATE(NOW())
+						) < DATE(NOW()),
+						fecha_final,
 						DATE(NOW())
 					),
+
 					IF(
 						fecha_inicio<'{$inicio_anio}',
 						'{$inicio_anio}',
@@ -326,18 +344,18 @@ class GruposResumenController extends Controller
 						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','<=',$today)
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query
-						->where('fecha_inicio','<',$today->startOfYear())
+						->where('fecha_inicio','<=',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_regreso_trabajar','>',$today->startOfYear())
-								->orWhere('fecha_regreso_trabajar',null);
+								->where('fecha_final','>',$today->startOfYear())
+								->orWhere('fecha_final',null);
 						});
 				});
 			})
@@ -357,7 +375,7 @@ class GruposResumenController extends Controller
 					});
 			})
 			->groupBy('id_tipo')
-			->orderBy('total','desc')
+			->orderBy('dias','desc')
 			->get();
 
 		$status = 'ok';
