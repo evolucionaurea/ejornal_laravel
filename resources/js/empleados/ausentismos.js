@@ -64,6 +64,25 @@ $(()=>{
 						return v==null ? '[no cargada]' : v
 					}
 				},
+
+				{
+					data:'dias_mes_actual',
+					orderable:false,
+					className:'align-middle',
+					name:'dias_mes_actual',
+					render:v=>{
+						return v>0 ? v : 0
+					}
+				},
+				{
+					data:'total_dias',
+					orderable:false,
+					className:'align-middle',
+					render:v=>{
+						return v
+					}
+				},
+
 				{
 					data:row=>row,
 					name:'fecha_final',

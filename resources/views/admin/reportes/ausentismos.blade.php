@@ -67,7 +67,7 @@
 						<th>Tipo</th>
 						<th>Fecha inicio</th>
 						<th>Fecha final</th>
-						<th>Días ausente</th>
+						<th>Total días</th>
 					</tr>
 				</thead>
 				<!--Table head-->

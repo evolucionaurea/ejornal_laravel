@@ -6,6 +6,7 @@ use App\Ausentismo;
 use App\Nomina;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 trait Clientes {
 
@@ -23,6 +24,12 @@ trait Clientes {
 
 
 		$today = CarbonImmutable::now();
+
+
+		$route = explode('/',Route::currentRouteName());
+		$route = array_values(array_filter($route));
+
+		///dd($route[0]);
 
 
 		$nomina_actual = Nomina::
@@ -403,7 +410,9 @@ trait Clientes {
 
 			'nomina_actual',
 			'nomina_mes_anterior',
-			'nomina_mes_anio_anterior'
+			'nomina_mes_anio_anterior',
+
+			'route'
 		);
 
 
