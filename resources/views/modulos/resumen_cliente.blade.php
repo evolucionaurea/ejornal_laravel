@@ -278,8 +278,9 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad</th>
-						<th scope="col">Porcentaje</th>
+						<th scope="col">Cantidad de ausentismos</th>
+						<th scope="col">Cantidad de días</th>
+						<th scope="col">Índice de Ausentismo</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -289,6 +290,7 @@
 					<tr class="alert-info">
 						<th>Total</th>
 						<th data-content="total-ausentismos"></th>
+						<th data-content="total-dias"></th>
 						<th data-content="total-percent"></th>
 					</tr>
 				</tfoot>
@@ -305,8 +307,9 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad</th>
-						<th scope="col">Porcentaje</th>
+						<th scope="col">Cantidad de ausentismos</th>
+						<th scope="col">Cantidad de días</th>
+						<th scope="col">Índice de ausentismo</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -316,6 +319,7 @@
 					<tr class="alert-info">
 						<th>Total</th>
 						<th data-content="total-ausentismos"></th>
+						<th data-content="total-dias"></th>
 						<th data-content="total-percent"></th>
 					</tr>
 				</tfoot>
@@ -332,8 +336,9 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad</th>
-						<th scope="col">Porcentaje</th>
+						<th scope="col">Cantidad ausentismos</th>
+						<th scope="col">Cantidad días</th>
+						<th scope="col">Índice de ausentismo</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -343,6 +348,7 @@
 					<tr class="alert-info">
 						<th>Total</th>
 						<th data-content="total-ausentismos"></th>
+						<th data-content="total-dias"></th>
 						<th data-content="total-percent"></th>
 					</tr>
 				</tfoot>
@@ -358,8 +364,9 @@
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad</th>
-						<th scope="col">Porcentaje</th>
+						<th scope="col">Cantidad ausentismos</th>
+						<th scope="col">Cantidad días</th>
+						<th scope="col">Índice de ausentismo</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -369,6 +376,7 @@
 					<tr class="alert-info">
 						<th>Total</th>
 						<th data-content="total-ausentismos"></th>
+						<th data-content="total-dias"></th>
 						<th data-content="total-percent"></th>
 					</tr>
 				</tfoot>

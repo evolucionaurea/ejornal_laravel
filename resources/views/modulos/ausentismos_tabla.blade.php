@@ -23,8 +23,14 @@
 			<select name="ausentes" class="form-control form-control-sm">
 				<option value="">--Seleccionar Filtro--</option>
 				<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
-				<option value="mes" {{ Request::get('ausentes')  == 'mes' ? 'selected' : '' }} >Ausentismos Cargados Mes Actual</option>
-				<option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos Cargados Mes Pasado</option>
+
+				<option value="mes-actual" {{ Request::get('ausentes')  == 'mes-actual' ? 'selected' : '' }} >Ausentismos mes actual</option>
+				{{-- <option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos mes anterior</option>
+				<option value="anio-anterior" {{ Request::get('ausentes')  == 'anio-anterior' ? 'selected' : '' }} >Ausentismos mismo mes año anterior</option>
+				<option value="anio-actual" {{ Request::get('ausentes')  == 'anio-actual' ? 'selected' : '' }} >Ausentismos año actual</option> --}}
+
+				<option value="mes-actual-carga" {{ Request::get('ausentes')  == 'mes-actual-carga' ? 'selected' : '' }} >Ausentismos cargados en mes actual</option>
+				<option value="mes-pasado-carga" {{ Request::get('ausentes')  == 'mes-pasado-carga' ? 'selected' : '' }} >Ausentismos cargados el mes pasado</option>
 			</select>
 		</div>
 

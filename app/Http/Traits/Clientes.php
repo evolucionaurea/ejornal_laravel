@@ -41,19 +41,24 @@ trait Clientes {
 			->count();
 
 
-
-
 		/// AUSENTISMOS
 		/// MES ACTUAL
-		///DB::enableQueryLog();
+		//DB::enableQueryLog();
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
+		$today_formatted = $today->format('Y-m-d');
 		$q_ausentismos_mes_actual = Ausentismo::selectRaw("
 			SUM(
 				DATEDIFF(
-					IFNULL(
-						fecha_final,
-						DATE(NOW())
+
+					IF(
+						IFNULL(
+							fecha_final,
+							DATE(NOW())
+						) >= DATE(NOW()),
+						DATE(NOW()),
+						fecha_final
 					),
+
 					IF(
 						fecha_inicio>='{$inicio_mes}',
 						fecha_inicio,
@@ -67,13 +72,13 @@ trait Clientes {
 				$query
 				->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
 				->where(function($query) use($today){
-					$query->where('fecha_final','<=',$today->startOfMonth())
+					$query->where('fecha_final','<=',$today)
 						->orWhere('fecha_final',null);
 				});
 			})
 			->orWhere(function($query) use ($today){
 				// los que siguen ausentes fuera del mes actual
-				$query->where('fecha_inicio','<',$today->startOfMonth())
+				$query->where('fecha_inicio','<=',$today->startOfMonth())
 				->where(function($query) use($today){
 					$query->where('fecha_final','>=',$today->startOfMonth())
 						->orWhere('fecha_final',null);
@@ -87,11 +92,12 @@ trait Clientes {
 				->where('id_cliente',$id_cliente)
 				//->where('estado',1)
 				->where('deleted_at',null);
-		});
+		})
+		->orderBy('dias','desc');
 
 		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),4)*100) : 0;
 
-		///dd(DB::getQueryLog());
+		//dd(DB::getQueryLog()[0]);
 
 
 		/// MES PASADO
@@ -197,14 +203,26 @@ trait Clientes {
 		/// AÑO ACTUAL
 		//DB::enableQueryLog();
 		$inicio_anio = $today->format('Y-01-01');
+
+
+		/*IF(
+			fecha_final<DATE(NOW()),
+			fecha_final,
+			DATE(NOW())
+		),*/
 		$q_ausentismos_anio_actual = Ausentismo::selectRaw("
 			SUM(
 				DATEDIFF(
+
 					IF(
-						fecha_final<DATE(NOW()),
+						IFNULL(
+							fecha_final,
+							DATE(NOW())
+						) < DATE(NOW()),
 						fecha_final,
 						DATE(NOW())
 					),
+
 					IF(
 						fecha_inicio<'{$inicio_anio}',
 						'{$inicio_anio}',
@@ -227,7 +245,7 @@ trait Clientes {
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
 				$query
-					->where('fecha_inicio','<',$today->startOfYear())
+					->where('fecha_inicio','<=',$today->startOfYear())
 					->where(function($query) use ($today){
 						$query
 							->where('fecha_final','>',$today->startOfYear())
@@ -242,13 +260,12 @@ trait Clientes {
 				->where('id_cliente',$id_cliente)
 				//->where('estado',1)
 				->where('deleted_at',null);
-		});
-		//dd(DB::getQueryLog());
+		})
+		->orderBy('dias','desc');
+
+		//dd($q_ausentismos_anio_actual->toSql());
+
 		$ausentismos_anio_actual = $nomina_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_actual*$today->dayOfYear()),4)*100) : 0;
-		///dd($q_ausentismos_anio_actual->first()->dias);
-
-
-
 
 
 		/// ACCIDENTES

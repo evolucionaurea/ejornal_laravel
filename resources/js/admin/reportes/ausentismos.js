@@ -10,7 +10,7 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			order:[[4,'desc']],
+			order:[[5,'desc']],
 			columns:[
 				{
 					data:'trabajador',

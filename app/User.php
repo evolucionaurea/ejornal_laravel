@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use App\ClienteUser;
 use App\Cliente;
 use App\Grupo;
+use App\Rol;
 
 class User extends Authenticatable
 {
@@ -52,6 +53,9 @@ class User extends Authenticatable
 	public function cliente_relacionar()
 	{
 		return $this->belongsTo(Cliente::class,'id_cliente_relacionar');
+	}
+	public function rol(){
+		return $this->belongsTo(Rol::class,'id_rol');
 	}
 
 

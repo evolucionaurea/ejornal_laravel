@@ -10,7 +10,7 @@ $(()=>{
 		server_side:true,
 		datatable_options:{
 			//ordering:false,
-			order:[[4,'desc']],
+			order:[[5,'desc']],
 
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 
@@ -65,10 +65,10 @@ $(()=>{
 					data:row=>row,
 					orderable:false,
 					render:v=>{
-						if(v.fecha_regreso_trabajar == null){
+						if(v.fecha_final == null){
 							return '<span class="badge badge-danger">ausente</span>'
 						}else{
-							let str = v.fecha_regreso_trabajar;
+							let str = v.fecha_final;
 							let [dia, mes, anio] = str.split('/');
 							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							let hoy = new Date();

@@ -49,10 +49,19 @@
 	{{-- Graficos con Chart JS --}}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" type="text/javascript"></script>
 	{{-- Graficos con Chart JS --}}
+	<script type="text/javascript" src="{{ asset('js/lib/jquery-3.3.1.min.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/lib/jquery-ui.js') }}"></script>
+	{{-- <script type="text/javascript" src="{{asset('js/lib/jquery.dataTables.min.js')}}"></script> --}}
+	<script type="text/javascript" src="{{asset('js/lib/mdb.min.js')}}"></script>
+	<script defer type="text/javascript" src="{{asset('js/lib/select2.min.js')}}"></script>
+	<script type="text/javascript" src="{{asset('js/lib/pdfmake.min.js')}}"></script>
+	<script type="text/javascript" src="{{asset('js/lib/vfs_fonts.js')}}"></script>
+	<script defer type="text/javascript" src="{{asset('js/lib/datatables.min.js')}}"></script>
 
 
 </head>
 <body>
+
 
 	<div id="app">
 	@yield('content')
@@ -66,14 +75,6 @@
 	{{-- <script type="application/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> --}}
 	<!-- Data Table para que funcione Admin - Reportes -->
 
-	<script type="text/javascript" src="{{ asset('js/lib/jquery-3.3.1.min.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('js/lib/jquery-ui.js') }}"></script>
-	{{-- <script type="text/javascript" src="{{asset('js/lib/jquery.dataTables.min.js')}}"></script> --}}
-	<script type="text/javascript" src="{{asset('js/lib/mdb.min.js')}}"></script>
-	<script defer type="text/javascript" src="{{asset('js/lib/select2.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('js/lib/pdfmake.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('js/lib/vfs_fonts.js')}}"></script>
-	<script defer type="text/javascript" src="{{asset('js/lib/datatables.min.js')}}"></script>
 
 
 
