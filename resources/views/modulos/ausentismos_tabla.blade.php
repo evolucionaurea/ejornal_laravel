@@ -25,12 +25,12 @@
 				<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
 
 				<option value="mes-actual" {{ Request::get('ausentes')  == 'mes-actual' ? 'selected' : '' }} >Ausentismos mes actual</option>
-				{{-- <option value="mes-pasado" {{ Request::get('ausentes')  == 'mes-pasado' ? 'selected' : '' }} >Ausentismos mes anterior</option>
-				<option value="anio-anterior" {{ Request::get('ausentes')  == 'anio-anterior' ? 'selected' : '' }} >Ausentismos mismo mes año anterior</option>
-				<option value="anio-actual" {{ Request::get('ausentes')  == 'anio-actual' ? 'selected' : '' }} >Ausentismos año actual</option> --}}
+				<option value="mes-anterior" {{ Request::get('ausentes')  == 'mes-anterior' ? 'selected' : '' }} >Ausentismos mes anterior</option>
+				<option value="mes-anio-anterior" {{ Request::get('ausentes')  == 'mes-anio-anterior' ? 'selected' : '' }} >Ausentismos mismo mes año anterior</option>
+				<option value="anio-actual" {{ Request::get('ausentes')  == 'anio-actual' ? 'selected' : '' }} >Ausentismos año actual</option>
 
 				<option value="mes-actual-carga" {{ Request::get('ausentes')  == 'mes-actual-carga' ? 'selected' : '' }} >Ausentismos cargados en mes actual</option>
-				<option value="mes-pasado-carga" {{ Request::get('ausentes')  == 'mes-pasado-carga' ? 'selected' : '' }} >Ausentismos cargados el mes pasado</option>
+				<option value="mes-anterior-carga" {{ Request::get('ausentes')  == 'mes-anterior-carga' ? 'selected' : '' }} >Ausentismos cargados el mes pasado</option>
 			</select>
 		</div>
 
@@ -70,14 +70,8 @@
 	</div>
 
 
-
-
-
-
-
 </div>
 <hr>
-
 
 <table class="table table-striped table-hover table-sm tabla_ausentismos">
 
@@ -91,6 +85,10 @@
 			<th>Fecha inicio</th>
 			<th>Fecha final</th>
 			<th>Fecha en que regresó</th>
+
+			<th>Días mes actual <i class="fa fa-question-circle fa-fw" data-swal="Se calcula en base a los días ausentes en el mes actual. También toma en cuenta si la fecha de inicio sea antes o la fecha final sea posterior al mes actual, contabilizando solamente los días desde el inicio del mes hasta el día de la fecha."></i></th>
+			<th>Total días <i class="fa fa-question-circle fa-fw" data-swal="Se calcula desde la fecha de inicio hasta la fecha final"></i></th>
+
 			<th>Hoy</th>
 
 			<th></th>

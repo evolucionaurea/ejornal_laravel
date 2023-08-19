@@ -309,15 +309,15 @@ class EmpleadosAusentismosController extends Controller
 		if ($ausentismo) {
 			// Eliminar el archivo si existe
 			$ruta_archivo = storage_path("app/ausentismos/trabajador/{$ausentismo->id}/{$ausentismo->hash_archivo}");
-			file_exists($ruta_archivo) && unlink($ruta_archivo);
-	
+			if(file_exists($ruta_archivo)) unlink($ruta_archivo);
+
 			// Eliminar la carpeta si existe
 			$ruta_carpeta = storage_path("app/ausentismos/trabajador/{$ausentismo->id}");
-			file_exists($ruta_carpeta) && rmdir($ruta_carpeta);
-	
+			if(file_exists($ruta_carpeta)) rmdir($ruta_carpeta);
+
 			// Eliminar las comunicaciones asociadas al ausentismo
 			Comunicacion::where('id_ausentismo', $id)->delete();
-	
+
 			// Finalmente, eliminar el ausentismo
 			$ausentismo->delete();
 			return back()->with('success', 'Ausentismo y Comunicación asociada eliminados correctamente');

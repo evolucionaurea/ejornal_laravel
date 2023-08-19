@@ -148,7 +148,14 @@ class AdminReporteController extends Controller
 		$filtro = '%'.$request->search['value'].'%';
 		$query = Ausentismo::selectRaw(
 			'ausentismos.*,
-			(DATEDIFF(IFNULL(fecha_final,DATE(NOW())),fecha_inicio)) as dias_ausente'
+			(
+				DATEDIFF(
+					IFNULL(
+						fecha_final,
+						DATE(NOW())
+					),fecha_inicio
+				)
+			)+1 as dias_ausente'
 		)
 		->join('ausentismo_tipo','ausentismo_tipo.id','ausentismos.id_tipo')
 		->join('nominas','nominas.id','ausentismos.id_trabajador')

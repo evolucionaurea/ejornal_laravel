@@ -103,9 +103,9 @@ class GruposResumenController extends Controller
 
 		///echo_json(auth()->user()->rol);
 
-		/***********************************************************************************************/
-		/*** Unificar queries desde Traits/Ausentismos ya son las mismas pero cambia un solo where  ****/
-		/***********************************************************************************************/
+		/***************************************************************************************************/
+		/*** Unificar queries desde Traits/Ausentismos ya que son las mismas pero cambia un solo where  ****/
+		/***************************************************************************************************/
 		/// MES ACTUAL
 		/*IFNULL(
 			fecha_regreso_trabajar,

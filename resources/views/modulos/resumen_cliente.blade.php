@@ -4,8 +4,6 @@
 @endphp
 
 
-
-
 <!-- AUSENTISMOS -->
 <div class="row px-4">
 
@@ -16,7 +14,7 @@
 
 	<!-- Mes Actual -->
 	<div class="col-lg-3 mb-4">
-		<div class="card purple white-text">
+		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-actual' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_actual }}%</div>
@@ -27,13 +25,13 @@
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
 				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 
 
 	<!-- Mes Anterior -->
 	<div class="col-lg-3 mb-4">
-		<div class="card purple white-text">
+		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-anterior' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_pasado }}%</div>
@@ -44,13 +42,13 @@
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
 				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 
 
 	<!-- Mes Año Anterior -->
 	<div class="col-lg-3 mb-4">
-		<div class="card purple white-text">
+		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-anio-anterior' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_anio_anterior }}%</div>
@@ -61,12 +59,12 @@
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
 				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 
 	<!-- Año Actual -->
 	<div class="col-lg-3 mb-4">
-		<div class="card purple white-text">
+		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=anio-actual' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_anio_actual }}%</div>
@@ -77,7 +75,7 @@
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
 				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 
 </div>
