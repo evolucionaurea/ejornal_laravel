@@ -135,13 +135,12 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo', 'ausentismos.id')
 		->first();
 
-		$documentacion_ausentismo = AusentismoDocumentacion::where('id_ausentismo', $id)->get();
+		$documentacion_ausentismo = AusentismoDocumentacion::where('id_ausentismo', $id)->orderBy('fecha_documento', 'desc')->get();
 
 		$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
 		->where('cliente_user.id_user', '=', auth()->user()->id)
 		->select('clientes.nombre', 'clientes.id')
 		->get();
-
 		return view('empleados.ausentismos.documentaciones', compact('ausencia', 'clientes', 'documentacion_ausentismo'));
 
 	}

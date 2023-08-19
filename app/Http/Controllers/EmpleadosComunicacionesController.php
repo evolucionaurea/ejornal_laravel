@@ -48,7 +48,6 @@ class EmpleadosComunicacionesController extends Controller
 			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
 		];
-
 	}
 
 	/**
@@ -105,6 +104,7 @@ class EmpleadosComunicacionesController extends Controller
 	  $comunicaciones_ausentismo = Comunicacion::join('tipo_comunicacion', 'comunicaciones.id_tipo', 'tipo_comunicacion.id')
 	  ->where('id_ausentismo', $id)
 	  ->select('comunicaciones.id', 'tipo_comunicacion.nombre', 'comunicaciones.descripcion', 'comunicaciones.updated_at')
+	  ->orderBy('comunicaciones.created_at', 'desc')
 	  ->get();
 
 	  $tipo_comunicaciones = TipoComunicacion::all();
