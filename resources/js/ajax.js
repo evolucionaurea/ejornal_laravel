@@ -63,8 +63,7 @@ $( ".editar_documentos_tarea_liviana" ).click(function(e) {
   let id_doc = $(this).data("id");
   let objDate = new Date();
   let fecha_actual = objDate.getFullYear() + "/" + objDate.getMonth()+1 + "/" + objDate.getDate();
-  console.log(fecha_actual);
-
+  
   axios.get('getDocumentacion/'+id_doc)
   .then(res => {
     $("#form_editar_documentacion_tarea_liviana input[name='id_doc']").val(res.data.id);

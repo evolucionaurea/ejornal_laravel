@@ -40,6 +40,65 @@
         <div class="tarjeta">
             <div class="row">
                 <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-3 col-sm-12 text-center">
+                            <i class="fas fa-user fa-10x"></i>
+                            <br>
+                            <br>
+                            <h5>{{$ausencia->nombre}}</h5>
+                        </div>
+                        <div class="col-lg-4 col-md-5 col-sm-12">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <b>Tipo: </b> {{$ausencia->nombre_ausentismo}}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Fecha inicio: </b> {{ (!empty($ausencia->fecha_inicio)) ?
+                                    date('d/m/Y',strtotime($ausencia->fecha_inicio)) : "" }}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Fecha final: </b> {{ (!empty($ausencia->fecha_final)) ?
+                                    date('d/m/Y',strtotime($ausencia->fecha_final)) : "" }}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Fecha en que regresó: </b> {{ (!empty($ausencia->fecha_regreso_trabajar)) ?
+                                    date('d/m/Y',strtotime($ausencia->fecha_regreso_trabajar)) : "" }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <b>Email: </b> {{$ausencia->email}}
+                                </li>
+                                <li class="list-group-item"><b>Estado: </b>
+                                    @if ($ausencia->estado == 1)
+                                    Activo
+                                    @else
+                                    Inactivo
+                                    @endif
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Telefono: </b> {{$ausencia->telefono}}
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Archivo adjunto: </b>
+                                    <br>
+                                    <br>
+                                    @if ($ausencia->archivo == null)
+                                    No se adjuntó un archivo
+                                    @else
+                                    <a class="btn-ejornal btn-ejornal-gris-claro"
+                                        href="{{route('ausentismos.archivo', $ausencia->id)}}">
+                                        <i class="fa fa-file"></i>{{$ausencia->archivo}}
+                                    </a>
+                                    @endif
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
 
                     @if (count($comunicaciones_ausentismo) > 0)
                     @foreach ($comunicaciones_ausentismo as $comunicacion)

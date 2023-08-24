@@ -101,32 +101,47 @@
                     @if (isset($comunicacione_tarea_liviana) && !empty($comunicacione_tarea_liviana) &&
                     count($comunicacione_tarea_liviana) > 0)
 
-                    <div class="card-columns">
-                        @foreach ($comunicacione_tarea_liviana as $comunicacion)
-                        <div class="card mt-2 mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title text_primary">
-                                    <b>Comunicación:</b> {{$comunicacion->nombre}}
-                                </h5>
-                                <p class="card-text">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Descripcion: </span>
-                                        <p>{{$comunicacion->descripcion}}</p>
-                                    </li>
-                                </ul>
-                                </p>
+                    @foreach ($comunicacione_tarea_liviana as $comunicacion)
+                    <div class="accordion mb-4" id="accordionExample">
+                        <div class="card">
+                            <div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingOne">
+                                <h2 class="mb-0 d-flex">
+                                    <button class="btn btn-link btn-block text-left" type="button"
+                                        data-toggle="collapse" data-target="#collapse_{{ $comunicacion->id }}"
+                                        aria-expanded="true" aria-controls="collapse_{{ $comunicacion->id }}">
+                                        <h6><b>Comunicación:</b> {{$comunicacion->nombre}}</h6>
+                                    </button>
+                                    <i class="fal fa-chevron-circle-down text-white"></i>
+                                </h2>
                             </div>
-                            <div class="card-footer">
-                                <small class="text-muted">
-                                    <h6 class="ml-4">Última actualización: </h6>
-                                    <span class="ml-4">{{ (!empty($comunicacion->updated_at)) ?
-                                        date('d/m/Y',strtotime($comunicacion->updated_at)) : "" }}</span>
-                                </small>
+                            <div id="collapse_{{ $comunicacion->id }}" class="collapse show"
+                                aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="card_consultas">
+                                        <div class="card_consulta">
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Descripcion:
+                                                    </span>
+                                                    {{ (!empty($comunicacion->descripcion)) ?
+                                                    $comunicacion->descripcion : "" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Última
+                                                        actualización: </span>
+                                                    {{ (!empty($comunicacion->updated_at)) ?
+                                                    date('d/m/Y',strtotime($comunicacion->updated_at)) :
+                                                    "" }}
+                                                </li>
+                                            </ul>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        @endforeach
                     </div>
+                    @endforeach
 
                     @else
                     <div class="alert alert-danger" role="alert">

@@ -47,7 +47,7 @@ class EmpleadosTareasLivianasDocumentacion extends Controller
             'diagnostico' => 'required',
             'fecha_documento' => 'required'
           ]);
-    
+
           $fecha_documento = Carbon::createFromFormat('d/m/Y', $request->fecha_documento);
     
             // Si hay un archivo adjunto se va a guardar todo

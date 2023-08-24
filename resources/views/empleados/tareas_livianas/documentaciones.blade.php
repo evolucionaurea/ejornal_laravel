@@ -97,79 +97,104 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-12">
                     @if (isset($documentacion_tarea_liviana) && !empty($documentacion_tarea_liviana) &&
                     count($documentacion_tarea_liviana) > 0)
 
-                    <div class="card-columns">
-                        @foreach ($documentacion_tarea_liviana as $documentacion)
-                        <div class="card mt-2 mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title text_primary">
-                                    <b>Institución:</b> {{$documentacion->institucion}}
-                                    <a class="editar_documentos_tarea_liviana" href="#!"
-                                        data-id="{{$documentacion->id}}">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                </h5>
-                                <p class="card-text">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Fecha del documento: </span>
-                                        {{ (!empty($documentacion->fecha_documento)) ?
-                                        date('d/m/Y',strtotime($documentacion->fecha_documento)) : "" }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Fecha última actualización:
-                                        </span>
-                                        {{ (!empty($documentacion->updated_at)) ?
-                                        date('d/m/Y',strtotime($documentacion->updated_at)) : "" }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Médico: </span>
-                                        {{$documentacion->medico}}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Matrícula provincial: </span>
-                                        {{ (!empty($documentacion->matricula_provincial)) ?
-                                        $documentacion->matricula_provincial : "No fue cargada" }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">
-                                            Matrícula nacional:
-                                        </span>
-                                        {{ (!empty($documentacion->matricula_nacional)) ?
-                                        $documentacion->matricula_nacional : "No fue cargada" }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Diagnóstico: </span>
-                                        <p>{{$documentacion->diagnostico}}</p>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">Observaciones: </span>
-                                        <p>{{$documentacion->observaciones}}</p>
-                                    </li>
-                                    @if ($documentacion->user != null)
-                                    <li class="list-group-item">
-                                        <span style="font-weight: 600;" class="text_black">User que registra: </span>
-                                        <p>{{$documentacion->user}}</p>
-                                    </li>
-                                    @endif
-                                </ul>
-                                </p>
+                    @foreach ($documentacion_tarea_liviana as $documentacion)
+                    <div class="accordion mb-4" id="accordionExample">
+                        <div class="card">
+                            <div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingOne">
+                                <h2 class="mb-0 d-flex">
+                                    <button class="btn btn-link btn-block text-left" type="button"
+                                        data-toggle="collapse" data-target="#collapse_{{ $documentacion->id }}"
+                                        aria-expanded="true" aria-controls="collapse_{{ $documentacion->id }}">
+                                        <b>Institución:</b> {{$documentacion->institucion}}
+                                    </button>
+                                    <i class="fal fa-chevron-circle-down text-white"></i>
+                                </h2>
                             </div>
-                            <div class="card-footer">
-                                <small class="text-muted">
-                                    <h6 class="ml-4">Archivo: </h6>
-                                    <a class="btn-ejornal btn-ejornal-gris-claro ml-4"
-                                        href="{{route('documentacion_liviana.archivo', $documentacion->id)}}">
-                                        <i class="fa fa-file"></i>{{$documentacion->archivo}}
-                                    </a>
-                                </small>
+                            <div id="collapse_{{ $documentacion->id }}" class="collapse show"
+                                aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="card_consultas">
+                                        <div class="card_consulta">
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Fecha del
+                                                        documento:
+                                                    </span>
+                                                    {{ (!empty($documentacion->fecha_documento)) ?
+                                                    date('d/m/Y',strtotime($documentacion->fecha_documento)) : "" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Fecha última
+                                                        actualización:
+                                                    </span>
+                                                    {{ (!empty($documentacion->updated_at)) ?
+                                                    date('d/m/Y',strtotime($documentacion->updated_at)) : "" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Médico: </span>
+                                                    {{$documentacion->medico}}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Matrícula
+                                                        provincial: </span>
+                                                    {{ (!empty($documentacion->matricula_provincial)) ?
+                                                    $documentacion->matricula_provincial : "No fue cargada" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">
+                                                        Matrícula nacional:
+                                                    </span>
+                                                    {{ (!empty($documentacion->matricula_nacional)) ?
+                                                    $documentacion->matricula_nacional : "No fue cargada" }}
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Diagnóstico:
+                                                    </span>
+                                                    <p>{{$documentacion->diagnostico}}</p>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">Observaciones:
+                                                    </span>
+                                                    <p>{{$documentacion->observaciones}}</p>
+                                                </li>
+                                                @if ($documentacion->user != null)
+                                                <li class="list-group-item">
+                                                    <span style="font-weight: 600;" class="text_black">User que
+                                                        registra: </span>
+                                                    <p>{{$documentacion->user}}</p>
+                                                </li>
+                                                @endif
+                                            </ul>
+                                            <br>
+                                            <h6 style="font-weight: 600;" class="text_black">Acciones:</h6>
+                                            <div class="d-flex mr-4">
+                                                <small class="text-muted">
+                                                    <h6 class="">Editar: </h6>
+                                                    <a class="editar_documentos_tarea_liviana btn btn-primary btn-sm"
+                                                        href="#!" data-id="{{$documentacion->id}}">
+                                                        <i class="fas fa-pen"></i>
+                                                    </a>
+                                                </small>
+                                                <small class="text-muted">
+                                                    <h6 class="ml-4 mb-3">Archivo subido: </h6>
+                                                    <a class="btn-ejornal btn-ejornal-gris-claro ml-4"
+                                                        href="{{route('documentacion_liviana.archivo', $documentacion->id)}}">
+                                                        <i class="fa fa-file"></i>{{$documentacion->archivo}}
+                                                    </a>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        @endforeach
                     </div>
+                    @endforeach
 
                     @else
                     <div class="alert alert-danger" role="alert">
