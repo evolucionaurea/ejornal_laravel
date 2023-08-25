@@ -30,22 +30,22 @@ $(()=>{
 				{
 					data:'nombre',
 					name:'nombre',
-					className:'align-middle'
+					className:'align-middle border-left'
 				},
 				{
 					data:'email',
 					name:'email',
-					className:'align-middle'
+					className:'align-middle border-left'
 				},
 				{
 					data:'telefono',
 					name:'telefono',
-					className:'align-middle'
+					className:'align-middle border-left'
 				},
 				{
 					data:row=>row,
 					name:'dni',
-					className:'align-middle',
+					className:'align-middle border-left',
 					render:v=>{
 						return v.dni==null ? '[no cargado]' : v.dni
 					}
@@ -53,7 +53,7 @@ $(()=>{
 				{
 					data:'estado',
 					name:'estado',
-					className:'align-middle',
+					className:'align-middle border-left',
 					render:v=>{
 						return `<span class="badge badge-${v==1 ? 'success' : 'danger'}">${v==1 ? 'activo' : 'inactivo'}</span>`
 					}
@@ -61,14 +61,14 @@ $(()=>{
 				{
 					data:'sector',
 					name:'sector',
-					className:'align-middle'
+					className:'align-middle border-left'
 				},
 
 				{
 					data:row=>row,
 					name:'hoy',
 					orderable:false,
-					className:'align-middle',
+					className:'align-middle disable-ordering border-left',
 					render:v=>{
 
 						let label = ''
@@ -106,7 +106,7 @@ $(()=>{
 					data:row=>row,
 					name:'actions',
 					orderable:false,
-					className:'align-middle',
+					className:'align-middle border-left',
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
@@ -135,4 +135,5 @@ $(()=>{
 
 
 	})
+
 })

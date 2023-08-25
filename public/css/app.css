@@ -11288,6 +11288,10 @@ table th {
   color: #bebebe;
 }
 
+.border-left {
+  border-left: 1px solid #bababa;
+}
+
 .error_404 {
   text-align: center;
 }

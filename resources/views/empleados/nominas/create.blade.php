@@ -16,96 +16,100 @@
 			<h2>Creación de trabajadores</h2>
 			<p>Aquí puedes cargar a los trabajadores que formarán parte de la nómina de la empresa</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}"><i
+						class="fas fa-arrow-circle-left"></i>Volver</a>
 			</div>
 		</div>
 
 		@include('../../mensajes_validacion')
 
 		@if ($errors->any())
-			@foreach ($errors->all() as $error)
-			<div class="alert alert-danger alert-dismissible fade show mr-4 ml-4" role="alert">
-				{{$error}}
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			@endforeach
+		@foreach ($errors->all() as $error)
+		<div class="alert alert-danger alert-dismissible fade show mr-4 ml-4" role="alert">
+			{{$error}}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		@endforeach
 		@endif
 
 		<div class="tarjeta">
-			<form action="{{action('EmpleadosNominasController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
-			@csrf
-			<div class="form-row">
-				<div class="form-group col-md-3">
-					<label>Nombre *</label>
-					<input required name="nombre" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Email *</label>
-					<input required name="email" type="email" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Teléfono</label>
-					<input name="telefono" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>DNI</label>
-					<input name="dni" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label >Estado *</label>
-					<select name="estado" class="form-control form-control-sm">
-						<option value="1">Activo</option>
-						<option value="0">Inactivo</option>
-					</select>
-				</div>
-				<div class="form-group col-md-3">
-					<label>Sector *</label>
-					<input required name="sector" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Calle</label>
-					<input name="calle" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Nro</label>
-					<input name="nro" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Entre calles</label>
-					<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Localidad</label>
-					<input name="localidad" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Partido</label>
-					<input name="partido" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
-				<div class="form-group col-md-3">
-					<label>Codigo postal</label>
-					<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="">
-				</div>
+			<form action="{{action('EmpleadosNominasController@store')}}" accept-charset="UTF-8" method="post"
+				enctype="multipart/form-data">
+				@csrf
+				<div class="form-row">
+					<div class="form-group col-md-3">
+						<label>Nombre *</label>
+						<input required name="nombre" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Email/CUIL *</label>
+						<input required name="email" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Teléfono</label>
+						<input name="telefono" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>DNI</label>
+						<input name="dni" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Estado *</label>
+						<select name="estado" class="form-control form-control-sm">
+							<option value="1">Activo</option>
+							<option value="0">Inactivo</option>
+						</select>
+					</div>
+					<div class="form-group col-md-3">
+						<label>Sector *</label>
+						<input required name="sector" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Calle</label>
+						<input name="calle" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Nro</label>
+						<input name="nro" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Entre calles</label>
+						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Localidad</label>
+						<input name="localidad" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Partido</label>
+						<input name="partido" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Codigo postal</label>
+						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="">
+					</div>
 
-				<div class="form-group col-md-3">
-					<label>Subir/Reemplazar foto</label>
-					<div class="input-group">
-						<div class="custom-file">
-							<input name="foto" id="input_file" type="file" class="custom-file-input" accept="image/*">
-							<label for="input_file" class="custom-file-label">Subir Imagen</label>
+					<div class="form-group col-md-3">
+						<label>Subir/Reemplazar foto</label>
+						<div class="input-group">
+							<div class="custom-file">
+								<input name="foto" id="input_file" type="file" class="custom-file-input"
+									accept="image/*">
+								<label for="input_file" class="custom-file-label">Subir Imagen</label>
+							</div>
 						</div>
 					</div>
-				</div>
 
 
-				<div class="form-group col-md-12">
-				  <label>Observaciones</label>
-				  <textarea class="form-control form-control-sm" name="observaciones" rows="2" cols="80"></textarea>
+					<div class="form-group col-md-12">
+						<label>Observaciones</label>
+						<textarea class="form-control form-control-sm" name="observaciones" rows="2"
+							cols="80"></textarea>
+					</div>
 				</div>
-			</div>
-			<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear trabajador</button>
+				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear trabajador</button>
 			</form>
 		</div>
 

@@ -16,7 +16,9 @@
 			<h2>Edición de trabajadores de la nómina</h2>
 			<p>Aquí podrá editar la información de un trabajador de la nómina</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}?{{$_SERVER['QUERY_STRING']}}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro"
+					href="{{ url('empleados/nominas') }}?{{$_SERVER['QUERY_STRING']}}"><i
+						class="fas fa-arrow-circle-left"></i>Volver</a>
 			</div>
 		</div>
 
@@ -33,84 +35,98 @@
 		@endif
 
 		<div class="tarjeta">
-			<form action="{{action('EmpleadosNominasController@update', $trabajador->id)}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+			<form action="{{action('EmpleadosNominasController@update', $trabajador->id)}}" accept-charset="UTF-8"
+				method="post" enctype="multipart/form-data">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Nombre</label>
-						<input name="nombre" type="text" class="form-control form-control-sm" value="{{$trabajador->nombre}}" placeholder="">
+						<input name="nombre" type="text" class="form-control form-control-sm"
+							value="{{$trabajador->nombre}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
-						<label>Email</label>
-						<input name="email" type="email" class="form-control form-control-sm" value="{{$trabajador->email}}" placeholder="">
+						<label>Email/CUIL</label>
+						<input name="email" type="text" class="form-control form-control-sm"
+							value="{{$trabajador->email}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Telefono</label>
-						<input name="telefono" type="text" class="form-control form-control-sm" value="{{$trabajador->telefono}}" placeholder="">
+						<input name="telefono" type="text" class="form-control form-control-sm"
+							value="{{$trabajador->telefono}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
 						<label>DNI</label>
-						<input name="dni" type="text" class="form-control form-control-sm" value="{{$trabajador->dni}}" placeholder="">
+						<input name="dni" type="text" class="form-control form-control-sm" value="{{$trabajador->dni}}"
+							placeholder="">
 					</div>
 					<div class="form-group col-md-3">
-						<label >Estado</label>
+						<label>Estado</label>
 						<select name="estado" class="form-control form-control-sm">
-						  @if ($trabajador->estado == 1)
-							  <option selected value="1">Activo</option>
-							  <option value="0">Inactivo</option>
+							@if ($trabajador->estado == 1)
+							<option selected value="1">Activo</option>
+							<option value="0">Inactivo</option>
 							@else
-							  <option value="1">Activo</option>
-							  <option selected value="0">Inactivo</option>
-						  @endif
+							<option value="1">Activo</option>
+							<option selected value="0">Inactivo</option>
+							@endif
 						</select>
 					</div>
 					<div class="form-group col-md-3">
 						<label>Sector</label>
-						<input name="sector" type="text" class="form-control form-control-sm" value="{{$trabajador->sector}}" placeholder="">
+						<input name="sector" type="text" class="form-control form-control-sm"
+							value="{{$trabajador->sector}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Calle</label>
-						<input name="calle" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->calle}}">
+						<input name="calle" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{$trabajador->calle}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Nro</label>
-						<input name="nro" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->nro}}">
+						<input name="nro" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{$trabajador->nro}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Entre calles</label>
-						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->entre_calles}}">
+						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{$trabajador->entre_calles}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Localidad</label>
-						<input name="localidad" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->localidad}}">
+						<input name="localidad" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{$trabajador->localidad}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Partido</label>
-						<input name="partido" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->partido}}">
+						<input name="partido" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{$trabajador->partido}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Codigo postal</label>
-						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="" value="{{$trabajador->cod_postal}}">
+						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{$trabajador->cod_postal}}">
 					</div>
 					<div class="form-group col-md-6">
-					  <label>Foto</label>
-					  <br>
-					  @if (isset($trabajador->foto) && !empty($trabajador->foto))
-						<img style="width: 300px;" src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
-					  @else
+						<label>Foto</label>
+						<br>
+						@if (isset($trabajador->foto) && !empty($trabajador->foto))
+						<img style="width: 300px;"
+							src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
+						@else
 						<span>
-						  <i class="fas fa-user fa-1x"></i>
-						  Sin foto cargada
+							<i class="fas fa-user fa-1x"></i>
+							Sin foto cargada
 						</span>
-					  @endif
+						@endif
 					</div>
 
 					<div class="form-group col-md-6">
 						<label>Subir/Reemplazar foto</label>
 						<div class="input-group">
 							<div class="custom-file">
-								<input name="foto" id="input_file" type="file" class="custom-file-input" accept="image/*">
+								<input name="foto" id="input_file" type="file" class="custom-file-input"
+									accept="image/*">
 								<label for="input_file" class="custom-file-label">Subir Imagen</label>
 							</div>
 						</div>
@@ -120,11 +136,13 @@
 
 
 					<div class="form-group col-md-12">
-					  <label>Observaciones</label>
-					  <textarea class="form-control form-control-sm" name="observaciones" rows="2" cols="80">{{$trabajador->observaciones}}</textarea>
+						<label>Observaciones</label>
+						<textarea class="form-control form-control-sm" name="observaciones" rows="2"
+							cols="80">{{$trabajador->observaciones}}</textarea>
 					</div>
 					<div class="col-12">
-					  <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
+						<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar
+							cambios</button>
 					</div>
 				</div>
 			</form>

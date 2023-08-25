@@ -86,6 +86,7 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'fecha_final',
+					orderable:false,
 					render:v=>{
 						if(v.fecha_final == null){
 							return '<span class="badge badge-danger">ausente</span>'

@@ -79,7 +79,7 @@ class EmpleadosNominasController extends Controller
 
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
-			'email' => 'required|email',
+			'email' => 'required',
 			'estado' => 'required',
 			'sector' => 'required'
 		]);
@@ -226,7 +226,7 @@ class EmpleadosNominasController extends Controller
 
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
-			'email' => 'required|email',
+			'email' => 'required',
 			'estado' => 'required',
 			'sector' => 'required'
 		]);

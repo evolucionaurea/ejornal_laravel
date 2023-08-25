@@ -5,29 +5,35 @@
 
 		<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-		<input name="search" class="form-control form-control-sm mr-2" style="max-width:240px" placeholder="Filtrar..." value="{{ Request::get('search') }}"></input>
+		<input name="search" class="form-control form-control-sm mr-2" style="max-width:240px" placeholder="Filtrar..."
+			value="{{ Request::get('search') }}"></input>
 
 
 		<select name="ausentes" class="form-control form-control-sm mr-2" style="max-width:240px">
 			<option value="">--Seleccionar Filtro--</option>
 			<option value="hoy" {{Request::get('ausentes')=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
 			<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes Hoy COVID</option>
-			<option value="accidente" {{Request::get('ausentes')=='accidente' ? 'selected' : '' }}>Ausentes Hoy Accidente</option>
-			<option value="incidente" {{Request::get('ausentes')=='incidente' ? 'selected' : '' }}>Ausentes Hoy Incidente</option>
+			<option value="accidente" {{Request::get('ausentes')=='accidente' ? 'selected' : '' }}>Ausentes Hoy
+				Accidente</option>
+			<option value="incidente" {{Request::get('ausentes')=='incidente' ? 'selected' : '' }}>Ausentes Hoy
+				Incidente</option>
 		</select>
 
 		<select name="estado" class="form-control form-control-sm mr-2" style="max-width:240px">
 			<option value="">--Seleccionar Filtro--</option>
-			<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }} >Sólo Activos</option>
-			<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }} >Sólo Inactivos</option>
+			<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }}>Sólo Activos</option>
+			<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }}>Sólo Inactivos</option>
 		</select>
 
 
 
-		<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar Todo</button>
+		<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i class="fas fa-search"></i>
+			Buscar</button>
+		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i>
+			Mostrar Todo</button>
 
-		<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info" ><i class="fas fa-file-excel"></i> Exportar</button>
+		<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank"
+			class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
 
 
 	</div>
@@ -49,7 +55,7 @@
 			<th>Estado</th>
 			<th>Sector</th>
 			<th>Hoy</th>
-			<th></th>
+			<th>Acciones</th>
 		</tr>
 	</thead>
 	<!--Table head-->
