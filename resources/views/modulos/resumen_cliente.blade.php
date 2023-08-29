@@ -10,6 +10,8 @@
 	<div class="col-lg-12 pb-0">
 		<h5 class="mb-0 font-weight-bold">AUSENTISMOS</h5>
 		<div class="small font-italic text-muted">Los porcentajes se calculan en base al total de días ausentes según el período seleccionado.</div>
+		<div class="small font-italic text-muted"><b>Nómina actual:</b> Valor de la última nómina disponible.</div>
+		<div class="small font-italic text-muted"><b>Nómina Año Atual:</b> Valor promedio de nominas mes a mes.</div>
 	</div>
 
 	<!-- Mes Actual -->
@@ -20,6 +22,7 @@
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_actual }}%</div>
 					<div class="mb-0">Mes Actual</div>
 					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}}</div>
+					<div class="mb-0 small font-italic"></div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -394,7 +397,7 @@
 	<div class="col-lg-6">
 		<div class="tarjeta">
 			<h4 class="mb-2">Top 10 trabajadores que mas días faltaron</h4>
-			<div class="small text-muted font-italic">Se computan los últimos 365 días. Si la fecha de regreso aún no ha sido guardada se computa como ausente hasta el día de la fecha.</div>
+			{{-- <div class="small text-muted font-italic">Se computan los últimos 365 días. Si la fecha de regreso aún no ha sido guardada se computa como ausente hasta el día de la fecha.</div> --}}
 			<table data-table="top_10_faltas" class="table table-striped">
 				<thead>
 					<tr>
@@ -425,7 +428,7 @@
 	<div class="col-lg-6">
 		<div class="tarjeta">
 			<h4 class="mb-2">Top trabajadores que mas veces solicitaron faltar</h4>
-			<div class="small text-muted font-italic">Se computan los últimos 365 días.</div>
+			{{-- <div class="small text-muted font-italic">Se computan los últimos 365 días.</div> --}}
 			<table data-table="top_10_solicitudes_faltas" class="table table-striped">
 				<thead>
 					<tr>

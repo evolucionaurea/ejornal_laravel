@@ -9,7 +9,7 @@ $(()=>{
 
 	/// tablas ausentismos nómina
 	$('[data-table="top_10_faltas"]').dataTable({
-		order:[[1,'desc']],
+		order:[[2,'desc']],
 		dom:'t'
 	})
 	$('[data-table="top_10_solicitudes_faltas"]').dataTable({

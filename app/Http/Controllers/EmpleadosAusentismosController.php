@@ -338,9 +338,17 @@ class EmpleadosAusentismosController extends Controller
 		//Guardar en base
 		$tipo_ausentismo = new AusentismoTipo();
 		$tipo_ausentismo->nombre = $request->nombre;
+
+		//generar un color único para los gráficos
+		$colorHex = sprintf("#%02x%02x%02x", rand(25, 200), rand(25, 200), rand(25, 200));
+		$tipo_ausentismo->color = $colorHex;
+
 		$tipo_ausentismo->save();
 
-		return back()->with('success', 'Tipo de ausentismo creado con éxito');
+		return back()->with([
+			'success'=>'Tipo de ausentismo creado con éxito',
+			'id_tipo'=>$tipo_ausentismo->id
+		]);
 	}
 
 
@@ -351,6 +359,7 @@ class EmpleadosAusentismosController extends Controller
 		}
 		$tipo_ausentismo = AusentismoTipo::find($request->id_tipo);
 		$tipo_ausentismo->nombre = $request->tipo_editado;
+		$tipo_ausentismo->color = $request->color;
 		$tipo_ausentismo->save();
 
 		return back()->with('success', 'Tipo de ausentismo editado con éxito');

@@ -99,7 +99,7 @@
 								<input required name="archivo" type="file" class="form-control-file">
 							</div>
 							<div class="form-group col-md-6">
-								<label>Diagnostico <span style="color: red;">*</span></label>
+								<label>Diagnóstico <span style="color: red;">*</span></label>
 								<textarea required name="diagnostico" class="form-control" rows="3"></textarea>
 							</div>
 							<div class="form-group col-md-6">

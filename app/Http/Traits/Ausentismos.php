@@ -336,7 +336,7 @@ trait Ausentismos {
 			//->where('estado',1)
 			->count();
 
-		//DB::enableQueryLog();
+		DB::enableQueryLog();
 		/// MES ACTUAL
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$today_formatted = $today->format('Y-m-d');
@@ -365,18 +365,19 @@ trait Ausentismos {
 				id_tipo"
 		)
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
-						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
-						->where(function($query) use($today){
+						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
+						/*->where(function($query) use($today){
 							$query
 								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
-						});
+						});*/
 				})
 				->orWhere(function($query) use ($today){
 					// los que siguen ausentes fuera del mes actual
@@ -400,8 +401,8 @@ trait Ausentismos {
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
 			->get();
-		//dd($ausentismos_mes->toArray());
-		//$query = DB::getQueryLog();
+		$query = DB::getQueryLog();
+		//dd($query);
 
 
 
@@ -428,7 +429,7 @@ trait Ausentismos {
 			id_tipo
 		")
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -485,7 +486,7 @@ trait Ausentismos {
 			id_tipo"
 		)
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -547,7 +548,7 @@ trait Ausentismos {
 			id_tipo
 		")
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -557,6 +558,7 @@ trait Ausentismos {
 						->where(function($query) use ($today){
 							$query
 								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
 						});
 				})

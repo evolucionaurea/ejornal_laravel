@@ -64,6 +64,16 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		if($request->from) $query->whereDate('consultas_enfermerias.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
+		if($request->search){
+			$query->where(function($query) use($request){
+				$filtro = '%'.$request->search['value'].'%';
+				$query->where('nominas.nombre','like',$filtro)
+					->orWhere('consultas_enfermerias.derivacion_consulta','like',$filtro)
+					->orWhere('consultas_enfermerias.observaciones','like',$filtro)
+					->orWhere('diagnostico_consulta.nombre','like',$filtro);
+			});
+		}
+
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
@@ -110,7 +120,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 
 		if ($request->amerita_salida == null || $request->derivacion_consulta == null) {
 			return back()->withInput($request->input())->with(
-				'error', 
+				'error',
 				'Amerita salida y Derivacion consulta no pueden estar sin completar. Revisa los campos obligatorios (*)'
 			);
 		}

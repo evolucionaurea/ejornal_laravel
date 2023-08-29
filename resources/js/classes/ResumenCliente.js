@@ -24,27 +24,36 @@ export default class ResumenCliente {
 			labels:[],
 			datasets:[{
 				label:obj.title,
-				backgroundColor:this.colores,
-				borderColor:this.colores_hover,
+				backgroundColor:[],
+				//borderColor:this.colores_hover,
 				data:[]
 			}]
 		}
 
+		if(obj.chart_canvas=='#chart_ausentismos_anual'){
+			console.log(obj.data)
+		}
 
 		if(obj.data.length>0){
 			let count = 0;
+			let colour_assign = {}
 
 			obj.data.map(item=>{
-				if(count>this.colores.length.length) count = 0
+
+
+				//if(count>this.colores.length) count = 0
+				//if(!colour_assign.hasOwnProperty(item.id_tipo)) colour_assign[item.id_tipo] = this.colores[count]
+
 
 				data_labels.labels.push(item.tipo.nombre)
 				data_labels.datasets[0].data.push(item.dias)
+				data_labels.datasets[0].backgroundColor.push(item.tipo.color)
 
 				count++
 				//ausentismos_count += item.total
 			})
 
-			///console.log(data_labels)
+			///console.log(colour_assign)
 
 			let chart = chart_canvas.getContext("2d");
 			this.chart_options.tooltips = {
@@ -182,7 +191,7 @@ export default class ResumenCliente {
 			"#8353c2"
 		]
 		this.colores_hover = [
-			"#FF4394",
+			"#000000",
 			"#36A2EB",
 			"#FFCE56",
 			"#27678a",

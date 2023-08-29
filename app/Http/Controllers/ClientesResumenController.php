@@ -22,17 +22,10 @@ class ClientesResumenController extends Controller
 	use Clientes,Ausentismos;
 
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index()
 	{
 
-
 		$id_cliente = auth()->user()->id_cliente_relacionar;
-
 
 		$cliente = Cliente::where('id', $id_cliente)
 			->select('clientes.nombre')

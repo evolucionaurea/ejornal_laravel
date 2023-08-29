@@ -69,7 +69,7 @@
 						<select required name="tipo" class="form-control form-control-sm select_2">
 							<option value="">--Seleccionar--</option>
 							@foreach ($ausentismo_tipos as $tipo)
-							<option value="{{$tipo->id}}" {{old("tipo")==$tipo->id ? 'selected' : ''}}>{{$tipo->nombre}}
+							<option value="{{$tipo->id}}" {{old("tipo")==$tipo->id || session('id_tipo')==$tipo->id ? 'selected' : ''}}>{{$tipo->nombre}}
 							</option>
 							@endforeach
 						</select>
@@ -160,7 +160,7 @@
 <!-- Modal Crear tipo ausentismo -->
 <div class="modal fade" id="crear_tipo_ausentismo" tabindex="-1" aria-labelledby="tipo_ausentismo_titulo"
 	aria-hidden="true">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="tipo_ausentismo_titulo">Crear tipo de Ausencia</h5>
@@ -170,21 +170,19 @@
 			</div>
 			<div class="modal-body">
 
-				<div class="row">
-					<div class="col-md-12">
-						<form action="{{action('EmpleadosAusentismosController@tipo')}}" accept-charset="UTF-8"
-							method="post">
-							{{ csrf_field() }}
+				<form action="{{action('EmpleadosAusentismosController@tipo')}}" accept-charset="UTF-8" method="post">
+					{{ csrf_field() }}
+					<div class="row">
+						<div class="col-md-12">
 							<div class="form-group">
 								<label>Nombre</label>
 								<input name="nombre" type="text" class="form-control form-control-sm" placeholder="">
 							</div>
-							<button type="submit" class="btn-ejornal btn-ejornal-success">Crear tipo</button>
-							<button type="button" class="btn-ejornal btn-ejornal-gris-claro"
-								data-dismiss="modal">Cerrar</button>
-						</form>
+						</div>
 					</div>
-				</div>
+					<button type="submit" class="btn-ejornal btn-ejornal-success">Crear tipo</button>
+					<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
+				</form>
 
 			</div>
 		</div>
@@ -221,7 +219,7 @@
 								<tr>
 									<td>{{$tipo->nombre}}</td>
 									<td class="acciones_tabla" scope="row">
-										<a data-id="{{ $tipo->id }}" data-text="{{ $tipo->nombre }}"
+										<a data-id="{{ $tipo->id }}" data-text="{{ $tipo->nombre }}" data-color="{{ $tipo->color }}"
 											class="btn_editar_tipo_ausentismo" title="Edit" data-toggle="modal"
 											data-target="#editar_tipo_ausentismo">
 											<i class="fas fa-pen"></i>
@@ -261,23 +259,26 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<form action="{{action('EmpleadosAusentismosController@editarTipo')}}" accept-charset="UTF-8"
-							method="post">
-							{{ csrf_field() }}
-							<input name="id_tipo" type="hidden" value="">
+				<form action="{{action('EmpleadosAusentismosController@editarTipo')}}" accept-charset="UTF-8" method="post">
+					{{ csrf_field() }}
+					<input name="id_tipo" type="hidden" value="">
+					<div class="row">
+						<div class="col-md-6">
 							<div class="form-group">
 								<input name="tipo_editado" type="text" class="form-control form-control-sm"
-									placeholder="">
+									placeholder="Nombre">
 							</div>
-							<button type="submit" class="btn-ejornal btn-ejornal-success">Editar</button>
-							<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">
-								Cerrar
-							</button>
-						</form>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<input name="color" type="text" class="form-control form-control-sm"
+									placeholder="Color">
+							</div>
+						</div>
 					</div>
-				</div>
+					<button type="submit" class="btn-ejornal btn-ejornal-success">Editar</button>
+					<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>
+				</form>
 
 			</div>
 		</div>
@@ -352,8 +353,7 @@
 								<tr>
 									<td>{{$value->nombre}}</td>
 									<td class="acciones_tabla" scope="row">
-										<form class="" action="{{route('comunicaciones.tipo_delete', $value->id)}}"
-											method="post">
+										<form class="" action="{{route('comunicaciones.tipo_delete', $value->id)}}" method="post">
 											{{ csrf_field() }}
 											<input type="hidden" name="_method" value="DELETE">
 											<button title="Eliminar" type="submit">

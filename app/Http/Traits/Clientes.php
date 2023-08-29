@@ -36,6 +36,11 @@ trait Clientes {
 			where('id_cliente',$id_cliente)
 			//->where('estado',1)
 			->count();
+		///se toma el valor de la última nómina disponible
+
+		///nomina año actual: promedio de nominas mes a mes
+
+
 		$nomina_mes_anterior = Nomina::
 			where('id_cliente',$id_cliente)
 			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
@@ -46,6 +51,25 @@ trait Clientes {
 			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
 			//->where('estado',1)
 			->count();
+
+
+		/*$nomina_anio_actual = Nomina::
+			select(
+				DB::raw('YEAR(created_at) as year'),
+				DB::raw('MONTH(created_at) as month'),
+				DB::raw('COUNT(*) as count'),
+				DB::raw('(
+						SELECT AVG(COUNT(*))
+						FROM nominas u2
+						WHERE YEAR(u2.created_at) = YEAR(nominas.created_at)
+						AND MONTH(u2.created_at) <= MONTH(nominas.created_at)
+				) as acumulated_average')
+			)
+			->where('id_cliente',$id_cliente)
+			->groupBy('year','month')
+			->orderBy('year','month')
+			->get();*/
+		//dd($nomina_anio_actual->toArray());
 
 
 		/// AUSENTISMOS
@@ -278,7 +302,7 @@ trait Clientes {
 		/// ACCIDENTES
 		/// MES ACTUAL
 		//DB::enableQueryLog();
-		DB::enableQueryLog();
+		//DB::enableQueryLog();
 		$q_accidentes_mes_actual = clone $q_ausentismos_mes_actual;
 		$q_accidentes_mes_actual->whereHas('tipo',function($query){
 			$query->where('agrupamiento','=','ART');
@@ -345,9 +369,9 @@ trait Clientes {
 
 
 		/// TOP 10
-		//DB::enableQueryLog();
+		DB::enableQueryLog();
 		$ausentismos_top_10 = Ausentismo::
-			selectRaw('SUM(DATEDIFF( IFNULL(fecha_final,DATE(NOW())),fecha_inicio )) total_dias, id_trabajador')
+			selectRaw('SUM(DATEDIFF( IFNULL(fecha_final,DATE(NOW())),fecha_inicio ))+1 total_dias, id_trabajador')
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -356,7 +380,12 @@ trait Clientes {
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
-				$query->selectRaw('id,nombre,(SELECT COUNT(a.id) FROM ausentismos a WHERE a.fecha_final IS NULL AND a.id_trabajador=nominas.id) as regreso_trabajo');
+				$query->selectRaw("id, nombre,
+				(
+					SELECT COUNT(a.id)
+					FROM ausentismos a
+					WHERE (a.fecha_final IS NULL OR a.fecha_final>DATE(NOW())) AND a.id_trabajador=nominas.id
+				) as regreso_trabajo");
 			}])
 			->where('fecha_inicio','>=',$today->subYear())
 			->groupBy('id_trabajador')
@@ -364,6 +393,8 @@ trait Clientes {
 			->limit(10)
 			->get();
 		//dd(DB::getQueryLog());
+		//dd($ausentismos_top_10->toArray());
+
 		$ausentismos_top_10_solicitudes = Ausentismo::
 			selectRaw('count(*) as total, id_trabajador')
 			->whereIn('id_trabajador',function($query) use ($id_cliente){

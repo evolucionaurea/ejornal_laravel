@@ -64,6 +64,19 @@ class EmpleadoConsultaMedicaController extends Controller
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
+		//dd($request->search['value']);
+
+		if($request->search){
+			$query->where(function($query) use($request){
+				$filtro = '%'.$request->search['value'].'%';
+				$query->where('nominas.nombre','like',$filtro)
+					->orWhere('consultas_medicas.derivacion_consulta','like',$filtro)
+					->orWhere('consultas_medicas.tratamiento','like',$filtro)
+					->orWhere('consultas_medicas.observaciones','like',$filtro)
+					->orWhere('diagnostico_consulta.nombre','like',$filtro);
+			});
+		}
+
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
@@ -106,14 +119,14 @@ class EmpleadoConsultaMedicaController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		
+
 		if ($request->amerita_salida == null || $request->derivacion_consulta == null) {
 			return back()->withInput($request->input())->with(
-				'error', 
+				'error',
 				'Amerita salida y Derivacion consulta no pueden estar sin completar. Revisa los campos obligatorios (*)'
 			);
 		}
-		
+
 		// Si existen medicaciones se validan aqui
 		$suministrados = [];
 		if (isset($request->medicaciones) && !empty($request->medicaciones)) {
@@ -291,7 +304,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id', $id)
 		->where('nominas.id_cliente',auth()->user()->id_cliente_actual) //IMPORTANTE: comprobar que está consultando a trabajadores de la nómina del cliente actual
-		->select('consultas_medicas.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado', 
+		->select('consultas_medicas.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado',
 		'nominas.email', DB::raw('diagnostico_consulta.nombre diagnostico'))
 		->first();
 

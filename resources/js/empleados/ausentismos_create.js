@@ -23,8 +23,10 @@ $(()=>{
 	$('.btn_editar_tipo_ausentismo').on('click', function(event) {
 		let id_tipo = $(this).data("id")
 		let tipo_actual = $(this).data("text")
+		let color = $(this).data("color")
 		$('#editar_tipo_ausentismo [name="tipo_editado"]').val(tipo_actual)
 		$('#editar_tipo_ausentismo [name="id_tipo"]').val(id_tipo)
+		$('#editar_tipo_ausentismo [name="color"]').val(color)
 
 	});
 

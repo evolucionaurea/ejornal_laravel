@@ -5,12 +5,12 @@
 
 	<div class="d-flex flex-wrap col-md-8 align-items-center">
 
-		<div class="mb-1 col-md-4">
+		<div class="mb-1 col-md-6">
 			<input name="search" class="form-control form-control-sm" placeholder="Buscar..." value="{{ Request::get('search') }}"></input>
 		</div>
 
 
-		<div class="mb-1 col-md-4">
+		<div class="mb-1 col-md-6">
 			<select name="tipo" class="form-control form-control-sm select_2">
 				<option value="">--Todos los tipos--</option>
 				@foreach ($tipos as $tipo)
@@ -19,7 +19,7 @@
 			</select>
 		</div>
 
-		<div class="mb-1 col-md-4">
+		<div class="mb-1 col-md-6">
 			<select name="ausentes" class="form-control form-control-sm">
 				<option value="">--Seleccionar Filtro--</option>
 				<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
@@ -29,12 +29,12 @@
 				<option value="mes-anio-anterior" {{ Request::get('ausentes')  == 'mes-anio-anterior' ? 'selected' : '' }} >Ausentismos mismo mes año anterior</option>
 				<option value="anio-actual" {{ Request::get('ausentes')  == 'anio-actual' ? 'selected' : '' }} >Ausentismos año actual</option>
 
-				<option value="mes-actual-carga" {{ Request::get('ausentes')  == 'mes-actual-carga' ? 'selected' : '' }} >Ausentismos cargados en mes actual</option>
-				<option value="mes-anterior-carga" {{ Request::get('ausentes')  == 'mes-anterior-carga' ? 'selected' : '' }} >Ausentismos cargados el mes pasado</option>
+				{{-- <option value="mes-actual-carga" {{ Request::get('ausentes')  == 'mes-actual-carga' ? 'selected' : '' }} >Ausentismos cargados en mes actual</option>
+				<option value="mes-anterior-carga" {{ Request::get('ausentes')  == 'mes-anterior-carga' ? 'selected' : '' }} >Ausentismos cargados el mes pasado</option> --}}
 			</select>
 		</div>
 
-		<div class="mb-1 col-md-4" >
+		<div class="mb-1 col-md-6" >
 			<select name="estado" class="form-control form-control-sm">
 				<option value="">--Seleccionar Filtro--</option>
 				<option value="activo" {{ Request::get('estado')  == 'activo' || Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Trabajadores Activos</option>
@@ -42,7 +42,7 @@
 			</select>
 		</div>
 
-		<div class="mb-1 col-md-4" >
+		{{-- <div class="mb-1 col-md-4" >
 			<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm"
 				value="{{Request::get('from')}}">
 		</div>
@@ -50,7 +50,7 @@
 		<div class="mb-1 col-md-4" >
 			<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm"
 				value="{{Request::get('to')}}">
-		</div>
+		</div> --}}
 
 	</div>
 

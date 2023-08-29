@@ -115,7 +115,7 @@ class GruposResumenController extends Controller
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$ausentismos_mes = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 
 					IF(
 						IFNULL(
@@ -131,14 +131,14 @@ class GruposResumenController extends Controller
 						fecha_inicio,
 						'{$inicio_mes}'
 					)
-				)+1
+				))+1
 			) dias,
 
 			count(*) as total,
 			id_tipo"
 		)
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -148,6 +148,7 @@ class GruposResumenController extends Controller
 						->where(function($query) use($today){
 							$query
 								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
 						});
 				})
@@ -207,7 +208,7 @@ class GruposResumenController extends Controller
 			id_tipo
 		")
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -268,7 +269,7 @@ class GruposResumenController extends Controller
 			id_tipo"
 		)
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -310,10 +311,11 @@ class GruposResumenController extends Controller
 
 
 		/// AÑO ACTUAL
+		DB::enableQueryLog();
 		$inicio_anio = $today->format('Y-01-01');
 		$ausentismos_anual = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 
 					IF(
 						IFNULL(
@@ -329,13 +331,13 @@ class GruposResumenController extends Controller
 						'{$inicio_anio}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias,
 			count(*) as total,
 			id_tipo
 		")
 			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
+				$query->select('id','nombre','color');
 			}])
 
 			->where(function($query) use ($today){
@@ -345,6 +347,7 @@ class GruposResumenController extends Controller
 						->where(function($query) use ($today){
 							$query
 								->where('fecha_final','<=',$today)
+								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
 						});
 				})
@@ -354,13 +357,11 @@ class GruposResumenController extends Controller
 						->where('fecha_inicio','<=',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>',$today->startOfYear())
+								->where('fecha_final','>=',$today->startOfYear())
 								->orWhere('fecha_final',null);
 						});
 				});
 			})
-
-
 			->whereIn('id_trabajador',function($query){
 				$query
 					->select('id')
@@ -377,6 +378,8 @@ class GruposResumenController extends Controller
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
 			->get();
+		$query = DB::getQueryLog();
+		//dd($query);
 
 		$status = 'ok';
 
