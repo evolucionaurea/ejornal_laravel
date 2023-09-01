@@ -101,26 +101,30 @@ trait Ausentismos {
 
 			$query->where(function($query) use ($now){
 
-				$query
-					->where(function($query) use ($now){
-						$query
-							->whereBetween('fecha_inicio',[$now->startOfMonth(),$now])
-							->where(function($query) use($now){
-								$query->where('fecha_final','<=',$now)
-									->orWhere('fecha_final',null);
-							});
-					})
-					->orWhere(function($query) use ($now){
-						// los que siguen ausentes fuera del mes actual
-						$query
-							->where('fecha_inicio','<=',$now->startOfMonth())
-							->where(function($query) use($now){
-								$query->where('fecha_final','>=',$now->startOfMonth())
-									->orWhere('fecha_final',null);
-							});
-					});
+				$query->whereBetween('fecha_inicio',[$now->startOfMonth(),$now])
+				/*$query->where(function($query) use ($now){
+					$query
+						->whereBetween('fecha_inicio',[$now->startOfMonth(),$now]);
+						->whereDate('fecha_inicio','<=',$now)
+						->where(function($query) use($now){
+							$query->whereDate('fecha_final','<=',$now)
+								->orWhere('fecha_final',null);
+						});
+				})*/
+				->orWhere(function($query) use ($now){
+					// los que siguen ausentes fuera del mes actual
+					$query
+						->where('fecha_inicio','<=',$now->startOfMonth())
+						->where(function($query) use($now){
+							$query->whereDate('fecha_final','>=',$now->startOfMonth())
+								->orWhere('fecha_final',null);
+						});
+				});
 
 			});
+			/*$query
+				->whereDate('fecha_inicio','<=',$now)
+				->whereDate('fecha_final','>=',$now);*/
 
 		}
 		if($request->ausentes=='mes-anterior'){
@@ -128,17 +132,17 @@ trait Ausentismos {
 			$query->where(function($query) use ($now){
 				$query->where(function($query) use ($now){
 					$query
-						->whereBetween('fecha_inicio',[$now->subMonth()->startOfMonth(),$now->subMonth()->endOfMonth()])
+						->whereBetween('fecha_inicio',[$now->startOfMonth()->subMonth(),$now->startOfMonth()->subMonth()->endOfMonth()])
 						->where(function($query) use ($now){
-							$query->where('fecha_final','<=',$now->subMonth()->endOfMonth())
+							$query->where('fecha_final','<=',$now->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($now){
-					$query->where('fecha_inicio','<',$now->subMonth()->startOfMonth())
+					$query->where('fecha_inicio','<',$now->startOfMonth()->subMonth())
 						->where(function($query) use ($now){
-							$query->where('fecha_final','>',$now->subMonth()->endOfMonth())
+							$query->where('fecha_final','>=',$now->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -150,19 +154,19 @@ trait Ausentismos {
 			$query->where(function($query) use ($now){
 				$query->where(function($query) use ($now){
 					$query
-						->whereBetween('fecha_inicio',[$now->subYear()->startOfMonth(),$now->subYear()->endOfMonth()])
+						->whereBetween('fecha_inicio',[$now->startOfMonth()->subYear(),$now->startOfMonth()->subYear()->endOfMonth()])
 						->where(function($query) use ($now){
 							$query
-								->where('fecha_final','<=',$now->subMonth()->endOfMonth())
+								->where('fecha_final','<=',$now->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($now){
-					$query->where('fecha_inicio','<',$now->subYear()->startOfMonth())
+					$query->where('fecha_inicio','<',$now->startOfMonth()->subYear())
 						->where(function($query) use ($now){
 							$query
-								->where('fecha_final','>',$now->subYear()->endOfMonth())
+								->where('fecha_final','>=',$now->startOfMonth()->subYear()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -173,7 +177,8 @@ trait Ausentismos {
 		if($request->ausentes=='anio-actual'){
 
 			$query->where(function($query) use ($now){
-				$query->where(function($query) use ($now){
+				$query->whereDate('fecha_inicio','>=',$now->startOfYear())
+				/*$query->where(function($query) use ($now){
 					$query
 						->whereBetween('fecha_inicio',[$now->startOfYear(),$now])
 						->where(function($query) use ($now){
@@ -181,7 +186,7 @@ trait Ausentismos {
 								->where('fecha_final','<=',$now)
 								->orWhere('fecha_final',null);
 						});
-				})
+				})*/
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($now){
 					$query
@@ -433,19 +438,20 @@ trait Ausentismos {
 			}])
 
 			->where(function($query) use ($today){
-				$query->where(function($query) use ($today){
+				$query->whereBetween('fecha_inicio',[$today->startOfMonth()->subMonth(),$today->startOfMonth()->subMonth()->endOfMonth()])
+				/*$query->where(function($query) use ($today){
 					$query
 						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
 						->where(function($query) use ($today){
 							$query->where('fecha_final','<=',$today->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
-				})
+				})*/
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
-					$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
+					$query->where('fecha_inicio','<',$today->startOfMonth()->subMonth())
 						->where(function($query) use ($today){
-							$query->where('fecha_final','>',$today->subMonth()->endOfMonth())
+							$query->where('fecha_final','>=',$today->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -492,19 +498,19 @@ trait Ausentismos {
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
-						->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
+						->whereBetween('fecha_inicio',[$today->startOfMonth()->subYear(),$today->startOfMonth()->subYear()->endOfMonth()])
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+								->where('fecha_final','<=',$today->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
-					$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
+					$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>',$today->subYear()->endOfMonth())
+								->where('fecha_final','>',$today->startOfMonth()->subYear()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -525,7 +531,7 @@ trait Ausentismos {
 		$inicio_anio = $today->format('Y-01-01');
 		$ausentismos_anual = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 
 					IF(
 						IFNULL(
@@ -536,13 +542,12 @@ trait Ausentismos {
 						DATE(NOW())
 					),
 
-
 					IF(
 						fecha_inicio<'{$inicio_anio}',
 						'{$inicio_anio}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias,
 			count(*) as total,
 			id_tipo
@@ -552,7 +557,8 @@ trait Ausentismos {
 			}])
 
 			->where(function($query) use ($today){
-				$query->where(function($query) use ($today){
+				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
+				/*$query->where(function($query) use ($today){
 					$query
 						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
 						->where(function($query) use ($today){
@@ -561,14 +567,14 @@ trait Ausentismos {
 								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
 						});
-				})
-				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				})*/
+				// los que estuvieron ausentes durante el curso del año pero iniciaron ausentismo antes de este año y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query
-						->where('fecha_inicio','<=',$today->startOfYear())
+						->where('fecha_inicio','<',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>',$today->startOfYear())
+								->where('fecha_final','>=',$today->startOfYear())
 								->orWhere('fecha_final',null);
 						});
 				});

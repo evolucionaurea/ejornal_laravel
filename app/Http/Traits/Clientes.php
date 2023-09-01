@@ -5,6 +5,7 @@ use App\ClienteUser;
 use App\Ausentismo;
 use App\Nomina;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +52,20 @@ trait Clientes {
 			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
 			//->where('estado',1)
 			->count();
+
+		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
+		// Iterate over the period
+		$count_nomina = [];
+		foreach ($period as $date) {
+			$yearmonth = $date->format('Ym');
+
+			$count_nomina[] = Nomina::
+				where('id_cliente',$id_cliente)
+				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<='{$yearmonth}'")
+				->count();
+		}
+		$valores = collect($count_nomina);
+		$nomina_promdio_actual = (int) ceil($valores->average());
 
 
 		/*$nomina_anio_actual = Nomina::
@@ -101,11 +116,11 @@ trait Clientes {
 		->where(function($query) use ($today){
 			$query->where(function($query) use ($today){
 				$query
-				->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
-				->where(function($query) use($today){
+				->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
+				/*->where(function($query) use($today){
 					$query->where('fecha_final','<=',$today)
 						->orWhere('fecha_final',null);
-				});
+				});*/
 			})
 			->orWhere(function($query) use ($today){
 				// los que siguen ausentes fuera del mes actual
@@ -151,19 +166,20 @@ trait Clientes {
 			) dias"
 		)
 		->where(function($query) use ($today){
-			$query->where(function($query) use ($today){
+			$query->whereBetween('fecha_inicio',[$today->startOfMonth()->subMonth(),$today->startOfMonth()->subMonth()->endOfMonth()])
+			/*$query->where(function($query) use ($today){
 				$query
 					->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
 					->where(function($query) use ($today){
 						$query->where('fecha_final','<=',$today->subMonth()->endOfMonth())
 							->orWhere('fecha_final',null);
 					});
-			})
+			})*/
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
-				$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
+				$query->where('fecha_inicio','<',$today->startOfMonth()->subMonth())
 					->where(function($query) use ($today){
-						$query->where('fecha_final','>',$today->subMonth()->endOfMonth())
+						$query->where('fecha_final','>',$today->startOfMonth()->subMonth()->endOfMonth())
 							->orWhere('fecha_final',null);
 					});
 			});
@@ -203,19 +219,19 @@ trait Clientes {
 		->where(function($query) use ($today){
 			$query->where(function($query) use ($today){
 				$query
-					->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
+					->whereBetween('fecha_inicio',[$today->startOfMonth()->subYear(),$today->startOfMonth()->subYear()->endOfMonth()])
 					->where(function($query) use ($today){
 						$query
-							->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+							->where('fecha_final','<=',$today->startOfMonth()->subMonth()->endOfMonth())
 							->orWhere('fecha_final',null);
 					});
 			})
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
-				$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
+				$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
 					->where(function($query) use ($today){
 						$query
-							->where('fecha_final','>',$today->subYear()->endOfMonth())
+							->where('fecha_final','>',$today->startOfMonth()->subYear()->endOfMonth())
 							->orWhere('fecha_final',null);
 					});
 			});
@@ -264,22 +280,23 @@ trait Clientes {
 		)
 
 		->where(function($query) use ($today){
-			$query->where(function($query) use ($today){
+
+			$query->whereDate('fecha_inicio','>=',$today)
+			/*$query->where(function($query) use ($today){
 				$query
-					->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
 					->where(function($query) use ($today){
 						$query
 							->where('fecha_final','<=',$today)
 							->orWhere('fecha_final',null);
 					});
-			})
+			})*/
 			// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 			->orWhere(function($query) use ($today){
 				$query
-					->where('fecha_inicio','<=',$today->startOfYear())
+					->where('fecha_inicio','<',$today->startOfYear())
 					->where(function($query) use ($today){
 						$query
-							->where('fecha_final','>',$today->startOfYear())
+							->where('fecha_final','>=',$today->startOfYear())
 							->orWhere('fecha_final',null);
 					});
 			});
@@ -296,7 +313,7 @@ trait Clientes {
 
 		//dd($q_ausentismos_anio_actual->toSql());
 
-		$ausentismos_anio_actual = $nomina_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_actual*$today->dayOfYear()),4)*100) : 0;
+		$ausentismos_anio_actual = $nomina_promdio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promdio_actual*$today->dayOfYear()),4)*100) : 0;
 
 
 		/// ACCIDENTES
@@ -442,6 +459,7 @@ trait Clientes {
 			'nomina_actual',
 			'nomina_mes_anterior',
 			'nomina_mes_anio_anterior',
+			'nomina_promdio_actual',
 
 			'route'
 		);

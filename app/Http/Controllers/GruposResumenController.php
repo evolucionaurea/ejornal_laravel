@@ -144,13 +144,13 @@ class GruposResumenController extends Controller
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
-						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
-						->where(function($query) use($today){
+						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
+						/*->where(function($query) use($today){
 							$query
 								->where('fecha_final','<=',$today)
 								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
-						});
+						});*/
 				})
 				->orWhere(function($query) use ($today){
 					// los que siguen ausentes fuera del mes actual
@@ -212,19 +212,20 @@ class GruposResumenController extends Controller
 			}])
 
 			->where(function($query) use ($today){
-				$query->where(function($query) use ($today){
+				$query->whereBetween('fecha_inicio',[$today->startOfMonth()->subMonth(),$today->startOfMonth()->subMonth()->endOfMonth()])
+				/*$query->where(function($query) use ($today){
 					$query
 						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
 						->where(function($query) use ($today){
 							$query->where('fecha_final','<=',$today->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
-				})
+				})*/
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
-					$query->where('fecha_inicio','<',$today->subMonth()->startOfMonth())
+					$query->where('fecha_inicio','<',$today->startOfMonth()->subMonth())
 						->where(function($query) use ($today){
-							$query->where('fecha_final','>',$today->subMonth()->endOfMonth())
+							$query->where('fecha_final','>',$today->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -275,19 +276,19 @@ class GruposResumenController extends Controller
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
-						->whereBetween('fecha_inicio',[$today->subYear()->startOfMonth(),$today->subYear()->endOfMonth()])
+						->whereBetween('fecha_inicio',[$today->startOfMonth()->subYear(),$today->startOfMonth()->subYear()->endOfMonth()])
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','<=',$today->subMonth()->endOfMonth())
+								->where('fecha_final','<=',$today->startOfMonth()->subMonth()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				})
 				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
 				->orWhere(function($query) use ($today){
-					$query->where('fecha_inicio','<',$today->subYear()->startOfMonth())
+					$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>',$today->subYear()->endOfMonth())
+								->where('fecha_final','>=',$today->startOfMonth()->subYear()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -341,7 +342,8 @@ class GruposResumenController extends Controller
 			}])
 
 			->where(function($query) use ($today){
-				$query->where(function($query) use ($today){
+				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
+				/*$query->where(function($query) use ($today){
 					$query
 						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
 						->where(function($query) use ($today){
@@ -350,11 +352,11 @@ class GruposResumenController extends Controller
 								->orWhere('fecha_final','>=',$today)
 								->orWhere('fecha_final',null);
 						});
-				})
-				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+				})*/
+				// los que estuvieron ausentes durante el curso del año pero iniciaron ausentismo antes de este año y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query
-						->where('fecha_inicio','<=',$today->startOfYear())
+						->where('fecha_inicio','<',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
 								->where('fecha_final','>=',$today->startOfYear())

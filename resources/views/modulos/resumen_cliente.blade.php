@@ -72,7 +72,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_anio_actual }}%</div>
 					<div class="mb-0">Año actual</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_promdio_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
