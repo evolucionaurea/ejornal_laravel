@@ -24,7 +24,7 @@ class EmpleadosAusentismosController extends Controller
 
 	public function index()
 	{
-
+		
 		//// Traits > Clientes
 		$clientes = $this->getClientesUser();
 
@@ -78,7 +78,6 @@ class EmpleadosAusentismosController extends Controller
 		$fecha_actual = Carbon::now();
 		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
 		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
-
 
 		$dos_dias_adelante = Carbon::now()->addDays(2);
 		$un_anio_atras = Carbon::now()->subYear(1);
@@ -332,12 +331,15 @@ class EmpleadosAusentismosController extends Controller
 	{
 
 		$validatedData = $request->validate([
-			'nombre' => 'required|string'
+			'nombre' => 'required|string',
+			'incluir_indice' => 'required'
 		]);
 
+		// dd($request);
 		//Guardar en base
 		$tipo_ausentismo = new AusentismoTipo();
 		$tipo_ausentismo->nombre = $request->nombre;
+		$tipo_ausentismo->incluir_indice = $request->incluir_indice;
 
 		//generar un color único para los gráficos
 		$colorHex = sprintf("#%02x%02x%02x", rand(25, 200), rand(25, 200), rand(25, 200));
@@ -354,12 +356,14 @@ class EmpleadosAusentismosController extends Controller
 
 	public function editarTipo(Request $request)
 	{
-		if ($request->tipo_editado == null || $request->id_tipo == null) {
-			return back()->with('error', 'No puede enviar el campo vacío');
+
+		if ($request->tipo_editado == null || $request->id_tipo == null || $request->editar_incluir_indice == null) {
+			return back()->with('error', 'No puede enviar campos vacíos');
 		}
 		$tipo_ausentismo = AusentismoTipo::find($request->id_tipo);
 		$tipo_ausentismo->nombre = $request->tipo_editado;
 		$tipo_ausentismo->color = $request->color;
+		$tipo_ausentismo->incluir_indice = $request->editar_incluir_indice;
 		$tipo_ausentismo->save();
 
 		return back()->with('success', 'Tipo de ausentismo editado con éxito');

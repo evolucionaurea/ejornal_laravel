@@ -24,9 +24,11 @@ $(()=>{
 		let id_tipo = $(this).data("id")
 		let tipo_actual = $(this).data("text")
 		let color = $(this).data("color")
+		let incluir_indice = $(this).data("indice")
 		$('#editar_tipo_ausentismo [name="tipo_editado"]').val(tipo_actual)
 		$('#editar_tipo_ausentismo [name="id_tipo"]').val(id_tipo)
 		$('#editar_tipo_ausentismo [name="color"]').val(color)
+		$('#editar_tipo_ausentismo [name="editar_incluir_indice"]').val(incluir_indice || 0)
 
 	});
 
