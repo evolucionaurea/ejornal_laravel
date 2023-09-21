@@ -1,6 +1,5 @@
 $(()=>{
 
-    console.log('entre');
     setTimeout(() => {
         $( ".extension_de_licencia" ).on( "click", function() {
             console.log( $( this ).attr("data-info") );

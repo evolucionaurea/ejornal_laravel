@@ -16,7 +16,8 @@
 			<p>Aquí puede ver el listado de ausentismos de la empresa</p>
 			@if (auth()->user()->fichada == 1)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('ausentismos.create')}}"><i class="fas fa-plus-circle"></i> Nuevo ausentismo</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('ausentismos.create')}}"><i
+						class="fas fa-plus-circle"></i> Nuevo ausentismo</a>
 			</div>
 			@else
 			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo ausentismo</i></div>
@@ -36,7 +37,7 @@
 </div>
 
 
-<!-- Modal -->
+<!-- Modal Extension de licencia -->
 <div class="modal fade" id="extensionLicenciaModal" tabindex="-1" aria-labelledby="extensionLicenciaModalLabel"
 	aria-hidden="true">
 	<div class="modal-dialog modal-lg">

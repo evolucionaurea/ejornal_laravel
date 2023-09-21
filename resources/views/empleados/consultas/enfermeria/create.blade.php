@@ -287,7 +287,7 @@
 										<div class="input-group-text">En stock: {{$medicamento->stock}}</div>
 									</div>
 									<input name="{{$medicamento->id}}" type="text" class="form-control" placeholder=""
-										value="">
+										value="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
 								</div>
 							</div>
 							@endforeach

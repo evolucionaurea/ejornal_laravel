@@ -48,6 +48,20 @@ class EmpleadosTareasLivianasDocumentacion extends Controller
             'fecha_documento' => 'required'
           ]);
 
+          // Si viene de Extension de Tarea Liviana (icono listado de tareas livianas), validar fechas
+          if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+            $tarea_liviana = TareaLiviana::findOrFail($request->id_tarea_liviana);
+            $fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+            if ($fecha_final->lessThan($tarea_liviana->fecha_inicio)) {
+              return back()->with('error', 'La fecha final es menor a la de inicio');
+            }
+            if ($tarea_liviana->fecha_regreso_trabajar != null) {
+              if ($fecha_final->greaterThan($tarea_liviana->fecha_regreso_trabajar)) {
+                return back()->with('error', 'La fecha final es mayor a la de regreso');
+              }
+            }
+          }
+
           $fecha_documento = Carbon::createFromFormat('d/m/Y', $request->fecha_documento);
     
             // Si hay un archivo adjunto se va a guardar todo
@@ -88,6 +102,12 @@ class EmpleadosTareasLivianasDocumentacion extends Controller
               $documentacion = TareaLivianaDocumentacion::findOrFail($documentacion->id);
               $documentacion->hash_archivo = $archivo->hashName();
               $documentacion->save();
+
+              // Si es una documentacion de tarea liviana extendida (se carga en el listado de tareas livianas)
+              if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+                $tarea_liviana->fecha_final = $fecha_final;
+                $tarea_liviana->save();
+              }
     
     
             }else {

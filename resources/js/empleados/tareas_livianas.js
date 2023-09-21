@@ -78,8 +78,43 @@ $(()=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
 
+						let regreso_trabajar = null;
+						let hoy;
+						let mostrar_extension;
+						if(v.fecha_final == null){
+							regreso_trabajar = null;
+							mostrar_extension = true;
+						}else{
+							let str = v.fecha_final;
+							let [dia, mes, anio] = str.split('/');
+							regreso_trabajar = new Date(+anio, mes - 1, +dia);
+							hoy = new Date();
+							if (regreso_trabajar > hoy) {
+								mostrar_extension = true
+							}else{
+								mostrar_extension = false;
+							}
+						}
+
 						return `
 							<div class="acciones_tabla">
+								${
+									(mostrar_extension == true)
+									?
+									`
+									<button
+										class="extension_de_licencia_adecuada"
+										title="extension de licencia adecuada"
+										data-toggle="modal"
+										data-target="#extensionLicenciaAdecuadaModal"
+										data-info="${v.id}"
+									>
+										<i title="extension de licencia" class="fas fa-forward"></i>
+									</button>
+									`
+									:
+									''
+								}
 								<a title="Comunicaciones" href="comunicaciones_livianas/${v.id}">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
 								</a>

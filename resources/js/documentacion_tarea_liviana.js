@@ -7,7 +7,7 @@ $(document).ready(() => {
     $( "#submit_crear_documentacion_tarea_liviana" ).click(function() {
   
       if ($('.matricula_validada_liviana_hidden').val() == 1) {
-        $('#form_crear_evento_tarea_liviana').submit();
+        $('#form_crear_evento_tareas_livianas').submit();
       }else {
         alert('La matricula no fue validada');
       }

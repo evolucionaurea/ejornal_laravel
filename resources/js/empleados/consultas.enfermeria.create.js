@@ -58,12 +58,13 @@ $(()=>{
 		medicamentos_suministrados = [];
 
 		$(".modal_medicacion_a_suministrar .btn-toolbar").each(function(index) {
-
-			medicamentos_suministrados.push({
-				'nombre': $(this).find('h6').text(),
-				'id_medicamento': $(this).find('input').attr('name'),
-				'suministrados': $(this).find('input').val()
-			})
+			if ($(this).find('input').val() != '') {
+				medicamentos_suministrados.push({
+					'nombre': $(this).find('h6').text(),
+					'id_medicamento': $(this).find('input').attr('name'),
+					'suministrados': $(this).find('input').val()
+				})
+			}
 		});
 		console.log(medicamentos_suministrados);
 

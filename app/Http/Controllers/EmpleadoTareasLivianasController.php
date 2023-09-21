@@ -195,7 +195,7 @@ class EmpleadoTareasLivianasController extends Controller
 		$comunicacion_liviana->save();
 
 
-		return redirect('empleados/tareas_livianas')->with('success', 'Tarea Liviana y Comunicación guardados con éxito');
+		return redirect('empleados/tareas_livianas')->with('success', 'Tarea adecuada y Comunicación guardados con éxito');
 	}
 
 	/**
@@ -303,7 +303,7 @@ class EmpleadoTareasLivianasController extends Controller
 		$tarea_liviana->user = auth()->user()->nombre;
 		$tarea_liviana->save();
 
-		return redirect('empleados/tareas_livianas')->with('success', 'Tarea liviana actualizada con éxito');
+		return redirect('empleados/tareas_livianas')->with('success', 'Tarea adecuada actualizada con éxito');
 	}
 
 	/**
@@ -324,7 +324,7 @@ class EmpleadoTareasLivianasController extends Controller
 		}
 		$comunicacion = ComunicacionLiviana::where('id_tarea_liviana', $id)->delete();
 		$tarea_liviana->delete();
-		return back()->with('success', 'Tarea liviana y Comunicación asociada eliminados correctamente');
+		return back()->with('success', 'Tarea adecuada y Comunicación asociada eliminados correctamente');
 
 	}
 
@@ -342,7 +342,7 @@ class EmpleadoTareasLivianasController extends Controller
 		$tipo_tarea_liviana->nombre = $request->nombre;
 		$tipo_tarea_liviana->save();
 
-		return back()->with('success', 'Tipo de tarea liviana creado con éxito');
+		return back()->with('success', 'Tipo de tarea adecuada creado con éxito');
 	}
 
 
@@ -352,12 +352,12 @@ class EmpleadoTareasLivianasController extends Controller
 		$tareas_livianas = TareaLiviana::where('id_tipo', $id_tipo)->get();
 
 		if (!empty($tareas_livianas) && count($tareas_livianas) > 0) {
-		return back()->with('error', 'Existen tareas livianas creadas con este tipo de tarea liviana. No puedes eliminarla');
+		return back()->with('error', 'Existen tareas adecuada creadas con este tipo de tarea liviana. No puedes eliminarla');
 		}
 
 		//Eliminar en base
 		$tipo_tarea_liviana = TareaLivianaTipo::find($id_tipo)->delete();
-		return back()->with('success', 'Tipo de tarea liviana eliminado correctamente');
+		return back()->with('success', 'Tipo de tarea adecuada eliminado correctamente');
 	}
 
 
