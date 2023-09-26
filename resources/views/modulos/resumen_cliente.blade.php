@@ -72,7 +72,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_anio_actual }}%</div>
 					<div class="mb-0">Año actual</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_promdio_actual}}</div>
+					<div class="mb-0 small font-italic">Nómina: {{$nomina_promedio_actual}}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -275,7 +275,7 @@
 		<div class="tarjeta ausentismos_mes_porcentajes">
 			<h4 class="mb-0">Ausentismos en este mes</h4>
 			<h6>{{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
-			<table data-table="ausentismos-mes" class="table table-striped tabla">
+			<table data-table="ausentismos-mes" class="table table-striped tabla table-sm small">
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
@@ -304,7 +304,7 @@
 		<div class="tarjeta ausentismos_mes_porcentajes">
 			<h4 class="mb-0">Ausentismos en el mes pasado</h4>
 			<h6>{{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
-			<table data-table="ausentismos-mes-anterior" class="table table-striped tabla">
+			<table data-table="ausentismos-mes-anterior" class="table table-striped tabla table-sm small">
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
@@ -333,7 +333,7 @@
 		<div class="tarjeta ausentismos_mes_porcentajes">
 			<h4 class="mb-0">Ausentismos en el mismo mes del año anterior</h4>
 			<h6>{{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h6>
-			<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla">
+			<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla table-sm small">
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>
@@ -361,7 +361,7 @@
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_anio_porcentajes">
 			<h4>Ausentismos del año actual ({{ $now->firstOfYear()->formatLocalized('%B') }} - {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }})</h4>
-			<table data-table="ausentismos-anual" class="table table-striped">
+			<table data-table="ausentismos-anual" class="table table-striped table-sm small">
 				<thead>
 					<tr>
 						<th scope="col">Tipo</th>

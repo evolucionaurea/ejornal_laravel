@@ -18,6 +18,7 @@ class TareaLiviana extends Model
   protected $casts = [
   	'fecha_inicio'=>'date:d/m/Y',
     'fecha_final'=>'date:d/m/Y',
+    'fecha_regreso_trabajar'=>'date:d/m/Y'
   ];
 
 

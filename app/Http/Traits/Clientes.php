@@ -32,16 +32,11 @@ trait Clientes {
 
 		///dd($route[0]);
 
-
+		// NOMINAS
 		$nomina_actual = Nomina::
 			where('id_cliente',$id_cliente)
 			//->where('estado',1)
 			->count();
-		///se toma el valor de la última nómina disponible
-
-		///nomina año actual: promedio de nominas mes a mes
-
-
 		$nomina_mes_anterior = Nomina::
 			where('id_cliente',$id_cliente)
 			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
@@ -52,7 +47,7 @@ trait Clientes {
 			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
 			//->where('estado',1)
 			->count();
-
+		///nomina año actual: promedio de nominas mes a mes
 		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
 		// Iterate over the period
 		$count_nomina = [];
@@ -65,7 +60,7 @@ trait Clientes {
 				->count();
 		}
 		$valores = collect($count_nomina);
-		$nomina_promdio_actual = (int) ceil($valores->average());
+		$nomina_promedio_actual = (int) ceil($valores->average());
 
 
 		/*$nomina_anio_actual = Nomina::
@@ -259,7 +254,7 @@ trait Clientes {
 		),*/
 		$q_ausentismos_anio_actual = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 
 					IF(
 						IFNULL(
@@ -275,13 +270,13 @@ trait Clientes {
 						'{$inicio_anio}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias"
 		)
 
 		->where(function($query) use ($today){
 
-			$query->whereDate('fecha_inicio','>=',$today)
+			$query->whereDate('fecha_inicio','>=',$today->startOfYear())
 			/*$query->where(function($query) use ($today){
 				$query
 					->where(function($query) use ($today){
@@ -311,9 +306,12 @@ trait Clientes {
 		})
 		->orderBy('dias','desc');
 
-		//dd($q_ausentismos_anio_actual->toSql());
+		//echo($q_ausentismos_anio_actual->toSql());
+		//echo $q_ausentismos_anio_actual->first()->dias;
 
-		$ausentismos_anio_actual = $nomina_promdio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promdio_actual*$today->dayOfYear()),4)*100) : 0;
+		//dd($today->dayOfYear());
+
+		$ausentismos_anio_actual = $nomina_promedio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promedio_actual*$today->dayOfYear()),4)*100) : 0;
 
 
 		/// ACCIDENTES
@@ -459,7 +457,7 @@ trait Clientes {
 			'nomina_actual',
 			'nomina_mes_anterior',
 			'nomina_mes_anio_anterior',
-			'nomina_promdio_actual',
+			'nomina_promedio_actual',
 
 			'route'
 		);

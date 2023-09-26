@@ -13,6 +13,7 @@ use App\Http\Traits\Clientes;
 use App\Http\Traits\Ausentismos;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 
 class GruposResumenController extends Controller
@@ -68,40 +69,63 @@ class GruposResumenController extends Controller
 	{
 		$today = CarbonImmutable::now();
 
+		$id_grupo = auth()->user()->id_grupo;
 
+		/// NOMINAS
 		$nomina_actual = Nomina::
-			whereIn('id_cliente',function($query){
+			whereIn('id_cliente',function($query) use ($id_grupo){
 				$query
 					->select('id_cliente')
 					->from('cliente_grupo')
-					->where('id_grupo',auth()->user()->id_grupo);
+					->where('id_grupo',$id_grupo);
 			})
 			//->where('estado',1)
 			->count();
-
 		$nomina_mes_anterior = Nomina::
-			whereIn('id_cliente',function($query){
+			whereIn('id_cliente',function($query) use ($id_grupo){
 				$query
 					->select('id_cliente')
 					->from('cliente_grupo')
-					->where('id_grupo',auth()->user()->id_grupo);
+					->where('id_grupo',$id_grupo);
 			})
 			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
 			//->where('estado',1)
 			->count();
-
 		$nomina_mes_anio_anterior = Nomina::
-			whereIn('id_cliente',function($query){
+			whereIn('id_cliente',function($query) use ($id_grupo){
 				$query
 					->select('id_cliente')
 					->from('cliente_grupo')
-					->where('id_grupo',auth()->user()->id_grupo);
+					->where('id_grupo',$id_grupo);
 			})
 			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
 			//->where('estado',1)
 			->count();
+		///nomina año actual: promedio de nominas mes a mes
+		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
+		// Iterate over the period
+		$count_nomina = [];
+		foreach ($period as $date) {
+			$yearmonth = $date->format('Ym');
 
-		///echo_json(auth()->user()->rol);
+			$count_nomina[] = Nomina::
+				whereIn('id_cliente',function($query) use ($id_grupo){
+					$query
+						->select('id_cliente')
+						->from('cliente_grupo')
+						->where('id_grupo',$id_grupo);
+				})
+				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<='{$yearmonth}'")
+				->whereIn('id_cliente',function($query) use ($id_grupo){
+					$query
+						->select('id_cliente')
+						->from('cliente_grupo')
+						->where('id_grupo',$id_grupo);
+				})
+				->count();
+		}
+		$valores = collect($count_nomina);
+		$nomina_promedio_actual = (int) ceil($valores->average());
 
 		/***************************************************************************************************/
 		/*** Unificar queries desde Traits/Ausentismos ya que son las mismas pero cambia un solo where  ****/
@@ -164,24 +188,22 @@ class GruposResumenController extends Controller
 				});
 			})
 
-			->whereIn('id_trabajador',function($query){
+			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
 					->from('nominas')
 					->where('deleted_at',null)
 					///->where('estado',1)
-					->whereIn('id_cliente',function($query){
+					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
 							->from('cliente_grupo')
-							->where('id_grupo',auth()->user()->id_grupo);
+							->where('id_grupo',$id_grupo);
 					});
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
 			->get();
-
-
 		$query_log = DB::getQueryLog();
 
 
@@ -231,17 +253,17 @@ class GruposResumenController extends Controller
 				});
 			})
 
-			->whereIn('id_trabajador',function($query){
+			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
 					->from('nominas')
 					//->where('deleted_at',null)
 					///->where('estado',1)
-					->whereIn('id_cliente',function($query){
+					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
 							->from('cliente_grupo')
-							->where('id_grupo',auth()->user()->id_grupo);
+							->where('id_grupo',$id_grupo);
 					});
 			})
 			->groupBy('id_tipo')
@@ -294,17 +316,17 @@ class GruposResumenController extends Controller
 				});
 			})
 
-			->whereIn('id_trabajador',function($query){
+			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
 					->from('nominas')
 					//->where('deleted_at',null)
 					->where('estado',1)
-					->whereIn('id_cliente',function($query){
+					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
 							->from('cliente_grupo')
-							->where('id_grupo',auth()->user()->id_grupo);
+							->where('id_grupo',$id_grupo);
 					});
 			})
 			->groupBy('id_tipo')
@@ -364,17 +386,17 @@ class GruposResumenController extends Controller
 						});
 				});
 			})
-			->whereIn('id_trabajador',function($query){
+			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
 					->from('nominas')
 					//->where('deleted_at',null)
 					->where('estado',1)
-					->whereIn('id_cliente',function($query){
+					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
 							->from('cliente_grupo')
-							->where('id_grupo',auth()->user()->id_grupo);
+							->where('id_grupo',$id_grupo);
 					});
 			})
 			->groupBy('id_tipo')
@@ -399,6 +421,7 @@ class GruposResumenController extends Controller
 			'nomina_actual',
 			'nomina_mes_anterior',
 			'nomina_mes_anio_anterior',
+			'nomina_promedio_actual',
 
 			'cant_dias_mes',
 			'cant_dias_mes_anterior',

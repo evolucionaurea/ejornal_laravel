@@ -8,6 +8,7 @@ use App\Cliente;
 use App\Nomina;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -326,6 +327,7 @@ trait Ausentismos {
 
 		$today = CarbonImmutable::now();
 
+		/// NOMINAS
 		$nomina_actual = Nomina::
 			where('id_cliente',$id_cliente)
 			//->where('estado',1)
@@ -340,8 +342,25 @@ trait Ausentismos {
 			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
 			//->where('estado',1)
 			->count();
+		///nomina año actual: promedio de nominas mes a mes
+		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
+		// Iterate over the period
+		$count_nomina = [];
+		foreach ($period as $date) {
+			$yearmonth = $date->format('Ym');
 
-		DB::enableQueryLog();
+			$count_nomina[] = Nomina::
+				where('id_cliente',$id_cliente)
+				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<='{$yearmonth}'")
+				->count();
+		}
+		$valores = collect($count_nomina);
+		$nomina_promedio_actual = (int) ceil($valores->average());
+
+
+
+
+		//DB::enableQueryLog();
 		/// MES ACTUAL
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$today_formatted = $today->format('Y-m-d');
@@ -406,7 +425,7 @@ trait Ausentismos {
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
 			->get();
-		$query = DB::getQueryLog();
+		//$query = DB::getQueryLog();
 		//dd($query);
 
 
@@ -593,7 +612,6 @@ trait Ausentismos {
 
 		$status = 'ok';
 
-
 		$cant_dias_mes = (int) $today->format('d');
 		$cant_dias_mes_anterior = (int) $today->firstOfMonth()->subMonth()->endOfMonth()->format('d');
 		$cant_dias_mes_anio_anterior = (int) $today->firstOfMonth()->subYear()->endOfMonth()->format('d');
@@ -608,12 +626,12 @@ trait Ausentismos {
 			'nomina_actual',
 			'nomina_mes_anterior',
 			'nomina_mes_anio_anterior',
+			'nomina_promedio_actual',
 
 			'cant_dias_mes',
 			'cant_dias_mes_anterior',
 			'cant_dias_mes_anio_anterior',
 			'cant_dias_anio',
-
 
 			'status'
 		);

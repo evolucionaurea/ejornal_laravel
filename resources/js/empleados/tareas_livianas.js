@@ -57,15 +57,17 @@ $(()=>{
 				},
 				{
 					data:row=>row,
+					orderable:false,
 					render:v=>{
-						if(v.fecha_regreso_trabajar == null){
+						console.log(v)
+						if(v.fecha_final == null){
 							return '[Ausente]'
 						}else{
-							let str = v.fecha_regreso_trabajar;
+							let str = v.fecha_final;
 							let [dia, mes, anio] = str.split('/');
 							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							let hoy = new Date();
-							return regreso_trabajar > hoy  ? '[Ausente]' : ''
+							return regreso_trabajar > hoy  ? '<span class="badge badge-danger">ausente</span>' : ''
 						}
 					}
 				},

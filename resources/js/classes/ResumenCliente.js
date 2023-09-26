@@ -31,7 +31,7 @@ export default class ResumenCliente {
 		}
 
 		if(obj.chart_canvas=='#chart_ausentismos_anual'){
-			console.log(obj.data)
+			console.log(this.data)
 		}
 
 		if(obj.data.length>0){
@@ -104,7 +104,7 @@ export default class ResumenCliente {
 			{
 				tabla:'ausentismos-anual',
 				data:'ausentismos_anual',
-				nomina:'nomina_actual',
+				nomina:'nomina_promedio_actual',
 				dias_periodo:'cant_dias_anio'
 			}
 		]
@@ -131,7 +131,8 @@ export default class ResumenCliente {
 				//const percent = nomina_actual*
 
 
-				td_nombre.text( row.tipo.nombre )
+				td_nombre.html( `<i class="fa fa-square" style="color:${row.tipo.color}"></i> ${row.tipo.nombre}` )
+				///console.log(row.tipo)
 				td_value.text( row.total )
 				td_dias.text(row.dias)
 
@@ -156,7 +157,8 @@ export default class ResumenCliente {
 
 			$(`[data-table="${dt.tabla}"]`).dataTable({
 				order:[[1,'desc']],
-				dom:'t'
+				dom:'t',
+				pageLength:40
 			})
 
 		})

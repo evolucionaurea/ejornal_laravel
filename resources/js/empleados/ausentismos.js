@@ -2,6 +2,8 @@ import Tablas from '../classes/Tablas.js';
 
 $(()=>{
 
+	//testing
+
 	new Tablas({
 		controller:'/empleados/ausentismos',
 		get_path:'/busqueda',
@@ -13,9 +15,7 @@ $(()=>{
 		server_side:true,
 		datatable_options:{
 			order:[[5,'desc']],
-
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
-
 			columns:[
 				{
 					data:row=>row,

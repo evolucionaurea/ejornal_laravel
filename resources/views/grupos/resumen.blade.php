@@ -84,7 +84,7 @@
 						<div class="tarjeta ausentismos_mes_porcentajes">
 							<h4 class="mb-0">Ausentismos del mes actual</h4>
 							<h6>{{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h6>
-							<table data-table="ausentismos-mes" class="table table-striped tabla">
+							<table data-table="ausentismos-mes" class="table table-striped tabla table-sm small">
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
@@ -113,7 +113,7 @@
 						<div class="tarjeta ausentismos_mes_porcentajes">
 							<h4 class="mb-0">Ausentismos del mes pasado</h4>
 							<h6>{{ $carbon::now()->subMonth()->formatLocalized('%B') }} {{ $carbon::now()->subMonth()->formatLocalized('%Y') }}</h6>
-							<table data-table="ausentismos-mes-anterior" class="table table-striped tabla">
+							<table data-table="ausentismos-mes-anterior" class="table table-striped tabla table-sm small">
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
@@ -142,7 +142,7 @@
 						<div class="tarjeta ausentismos_mes_porcentajes">
 							<h4 class="mb-0">Ausentismos mismo mes del año anterior</h4>
 							<h6>{{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->subYear()->formatLocalized('%Y') }}</h6>
-							<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla">
+							<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla table-sm small">
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
@@ -169,9 +169,9 @@
 					<!-- Año Actual -->
 					<div class="col-lg-6">
 						<div class="tarjeta ausentismos_anio_porcentajes">
-							<h4 class="mb-0">Ausentismos de los últimos 365 días</h4>
+							<h4 class="mb-0">Ausentismos del año actual</h4>
 							<h6>{{ $carbon::now()->firstOfYear()->formatLocalized('%B') }} a {{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h6>
-							<table data-table="ausentismos-anual" class="table table-striped">
+							<table data-table="ausentismos-anual" class="table table-striped table-sm small">
 								<thead>
 									<tr>
 										<th scope="col">Tipo</th>
