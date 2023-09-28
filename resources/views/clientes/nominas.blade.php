@@ -14,6 +14,11 @@
 		<div class="cabecera">
 			<h2>Listado de trabajadores</h2>
 			<p>Aquí puede ver el listado de trabajadores de su empresa</p>
+
+			<div class="form-group">
+				<a href="{{url('clientes/nominas/historial')}}" class="btn btn-dark btn-sm"><i class="fa fa-calendar fa-fw"></i> Ver Historial</a>
+			</div>
+
 		</div>
 
 		@include('../mensajes_validacion')

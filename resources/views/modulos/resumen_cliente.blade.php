@@ -15,7 +15,7 @@
 	</div>
 
 	<!-- Mes Actual -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-actual' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -33,7 +33,7 @@
 
 
 	<!-- Mes Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-anterior' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -50,7 +50,7 @@
 
 
 	<!-- Mes Año Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-anio-anterior' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -66,7 +66,7 @@
 	</div>
 
 	<!-- Año Actual -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=anio-actual' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -95,7 +95,7 @@
 	</div>
 
 	<!-- Mes Actual -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -111,7 +111,7 @@
 	</div>
 
 	<!-- Mes Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -127,7 +127,7 @@
 	</div>
 
 	<!-- Mes Año Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -143,7 +143,7 @@
 	</div>
 
 	<!-- Año Actual -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-1">
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -173,7 +173,7 @@
 	</div>
 
 	<!-- Mes Actual -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-4 mb-1">
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -189,7 +189,7 @@
 	</div>
 
 	<!-- Mes Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-4 mb-1">
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -205,7 +205,7 @@
 	</div>
 
 	<!-- Mes Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-4 mb-1">
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
@@ -221,7 +221,7 @@
 	</div>
 
 	<!-- Mes Anterior -->
-	<div class="col-lg-3 mb-4">
+	<div class="col-lg-3 mb-4 mb-1">
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>

@@ -51,16 +51,27 @@ trait Clientes {
 		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
 		// Iterate over the period
 		$count_nomina = [];
+		DB::enableQueryLog();
 		foreach ($period as $date) {
 			$yearmonth = $date->format('Ym');
-
-			$count_nomina[] = Nomina::
+			$count_nomina[$yearmonth] = Nomina::
 				where('id_cliente',$id_cliente)
-				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<='{$yearmonth}'")
+				->withTrashed()
+				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<={$yearmonth}")
+				->where(function($query) use($yearmonth){
+					$query
+						->where('deleted_at',null)
+						->orWhereRaw("EXTRACT(YEAR_MONTH FROM deleted_at)>{$yearmonth}");
+				})
 				->count();
 		}
+
+		///dd($count_nomina);
+
+
 		$valores = collect($count_nomina);
 		$nomina_promedio_actual = (int) ceil($valores->average());
+
 
 
 		/*$nomina_anio_actual = Nomina::

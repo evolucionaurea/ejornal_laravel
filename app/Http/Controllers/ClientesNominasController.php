@@ -34,4 +34,15 @@ class ClientesNominasController extends Controller
     return $this->exportNomina(auth()->user()->id_cliente_relacionar,$request);
   }
 
+  public function historial()
+  {
+
+    $cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
+    ->select('clientes.nombre')
+    ->first();
+
+    return view('clientes.nominas_historial', compact('cliente'));
+
+  }
+
 }
