@@ -45,10 +45,45 @@ class ClientesNominasController extends Controller
 		->select('clientes.nombre')
 		->first();
 
-
-
-
 		return view('clientes.nominas_historial', compact('cliente'));
+
+	}
+	public function historial_listado(Request $request){
+
+		$query = NominaHistorial::select()
+			->where('cliente_id',auth()->user()->id_cliente_relacionar);
+
+		$total = $query->count();
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['data'];
+			$dir  = $request->order[0]['dir'];
+			switch ($sort) {
+				case 'year':
+					$sort = 'year_month';
+					break;
+			}
+			$query->orderBy($sort,$dir);
+		}
+
+
+		$records_filtered = $query->count();
+		$historial = $query->skip($request->start)->take($request->length)->get();
+
+		foreach($historial as $k=>$hist){
+			if($k===count($historial)-1){
+				$hist->dif_mes_anterior = 0;
+			}else{
+				$hist->dif_mes_anterior = $hist->cantidad-$historial[$k+1]->cantidad;
+			}
+		}
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$records_filtered,
+			'data'=>$historial,
+			'request'=>$request->all()
+		];
 
 	}
 

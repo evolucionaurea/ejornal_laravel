@@ -20,7 +20,8 @@ Route::group(['middleware' => 'autenticacion_clientes'], function () {
 	Route::get('clientes/nominas', 'ClientesNominasController@index')->name('/clientes/nominas');
 	Route::post('clientes/nominas/busqueda','ClientesNominasController@busqueda');
 	Route::get('clientes/nominas/exportar', 'ClientesNominasController@exportar');
-	Route::get('clientes/nominas/historial', 'ClientesNominasController@historial');
+	Route::get('clientes/nominas/historial', 'ClientesNominasController@historial')->name('/clientes/nominas/historial');
+	Route::post('clientes/nominas/historial_listado', 'ClientesNominasController@historial_listado')->name('/clientes/nominas/historial_listado');
 
 	Route::get('clientes/ausentismos', 'ClientesAusentismosController@index')->name('/clientes/ausentismos');
 	Route::post('clientes/ausentismos/busqueda','ClientesAusentismosController@busqueda');

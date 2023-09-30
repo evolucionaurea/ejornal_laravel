@@ -18,12 +18,9 @@
 				<a href="{{url('clientes/nominas')}}" class="btn btn-dark btn-sm"><i class="fa fa-angle-double-left fa-fw"></i> Volver al listado</a>
 			</div>
 
-
-
 			<hr>
 
-
-			<table class="table table-striped table-hover table-sm tabla_nominas dt-responsive">
+			<table data-table="historial_nominas" class="table table-striped table-hover table-sm dt-responsive">
 
 				<!--Table head-->
 				<thead>
@@ -31,7 +28,7 @@
 						<th>Año</th>
 						<th>Mes</th>
 						<th>Total Nómina</th>
-						<th>Dif. respecto mes anterior</th>
+						<th>Diferencia Respecto Mes Anterior</th>
 					</tr>
 				</thead>
 				<!--Table head-->

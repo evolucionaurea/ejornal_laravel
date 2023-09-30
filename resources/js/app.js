@@ -64,6 +64,7 @@ if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create'
 //CLIENTES
 if(route=='/clientes/resumen') require('./clientes/resumen')
 if(route=='/clientes/nominas') require('./clientes/nominas')
+if(route=='/clientes/nominas/historial') require('./clientes/nominas_historial')
 if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
 
 
@@ -73,4 +74,4 @@ if(route=='/grupos/resumen_cliente') require('./grupos/resumen_cliente')
 if(route=='/grupos/nominas') require('./grupos/nominas')
 if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
 
-console.log(route)
+console.log(`route: ${route}`)
