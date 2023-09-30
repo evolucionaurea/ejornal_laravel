@@ -5,44 +5,51 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Nomina;
 use App\Cliente;
+use App\NominaHistorial;
 use App\Http\Traits\Nominas;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
+
 
 class ClientesNominasController extends Controller
 {
 
-  use Nominas;
+	use Nominas;
 
-  public function index()
-  {
-    $cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
-    ->select('clientes.nombre')
-    ->first();
-    ///$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_relacionar)->get();
-    return view('clientes.nominas', compact('cliente'));
-  }
+	public function index()
+	{
+		$cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
+		->select('clientes.nombre')
+		->first();
+		///$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_relacionar)->get();
+		return view('clientes.nominas', compact('cliente'));
+	}
 
-  public function busqueda(Request $request)
-  {
-    //Traits > Nominas
-    return $this->searchNomina(auth()->user()->id_cliente_relacionar,$request);
-  }
+	public function busqueda(Request $request)
+	{
+		//Traits > Nominas
+		return $this->searchNomina(auth()->user()->id_cliente_relacionar,$request);
+	}
 
-  public function exportar(Request $request)
-  {
+	public function exportar(Request $request)
+	{
 
-    //Traits > Nominas
-    return $this->exportNomina(auth()->user()->id_cliente_relacionar,$request);
-  }
+		//Traits > Nominas
+		return $this->exportNomina(auth()->user()->id_cliente_relacionar,$request);
+	}
 
-  public function historial()
-  {
+	public function historial()
+	{
 
-    $cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
-    ->select('clientes.nombre')
-    ->first();
+		$cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
+		->select('clientes.nombre')
+		->first();
 
-    return view('clientes.nominas_historial', compact('cliente'));
 
-  }
+
+
+		return view('clientes.nominas_historial', compact('cliente'));
+
+	}
 
 }

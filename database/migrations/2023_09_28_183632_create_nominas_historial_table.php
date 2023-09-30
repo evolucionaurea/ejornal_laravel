@@ -17,6 +17,7 @@ class CreateNominasHistorialTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedInteger('year_month');
             $table->unsignedBigInteger('cliente_id');
+            $table->unsignedInteger('cantidad');
             $table->foreign('cliente_id')->references('id')->on('clientes')->cascadeOnDelete();
             $table->timestamps();
         });
