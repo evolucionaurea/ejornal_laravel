@@ -67,7 +67,7 @@ $(()=>{
 							let [dia, mes, anio] = str.split('/');
 							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							let hoy = new Date();
-							return regreso_trabajar > hoy  ? '<span class="badge badge-danger">ausente</span>' : ''
+							return regreso_trabajar > hoy  ? '<span class="badge badge-success">vigente</span>' : ''
 						}
 					}
 				},
