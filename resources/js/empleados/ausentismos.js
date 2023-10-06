@@ -150,8 +150,8 @@ $(()=>{
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
 								</a>
 
-								<a title="Documentacion" href="documentaciones/${v.id}">
-									<i title="Documentacion" class="fas fa-files-medical"></i>
+								<a title="Certificados" href="documentaciones/${v.id}">
+									<i title="Certificados" class="fas fa-files-medical"></i>
 								</a>
 
 								<a title="Historial" href="ausentismos/${v.id_trabajador}">

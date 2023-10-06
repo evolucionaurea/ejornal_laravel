@@ -10,19 +10,15 @@ $(()=>{
 		datatable_options:{order:[[ 6, "desc" ]]},
 		render_row:medicamento=>{
 
-			const formatDate = (date, includeTime) => {
+			const formatDate = (date) => {
                 if (!date) return '';
                 const d = new Date(date);
                 const formattedDate = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-                if (includeTime) {
-                    const formattedTime = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-                    return `${formattedDate} ${formattedTime}`;
-                }
                 return formattedDate;
             };
 
-            const formattedFechaIngreso = formatDate(medicamento.fecha_ingreso, false);
-            const formattedCreatedAt = formatDate(medicamento.created_at, true);
+            const formattedFechaIngreso = formatDate(medicamento.fecha_ingreso);
+            const formattedCreatedAt = formatDate(medicamento.created_at);
 			
 			return $(`
 				<tr>

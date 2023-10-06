@@ -13,14 +13,14 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Documentacion de una tarea adecuada</h2>
-            <p>Aquí puedes ver y cargar nuevos documentos de esta tarea adecuada</p>
+            <h2>Certificados de una tarea adecuada</h2>
+            <p>Aquí puedes ver y cargar nuevos certificados de esta tarea adecuada</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/tareas_livianas') }}"><i
                         class="fas fa-arrow-circle-left"></i>Volver</a>
                 <a data-toggle="modal" data-target="#cargar_documentos_tarea_liviana"
                     class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-plus-circle"></i>Crear
-                    documentación</a>
+                    certificado</a>
             </div>
         </div>
 
@@ -199,7 +199,7 @@
                     @else
                     <div class="alert alert-danger" role="alert">
                         <h4 class="alert-heading">Sin datos</h4>
-                        <p>No hay documentaciones de esta tarea liviana</p>
+                        <p>No hay certificados de esta tarea liviana</p>
                     </div>
                     @endif
 
@@ -221,7 +221,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="cargar_documentos_tarea_liviana_titulo">Crear documento</h5>
+                <h5 class="modal-title" id="cargar_documentos_tarea_liviana_titulo">Crear certificado</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -282,7 +282,7 @@
                             </div>
                         </div>
                         <a id="submit_crear_documentacion_tarea_liviana" class="btn-ejornal btn-ejornal-success">Crear
-                            documentacion</a>
+                            certificado</a>
                     </form>
                 </div>
 
@@ -299,7 +299,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editar_documentos_tarea_liviana_titulo">Editar documento</h5>
+                <h5 class="modal-title" id="editar_documentos_tarea_liviana_titulo">Editar certificado</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
