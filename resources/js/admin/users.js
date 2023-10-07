@@ -15,8 +15,6 @@ $(()=>{
 			let clientes = [];
 			let grupo = '';
 
-			///console.log(user)
-
 			user.clientes_user.map(cliente=>{
 				clientes.push(cliente.nombre)
 			})
