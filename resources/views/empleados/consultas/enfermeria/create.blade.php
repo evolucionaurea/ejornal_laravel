@@ -275,7 +275,10 @@
 				</button>
 			</div>
 			<div class="modal-body">
-
+				<div class="form-group">
+					<input type="text" class="form-control" id="medicamentoSearch"
+						placeholder="Busca tu medicamento...">
+				</div>
 				<div class="row">
 					<div class="col-md-12">
 						<form class="modal_medicacion_a_suministrar" action="" accept-charset="UTF-8" method="">

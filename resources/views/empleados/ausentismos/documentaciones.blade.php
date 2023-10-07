@@ -13,15 +13,15 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Documentacion de un ausentismo</h2>
-            <p>Aquí puedes ver y cargar nuevos documentos de ausentismo</p>
+            <h2>Certificados de un ausentismo</h2>
+            <p>Aquí puedes ver y cargar nuevos certificados de ausentismo</p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro"
                     href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}"><i
                         class="fas fa-arrow-circle-left"></i>Volver</a>
                 <a data-toggle="modal" data-target="#cargar_documentos_ausentismo"
                     class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-plus-circle"></i>Crear
-                    documentación</a>
+                    certificado</a>
             </div>
         </div>
 
@@ -199,15 +199,15 @@
                     @else
                     @if ($ausencia->archivo != null)
                     <div class="alert alert-info" role="alert">
-                        <h4 class="alert-heading">Documentacion cargada</h4>
+                        <h4 class="alert-heading">Certificados cargados</h4>
                         <p>De momento solo lleva guardado el adjunto al momento de crear el ausentismo.</p>
-                        <p>No lleva documentación cargada fuera de ello. Vaya al boton verde arriba llamado "Crear
-                            documentación" para continuar trabajando.</p>
+                        <p>No lleva certificados cargados fuera de ello. Vaya al boton verde arriba llamado "Crear
+                            certificado" para continuar trabajando.</p>
                     </div>
                     @else
                     <div class="alert alert-danger" role="alert">
                         <h4 class="alert-heading">Sin datos</h4>
-                        <p>No hay documentaciones de este ausentismo</p>
+                        <p>No hay certificados de este ausentismo</p>
                     </div>
                     @endif
                     @endif
@@ -315,7 +315,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="cargar_documentos_ausentismo_titulo">Crear documento</h5>
+                <h5 class="modal-title" id="cargar_documentos_ausentismo_titulo">Crear certificado</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -376,7 +376,7 @@
                             </div>
                         </div>
                         <a id="submit_crear_documentacion_ausentismo" class="btn-ejornal btn-ejornal-success">Crear
-                            documentacion</a>
+                            certificado</a>
                     </form>
                 </div>
 
@@ -393,7 +393,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editar_documentos_ausentismo_titulo">Editar documento</h5>
+                <h5 class="modal-title" id="editar_documentos_ausentismo_titulo">Editar certificado</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

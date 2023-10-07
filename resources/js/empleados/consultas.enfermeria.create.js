@@ -110,6 +110,22 @@ $(()=>{
 	});
 
 
+	// Evento de búsqueda en tiempo real
+	$('#medicamentoSearch').on('input', function () {
+		var searchText = $(this).val().toLowerCase(); // Texto de búsqueda en minúsculas
+
+		// Filtra los medicamentos que coinciden con el texto de búsqueda
+		$('.btn-toolbar').each(function () {
+			var medicamentoNombre = $(this).find('h6').text().toLowerCase(); // Nombre del medicamento
+
+			if (medicamentoNombre.includes(searchText)) {
+				$(this).show(); // Muestra el medicamento si coincide
+			} else {
+				$(this).hide(); // Oculta el medicamento si no coincide
+			}
+		});
+	});
+	
 	$("#guarda_consulta").click(function(e) {
 		e.preventDefault();
 		$('#consulta_confirmacion_final').modal('show');
