@@ -27,7 +27,7 @@ $(()=>{
 			}
 			if(user.rol=='cliente' && 'cliente_relacionar' in user)
 			{
-				clientes = [user.cliente_relacionar.nombre]
+				if(user.cliente_relacionar!=null) clientes = [user.cliente_relacionar.nombre]
 			}
 			/*if(user.rol=='cliente'){
 
