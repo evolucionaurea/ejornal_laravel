@@ -99,7 +99,7 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($accidentes_mes_actual/($nomina_actual*$now->format('d')),4))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($accidentes_mes_actual/($nomina_actual*$now->format('d')),5))*100 : 0 }}%</div>
 					<div class="mb-0">Mes Actual</div>
 					<div class="mb-0 small font-italic">Total: {{$accidentes_mes_actual}}</div>
 				</div>
@@ -115,7 +115,7 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? (round($accidentes_mes_pasado/($nomina_mes_anterior*$now->subMonth()->endOfMonth()->format('d')),4))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? (round($accidentes_mes_pasado/($nomina_mes_anterior*$now->subMonth()->endOfMonth()->format('d')),5))*100 : 0 }}%</div>
 					<div class="mb-0">Mes Anterior</div>
 					<div class="mb-0 small font-italic">Total: {{$accidentes_mes_pasado}}</div>
 				</div>
@@ -131,7 +131,7 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($accidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$now->subYear()->endOfMonth()->format('d')),4)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($accidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$now->subYear()->endOfMonth()->format('d')),5)*100 : 0}}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
 					<div class="mb-0 small font-italic">Total: {{$accidentes_mes_anio_anterior}}</div>
 				</div>
@@ -147,7 +147,7 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($accidentes_anio_actual/($nomina_actual*$now->dayOfYear()),4)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($accidentes_anio_actual/($nomina_actual*$now->dayOfYear()),5)*100 : 0}}%</div>
 					<div class="mb-0">Año actual</div>
 					<div class="mb-0 small font-italic">Total: {{$accidentes_anio_actual}}</div>
 				</div>
@@ -177,7 +177,7 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($incidentes_mes_actual/($nomina_actual*$now->format('d')),4))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($incidentes_mes_actual/($nomina_actual*$now->format('d')),5))*100 : 0 }}%</div>
 					<div class="mb-0">Mes Actual</div>
 					<div class="mb-0 small font-italic">Total: {{$incidentes_mes_actual}}</div>
 				</div>
@@ -193,7 +193,7 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? (round($incidentes_mes_pasado/($nomina_mes_anterior*$now->subMonth()->endOfMonth()->format('d')),4))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? (round($incidentes_mes_pasado/($nomina_mes_anterior*$now->subMonth()->endOfMonth()->format('d')),5))*100 : 0 }}%</div>
 					<div class="mb-0">Mes Anterior</div>
 					<div class="mb-0 small font-italic">Total: {{$incidentes_mes_pasado}}</div>
 				</div>
@@ -209,7 +209,7 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($incidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$now->subYear()->endOfMonth()->format('d')),4)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($incidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$now->subYear()->endOfMonth()->format('d')),5)*100 : 0}}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
 					<div class="mb-0 small font-italic">Total: {{$incidentes_mes_anio_anterior}}</div>
 				</div>
@@ -225,7 +225,7 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($incidentes_anio_actual/($nomina_actual*$now->dayOfYear()),4)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($incidentes_anio_actual/($nomina_actual*$now->dayOfYear()),5)*100 : 0}}%</div>
 					<div class="mb-0">Año actual</div>
 					<div class="mb-0 small font-italic">Total: {{$incidentes_anio_actual}}</div>
 				</div>

@@ -65,10 +65,7 @@ trait Clientes {
 				})
 				->count();
 		}
-
 		///dd($count_nomina);
-
-
 		$valores = collect($count_nomina);
 		$nomina_promedio_actual = (int) ceil($valores->average());
 
@@ -137,7 +134,6 @@ trait Clientes {
 				});
 			});
 		})
-
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -145,9 +141,12 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		})
+		->whereHas('tipo',function($query){
+			$query->where('incluir_indice','=',1);
+		})
 		->orderBy('dias','desc');
 
-		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),4)*100) : 0;
+		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),5)*100) : 0;
 
 		//dd(DB::getQueryLog()[0]);
 
@@ -190,7 +189,9 @@ trait Clientes {
 					});
 			});
 		})
-
+		->whereHas('tipo',function($query){
+			$query->where('incluir_indice','=',1);
+		})
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -198,7 +199,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null); ////consultar
 		});
-		$ausentismos_mes_pasado = $nomina_mes_anterior ? (round($q_ausentismos_mes_pasado->first()->dias/($nomina_mes_anterior*$today->firstOfMonth()->subMonth()->endOfMonth()->format('d')),4)*100) : 0;
+		$ausentismos_mes_pasado = $nomina_mes_anterior ? (round($q_ausentismos_mes_pasado->first()->dias/($nomina_mes_anterior*$today->firstOfMonth()->subMonth()->endOfMonth()->format('d')),5)*100) : 0;
 
 
 
@@ -221,7 +222,6 @@ trait Clientes {
 				)+1
 			) dias"
 		)
-
 		->where(function($query) use ($today){
 			$query->where(function($query) use ($today){
 				$query
@@ -242,7 +242,9 @@ trait Clientes {
 					});
 			});
 		})
-
+		->whereHas('tipo',function($query){
+			$query->where('incluir_indice','=',1);
+		})
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -250,7 +252,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		});
-		$ausentismos_mes_anio_anterior = $nomina_mes_anio_anterior ? (round($q_ausentismos_mes_anio_anterior->first()->dias/($nomina_mes_anio_anterior*$today->firstOfMonth()->subYear()->endOfMonth()->format('d')),4)*100) : 0;
+		$ausentismos_mes_anio_anterior = $nomina_mes_anio_anterior ? (round($q_ausentismos_mes_anio_anterior->first()->dias/($nomina_mes_anio_anterior*$today->firstOfMonth()->subYear()->endOfMonth()->format('d')),5)*100) : 0;
 
 
 		/// AÑO ACTUAL
@@ -258,11 +260,7 @@ trait Clientes {
 		$inicio_anio = $today->format('Y-01-01');
 
 
-		/*IF(
-			fecha_final<DATE(NOW()),
-			fecha_final,
-			DATE(NOW())
-		),*/
+
 		$q_ausentismos_anio_actual = Ausentismo::selectRaw("
 			SUM(
 				ABS(DATEDIFF(
@@ -284,7 +282,6 @@ trait Clientes {
 				))+1
 			) dias"
 		)
-
 		->where(function($query) use ($today){
 
 			$query->whereDate('fecha_inicio','>=',$today->startOfYear())
@@ -307,7 +304,6 @@ trait Clientes {
 					});
 			});
 		})
-
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
@@ -315,14 +311,12 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		})
+		->whereHas('tipo',function($query){
+			$query->where('incluir_indice','=',1);
+		})
 		->orderBy('dias','desc');
 
-		//echo($q_ausentismos_anio_actual->toSql());
-		//echo $q_ausentismos_anio_actual->first()->dias;
-
-		//dd($today->dayOfYear());
-
-		$ausentismos_anio_actual = $nomina_promedio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promedio_actual*$today->dayOfYear()),4)*100) : 0;
+		$ausentismos_anio_actual = $nomina_promedio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promedio_actual*$today->dayOfYear()),5)*100) : 0;
 
 
 		/// ACCIDENTES

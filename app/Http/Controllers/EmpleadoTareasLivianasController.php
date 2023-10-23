@@ -119,10 +119,10 @@ class EmpleadoTareasLivianasController extends Controller
 			$dos_dias_adelante = Carbon::now()->addDays(2);
 			$un_anio_atras = Carbon::now()->subYear(1);
 			if ($fecha_inicio > $dos_dias_adelante) {
-				return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a dos dias adelante de la fecha actual');
+				return back()->withInput()->with('error', 'La fecha de inicio no puede ser superior a dos días adelante de la fecha actual');
 			}
 			if ($fecha_inicio->lessThan($un_anio_atras)) {
-				return back()->withInput()->with('error', 'La fecha de inicio puede ser hasta un año atrás, no mas');
+				return back()->withInput()->with('error', 'La fecha de inicio puede ser hasta un año atrás, no más');
 			}
 
 		if (isset($request->fecha_final) && !empty($request->fecha_final) && !is_null($request->fecha_final)) {

@@ -39,7 +39,7 @@
 			<form action="{{action('EmpleadosAusentismosController@update', $ausentismo->id)}}?{{$_SERVER['QUERY_STRING']}}" accept-charset="UTF-8" method="post">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
-				<div class="form-row">
+				<div class="row">
 					<div class="form-group col-md-4">
 						<label>Trabajador</label>
 						<input disabled name="nombre" type="text" class="form-control" value="{{$ausentismo->nombre}}" placeholder="">
@@ -50,19 +50,23 @@
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha inicio</label>
-						<input id="ausentismo_fecha_inicio" name="fecha_inicio" type="datetime" class="form-control"
+						<input name="fecha_inicio" type="text" class="form-control"
 						value="{{ (!empty($ausentismo->fecha_inicio)) ? date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}">
 					</div>
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-4">
 						<label>Fecha final</label>
-						<input id="ausentismo_fecha_final" name="fecha_final" type="datetime" class="form-control"
+						<input name="fecha_final" type="text" class="form-control"
 						value="{{ (!empty($ausentismo->fecha_final)) ? date('d/m/Y',strtotime($ausentismo->fecha_final)) : "" }}">
 					</div>
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-4">
 						<label>Fecha en que regresó</label>
-						<input id="ausentismo_fecha_regreso" name="fecha_regreso_trabajar" type="datetime" class="form-control"
+						<input name="fecha_regreso_trabajar" type="text" class="form-control"
 						value="{{ (!empty($ausentismo->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}">
 					</div>
+				</div>
+				<hr>
+
+				<div class="form-group">
 					<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
 				</div>
 			</form>

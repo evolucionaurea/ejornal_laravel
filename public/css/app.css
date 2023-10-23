@@ -11227,8 +11227,10 @@ select {
 
 .acciones_tabla a {
   background-color: #2e87b8;
-  padding: 10px;
+  padding: 0;
   border-radius: 50%;
+  height: 32px;
+  width: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11236,13 +11238,16 @@ select {
 }
 
 .acciones_tabla a i {
+  font-size: 10pt;
   color: white;
 }
 
 .acciones_tabla button {
   background-color: #8a2c2c;
-  padding: 10px;
+  padding: 0;
   border-radius: 50%;
+  height: 32px;
+  width: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11250,6 +11255,7 @@ select {
 }
 
 .acciones_tabla button i {
+  font-size: 10pt;
   color: white;
 }
 

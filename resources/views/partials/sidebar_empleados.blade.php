@@ -114,6 +114,12 @@
 						onclick="javascript:location.href='{{url('/empleados/tareas_livianas')}}'">
 						<a href="{{url('/empleados/tareas_livianas')}}">Listado</a>
 					</ol>
+					@if (auth()->user()->fichada == 1)
+					<ol data-route="tareas_livianas.create" class="{{ setActiveSub('tareas_livianas.create') }}"
+						onclick="javascript:location.href='{{url('/empleados/tareas_livianas/create')}}'">
+						<a href="{{url('/empleados/tareas_livianas/create')}}">Agregar Ausentismo</a>
+					</ol>
+					@endif
 					<ol data-route="/empleados/comunicaciones_livianas"
 						class="{{ setActiveSub('/empleados/comunicaciones_livianas') }}"
 						onclick="javascript:location.href='{{url('/empleados/comunicaciones_livianas')}}'">

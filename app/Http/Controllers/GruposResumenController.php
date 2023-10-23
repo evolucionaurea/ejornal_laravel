@@ -164,7 +164,6 @@ class GruposResumenController extends Controller
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
@@ -187,7 +186,6 @@ class GruposResumenController extends Controller
 						});
 				});
 			})
-
 			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
@@ -200,6 +198,9 @@ class GruposResumenController extends Controller
 							->from('cliente_grupo')
 							->where('id_grupo',$id_grupo);
 					});
+			})
+			->whereHas('tipo',function($query){
+				$query->where('incluir_indice',1);
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
@@ -232,7 +233,6 @@ class GruposResumenController extends Controller
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->whereBetween('fecha_inicio',[$today->startOfMonth()->subMonth(),$today->startOfMonth()->subMonth()->endOfMonth()])
 				/*$query->where(function($query) use ($today){
@@ -252,7 +252,6 @@ class GruposResumenController extends Controller
 						});
 				});
 			})
-
 			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
@@ -265,6 +264,9 @@ class GruposResumenController extends Controller
 							->from('cliente_grupo')
 							->where('id_grupo',$id_grupo);
 					});
+			})
+			->whereHas('tipo',function($query){
+				$query->where('incluir_indice',1);
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -294,7 +296,6 @@ class GruposResumenController extends Controller
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
@@ -315,7 +316,6 @@ class GruposResumenController extends Controller
 						});
 				});
 			})
-
 			->whereIn('id_trabajador',function($query) use ($id_grupo){
 				$query
 					->select('id')
@@ -328,6 +328,9 @@ class GruposResumenController extends Controller
 							->from('cliente_grupo')
 							->where('id_grupo',$id_grupo);
 					});
+			})
+			->whereHas('tipo',function($query){
+				$query->where('incluir_indice',1);
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -362,7 +365,6 @@ class GruposResumenController extends Controller
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
 				/*$query->where(function($query) use ($today){
@@ -398,6 +400,9 @@ class GruposResumenController extends Controller
 							->from('cliente_grupo')
 							->where('id_grupo',$id_grupo);
 					});
+			})
+			->whereHas('tipo',function($query){
+				$query->where('incluir_indice',1);
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')

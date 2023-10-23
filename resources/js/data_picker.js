@@ -4,9 +4,6 @@ $.datepicker.setDefaults($.datepicker.regional['es']);
 $(document).ready(function($){
 	$(`
 		#data_picker_gral,
-		#ausentismo_fecha_inicio,
-		#ausentismo_fecha_final,
-		#ausentismo_fecha_regreso,
 		#data_picker_edit_doc_ausentismo,
 		#reporte_fichadas_desde,
 		#reporte_fichadas_hasta,
@@ -20,11 +17,12 @@ $(document).ready(function($){
 		#reporte_consultas_enfermerias_hasta,
 		#reporte_comunicaciones_desde,
 		#reporte_comunicaciones_hasta,
-		#fecha_vencimiento_matricula,
-		#tarea_liviana_fecha_inicio,
-		#tarea_liviana_fecha_final,
-		#tarea_liviana_fecha_regreso
+		#fecha_vencimiento_matricula
 	`).datepicker()
+
+	/*#ausentismo_fecha_inicio,
+		#ausentismo_fecha_final,
+		#ausentismo_fecha_regreso,*/
 
 	const today = new Date()
 	let mes = today.getMonth()+1

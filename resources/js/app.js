@@ -42,8 +42,13 @@ if(route=='/empleados/nominas' || route=='empleados.listado') require('./emplead
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos_extension_licencia')
 if(route=='ausentismos.create') require('./empleados/ausentismos_create')
+if(route=='ausentismos.edit') require('./empleados/ausentismos_create')
+
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas')
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas_extension_licencia')
+if(route=='tareas_livianas.create') require('./empleados/tareas_livianas.create')
+if(route=='tareas_livianas.edit') require('./empleados/tareas_livianas.create')
+
 if(route=='/empleados/comunicaciones') require('./empleados/comunicaciones')
 if(route=='/empleados/certificados') require('./empleados/certificados')
 if(route=='/empleados/comunicaciones_livianas') require('./empleados/comunicaciones_livianas')
@@ -60,6 +65,8 @@ if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicament
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='medicas.create') require('./empleados/consultas.medicas.create')
 if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
+
+
 
 //CLIENTES
 if(route=='/clientes/resumen') require('./clientes/resumen')

@@ -161,7 +161,7 @@
 <!-- Modal Crear tipo ausentismo -->
 <div class="modal fade" id="crear_tipo_ausentismo" tabindex="-1" aria-labelledby="tipo_ausentismo_titulo"
 	aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="tipo_ausentismo_titulo">Crear tipo de Ausencia</h5>
@@ -174,18 +174,18 @@
 				<form action="{{action('EmpleadosAusentismosController@tipo')}}" accept-charset="UTF-8" method="post">
 					{{ csrf_field() }}
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-6">
 							<div class="form-group">
 								<label>Nombre</label>
 								<input name="nombre" type="text" class="form-control form-control-sm" placeholder="">
 							</div>
 						</div>
-						<div class="col-md-12">
+						<div class="col-md-6">
 							<div class="form-group">
 								<label>Incluir en indice de ausentismo</label>
 								<select class="form-control form-control-sm" name="incluir_indice">
-									<option value="0">No</option>
 									<option value="1">Si</option>
+									<option value="0">No</option>
 								</select>
 							</div>
 						</div>
@@ -218,32 +218,43 @@
 
 				<div class="row">
 					<div class="col-md-12">
-						<table class="table table-striped table-hover table-sm ">
+						<table class="table table-striped table-hover table-sm small">
 							<thead>
 								<tr>
 									<th>Tipo</th>
-									<th>Acciones</th>
+									<th class="text-center">Genera Ausentismo</th>
+									<th class="text-right">Acciones</th>
 								</tr>
 							</thead>
 							<tbody>
 								@foreach ($ausentismo_tipos as $tipo)
 								<tr>
-									<td>{{$tipo->nombre}}</td>
-									<td class="acciones_tabla" scope="row">
-										<a data-id="{{ $tipo->id }}" data-text="{{ $tipo->nombre }}"
-											data-color="{{ $tipo->color }}" data-indice="{{ $tipo->incluir_indice }}"
-											class=" btn_editar_tipo_ausentismo" title="Edit" data-toggle="modal"
-											data-target="#editar_tipo_ausentismo">
-											<i class="fas fa-pen"></i>
-										</a>
-										<form class="" action="{{route('ausentismos.tipo_delete', $tipo->id)}}"
-											method="post">
-											{{ csrf_field() }}
-											<input type="hidden" name="_method" value="DELETE">
-											<button title="Eliminar" type="submit">
-												<i class="fas fa-trash"></i>
-											</button>
-										</form>
+									<td class="align-middle">{{$tipo->nombre}}</td>
+									<td class="text-center align-middle">
+										@if($tipo->incluir_indice)
+										<span>si</span>
+										@else
+										<span>no</span>
+										@endif
+									</td>
+									<td class="align-middle" >
+										<div class="acciones_tabla text-right justify-content-end">
+
+											<a data-id="{{ $tipo->id }}" data-text="{{ $tipo->nombre }}"
+												data-color="{{ $tipo->color }}" data-indice="{{ $tipo->incluir_indice }}"
+												class=" btn_editar_tipo_ausentismo" title="Edit" data-toggle="modal"
+												data-target="#editar_tipo_ausentismo">
+												<i class="fas fa-pen"></i>
+											</a>
+											<form class="" action="{{route('ausentismos.tipo_delete', $tipo->id)}}"
+												method="post">
+												{{ csrf_field() }}
+												<input type="hidden" name="_method" value="DELETE">
+												<button title="Eliminar" type="submit">
+													<i class="fas fa-trash"></i>
+												</button>
+											</form>
+										</div>
 									</td>
 								</tr>
 								@endforeach

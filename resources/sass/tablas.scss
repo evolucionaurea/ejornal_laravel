@@ -18,35 +18,32 @@
 }
 
 
+@mixin botones_tabla($color){
+  background-color: $color;
+  padding: 0;
+  border-radius: 50%;
+  height:32px;
+  width:32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px !important;
+
+  & i{
+    font-size: 10pt;
+    color: white;
+  }
+}
 .acciones_tabla {
   display: flex;
 
-  & a {
-    background-color: $ejornal;
-    padding: 10px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px !important;
 
-    & i{
-      color: white;
-    }
+  & a {
+    @include botones_tabla($ejornal);
   }
 
   & button{
-    background-color: $ejornal_red;
-    padding: 10px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px !important;
-
-    & i{
-      color: white;
-    }
+    @include botones_tabla($ejornal_red);
   }
 
 }

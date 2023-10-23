@@ -24,7 +24,7 @@ class EmpleadosAusentismosController extends Controller
 
 	public function index()
 	{
-		
+
 		//// Traits > Clientes
 		$clientes = $this->getClientesUser();
 
@@ -51,6 +51,7 @@ class EmpleadosAusentismosController extends Controller
 	{
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
 		$ausentismo_tipos = AusentismoTipo::orderBy('nombre', 'asc')->get();
+
 		$clientes = $this->getClientesUser();
 		$tipo_comunicacion = TipoComunicacion::orderBy('nombre', 'asc')->get();
 

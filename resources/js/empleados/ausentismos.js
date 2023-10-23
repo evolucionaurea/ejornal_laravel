@@ -20,6 +20,7 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'nominas.nombre',
+					className:'align-middle',
 					render:v=>{
 						return `
 							<div><b>${v.trabajador_nombre}</b></div>
@@ -30,6 +31,7 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'nominas.dni',
+					className:'align-middle',
 					render:v=>{
 						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
 					}
@@ -37,21 +39,25 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'nominas.sector',
+					className:'align-middle',
 					render:v=>{
 						return v.trabajador_sector==null ? '[no cargado]' : v.trabajador_sector
 					}
 				},
 				{
 					data:'ausentismo_tipo',
+					className:'align-middle',
 					name:'ausentismo_tipo.nombre'
 				},
 
 				{
 					data:'fecha_inicio',
+					className:'align-middle',
 					name:'fecha_inicio'
 				},
 				{
 					data:'fecha_final',
+					className:'align-middle',
 					name:'fecha_final',
 					render:v=>{
 						return v==null ? '[no cargada]' : v
@@ -59,6 +65,7 @@ $(()=>{
 				},
 				{
 					data:'fecha_regreso_trabajar',
+					className:'align-middle',
 					name:'fecha_regreso_trabajar',
 					render:v=>{
 						return v==null ? '[no cargada]' : v
@@ -85,6 +92,7 @@ $(()=>{
 
 				{
 					data:row=>row,
+					className:'align-middle',
 					name:'fecha_final',
 					orderable:false,
 					render:v=>{
@@ -104,6 +112,7 @@ $(()=>{
 					data:row=>row,
 					name:'actions',
 					orderable:false,
+					className:'align-middle',
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
