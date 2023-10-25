@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Nomina;
 use App\NominaHistorial;
+use App\Cliente;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 

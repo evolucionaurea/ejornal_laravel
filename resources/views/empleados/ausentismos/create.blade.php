@@ -182,7 +182,7 @@
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label>Incluir en indice de ausentismo</label>
+								<label>Incluir en índices de ausentismos</label>
 								<select class="form-control form-control-sm" name="incluir_indice">
 									<option value="1">Si</option>
 									<option value="0">No</option>

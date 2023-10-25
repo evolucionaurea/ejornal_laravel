@@ -41,7 +41,8 @@ trait Ausentismos {
 				'nominas.id_cliente',
 				'nominas.estado as trabajador_estado',
 
-				'ausentismo_tipo.nombre as ausentismo_tipo'
+				'ausentismo_tipo.nombre as ausentismo_tipo',
+				'ausentismo_tipo.incluir_indice as incluir_indice'
 			)
 			->addSelect(DB::raw(
 				"DATEDIFF(
