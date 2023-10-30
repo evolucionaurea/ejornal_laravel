@@ -68,6 +68,10 @@
 						onclick="javascript:location.href='{{url('/empleados/nominas')}}'">
 						<a href="{{url('/empleados/nominas')}}">Listado</a>
 					</ol>
+					<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}"
+						onclick="javascript:location.href='{{route('nominas.create')}}'">
+						<a href="{{route('nominas.create')}}">Crear Trabajador</a>
+					</ol>
 				</ul>
 			</div>
 		</li>

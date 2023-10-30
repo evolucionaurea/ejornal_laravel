@@ -11005,6 +11005,7 @@ body {
 .cabecera .cabecera_acciones {
   width: 100%;
   display: flex;
+  align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -11477,7 +11478,7 @@ table th {
 }
 
 #sidebar-wrapper .list-group {
-  width: 15rem;
+  width: 16rem;
 }
 
 #page-content-wrapper {
@@ -11592,7 +11593,8 @@ table th {
 }
 
 .dropdownButton a {
-  padding-left: 0px;
+  padding-left: .225rem;
+  line-height: 1.15;
 }
 
 .dropdownContent {
@@ -11611,11 +11613,15 @@ table th {
   border-top: 1px solid #212b36;
   background-color: #293645;
   cursor: pointer;
+  font-size: 10pt;
+  height: auto;
+  padding: .625rem 1.5rem;
 }
 
 .dropdownContent ul ol a {
-  padding-left: 20px;
   color: #c9c9c9;
+  display: block;
+  line-height: 1.15;
 }
 
 .dropdownContent ul ol a:hover {
@@ -11637,7 +11643,7 @@ table th {
   }
 
   #wrapper.toggled #sidebar-wrapper {
-    margin-left: -15rem;
+    margin-left: -17.5rem;
   }
 }
 

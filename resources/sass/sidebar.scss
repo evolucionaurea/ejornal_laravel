@@ -13,7 +13,7 @@
 }
 
 #sidebar-wrapper .list-group {
-  width: 15rem;
+  width: 16rem;
 }
 
 #page-content-wrapper {
@@ -136,7 +136,8 @@
   }
 
   & a{
-    padding-left: 0px;
+    padding-left: .225rem;
+    line-height:1.15;
   }
 
 
@@ -156,10 +157,14 @@
       border-top: 1px solid #212b36;
       background-color: #293645;
       cursor: pointer;
-
+      font-size: 10pt;
+      height: auto;
+      padding: .625rem 1.5rem;
       & a{
-        padding-left: 20px;
+        ///padding-left: 20px;
         color: #c9c9c9;
+        display: block;
+        line-height: 1.15;
       }
       & a:hover{
         text-decoration: none;
@@ -182,6 +187,6 @@
   }
 
   #wrapper.toggled #sidebar-wrapper {
-    margin-left: -15rem;
+    margin-left: -17.5rem;
   }
 }

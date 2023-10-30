@@ -22,6 +22,7 @@ use App\CovidVacuna;
 use App\CovidTesteo;
 use App\Preocupacional;
 use App\NominaImportacion;
+use App\NominaHistorial;
 use Intervention\Image\Facades\Image;
 
 
@@ -416,100 +417,6 @@ class EmpleadosNominasController extends Controller
 
 
 			}
-
-			///$registro = [];
-			// Crea un array asociativo con los nombres y valores de los campos
-			/*for ($icampo = 0; $icampo < $num_campos; $icampo++) {
-
-				if ($datos[$icampo] !== '') {
-					switch ($icampo) {
-						case 0:
-							$registro['nombre'] = $datos[$icampo];
-							break;
-						case 1:
-							$registro['email'] = $datos[$icampo];
-							break;
-						case 2:
-							$registro['telefono'] = $datos[$icampo];
-							break;
-						case 3:
-							$registro['dni'] = $datos[$icampo];
-							break;
-						case 4:
-							$registro['estado'] = $datos[$icampo];
-							break;
-						case 5:
-							$registro['sector'] = $datos[$icampo];
-							break;
-						case 6:
-							$registro['calle'] = $datos[$icampo];
-							break;
-						case 7:
-							$registro['nro'] = $datos[$icampo];
-							break;
-						case 8:
-							$registro['entre_calles'] = $datos[$icampo];
-							break;
-						case 9:
-							$registro['localidad'] = $datos[$icampo];
-							break;
-						case 10:
-							$registro['partido'] = $datos[$icampo];
-							break;
-						case 11:
-							$registro['cod_postal'] = $datos[$icampo];
-							break;
-						case 12:
-							$registro['observaciones'] = $datos[$icampo];
-							break;
-					}
-				}else {
-					switch ($icampo) {
-						case 0:
-							$registro['nombre'] = '';
-							break;
-						case 1:
-							$registro['email'] = '';
-							break;
-						case 2:
-							$registro['telefono'] = '';
-							break;
-						case 3:
-							$registro['dni'] = '';
-							break;
-						case 4:
-							$registro['estado'] = '';
-							break;
-						case 5:
-							$registro['sector'] = '';
-							break;
-						case 6:
-							$registro['calle'] = '';
-							break;
-						case 7:
-							$registro['nro'] = '';
-							break;
-						case 8:
-							$registro['entre_calles'] = '';
-							break;
-						case 9:
-							$registro['localidad'] = '';
-							break;
-						case 10:
-							$registro['partido'] = '';
-							break;
-						case 11:
-							$registro['cod_postal'] = '';
-							break;
-						case 12:
-							$registro['observaciones'] = '';
-							break;
-					}
-				}
-			}*/
-			// Añade el registro leido al array de registros
-
-
 			$indice++;
 		}
 		fclose($fichero);
@@ -661,6 +568,55 @@ class EmpleadosNominasController extends Controller
 
 		//Traits > Nominas
 		return $this->exportNomina($idcliente,$request);
+	}
+
+
+	public function historial()
+	{
+
+		$clientes = $this->getClientesUser();
+		//dd($clientes);
+		return view('empleados.nominas.nominas_historial', compact('clientes'));
+
+	}
+	public function historial_listado(Request $request){
+
+		$query = NominaHistorial::select()
+			->where('cliente_id',auth()->user()->id_cliente_actual);
+
+		$total = $query->count();
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['data'];
+			$dir  = $request->order[0]['dir'];
+			switch ($sort) {
+				case 'year':
+					$sort = 'year_month';
+					break;
+			}
+			$query->orderBy($sort,$dir);
+		}
+		$query->orderBy('created_at','desc');
+
+
+		$records_filtered = $query->count();
+		$historial = $query->skip($request->start)->take($request->length)->get();
+
+		foreach($historial as $k=>$hist){
+			if($k===count($historial)-1){
+				$hist->dif_mes_anterior = 0;
+			}else{
+				$hist->dif_mes_anterior = $hist->cantidad-$historial[$k+1]->cantidad;
+			}
+		}
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$records_filtered,
+			'data'=>$historial,
+			'request'=>$request->all()
+		];
+
 	}
 
 
