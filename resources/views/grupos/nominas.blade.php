@@ -17,6 +17,11 @@
 		<div class="cabecera">
 			<h2>Listado de trabajadores</h2>
 			<p>Aquí puede ver el listado de trabajadores de la sucursal seleccionada: <b>{{ $cliente_actual->nombre }}</b></p>
+
+			<div class="cabecera_acciones">
+				<a href="{{route('/grupos/nominas_historial')}}" class="btn-ejornal btn-dark" ><i class="fas fa-file-excel fa-fw"></i> Historial</a>
+			</div>
+
 		</div>
 
 

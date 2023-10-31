@@ -93,6 +93,14 @@ $(()=>{
 						return `${label} ${nombre}`
 					}
 				},
+
+				{
+					data:'created_at',
+					name:'created_at',
+					className:'align-middle'
+				},
+
+
 				{
 					data:row=>row,
 					orderable:false,

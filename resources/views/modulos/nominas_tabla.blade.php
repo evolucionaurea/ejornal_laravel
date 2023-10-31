@@ -55,6 +55,7 @@
 			<th>Estado</th>
 			<th>Sector</th>
 			<th>Hoy</th>
+			<th>Fecha de Alta</th>
 			<th>Acciones</th>
 		</tr>
 	</thead>

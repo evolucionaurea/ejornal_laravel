@@ -80,5 +80,6 @@ if(route=='/grupos/resumen') require('./grupos/resumen')
 if(route=='/grupos/resumen_cliente') require('./grupos/resumen_cliente')
 if(route=='/grupos/nominas') require('./grupos/nominas')
 if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
+if(route=='/grupos/nominas_historial') require('./grupos/nominas_historial')
 
 console.log(`route: ${route}`)

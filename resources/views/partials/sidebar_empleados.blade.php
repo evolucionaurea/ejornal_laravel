@@ -63,15 +63,18 @@
 				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 			</div>
 			<div class="dropdownContent">
+
 				<ul>
 					<ol data-route="/empleados/nominas" class="{{ setActiveSub('/empleados/nominas') }}"
 						onclick="javascript:location.href='{{url('/empleados/nominas')}}'">
 						<a href="{{url('/empleados/nominas')}}">Listado</a>
 					</ol>
+					@if(auth()->user()->fichada == 1)
 					<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}"
 						onclick="javascript:location.href='{{route('nominas.create')}}'">
 						<a href="{{route('nominas.create')}}">Crear Trabajador</a>
 					</ol>
+					@endif
 				</ul>
 			</div>
 		</li>

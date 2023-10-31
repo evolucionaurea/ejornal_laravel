@@ -123,11 +123,11 @@ export default class Tablas {
 			})
 			.then(async swal=>{
 				if(swal.value){
-					await this.delete(id)
+					const response = await this.delete(id)
+					///console.log(response)
 					//let data = await this.get()
 					//this.render_table(data)
 					window.location.reload()
-
 				}
 			})
 		})

@@ -36,7 +36,6 @@ class EmpleadosNominasController extends Controller
 	public function index()
 	{
 		$clientes = $this->getClientesUser();
-		//dd($clientes->first()->nombre);
 		return view('empleados.nominas', compact('clientes'));
 	}
 	public function busqueda(Request $request)
@@ -85,6 +84,11 @@ class EmpleadosNominasController extends Controller
 			'sector' => 'required'
 		]);
 
+		if(!auth()->user()->id_cliente_actual){
+			back()->with('error','Debes fichar para poder agregar un nuevo trabajador.');
+		}
+
+
 		//Guardar en base
 		$trabajador = new Nomina();
 		$trabajador->id_cliente = auth()->user()->id_cliente_actual;
@@ -126,6 +130,31 @@ class EmpleadosNominasController extends Controller
 		}
 
 		$trabajador->save();
+
+
+		/// Agrego registro en el historial de nóminas
+		$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
+			->orderBy('year_month','desc')
+			->first();
+		$nomina_historial = new NominaHistorial;
+		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
+		$nomina_historial->cliente_id = auth()->user()->id_cliente_actual;
+
+		if($nomina_historial_creado){
+			//si existe el registro del mes se actualiza
+			if($nomina_historial_creado->year_month==CarbonImmutable::now()->format('Ym')){
+				$nomina_historial = $nomina_historial_creado;
+			}
+			$nomina_historial->cantidad = $nomina_historial_creado->cantidad+1;
+			$nomina_historial->save();
+
+		}else{
+			//si no existe el registro del mes se crea
+			$nomina_historial->cantidad = 1;
+			$nomina_historial->save();
+		}
+
+
 
 
 		if ($request->hasFile('foto')) {
@@ -345,7 +374,27 @@ class EmpleadosNominasController extends Controller
 		// Consultar los borrados logicos
 		// $trabajador = Nomina::onlyTrashed()->get();
 
-		$trabajador = Nomina::find($id)->delete();
+		$trabajador = Nomina::find($id);
+
+		/// Agrego registro en el historial de nóminas
+		$nomina_historial_creado = NominaHistorial::where('cliente_id',$trabajador->id_cliente)
+			->orderBy('year_month','desc')
+			->first();
+		$nomina_historial = new NominaHistorial;
+		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
+		$nomina_historial->cliente_id = $trabajador->id_cliente;
+
+		if($nomina_historial_creado){
+			//si existe el registro del mes se actualiza
+			if($nomina_historial_creado->year_month==CarbonImmutable::now()->format('Ym')){
+				$nomina_historial = $nomina_historial_creado;
+			}
+			$nomina_historial->cantidad = $nomina_historial_creado->cantidad ? $nomina_historial_creado->cantidad-1 : 0;
+			$nomina_historial->save();
+		}
+
+
+		$trabajador->delete();
 		return redirect('empleados/nominas')->with('success', 'Trabajador de la nómina eliminado correctamente');
 	}
 
