@@ -42,11 +42,17 @@
 				<div class="row">
 					<div class="form-group col-md-4">
 						<label>Trabajador</label>
-						<input disabled name="nombre" type="text" class="form-control" value="{{$ausentismo->nombre}}" placeholder="">
+						<input disabled name="nombre" type="text" class="form-control" value="{{$ausentismo->trabajador->nombre}}" placeholder="">
 					</div>
 					<div class="form-group col-md-4">
 						<label>Tipo</label>
-						<input disabled name="tipo" type="text" class="form-control" value="{{$ausentismo->nombre_ausentismo}}" placeholder="">
+						@if($ausentismo_tipos)
+						<select name="tipo" class="form-control">
+							@foreach($ausentismo_tipos as $tipo)
+							<option value="{{$tipo->id}}" {{ $ausentismo->tipo->id==$tipo->id ? 'selected' : '' }} >{{$tipo->nombre}}</option>
+							@endforeach
+						</select>
+						@endif
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha inicio</label>
@@ -64,7 +70,37 @@
 						value="{{ (!empty($ausentismo->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}">
 					</div>
 				</div>
+
+
 				<hr>
+				<h4>Comunicación</h4>
+				<div class="form-row">
+					<div class="form-group col-md-3">
+						<label>
+							Tipo
+							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
+								data-target="#crear_tipo_comunicacion" href="#">
+								<i class="fas fa-plus-circle"></i>
+							</a>
+							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion"
+								href="#">
+								<i class="fas fa-eye"></i>
+							</a>
+						</label>
+						<select required name="tipo_comunicacion" class="form-control form-control-sm select_2">
+							<option value="">--Seleccionar--</option>
+							@foreach ($tipo_comunicaciones as $tipo_com)
+							<option value="{{$tipo_com->id}}" {{ $ausentismo->comunicacion->id_tipo==$tipo_com->id ? 'selected' :
+								'' }} >{{$tipo_com->nombre}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="form-group col-md-9">
+						<label>Descripción</label>
+						<textarea required name="descripcion" class="form-control"
+							rows="3">{{ $ausentismo->comunicacion->descripcion }}</textarea>
+					</div>
+				</div>
 
 				<div class="form-group">
 					<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>

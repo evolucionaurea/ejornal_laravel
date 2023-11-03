@@ -8,6 +8,7 @@ use App\AusentismoTipo;
 use App\Nomina;
 use App\Cliente;
 use App\AusentismoDocumentacion;
+use App\Comunicacion;
 
 class Ausentismo extends Model
 {
@@ -39,6 +40,10 @@ class Ausentismo extends Model
 
   public function documentaciones(){
     return $this->hasMany(AusentismoDocumentacion::class,'id_ausentismo');
+  }
+
+  public function comunicacion(){
+    return $this->hasOne(Comunicacion::class,'id_ausentismo');
   }
 
 }

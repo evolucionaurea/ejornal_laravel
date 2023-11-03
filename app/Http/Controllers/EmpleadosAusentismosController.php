@@ -226,16 +226,30 @@ class EmpleadosAusentismosController extends Controller
 	public function edit($id)
 	{
 
-		$ausentismo = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->where('ausentismos.id', $id)
-		->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'))
-		->first();
+		$ausentismo = Ausentismo::select('ausentismos.*')
+			//->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+			///->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+			->with('comunicacion')
+			->with('tipo')
+			->with(['trabajador'=>function($query){
+				$query->select('id','nombre','email','estado','dni','telefono');
+			}])
+			->whereHas('trabajador',function($query){
+				$query->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			///->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+			->where('ausentismos.id', $id)
+			->first();
 
 		$clientes = $this->getClientesUser();
+		$ausentismo_tipos = AusentismoTipo::orderBy('nombre', 'asc')->get();
 
-		return view('empleados.ausentismos.edit', compact('ausentismo', 'clientes'));
+		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
+
+
+		//dump($ausentismo);
+
+		return view('empleados.ausentismos.edit', compact('ausentismo', 'clientes', 'ausentismo_tipos', 'tipo_comunicaciones'));
 	}
 
 	/**
@@ -249,7 +263,8 @@ class EmpleadosAusentismosController extends Controller
 	{
 
 		$validatedData = $request->validate([
-			'fecha_inicio' => 'required'
+			'fecha_inicio' => 'required',
+			'tipo' => 'required',
 		]);
 
 		$fecha_actual = Carbon::now();
@@ -278,6 +293,19 @@ class EmpleadosAusentismosController extends Controller
 		//Actualizar en base
 		$ausentismo = Ausentismo::findOrFail($id);
 		$ausentismo->fecha_inicio = $fecha_inicio;
+		$ausentismo->id_tipo = $request->tipo;
+
+		//Guardar en base Comunicacion
+		$ausentismo->comunicacion->id_tipo = $request->tipo_comunicacion;
+		$ausentismo->comunicacion->descripcion = $request->descripcion;
+		$ausentismo->comunicacion->save();
+		//$comunicacion = new Comunicacion;
+		//$comunicacion->id_ausentismo = $ausentismo->id;
+		//$comunicacion->id_tipo = $request->tipo_comunicacion;
+		//$comunicacion->descripcion = $request->descripcion;
+		//$comunicacion->save();
+		///dd($ausentismo->comunicacion);
+
 		if (isset($request->fecha_final) && !empty($request->fecha_final)) {
 			$ausentismo->fecha_final = $fecha_final;
 		}else {
@@ -290,6 +318,8 @@ class EmpleadosAusentismosController extends Controller
 		}
 		$ausentismo->user = auth()->user()->nombre;
 		$ausentismo->save();
+
+
 
 		return redirect('empleados/ausentismos?'.$_SERVER['QUERY_STRING'])->with('success', 'Ausentismo actualizado con éxito');
 
