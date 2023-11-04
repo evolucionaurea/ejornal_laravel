@@ -419,7 +419,6 @@ class EmpleadosNominasController extends Controller
 		// Lee los registros
 		while (($fila = fgetcsv($fichero, 0, ";", '"')) !== false) {
 
-
 			if($indice!==0){
 
 				if(
@@ -451,7 +450,6 @@ class EmpleadosNominasController extends Controller
 				];
 			}else{
 
-
 				if(
 					!isset($fila[0]) ||
 					!isset($fila[1]) ||
@@ -461,9 +459,7 @@ class EmpleadosNominasController extends Controller
 				){
 					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');
 					break;
-
 				}
-
 
 			}
 			$indice++;
@@ -473,6 +469,9 @@ class EmpleadosNominasController extends Controller
 		if($error){
 			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, email, estado y sector son obligatorios.');
 		}
+
+
+		//dd($registros);
 
 
 
@@ -508,6 +507,8 @@ class EmpleadosNominasController extends Controller
 		$empleados_inexistentes = [];
 		$empleados_actualizados = [];
 		$empleados_existentes = [];
+
+		//dd(count($nomina_actual));
 
 
 		foreach ($registros as $kr=>$registro){
@@ -582,6 +583,27 @@ class EmpleadosNominasController extends Controller
 		);
 
 		//dd($values);
+
+
+		///Actualizo el historial de nómina
+		$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
+			->orderBy('year_month','desc')
+			->first();
+		$total_nomina = count($nomina_actual)+count($empleados_inexistentes)-($request->borrar==1 ? count($empleados_borrables) : 0);
+		$nomina_historial = new NominaHistorial;
+		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
+		$nomina_historial->cliente_id = auth()->user()->id_cliente_actual;
+		$nomina_historial->cantidad = $total_nomina;
+
+		if($nomina_historial_creado){
+			//si existe el registro del mes se actualiza
+			if($nomina_historial_creado->year_month==CarbonImmutable::now()->format('Ym')){
+				$nomina_historial = $nomina_historial_creado;
+				$nomina_historial->cantidad = $total_nomina;
+			}
+		}
+		$nomina_historial->save();
+
 
 		// Mostrar registro de empleados modificados, borrados y agregados.
 		return redirect('empleados/nominas')->with([

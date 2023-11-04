@@ -40,7 +40,8 @@ class NominaHistorialSeeder extends Seeder
 					$nomina_historial = new NominaHistorial;
 					foreach($nomina_historial_creados as $nh){
 						if($nh->year_month == $date->format('Ym') && $nh->cliente_id==$client->id) {
-							$nomina_historial->id = NominaHistorial::find($nh->id);
+							$nomina_historial = NominaHistorial::find($nh->id);
+							//$nomina_historial->id = $nh->id;
 						}
 					}
 

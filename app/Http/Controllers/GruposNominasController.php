@@ -106,6 +106,7 @@ class GruposNominasController extends Controller
 
   public function historial()
 	{
+		//dd($this->getClientesGrupo());
 		return view('grupos.nominas_historial', $this->getClientesGrupo());
 
 	}

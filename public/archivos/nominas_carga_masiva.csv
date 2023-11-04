@@ -2,4 +2,4 @@ nombre;email;telefono;dni;estado;sector;calle;nro;entre_calles;localidad;partido
 Romina Paz;rom@prueba.com;45564789;35628974;Activo;administrativo;;;;;;;
 Pedro Zinc;pedro@prueba.com;45268794;34205987;Activo;contable;;;;;;;
 Manuel Isac;manuel@prueba.com;12569875;34569897;Activo;tesoreria;;;;;;;
-Melisa Gomez;mel@prueba.com;45269823;35206587;Inactivo;sector y;;;;;;;
+Melisa Gomez;mel@prueba.com;45269823;35206587;Inactivo;sector;;;;;;;

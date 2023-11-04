@@ -78,16 +78,16 @@
 					<div class="form-group col-md-3">
 						<label>
 							Tipo
-							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
+							{{-- <a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
 								data-target="#crear_tipo_comunicacion" href="#">
 								<i class="fas fa-plus-circle"></i>
 							</a>
 							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion"
 								href="#">
 								<i class="fas fa-eye"></i>
-							</a>
+							</a> --}}
 						</label>
-						<select required name="tipo_comunicacion" class="form-control form-control-sm select_2">
+						<select required name="tipo_comunicacion" class="form-control">
 							<option value="">--Seleccionar--</option>
 							@foreach ($tipo_comunicaciones as $tipo_com)
 							<option value="{{$tipo_com->id}}" {{ $ausentismo->comunicacion->id_tipo==$tipo_com->id ? 'selected' :

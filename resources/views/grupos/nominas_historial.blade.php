@@ -6,7 +6,7 @@
 
 <div class="d-flex" id="wrapper">
 
-	@include('partials.sidebar_empleados')
+	@include('partials.sidebar_grupos')
 
 	<div id="page-content-wrapper">
 		@include('partials.nav_sup')
