@@ -443,28 +443,28 @@ trait Ausentismos {
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$today_formatted = $today->format('Y-m-d');
 		$ausentismos_mes = Ausentismo::selectRaw("
-				SUM(
-					DATEDIFF(
+			SUM(
+				DATEDIFF(
 
-						IF(
-							IFNULL(
-								fecha_final,
-								DATE(NOW())
-							) >= DATE(NOW()),
-							DATE(NOW()),
-							fecha_final
-						),
+					IF(
+						IFNULL(
+							fecha_final,
+							DATE(NOW())
+						) >= DATE(NOW()),
+						DATE(NOW()),
+						fecha_final
+					),
 
-						IF(
-							fecha_inicio>='{$inicio_mes}',
-							fecha_inicio,
-							'{$inicio_mes}'
-						)
-					)+1
-				) dias,
+					IF(
+						fecha_inicio>='{$inicio_mes}',
+						fecha_inicio,
+						'{$inicio_mes}'
+					)
+				)+1
+			) dias,
 
-				count(*) as total,
-				id_tipo"
+			count(*) as total,
+			id_tipo"
 		)
 			->with(['tipo'=>function($query){
 				$query

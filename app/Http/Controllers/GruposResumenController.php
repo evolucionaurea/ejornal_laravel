@@ -8,6 +8,7 @@ use App\User;
 use App\ClienteGrupo;
 use App\Ausentismo;
 use App\Nomina;
+use App\NominaHistorial;
 use App\Http\Traits\ClientesGrupo;
 use App\Http\Traits\Clientes;
 use App\Http\Traits\Ausentismos;
@@ -15,6 +16,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GruposResumenController extends Controller
 {
@@ -130,11 +132,96 @@ class GruposResumenController extends Controller
 		/***************************************************************************************************/
 		/*** Unificar queries desde Traits/Ausentismos ya que son las mismas pero cambia un solo where  ****/
 		/***************************************************************************************************/
-		/// MES ACTUAL
-		/*IFNULL(
-			fecha_regreso_trabajar,
-			DATE(NOW())
-		),*/
+		///
+		$months_current_year = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
+		$indices_mes_a_mes = [];
+		foreach($months_current_year as $date){
+
+			$date_immutable = CarbonImmutable::create($date->format('Y'),$date->format('m'),1);
+
+			$inicio_mes = $date_immutable->firstOfMonth();
+			$inicio_mes_formatted = $inicio_mes->format('Y-m-d');
+			$fin_mes = $today->format('Ym')==$date->format('Ym') ? $today : $date_immutable->lastOfMonth();
+			$fin_mes_formatted = $fin_mes->format('Y-m-d');
+
+			///
+			$nomina = NominaHistorial::selectRaw("SUM(cantidad) cantidad")
+				->where('year_month',$date->format('Ym'))
+				->whereIn('cliente_id',function($query) use ($id_grupo){
+					$query
+						->select('id_cliente')
+						->from('cliente_grupo')
+						->where('id_grupo',$id_grupo);
+				})
+				->first()
+				->cantidad;
+
+			$ausentismos = Ausentismo::selectRaw("
+				SUM(
+					ABS(DATEDIFF(
+
+						IF(
+						fecha_final<'{$fin_mes_formatted}',
+						fecha_final,
+						'{$fin_mes_formatted}'
+					),
+					IF(
+						fecha_inicio<'{$inicio_mes_formatted}',
+						'{$inicio_mes_formatted}',
+						fecha_inicio
+					)
+					))+1
+				) dias
+			")
+				->where(function($query) use ($inicio_mes,$fin_mes){
+					$query->whereBetween('fecha_inicio',[$inicio_mes,$fin_mes])
+					->orWhere(function($query) use ($inicio_mes,$fin_mes){
+						$query->where('fecha_inicio','<',$inicio_mes)
+							->where(function($query) use ($fin_mes){
+								$query->where('fecha_final','>',$fin_mes)
+									->orWhere('fecha_final',null);
+							});
+					});
+				})
+				->whereIn('id_trabajador',function($query) use ($id_grupo){
+					$query
+						->select('id')
+						->from('nominas')
+						->where('deleted_at',null)
+						///->where('estado',1)
+						->whereIn('id_cliente',function($query) use ($id_grupo){
+							$query
+								->select('id_cliente')
+								->from('cliente_grupo')
+								->where('id_grupo',$id_grupo);
+						});
+				})
+				->whereHas('tipo',function($query){
+					$query->where('incluir_indice',1);
+				})
+				->first();
+
+			$indices_mes_a_mes[] = [
+				//'ausentismos'=>$ausentismos->total,
+				'dias'=>$ausentismos->dias,
+				'month'=>Str::ucfirst($date->formatLocalized('%B')),
+				'indice'=>$nomina ? (round($ausentismos->dias/($nomina*( $fin_mes->format('d') )),5)*100) : 0,
+				'nomina'=>$nomina,
+				'inicio_mes'=>$inicio_mes_formatted,
+				'fin_mes'=>$fin_mes_formatted
+				///'dia'=>$today->format('Ym')==$date->format('Ym') ? $today->format('d') : $date->endOfMonth()->format('d')
+			];
+
+			////$indices_mes_a_mes[$date->format('Ym')]['month'] = Str::ucfirst($date->formatLocalized('%B'));
+		}
+		////dd(123);
+
+
+
+
+
+
+
 		DB::enableQueryLog();
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$ausentismos_mes = Ausentismo::selectRaw("
@@ -418,6 +505,9 @@ class GruposResumenController extends Controller
 		$cant_dias_anio = (int) $today->dayOfYear();
 
 		return compact(
+
+			'indices_mes_a_mes',
+
 			'ausentismos_mes',
 			'ausentismos_mes_anterior',
 			'ausentismos_mes_anio_anterior',

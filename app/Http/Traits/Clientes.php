@@ -147,7 +147,8 @@ trait Clientes {
 		->orderBy('dias','desc');
 
 		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),5)*100) : 0;
-		dump($q_ausentismos_mes_actual->first()->dias);
+		$ausentismos_mes_actual = number_format($ausentismos_mes_actual,2,',','.');
+		//dump($q_ausentismos_mes_actual->first()->dias);
 
 		//dd(DB::getQueryLog()[0]);
 
@@ -202,6 +203,7 @@ trait Clientes {
 				->where('deleted_at',null); ////consultar
 		});
 		$ausentismos_mes_pasado = $nomina_mes_anterior ? (round($q_ausentismos_mes_pasado->first()->dias/($nomina_mes_anterior*$today->firstOfMonth()->subMonth()->endOfMonth()->format('d')),5)*100) : 0;
+		$ausentismos_mes_pasado = number_format($ausentismos_mes_pasado,2,',','.');
 
 
 
@@ -255,6 +257,7 @@ trait Clientes {
 				->where('deleted_at',null);
 		});
 		$ausentismos_mes_anio_anterior = $nomina_mes_anio_anterior ? (round($q_ausentismos_mes_anio_anterior->first()->dias/($nomina_mes_anio_anterior*$today->firstOfMonth()->subYear()->endOfMonth()->format('d')),5)*100) : 0;
+		$ausentismos_mes_anio_anterior = number_format($ausentismos_mes_anio_anterior,2,',','.');
 
 
 		/// AÑO ACTUAL
@@ -319,6 +322,7 @@ trait Clientes {
 		->orderBy('dias','desc');
 
 		$ausentismos_anio_actual = $nomina_promedio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promedio_actual*$today->dayOfYear()),5)*100) : 0;
+		$ausentismos_anio_actual = number_format($ausentismos_anio_actual,2,',','.');
 
 
 		/// ACCIDENTES

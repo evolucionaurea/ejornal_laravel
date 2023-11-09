@@ -212,6 +212,9 @@ export default class ResumenCliente {
 
 		this.chart_options = {
 			///cutoutPercentage:40,
+			legend:{
+				display:false
+			},
 			scales:{
 				xAxes:[{
 					ticks:{
@@ -251,13 +254,15 @@ export default class ResumenCliente {
 				labels:[],
 				datasets:[{
 					data:[],
-					backgroundColor:[]
+					backgroundColor:[],
+					row:[]
 				}]
 			}
 			this.data.indices_mes_a_mes.map((row,k)=>{
 				data.labels.push(row.month)
 				data.datasets[0].data.push(row.indice)
-				data.datasets[0].backgroundColor.push(`#${colours[k]}`)
+				data.datasets[0].backgroundColor.push(`#9c27b0`)
+				data.datasets[0].row.push(row)
 				console.log(row)
 			})
 			const tooltips = {
@@ -282,7 +287,11 @@ export default class ResumenCliente {
 						callbacks:{
 							label:(tooltipItem,data)=>{
 								const indx = tooltipItem.index
-								return `${data.datasets[0].data[indx].toFixed(3)} %`
+								return [
+									`Indice: ${data.datasets[0].data[indx].toFixed(2)}%`,
+									`Nómina: ${data.datasets[0].row[indx].nomina}`,
+									`Días: ${data.datasets[0].row[indx].dias}`
+								]
 							}
 						}
 					}
