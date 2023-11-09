@@ -30,9 +30,9 @@ export default class ResumenCliente {
 			}]
 		}
 
-		if(obj.chart_canvas=='#chart_ausentismos_anual'){
+		/*if(obj.chart_canvas=='#chart_ausentismos_anual'){
 			console.log(this.data)
-		}
+		}*/
 
 		if(obj.data.length>0){
 			let count = 0;
@@ -239,6 +239,56 @@ export default class ResumenCliente {
 
 		// ausentismos mes actual
 		this.render_tables()
+
+
+
+		if('indices_mes_a_mes' in this.data){
+			const chart_canvas = document.querySelector(`#chart_indice_ausentismos_anual`)
+			const chart_test = chart_canvas.getContext("2d");
+			const colours = ['ff0029', '377eb8', '66a61e', '984ea3', '00d2d5', 'ff7f00', 'af8d00', '7f80cd', 'b3e900', 'c42e60', 'a65628']
+
+			const data = {
+				labels:[],
+				datasets:[{
+					data:[],
+					backgroundColor:[]
+				}]
+			}
+			this.data.indices_mes_a_mes.map((row,k)=>{
+				data.labels.push(row.month)
+				data.datasets[0].data.push(row.indice)
+				data.datasets[0].backgroundColor.push(`#${colours[k]}`)
+				console.log(row)
+			})
+			const tooltips = {
+
+			}
+
+			new Chart(chart_test, {
+				type: 'bar',
+				data:data,
+				options: {
+					legend:{
+						display:false
+					},
+					scales:{
+						yAxes:[{
+							ticks:{
+								beginAtZero:true
+							}
+						}]
+					},
+					tooltips:{
+						callbacks:{
+							label:(tooltipItem,data)=>{
+								const indx = tooltipItem.index
+								return `${data.datasets[0].data[indx].toFixed(3)} %`
+							}
+						}
+					}
+				}
+			})
+		}
 
 
 	}

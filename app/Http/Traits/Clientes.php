@@ -147,6 +147,7 @@ trait Clientes {
 		->orderBy('dias','desc');
 
 		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),5)*100) : 0;
+		dump($q_ausentismos_mes_actual->first()->dias);
 
 		//dd(DB::getQueryLog()[0]);
 
@@ -154,9 +155,10 @@ trait Clientes {
 		/// MES PASADO
 		$inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
 		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
+
 		$q_ausentismos_mes_pasado = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 					IF(
 						fecha_final<'{$fin_mes_pasado}',
 						fecha_final,
@@ -167,7 +169,7 @@ trait Clientes {
 						'{$inicio_mes_pasado}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias"
 		)
 		->where(function($query) use ($today){

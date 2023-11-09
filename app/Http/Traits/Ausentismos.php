@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Ausentismo;
 use App\Cliente;
 use App\Nomina;
+use App\NominaHistorial;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
@@ -326,6 +327,8 @@ trait Ausentismos {
 	public function ausentismosAjax($id_cliente=null)
 	{
 
+		$newLocale = setlocale(LC_TIME, 'Spanish');
+
 		$today = CarbonImmutable::now();
 
 		/// NOMINAS
@@ -357,6 +360,80 @@ trait Ausentismos {
 		}
 		$valores = collect($count_nomina);
 		$nomina_promedio_actual = (int) ceil($valores->average());
+
+
+
+		///
+		$months_current_year = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
+		$indices_mes_a_mes = [];
+		foreach($months_current_year as $date){
+
+			//$month = $date->format('Y-m-d');
+			$date_immutable = CarbonImmutable::create($date->format('Y'),$date->format('m'),1);
+			///$date_immutable = $date;
+			$inicio_mes = $date_immutable->firstOfMonth();
+			$inicio_mes_formatted = $inicio_mes->format('Y-m-d');
+			$fin_mes = $today->format('Ym')==$date->format('Ym') ? $today : $date_immutable->lastOfMonth();
+			$fin_mes_formatted = $fin_mes->format('Y-m-d');
+			//exit;
+			$nomina = NominaHistorial::select('cantidad','year_month')
+				->where('year_month',$date->format('Ym'))
+				->where('cliente_id',$id_cliente)
+				->first()
+				->cantidad;
+			$ausentismos = Ausentismo::selectRaw("
+				SUM(
+					ABS(DATEDIFF(
+
+						IF(
+						fecha_final<'{$fin_mes_formatted}',
+						fecha_final,
+						'{$fin_mes_formatted}'
+					),
+					IF(
+						fecha_inicio<'{$inicio_mes_formatted}',
+						'{$inicio_mes_formatted}',
+						fecha_inicio
+					)
+					))+1
+				) dias
+			")
+				->where(function($query) use ($inicio_mes,$fin_mes){
+					$query->whereBetween('fecha_inicio',[$inicio_mes,$fin_mes])
+					->orWhere(function($query) use ($inicio_mes,$fin_mes){
+						$query->where('fecha_inicio','<',$inicio_mes)
+							->where(function($query) use ($fin_mes){
+								$query->where('fecha_final','>',$fin_mes)
+									->orWhere('fecha_final',null);
+							});
+					});
+				})
+				->whereIn('id_trabajador',function($query) use ($id_cliente){
+					$query->select('id')
+						->from('nominas')
+						//->where('estado',1)
+						->where('deleted_at',null)
+						->where('id_cliente',$id_cliente);
+				})
+				->whereHas('tipo',function($query){
+					$query->where('incluir_indice',1);
+				})
+				->first();
+
+			$indices_mes_a_mes[] = [
+				//'ausentismos'=>$ausentismos->total,
+				'dias'=>$ausentismos->dias,
+				'month'=>Str::ucfirst($date->formatLocalized('%B')),
+				'indice'=>$nomina ? (round($ausentismos->dias/($nomina*( $fin_mes->format('d') )),5)*100) : 0,
+				'nomina'=>$nomina,
+				'inicio_mes'=>$inicio_mes_formatted,
+				'fin_mes'=>$fin_mes_formatted
+				///'dia'=>$today->format('Ym')==$date->format('Ym') ? $today->format('d') : $date->endOfMonth()->format('d')
+			];
+
+			////$indices_mes_a_mes[$date->format('Ym')]['month'] = Str::ucfirst($date->formatLocalized('%B'));
+		}
+		////dd(123);
 
 
 
@@ -582,16 +659,6 @@ trait Ausentismos {
 
 			->where(function($query) use ($today){
 				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
-				/*$query->where(function($query) use ($today){
-					$query
-						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
-						->where(function($query) use ($today){
-							$query
-								->where('fecha_final','<=',$today)
-								->orWhere('fecha_final','>=',$today)
-								->orWhere('fecha_final',null);
-						});
-				})*/
 				// los que estuvieron ausentes durante el curso del año pero iniciaron ausentismo antes de este año y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query
@@ -625,6 +692,9 @@ trait Ausentismos {
 		$cant_dias_anio = (int) $today->dayOfYear();
 
 		return compact(
+			'indices_mes_a_mes',
+
+
 			'ausentismos_mes',
 			'ausentismos_mes_anterior',
 			'ausentismos_mes_anio_anterior',
@@ -639,6 +709,8 @@ trait Ausentismos {
 			'cant_dias_mes_anterior',
 			'cant_dias_mes_anio_anterior',
 			'cant_dias_anio',
+
+			'months_current_year',
 
 			'status'
 		);
