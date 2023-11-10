@@ -30,7 +30,9 @@ class EmpleadosAusentismosController extends Controller
 
 		$tipos = AusentismoTipo::get();
 
-		return view('empleados.ausentismos', compact('clientes','tipos'));
+		$tipo_comunicaciones = TipoComunicacion::all();
+
+		return view('empleados.ausentismos', compact('clientes','tipos', 'tipo_comunicaciones'));
 	}
 	public function busqueda(Request $request)
 	{
@@ -431,6 +433,34 @@ class EmpleadosAusentismosController extends Controller
 	{
 		//Traits > Ausentismos
 		return $this->exportAusentismos(auth()->user()->id_cliente_actual,$request);
+	}
+
+
+	public function extensionComunicacion(Request $request)
+	{
+		$validatedData = $request->validate([
+			'fecha_final' => 'required',
+			'descripcion' => 'required'
+		]);
+
+		$ausentismo = Ausentismo::findOrFail($request->id_ausentismo);
+		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+		if ($fecha_final->lessThan($ausentismo->fecha_inicio)) {
+			return back()->with('error', 'La fecha final es menor a la de inicio');
+		}
+		$ausentismo->fecha_final = $fecha_final;
+		$ausentismo->fecha_regreso_trabajar = $fecha_final;
+		$ausentismo->save();
+
+		$comunicacion = new Comunicacion();
+	  	$comunicacion->id_ausentismo = $request->id_ausentismo;
+	  	$comunicacion->id_tipo = $request->id_tipo;
+	  	$comunicacion->descripcion = $request->descripcion;
+	  	$comunicacion->user = auth()->user()->nombre;
+	  	$comunicacion->save();
+
+	  	return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+
 	}
 
 

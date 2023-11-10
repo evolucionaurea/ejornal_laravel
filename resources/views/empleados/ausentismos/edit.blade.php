@@ -19,7 +19,9 @@
 			<h2>Edición de un ausentismo</h2>
 			<p>Aquí podrá editar la información referente al ausentismo de un trabajador</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/ausentismos')}}?{{$_SERVER['QUERY_STRING']}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro"
+					href="{{url('empleados/ausentismos')}}?{{$_SERVER['QUERY_STRING']}}"><i
+						class="fas fa-arrow-alt-circle-left"></i>Volver</a>
 			</div>
 		</div>
 
@@ -36,20 +38,24 @@
 		@endif
 
 		<div class="tarjeta">
-			<form action="{{action('EmpleadosAusentismosController@update', $ausentismo->id)}}?{{$_SERVER['QUERY_STRING']}}" accept-charset="UTF-8" method="post">
+			<form
+				action="{{action('EmpleadosAusentismosController@update', $ausentismo->id)}}?{{$_SERVER['QUERY_STRING']}}"
+				accept-charset="UTF-8" method="post">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
 				<div class="row">
 					<div class="form-group col-md-4">
 						<label>Trabajador</label>
-						<input disabled name="nombre" type="text" class="form-control" value="{{$ausentismo->trabajador->nombre}}" placeholder="">
+						<input disabled name="nombre" type="text" class="form-control"
+							value="{{$ausentismo->trabajador->nombre}}" placeholder="">
 					</div>
 					<div class="form-group col-md-4">
 						<label>Tipo</label>
 						@if($ausentismo_tipos)
 						<select name="tipo" class="form-control">
 							@foreach($ausentismo_tipos as $tipo)
-							<option value="{{$tipo->id}}" {{ $ausentismo->tipo->id==$tipo->id ? 'selected' : '' }} >{{$tipo->nombre}}</option>
+							<option value="{{$tipo->id}}" {{ $ausentismo->tipo->id==$tipo->id ? 'selected' : '' }}
+								>{{$tipo->nombre}}</option>
 							@endforeach
 						</select>
 						@endif
@@ -57,17 +63,18 @@
 					<div class="form-group col-md-4">
 						<label>Fecha inicio</label>
 						<input name="fecha_inicio" type="text" class="form-control"
-						value="{{ (!empty($ausentismo->fecha_inicio)) ? date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}">
+							value="{{ (!empty($ausentismo->fecha_inicio)) ? date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}">
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha final</label>
 						<input name="fecha_final" type="text" class="form-control"
-						value="{{ (!empty($ausentismo->fecha_final)) ? date('d/m/Y',strtotime($ausentismo->fecha_final)) : "" }}">
+							value="{{ (!empty($ausentismo->fecha_final)) ? date('d/m/Y',strtotime($ausentismo->fecha_final)) : "" }}">
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha en que regresó</label>
-						<input name="fecha_regreso_trabajar" type="text" class="form-control"
-						value="{{ (!empty($ausentismo->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}">
+						<input style="background-color: #f0f0f0; pointer-events: none;" name="fecha_regreso_trabajar"
+							type="text" class="form-control"
+							value="{{ (!empty($ausentismo->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}">
 					</div>
 				</div>
 
@@ -90,7 +97,8 @@
 						<select required name="tipo_comunicacion" class="form-control">
 							<option value="">--Seleccionar--</option>
 							@foreach ($tipo_comunicaciones as $tipo_com)
-							<option value="{{$tipo_com->id}}" {{ $ausentismo->comunicacion->id_tipo==$tipo_com->id ? 'selected' :
+							<option value="{{$tipo_com->id}}" {{ $ausentismo->comunicacion->id_tipo==$tipo_com->id ?
+								'selected' :
 								'' }} >{{$tipo_com->nombre}}</option>
 							@endforeach
 						</select>

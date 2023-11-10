@@ -130,7 +130,8 @@ $(()=>{
 							let [dia, mes, anio] = str.split('/');
 							regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							hoy = new Date();
-							if (regreso_trabajar > hoy) {
+							hoy.setHours(0, 0, 0, 0);
+							if (regreso_trabajar >= hoy) {
 								mostrar_extension = true
 							}else{
 								mostrar_extension = false;

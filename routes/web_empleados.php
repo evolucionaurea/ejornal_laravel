@@ -52,7 +52,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/ausentismos/tipo', 'EmpleadosAusentismosController@tipo')->name('/empleados/ausentismos/tipo');
 	Route::delete('empleados/ausentismos/tipo_delete/{id_tipo}', 'EmpleadosAusentismosController@tipo_destroy')->name('ausentismos.tipo_delete');
 	Route::get('empleados/ausentismos/archivo/{id}', 'EmpleadosAusentismosController@descargar_archivo')->name('ausentismos.archivo');
-
+	Route::post('empleados/ausentismos/extension_comunicacion','EmpleadosAusentismosController@extensionComunicacion');
 
 
 	// TAREAS LIVIANAS

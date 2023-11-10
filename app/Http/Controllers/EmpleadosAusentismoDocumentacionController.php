@@ -49,6 +49,7 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		]);
 
 		// Si viene de Extension de Ausentismo (icono listado de ausentismos), validar fechas
+		// Esto puede quedar en desuso
 		if (isset($request->fecha_final) && !empty($request->fecha_final)) {
 			$ausentismo = Ausentismo::findOrFail($request->id_ausentismo);
 			$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
@@ -105,6 +106,7 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 				$documentacion->save();
 
 				// Si es una documentacion de ausentismo extendida (se carga en el listado de ausentismos)
+				// Esto puede quedar en desuso
 				if (isset($request->fecha_final) && !empty($request->fecha_final)) {
 					$ausentismo->fecha_final = $fecha_final;
 					$ausentismo->save();
