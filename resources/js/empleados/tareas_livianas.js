@@ -12,7 +12,6 @@ $(()=>{
 		delete_message:'¿Seguro deseas borrar esta tarea liviana?',
 
 		datatable_options:{
-			//ordering:false,
 			columns:[
 				{
 					data:'nombre',
