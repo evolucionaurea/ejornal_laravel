@@ -13,37 +13,37 @@ use App\Comunicacion;
 class Ausentismo extends Model
 {
 
-  //use \OwenIt\Auditing\Auditable;
+	//use \OwenIt\Auditing\Auditable;
 
-  // Nombre de la tabla
-  protected $table = 'ausentismos';
+	// Nombre de la tabla
+	protected $table = 'ausentismos';
 
-  // Campos habilitados para ingresar
-  protected $fillable = ['id_trabajador', 'user', 'id_tipo', 'fecha_inicio', 'fecha_final', 'fecha_regreso_trabajar', 'archivo', 'hash_archivo'];
+	// Campos habilitados para ingresar
+	protected $fillable = ['id_trabajador', 'user', 'id_tipo', 'fecha_inicio', 'fecha_final', 'fecha_regreso_trabajar', 'archivo', 'hash_archivo'];
 
-  protected $casts = [
-    'fecha_inicio'=>'date:d/m/Y',
-    'fecha_final'=>'date:d/m/Y',
-    'fecha_regreso_trabajar'=>'date:d/m/Y'
-  ];
+	protected $casts = [
+		'fecha_inicio'=>'date:d/m/Y',
+		'fecha_final'=>'date:d/m/Y',
+		'fecha_regreso_trabajar'=>'date:d/m/Y'
+	];
 
-  public function tipo(){
-  	return $this->belongsTo(AusentismoTipo::class,'id_tipo');
-  }
-  public function trabajador(){
-  	return $this->belongsTo(Nomina::class,'id_trabajador');
-  }
+	public function tipo(){
+		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
+	}
+	public function trabajador(){
+		return $this->belongsTo(Nomina::class,'id_trabajador');
+	}
 
-  public function cliente(){
-    return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');
-  }
+	public function cliente(){
+		return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');
+	}
 
-  public function documentaciones(){
-    return $this->hasMany(AusentismoDocumentacion::class,'id_ausentismo');
-  }
+	public function documentaciones(){
+		return $this->hasMany(AusentismoDocumentacion::class,'id_ausentismo');
+	}
 
-  public function comunicacion(){
-    return $this->hasOne(Comunicacion::class,'id_ausentismo');
-  }
+	public function comunicacion(){
+		return $this->hasOne(Comunicacion::class,'id_ausentismo');
+	}
 
 }

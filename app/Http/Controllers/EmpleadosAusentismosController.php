@@ -245,11 +245,7 @@ class EmpleadosAusentismosController extends Controller
 
 		$clientes = $this->getClientesUser();
 		$ausentismo_tipos = AusentismoTipo::orderBy('nombre', 'asc')->get();
-
 		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
-
-
-		//dump($ausentismo);
 
 		return view('empleados.ausentismos.edit', compact('ausentismo', 'clientes', 'ausentismo_tipos', 'tipo_comunicaciones'));
 	}

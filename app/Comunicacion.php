@@ -17,4 +17,8 @@ class Comunicacion extends Model
   // Campos habilitados para ingresar
   protected $fillable = ['id_ausentismo', 'id_tipo', 'user', 'descripcion'];
 
+  protected $casts = [
+  	'created_at'=>'date:d/m/Y'
+  ];
+
 }

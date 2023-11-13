@@ -4,6 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\TareaLivianaTipo;
+use App\Nomina;
+use App\Cliente;
+use App\TareaLivianaDocumentacion;
+use App\ComunicacionLiviana;
 
 
 class TareaLiviana extends Model
@@ -22,9 +26,21 @@ class TareaLiviana extends Model
   ];
 
 
-  public function tipo()
-  {
+  public function tipo() {
   	return $this->belongsTo(TareaLivianaTipo::class,'id_tipo');
+  }
+  public function trabajador(){
+    return $this->belongsTo(Nomina::class,'id_trabajador');
+  }
+  public function cliente(){
+    return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');
+  }
+
+  public function documentaciones(){
+    return $this->hasMany(TareaLivianaDocumentacion::class,'id_tarea_liviana');
+  }
+  public function comunicacion(){
+    return $this->hasOne(ComunicacionLiviana::class,'id_tarea_liviana');
   }
 
 }

@@ -97,7 +97,7 @@ trait Clientes {
 		$today_formatted = $today->format('Y-m-d');
 		$q_ausentismos_mes_actual = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 
 					IF(
 						IFNULL(
@@ -113,7 +113,7 @@ trait Clientes {
 						fecha_inicio,
 						'{$inicio_mes}'
 					)
-				)+1
+				))+1
 			) dias"
 		)
 		->where(function($query) use ($today){
@@ -146,7 +146,7 @@ trait Clientes {
 		})
 		->orderBy('dias','desc');
 
-		$ausentismos_mes_actual = $nomina_actual ? (round($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d')),5)*100) : 0;
+		$ausentismos_mes_actual = $nomina_actual ? ($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d'))*100) : 0;
 		$ausentismos_mes_actual = number_format($ausentismos_mes_actual,2,',','.');
 		//dump($q_ausentismos_mes_actual->first()->dias);
 
@@ -154,8 +154,8 @@ trait Clientes {
 
 
 		/// MES PASADO
-		$inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
-		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
+		$inicio_mes_pasado = $today->startOfMonth()->subMonth()->format('Y-m-d');
+		$fin_mes_pasado = $today->startOfMonth()->subMonth()->endOfMonth()->format('Y-m-d');
 
 		$q_ausentismos_mes_pasado = Ausentismo::selectRaw("
 			SUM(
@@ -202,7 +202,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null); ////consultar
 		});
-		$ausentismos_mes_pasado = $nomina_mes_anterior ? (round($q_ausentismos_mes_pasado->first()->dias/($nomina_mes_anterior*$today->firstOfMonth()->subMonth()->endOfMonth()->format('d')),5)*100) : 0;
+		$ausentismos_mes_pasado = $nomina_mes_anterior ? ($q_ausentismos_mes_pasado->first()->dias/($nomina_mes_anterior*$today->startOfMonth()->subMonth()->endOfMonth()->format('d'))*100) : 0;
 		$ausentismos_mes_pasado = number_format($ausentismos_mes_pasado,2,',','.');
 
 
@@ -212,7 +212,7 @@ trait Clientes {
 		$fin_mes_anio_anterior = $today->subYear()->endOfMonth()->format('Y-m-d');
 		$q_ausentismos_mes_anio_anterior = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 					IF(
 						fecha_final<'{$fin_mes_anio_anterior}',
 						fecha_final,
@@ -223,7 +223,7 @@ trait Clientes {
 						'{$inicio_mes_anio_anterior}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias"
 		)
 		->where(function($query) use ($today){
@@ -256,7 +256,7 @@ trait Clientes {
 				//->where('estado',1)
 				->where('deleted_at',null);
 		});
-		$ausentismos_mes_anio_anterior = $nomina_mes_anio_anterior ? (round($q_ausentismos_mes_anio_anterior->first()->dias/($nomina_mes_anio_anterior*$today->firstOfMonth()->subYear()->endOfMonth()->format('d')),5)*100) : 0;
+		$ausentismos_mes_anio_anterior = $nomina_mes_anio_anterior ? ($q_ausentismos_mes_anio_anterior->first()->dias/($nomina_mes_anio_anterior*$today->startOfMonth()->subYear()->endOfMonth()->format('d'))*100) : 0;
 		$ausentismos_mes_anio_anterior = number_format($ausentismos_mes_anio_anterior,2,',','.');
 
 
@@ -321,19 +321,20 @@ trait Clientes {
 		})
 		->orderBy('dias','desc');
 
-		$ausentismos_anio_actual = $nomina_promedio_actual ? (round($q_ausentismos_anio_actual->first()->dias/($nomina_promedio_actual*$today->dayOfYear()),5)*100) : 0;
+		$ausentismos_anio_actual = $nomina_promedio_actual ? ($q_ausentismos_anio_actual->first()->dias/($nomina_promedio_actual*$today->dayOfYear())*100) : 0;
 		$ausentismos_anio_actual = number_format($ausentismos_anio_actual,2,',','.');
 
 
 		/// ACCIDENTES
 		/// MES ACTUAL
 		//DB::enableQueryLog();
-		//DB::enableQueryLog();
 		$q_accidentes_mes_actual = clone $q_ausentismos_mes_actual;
 		$q_accidentes_mes_actual->whereHas('tipo',function($query){
 			$query->where('agrupamiento','=','ART');
 		});
-		$accidentes_mes_actual = $q_accidentes_mes_actual->first()->dias;
+		$accidentes_mes_actual = (int) $q_accidentes_mes_actual->first()->dias;
+		$accidentes_mes_actual_indice = $nomina_actual ? ($accidentes_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
+		$accidentes_mes_actual_indice = number_format($accidentes_mes_actual_indice,2,',','.');
 		//dd($accidentes_mes_actual);
 
 		/// MES PASADO
@@ -341,21 +342,27 @@ trait Clientes {
 		$q_accidentes_mes_pasado->whereHas('tipo',function($query){
 			$query->where('agrupamiento','=','ART');
 		});
-		$accidentes_mes_pasado = $q_accidentes_mes_pasado->first()->dias;
+		$accidentes_mes_pasado = (int) $q_accidentes_mes_pasado->first()->dias;
+		$accidentes_mes_pasado_indice = $nomina_mes_anterior ? ($accidentes_mes_pasado/($nomina_mes_anterior*$today->startOfMonth()->subMonth()->endOfMonth()->format('d'))*100) : 0;
+		$accidentes_mes_pasado_indice = number_format($accidentes_mes_pasado_indice,2,',','.');
 
 		/// MES AÑO ANTERIOR
 		$q_accidentes_mes_anio_anterior = clone $q_ausentismos_mes_anio_anterior;
 		$q_accidentes_mes_anio_anterior->whereHas('tipo',function($query){
 			$query->where('agrupamiento','=','ART');
 		});
-		$accidentes_mes_anio_anterior = $q_accidentes_mes_anio_anterior->first()->dias;
+		$accidentes_mes_anio_anterior = (int) $q_accidentes_mes_anio_anterior->first()->dias;
+		$accidentes_mes_anio_anterior_indice = $nomina_mes_anio_anterior ? ($accidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$today->startOfMonth()->subYear()->endOfMonth()->format('d'))*100) : 0;
+		$accidentes_mes_anio_anterior_indice = number_format($accidentes_mes_anio_anterior_indice,2,',','.');
 
 		/// AÑO ACTUAL
 		$q_accidentes_anio_actual = clone $q_ausentismos_anio_actual;
 		$q_accidentes_anio_actual->whereHas('tipo',function($query){
 			$query->where('agrupamiento','=','ART');
 		});
-		$accidentes_anio_actual = $q_accidentes_anio_actual->first()->dias;
+		$accidentes_anio_actual = (int) $q_accidentes_anio_actual->first()->dias;
+		$accidentes_anio_actual_indice = $nomina_promedio_actual ? ($accidentes_anio_actual/($nomina_promedio_actual*$today->dayOfYear())*100) : 0;
+		$accidentes_anio_actual_indice = number_format($accidentes_anio_actual_indice,2,',','.');
 
 
 
@@ -367,14 +374,18 @@ trait Clientes {
 		$q_incidentes_mes_actual->whereHas('tipo',function($query){
 			$query->where('nombre','LIKE','%incidente%');
 		});
-		$incidentes_mes_actual = $q_incidentes_mes_actual->first()->dias;
+		$incidentes_mes_actual = (int) $q_incidentes_mes_actual->first()->dias;
+		$incidentes_mes_actual_indice = $nomina_actual ? ($incidentes_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
+		$incidentes_mes_actual_indice = number_format($incidentes_mes_actual_indice,2,',','.');
 
 		/// MES PASADO
 		$q_incidentes_mes_pasado = clone $q_ausentismos_mes_pasado;
 		$q_incidentes_mes_pasado->whereHas('tipo',function($query){
 			$query->where('nombre','LIKE','%incidente%');
 		});
-		$incidentes_mes_pasado = $q_incidentes_mes_pasado->first()->dias;
+		$incidentes_mes_pasado = (int) $q_incidentes_mes_pasado->first()->dias;
+		$incidentes_mes_pasado_indice = $nomina_mes_anterior ? ($incidentes_mes_pasado/($nomina_mes_anterior*$today->startOfMonth()->subMonth()->endOfMonth()->format('d'))*100) : 0;
+		$incidentes_mes_pasado_indice = number_format($incidentes_mes_pasado_indice,2,',','.');
 
 
 		/// MES AÑO ANTERIOR
@@ -382,14 +393,18 @@ trait Clientes {
 		$q_incidentes_mes_anio_anterior->whereHas('tipo',function($query){
 			$query->where('nombre','LIKE','%incidente%');
 		});
-		$incidentes_mes_anio_anterior = $q_incidentes_mes_anio_anterior->first()->dias;
+		$incidentes_mes_anio_anterior = (int) $q_incidentes_mes_anio_anterior->first()->dias;
+		$incidentes_mes_anio_anterior_indice = $nomina_mes_anio_anterior ? ($incidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$today->startOfMonth()->subYear()->endOfMonth()->format('d'))*100) : 0;
+		$incidentes_mes_anio_anterior_indice = number_format($incidentes_mes_anio_anterior_indice,2,',','.');
 
 		/// AÑO ACTUAL
 		$q_incidentes_anio_actual = clone $q_ausentismos_anio_actual;
 		$q_incidentes_anio_actual->whereHas('tipo',function($query){
 			$query->where('nombre','LIKE','%incidente%');
 		});
-		$incidentes_anio_actual = $q_incidentes_anio_actual->first()->dias;
+		$incidentes_anio_actual = (int) $q_incidentes_anio_actual->first()->dias;
+		$incidentes_anio_actual_indice = $nomina_promedio_actual ? ($incidentes_anio_actual/($nomina_promedio_actual*$today->dayOfYear())*100) : 0;
+		$incidentes_anio_actual_indice = number_format($incidentes_anio_actual_indice,2,',','.');
 
 
 
@@ -453,14 +468,22 @@ trait Clientes {
 			'ausentismos_anio_actual',
 
 			'accidentes_mes_actual',
+			'accidentes_mes_actual_indice',
 			'accidentes_mes_pasado',
+			'accidentes_mes_pasado_indice',
 			'accidentes_mes_anio_anterior',
+			'accidentes_mes_anio_anterior_indice',
 			'accidentes_anio_actual',
+			'accidentes_anio_actual_indice',
 
 			'incidentes_mes_actual',
+			'incidentes_mes_actual_indice',
 			'incidentes_mes_pasado',
+			'incidentes_mes_pasado_indice',
 			'incidentes_mes_anio_anterior',
+			'incidentes_mes_anio_anterior_indice',
 			'incidentes_anio_actual',
+			'incidentes_anio_actual_indice',
 
 			'ausentismos_top_10',
 			'ausentismos_top_10_solicitudes',

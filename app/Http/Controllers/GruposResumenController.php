@@ -301,7 +301,7 @@ class GruposResumenController extends Controller
 		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
 		$ausentismos_mes_anterior = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 					IF(
 						fecha_final<'{$fin_mes_pasado}',
 						fecha_final,
@@ -312,7 +312,7 @@ class GruposResumenController extends Controller
 						'{$inicio_mes_pasado}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias,
 			count(*) as total,
 			id_tipo
@@ -364,7 +364,7 @@ class GruposResumenController extends Controller
 		$fin_mes_anio_anterior = $today->subYear()->endOfMonth()->format('Y-m-d');
 		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw("
 			SUM(
-				DATEDIFF(
+				ABS(DATEDIFF(
 					IF(
 						fecha_final<'{$fin_mes_anio_anterior}',
 						fecha_final,
@@ -375,7 +375,7 @@ class GruposResumenController extends Controller
 						'{$inicio_mes_anio_anterior}',
 						fecha_inicio
 					)
-				)+1
+				))+1
 			) dias,
 			count(*) as total,
 			id_tipo"

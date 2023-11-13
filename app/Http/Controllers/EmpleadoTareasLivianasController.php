@@ -239,16 +239,31 @@ class EmpleadoTareasLivianasController extends Controller
 	 */
 	public function edit($id)
 	{
-		$tarea_liviana = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
+		/*$tarea_liviana = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 				->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
 				->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 				->where('tareas_livianas.id', $id)
 				->select('tareas_livianas.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado', DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'))
-				->first();
+				->first();*/
+
+		$tarea_liviana = TareaLiviana::select('tareas_livianas.*')
+			->with('comunicacion')
+			->with('tipo')
+			->with(['trabajador'=>function($query){
+				$query->select('id','nombre','email','estado','dni','telefono');
+			}])
+			->whereHas('trabajador',function($query){
+				$query->where('id_cliente',auth()->user()->id_cliente_actual);
+			})
+			->where('tareas_livianas.id', $id)
+			->first();
 
 		$clientes = $this->getClientesUser();
+		$tareas_livianas_tipos = TareaLivianaTipo::orderBy('nombre', 'asc')->get();
+		$tipo_comunicaciones = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();
+		//dd($tipo_comunicaciones->toArray());
 
-		return view('empleados.tareas_livianas.edit', compact('tarea_liviana', 'clientes'));
+		return view('empleados.tareas_livianas.edit', compact('tarea_liviana', 'clientes', 'tareas_livianas_tipos', 'tipo_comunicaciones'));
 	}
 
 	/**
@@ -290,6 +305,13 @@ class EmpleadoTareasLivianasController extends Controller
 		//Actualizar en base
 		$tarea_liviana = TareaLiviana::findOrFail($id);
 		$tarea_liviana->fecha_inicio = $fecha_inicio;
+		$tarea_liviana->id_tipo = $request->tipo;
+
+		//Guardar en base Comunicacion
+		$tarea_liviana->comunicacion->id_tipo = $request->tipo_comunicacion;
+		$tarea_liviana->comunicacion->descripcion = $request->descripcion;
+		$tarea_liviana->comunicacion->save();
+
 		if (isset($request->fecha_final) && !empty($request->fecha_final)) {
 			$tarea_liviana->fecha_final = $fecha_final;
 		}else {
