@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 use App\ClienteUser;
 use App\Ausentismo;
 use App\Nomina;
+use App\NominaHistorial;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
@@ -33,61 +34,28 @@ trait Clientes {
 		///dd($route[0]);
 
 		// NOMINAS
-		$nomina_actual = Nomina::
-			where('id_cliente',$id_cliente)
-			//->where('estado',1)
-			->count();
-		$nomina_mes_anterior = Nomina::
-			where('id_cliente',$id_cliente)
-			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
-			//->where('estado',1)
-			->count();
-		$nomina_mes_anio_anterior = Nomina::
-			where('id_cliente',$id_cliente)
-			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
-			//->where('estado',1)
-			->count();
-		///nomina año actual: promedio de nominas mes a mes
-		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
-		// Iterate over the period
-		$count_nomina = [];
-		DB::enableQueryLog();
-		foreach ($period as $date) {
-			$yearmonth = $date->format('Ym');
-			$count_nomina[$yearmonth] = Nomina::
-				where('id_cliente',$id_cliente)
-				->withTrashed()
-				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<={$yearmonth}")
-				->where(function($query) use($yearmonth){
-					$query
-						->where('deleted_at',null)
-						->orWhereRaw("EXTRACT(YEAR_MONTH FROM deleted_at)>{$yearmonth}");
-				})
-				->count();
-		}
-		///dd($count_nomina);
-		$valores = collect($count_nomina);
-		$nomina_promedio_actual = (int) ceil($valores->average());
+		$nomina_actual = NominaHistorial::select('*')
+			->where('year_month',$today->format('Ym'))
+			->where('cliente_id',$id_cliente)
+			->first()
+			->cantidad;
+		$nomina_mes_anterior = NominaHistorial::select('*')
+			->where('year_month',$today->firstOfMonth()->subMonth()->format('Ym'))
+			->where('cliente_id',$id_cliente)
+			->first()
+			->cantidad;
+		$nomina_mes_anio_anterior = NominaHistorial::select('*')
+			->where('year_month',$today->firstOfMonth()->subYear()->format('Ym'))
+			->where('cliente_id',$id_cliente)
+			->first()
+			->cantidad;
+		$nomina_promedio_actual = NominaHistorial::selectRaw("CEIL(AVG(cantidad)) as cantidad")
+			->whereBetween('year_month',[$today->startOfYear()->format('Ym'),$today->format('Ym')])
+			->where('cliente_id',$id_cliente)
+			->first()
+			->cantidad;
 
 
-
-		/*$nomina_anio_actual = Nomina::
-			select(
-				DB::raw('YEAR(created_at) as year'),
-				DB::raw('MONTH(created_at) as month'),
-				DB::raw('COUNT(*) as count'),
-				DB::raw('(
-						SELECT AVG(COUNT(*))
-						FROM nominas u2
-						WHERE YEAR(u2.created_at) = YEAR(nominas.created_at)
-						AND MONTH(u2.created_at) <= MONTH(nominas.created_at)
-				) as acumulated_average')
-			)
-			->where('id_cliente',$id_cliente)
-			->groupBy('year','month')
-			->orderBy('year','month')
-			->get();*/
-		//dd($nomina_anio_actual->toArray());
 
 
 		/// AUSENTISMOS
@@ -117,22 +85,16 @@ trait Clientes {
 			) dias"
 		)
 		->where(function($query) use ($today){
-			$query->where(function($query) use ($today){
-				$query
-				->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
-				/*->where(function($query) use($today){
-					$query->where('fecha_final','<=',$today)
-						->orWhere('fecha_final',null);
-				});*/
-			})
-			->orWhere(function($query) use ($today){
-				// los que siguen ausentes fuera del mes actual
-				$query->where('fecha_inicio','<=',$today->startOfMonth())
-				->where(function($query) use($today){
-					$query->where('fecha_final','>=',$today->startOfMonth())
-						->orWhere('fecha_final',null);
+			$query
+				->whereBetween('fecha_inicio',[$today->startOfMonth(),$today])
+				->orWhere(function($query) use ($today){
+					// los que siguen ausentes fuera del mes actual
+					$query->where('fecha_inicio','<',$today->startOfMonth())
+					->where(function($query) use($today){
+						$query->where('fecha_final','>',$today->endOfMonth())
+							->orWhere('fecha_final',null);
+					});
 				});
-			});
 		})
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
@@ -146,11 +108,14 @@ trait Clientes {
 		})
 		->orderBy('dias','desc');
 
-		$ausentismos_mes_actual = $nomina_actual ? ($q_ausentismos_mes_actual->first()->dias/($nomina_actual*$today->format('d'))*100) : 0;
+		///dd($q_ausentismos_mes_actual->first()->dias);
+
+		$dias_mes_actual = $q_ausentismos_mes_actual->first()->dias;
+		$ausentismos_mes_actual = $nomina_actual ? ($dias_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
 		$ausentismos_mes_actual = number_format($ausentismos_mes_actual,2,',','.');
 		//dump($q_ausentismos_mes_actual->first()->dias);
+		//dd(DB::getQueryLog());
 
-		//dd(DB::getQueryLog()[0]);
 
 
 		/// MES PASADO
@@ -304,7 +269,7 @@ trait Clientes {
 					->where('fecha_inicio','<',$today->startOfYear())
 					->where(function($query) use ($today){
 						$query
-							->where('fecha_final','>=',$today->startOfYear())
+							->where('fecha_final','>',$today->startOfYear())
 							->orWhere('fecha_final',null);
 					});
 			});
@@ -462,6 +427,7 @@ trait Clientes {
 
 
 		return compact(
+			'dias_mes_actual',
 			'ausentismos_mes_actual',
 			'ausentismos_mes_pasado',
 			'ausentismos_mes_anio_anterior',

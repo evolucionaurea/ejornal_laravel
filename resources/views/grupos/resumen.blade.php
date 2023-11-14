@@ -106,7 +106,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot>
+								<tfoot class="d-none">
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>
@@ -135,7 +135,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot>
+								<tfoot class="d-none">
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>
@@ -164,7 +164,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot>
+								<tfoot class="d-none">
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>
@@ -193,7 +193,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot>
+								<tfoot class="d-none">
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>

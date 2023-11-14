@@ -74,7 +74,7 @@ $(()=>{
 
 				{
 					data:'dias_mes_actual',
-					orderable:false,
+					///orderable:false,
 					className:'align-middle',
 					name:'dias_mes_actual',
 					render:v=>{
@@ -83,7 +83,8 @@ $(()=>{
 				},
 				{
 					data:'total_dias',
-					orderable:false,
+					name:'total_dias',
+					//orderable:false,
 					className:'align-middle',
 					render:v=>{
 						return v

@@ -245,6 +245,16 @@
 
 <!-- CHARTS -->
 <div class="row">
+
+	<div class="col-lg-12">
+		<div class="tarjeta">
+			<h2 class="text-center">Índice de Ausentismos del año actual</h2>
+			<hr>
+			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
+			<canvas id="chart_indice_ausentismos_anual" height="480"></canvas>
+		</div>
+	</div>
+
 	<div class="col-lg-6 ">
 		<div class="tarjeta" >
 			<h2 class="text-center">Ausentismos de {{ $now->formatLocalized('%B') }}</h2>
@@ -262,16 +272,6 @@
 		</div>
 	</div>
 
-	<div class="col-lg-12">
-
-		<div class="tarjeta">
-			<h2 class="text-center">Índice de Ausentismos del año actual</h2>
-			<hr>
-			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
-			<canvas id="chart_indice_ausentismos_anual" height="480"></canvas>
-		</div>
-
-	</div>
 
 </div>
 

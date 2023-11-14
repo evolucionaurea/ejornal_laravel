@@ -69,70 +69,59 @@ class GruposResumenController extends Controller
 
 	public function index_ajax()
 	{
+
+		$newLocale = setlocale(LC_TIME, 'Spanish');
+
 		$today = CarbonImmutable::now();
 
 		$id_grupo = auth()->user()->id_grupo;
 
-		/// NOMINAS
-		$nomina_actual = Nomina::
-			whereIn('id_cliente',function($query) use ($id_grupo){
+		$nomina_actual = NominaHistorial::select('*')
+			->where('year_month',$today->format('Ym'))
+			->whereIn('cliente_id',function($query) use ($id_grupo){
 				$query
 					->select('id_cliente')
 					->from('cliente_grupo')
 					->where('id_grupo',$id_grupo);
 			})
-			//->where('estado',1)
-			->count();
-		$nomina_mes_anterior = Nomina::
-			whereIn('id_cliente',function($query) use ($id_grupo){
+			->first()
+			->cantidad;
+		$nomina_mes_anterior = NominaHistorial::select('*')
+			->where('year_month',$today->firstOfMonth()->subMonth()->format('Ym'))
+			->whereIn('cliente_id',function($query) use ($id_grupo){
 				$query
 					->select('id_cliente')
 					->from('cliente_grupo')
 					->where('id_grupo',$id_grupo);
 			})
-			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
-			//->where('estado',1)
-			->count();
-		$nomina_mes_anio_anterior = Nomina::
-			whereIn('id_cliente',function($query) use ($id_grupo){
+			->first()
+			->cantidad;
+		$nomina_mes_anio_anterior = NominaHistorial::select('*')
+			->where('year_month',$today->firstOfMonth()->subYear()->format('Ym'))
+			->whereIn('cliente_id',function($query) use ($id_grupo){
 				$query
 					->select('id_cliente')
 					->from('cliente_grupo')
 					->where('id_grupo',$id_grupo);
 			})
-			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
-			//->where('estado',1)
-			->count();
-		///nomina año actual: promedio de nominas mes a mes
-		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
-		// Iterate over the period
-		$count_nomina = [];
-		foreach ($period as $date) {
-			$yearmonth = $date->format('Ym');
-
-			$count_nomina[] = Nomina::
-				whereIn('id_cliente',function($query) use ($id_grupo){
-					$query
-						->select('id_cliente')
-						->from('cliente_grupo')
-						->where('id_grupo',$id_grupo);
-				})
-				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<='{$yearmonth}'")
-				->whereIn('id_cliente',function($query) use ($id_grupo){
-					$query
-						->select('id_cliente')
-						->from('cliente_grupo')
-						->where('id_grupo',$id_grupo);
-				})
-				->count();
-		}
-		$valores = collect($count_nomina);
-		$nomina_promedio_actual = (int) ceil($valores->average());
+			->first()
+			->cantidad;
+		$nomina_promedio_actual = NominaHistorial::selectRaw("CEIL(AVG(cantidad)) as cantidad")
+			->whereBetween('year_month',[$today->startOfYear()->format('Ym'),$today->format('Ym')])
+			->whereIn('cliente_id',function($query) use ($id_grupo){
+				$query
+					->select('id_cliente')
+					->from('cliente_grupo')
+					->where('id_grupo',$id_grupo);
+			})
+			->first()
+			->cantidad;
 
 		/***************************************************************************************************/
 		/*** Unificar queries desde Traits/Ausentismos ya que son las mismas pero cambia un solo where  ****/
 		/***************************************************************************************************/
-		///
+
+		/// ausentismos mes a mes
 		$months_current_year = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
 		$indices_mes_a_mes = [];
 		foreach($months_current_year as $date){
@@ -145,7 +134,7 @@ class GruposResumenController extends Controller
 			$fin_mes_formatted = $fin_mes->format('Y-m-d');
 
 			///
-			$nomina = NominaHistorial::selectRaw("SUM(cantidad) cantidad")
+			$nomina = NominaHistorial::select('cantidad','year_month')
 				->where('year_month',$date->format('Ym'))
 				->whereIn('cliente_id',function($query) use ($id_grupo){
 					$query
@@ -159,26 +148,28 @@ class GruposResumenController extends Controller
 			$ausentismos = Ausentismo::selectRaw("
 				SUM(
 					ABS(DATEDIFF(
-
 						IF(
-						fecha_final<'{$fin_mes_formatted}',
-						fecha_final,
-						'{$fin_mes_formatted}'
-					),
-					IF(
-						fecha_inicio<'{$inicio_mes_formatted}',
-						'{$inicio_mes_formatted}',
-						fecha_inicio
-					)
+							IFNULL(
+								fecha_final,
+								'{$fin_mes_formatted}'
+							) >= '{$fin_mes_formatted}',
+							'{$fin_mes_formatted}',
+							fecha_final
+						),
+						IF(
+							fecha_inicio>='{$inicio_mes_formatted}',
+							fecha_inicio,
+							'{$inicio_mes_formatted}'
+						)
 					))+1
 				) dias
 			")
-				->where(function($query) use ($inicio_mes,$fin_mes){
+				->where(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
 					$query->whereBetween('fecha_inicio',[$inicio_mes,$fin_mes])
-					->orWhere(function($query) use ($inicio_mes,$fin_mes){
+					->orWhere(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
 						$query->where('fecha_inicio','<',$inicio_mes)
-							->where(function($query) use ($fin_mes){
-								$query->where('fecha_final','>',$fin_mes)
+							->where(function($query) use ($fin_mes,$date_immutable){
+								$query->where('fecha_final','>',$date_immutable->endOfMonth())
 									->orWhere('fecha_final',null);
 							});
 					});
@@ -205,7 +196,7 @@ class GruposResumenController extends Controller
 				//'ausentismos'=>$ausentismos->total,
 				'dias'=>$ausentismos->dias,
 				'month'=>Str::ucfirst($date->formatLocalized('%B')),
-				'indice'=>$nomina ? (round($ausentismos->dias/($nomina*( $fin_mes->format('d') )),5)*100) : 0,
+				'indice'=>$nomina ? ($ausentismos->dias/($nomina*( $fin_mes->format('d') ))*100) : 0,
 				'nomina'=>$nomina,
 				'inicio_mes'=>$inicio_mes_formatted,
 				'fin_mes'=>$fin_mes_formatted
@@ -214,11 +205,6 @@ class GruposResumenController extends Controller
 
 			////$indices_mes_a_mes[$date->format('Ym')]['month'] = Str::ucfirst($date->formatLocalized('%B'));
 		}
-		////dd(123);
-
-
-
-
 
 
 
@@ -265,10 +251,10 @@ class GruposResumenController extends Controller
 				->orWhere(function($query) use ($today){
 					// los que siguen ausentes fuera del mes actual
 					$query
-						->where('fecha_inicio','<=',$today->startOfMonth())
+						->where('fecha_inicio','<',$today->startOfMonth())
 						->where(function($query) use($today){
 							$query
-								->where('fecha_final','>=',$today->startOfMonth())
+								->where('fecha_final','>',$today->startOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -398,7 +384,7 @@ class GruposResumenController extends Controller
 					$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>=',$today->startOfMonth()->subYear()->endOfMonth())
+								->where('fecha_final','>',$today->startOfMonth()->subYear()->endOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -470,7 +456,7 @@ class GruposResumenController extends Controller
 						->where('fecha_inicio','<',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>=',$today->startOfYear())
+								->where('fecha_final','>',$today->startOfYear())
 								->orWhere('fecha_final',null);
 						});
 				});
