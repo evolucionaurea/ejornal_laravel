@@ -69,7 +69,13 @@ trait Ausentismos {
 						DATE(NOW())
 					),
 					fecha_inicio
-				))+1 as total_dias"
+				))+1 as total_dias,
+
+				IF(
+					IFNULL(fecha_final,DATE(NOW())) >= DATE(NOW()),
+					1,
+					0
+				) ausente"
 			))
 			->where('nominas.id_cliente',$id_cliente);
 
@@ -94,9 +100,10 @@ trait Ausentismos {
 			$query->where(function($query) use ($now) {
 				$query
 					->where('ausentismos.fecha_final',null)
-					->orWhere('ausentismos.fecha_final','>',$now);
+					->orWhere('ausentismos.fecha_final','>=',$now->format('Y-m-d'));
 			});
-			$query->where('ausentismos.fecha_inicio','<=',$now);
+			$query->where('ausentismos.fecha_inicio','<=',$now->format('Y-m-d'));
+			$query->where('ausentismo_tipo.incluir_indice',1);
 		}
 
 
@@ -299,11 +306,15 @@ trait Ausentismos {
 
 		foreach($ausentismos as $ausentismo){
 			$hoy = '';
-			if(is_null($ausentismo->fecha_final)){
+			/*if(is_null($ausentismo->fecha_final)){
 				$hoy = 'ausente';
 			}else{
-				if($ausentismo->fecha_final > $now) $hoy = 'ausente';
-			}
+				if($ausentismo->fecha_final >= $now->format) $hoy = 'ausente';
+			}*/
+
+			if($ausentismo->ausente===1 && $ausentismo->incluir_indice===1) $hoy = 'ausente';
+			if($ausentismo->ausente===1 && $ausentismo->incluir_indice===0) $hoy = 'vigente';
+
 			fputcsv($fp,[
 				$ausentismo->trabajador_nombre,
 				$ausentismo->trabajador_dni,
@@ -332,30 +343,6 @@ trait Ausentismos {
 		$today = CarbonImmutable::now();
 
 		/// NOMINAS
-		/*$nomina_actual = Nomina::
-			where('id_cliente',$id_cliente)
-			->count();
-		$nomina_mes_anterior = Nomina::
-			where('id_cliente',$id_cliente)
-			->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString())
-			->count();
-		$nomina_mes_anio_anterior = Nomina::
-			where('id_cliente',$id_cliente)
-			->where('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString())
-			->count();
-		$period = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
-		$count_nomina = [];
-		foreach ($period as $date) {
-			$yearmonth = $date->format('Ym');
-
-			$count_nomina[] = Nomina::
-				where('id_cliente',$id_cliente)
-				->whereRaw("EXTRACT(YEAR_MONTH FROM created_at)<='{$yearmonth}'")
-				->count();
-		}
-		$valores = collect($count_nomina);
-		$nomina_promedio_actual = (int) ceil($valores->average());*/
-
 		$nomina_actual = NominaHistorial::select('*')
 			->where('year_month',$today->format('Ym'))
 			->where('cliente_id',$id_cliente)
@@ -397,7 +384,7 @@ trait Ausentismos {
 				->where('cliente_id',$id_cliente)
 				->first()
 				->cantidad;
-			DB::enableQueryLog();
+			//DB::enableQueryLog();
 			$ausentismos = Ausentismo::selectRaw("
 				SUM(
 					ABS(DATEDIFF(
@@ -424,7 +411,7 @@ trait Ausentismos {
 						->orWhere(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
 							$query->where('fecha_inicio','<',$inicio_mes)
 								->where(function($query) use ($fin_mes,$date_immutable){
-									$query->where('fecha_final','>',$date_immutable->endOfMonth())
+									$query->where('fecha_final','>',$fin_mes)
 										->orWhere('fecha_final',null);
 								});
 						});
@@ -432,7 +419,6 @@ trait Ausentismos {
 				->whereIn('id_trabajador',function($query) use ($id_cliente){
 					$query->select('id')
 						->from('nominas')
-						//->where('estado',1)
 						->where('deleted_at',null)
 						->where('id_cliente',$id_cliente);
 				})
@@ -451,7 +437,7 @@ trait Ausentismos {
 				'nomina'=>$nomina,
 				'inicio_mes'=>$inicio_mes_formatted,
 				'fin_mes'=>$fin_mes_formatted,
-				'sql'=>DB::getQueryLog()[0]
+				//'sql'=>DB::getQueryLog()[0]
 				///'dia'=>$today->format('Ym')==$date->format('Ym') ? $today->format('d') : $date->endOfMonth()->format('d')
 			];
 

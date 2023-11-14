@@ -5,19 +5,19 @@ $(()=>{
 	new Tablas({
 		controller:'/empleados/medicamentos',
 		get_path:'/busqueda',
-		table:$('.tabla_movimientos_empleado_listado'),
+		table:$('[data-table="movimientos-medicamentos"]'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:[[ 5, "desc" ]]},
 		render_row:medicamento=>{
 
 			// Obtener la fecha en formato ISO (yyyy-mm-dd)
-            const fechaISO = medicamento.fecha_ingreso.split(' ')[0];
+			const fechaISO = medicamento.fecha_ingreso.split(' ')[0];
 
-            // Dividir la fecha en año, mes y día
-            const [año, mes, dia] = fechaISO.split('-');
+			// Dividir la fecha en año, mes y día
+			const [año, mes, dia] = fechaISO.split('-');
 
-            // Formatear la fecha en el formato "dd/mm/yyyy"
-            const fechaFormateada = `${dia}/${mes}/${año}`;
+			// Formatear la fecha en el formato "dd/mm/yyyy"
+			const fechaFormateada = `${dia}/${mes}/${año}`;
 
 			return $(`
 				<tr>
@@ -39,5 +39,12 @@ $(()=>{
 			)
 		}
 	})
+
+
+	$('[data-table="movimientos-medicamentos"]').on('click','.editar_stock_medicamentos',btn=>{
+		let id = $(btn.currentTarget).attr('data-info')
+		$('.form_editar_stock_medicamentos').attr('action', `medicamentos/${id}`)
+	})
+
 
 })

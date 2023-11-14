@@ -94,17 +94,9 @@ $(()=>{
 					orderable:false,
 					className:'align-middle',
 					render:v=>{
-						if(v.fecha_final == null){
-							if(v.incluir_indice===0) return '<span class="badge badge-warning">vigente</span>'
-							return '<span class="badge badge-danger">ausente</span>'
-						}else{
-							let str = v.fecha_final;
-							let [dia, mes, anio] = str.split('/');
-							let regreso_trabajar = new Date(+anio, mes - 1, +dia);
-							let hoy = new Date();
-							if(regreso_trabajar > hoy && v.incluir_indice===0) return '<span class="badge badge-warning">vigente</span>'
-							return regreso_trabajar > hoy  ? '<span class="badge badge-danger">ausente</span>' : ''
-						}
+						if(v.ausente===1 && v.incluir_indice===1) return '<span class="badge badge-danger">ausente</span>'
+						if(v.ausente===1 && v.incluir_indice===0) return '<span class="badge badge-warning">vigente</span>'
+						return ''
 					}
 				},
 				{

@@ -169,7 +169,7 @@ class GruposResumenController extends Controller
 					->orWhere(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
 						$query->where('fecha_inicio','<',$inicio_mes)
 							->where(function($query) use ($fin_mes,$date_immutable){
-								$query->where('fecha_final','>',$date_immutable->endOfMonth())
+								$query->where('fecha_final','>',$fin_mes)
 									->orWhere('fecha_final',null);
 							});
 					});

@@ -13,8 +13,8 @@ require('./footer.js');
 require('./ajax.js');
 require('./users.js');
 require('./nav_sup.js');
-require('./medicamentos.js');
-require('./stock_medicamentos.js');
+//require('./medicamentos.js');
+///require('./stock_medicamentos.js');
 require('./documentacion_ausentismo.js');
 require('./documentacion_tarea_liviana.js');
 
@@ -61,6 +61,7 @@ if(route=='empleados.covid.testeos') require('./empleados/covid.testeos')
 if(route=='empleados.covid.vacunas') require('./empleados/covid.vacunas')
 
 if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
+if(route=='medicamentos.create') require('./empleados/medicamentos.create')
 if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='medicas.create') require('./empleados/consultas.medicas.create')

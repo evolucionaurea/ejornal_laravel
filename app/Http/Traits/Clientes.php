@@ -57,12 +57,12 @@ trait Clientes {
 
 
 
-
 		/// AUSENTISMOS
 		/// MES ACTUAL
 		//DB::enableQueryLog();
 		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
 		$today_formatted = $today->format('Y-m-d');
+		///dump($inicio_mes,$today_formatted);
 		$q_ausentismos_mes_actual = Ausentismo::selectRaw("
 			SUM(
 				ABS(DATEDIFF(
@@ -70,9 +70,9 @@ trait Clientes {
 					IF(
 						IFNULL(
 							fecha_final,
-							DATE(NOW())
-						) >= DATE(NOW()),
-						DATE(NOW()),
+							'{$today_formatted}'
+						) >= '{$today_formatted}',
+						'{$today_formatted}',
 						fecha_final
 					),
 
@@ -91,7 +91,7 @@ trait Clientes {
 					// los que siguen ausentes fuera del mes actual
 					$query->where('fecha_inicio','<',$today->startOfMonth())
 					->where(function($query) use($today){
-						$query->where('fecha_final','>',$today->endOfMonth())
+						$query->where('fecha_final','>',$today)
 							->orWhere('fecha_final',null);
 					});
 				});
@@ -108,7 +108,7 @@ trait Clientes {
 		})
 		->orderBy('dias','desc');
 
-		///dd($q_ausentismos_mes_actual->first()->dias);
+		//dd($q_ausentismos_mes_actual->toSql());
 
 		$dias_mes_actual = $q_ausentismos_mes_actual->first()->dias;
 		$ausentismos_mes_actual = $nomina_actual ? ($dias_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
