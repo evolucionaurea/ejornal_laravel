@@ -45,10 +45,10 @@ class GruposResumenController extends Controller
 				//total nóminas
 				->withCount('nominas')
 				->withCount(['nominas as nominas_mes_anterior'=>function($query) use ($today){
-						$query->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString());
+					$query->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString());
 				}])
 				->withCount(['nominas as nominas_mes_anio_anterior'=>function($query) use ($today){
-						$query->whereDate('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString());
+					$query->whereDate('created_at','<=',$today->firstOfMonth()->subYear()->endOfMonth()->toDateString());
 				}]);
 
 			}
@@ -241,12 +241,6 @@ class GruposResumenController extends Controller
 				$query->where(function($query) use ($today){
 					$query
 						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
-						/*->where(function($query) use($today){
-							$query
-								->where('fecha_final','<=',$today)
-								->orWhere('fecha_final','>=',$today)
-								->orWhere('fecha_final',null);
-						});*/
 				})
 				->orWhere(function($query) use ($today){
 					// los que siguen ausentes fuera del mes actual
@@ -329,7 +323,7 @@ class GruposResumenController extends Controller
 				$query
 					->select('id')
 					->from('nominas')
-					//->where('deleted_at',null)
+					->where('deleted_at',null)
 					///->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
@@ -393,8 +387,8 @@ class GruposResumenController extends Controller
 				$query
 					->select('id')
 					->from('nominas')
-					//->where('deleted_at',null)
-					->where('estado',1)
+					->where('deleted_at',null)
+					//->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
@@ -440,16 +434,6 @@ class GruposResumenController extends Controller
 			}])
 			->where(function($query) use ($today){
 				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
-				/*$query->where(function($query) use ($today){
-					$query
-						->whereBetween('fecha_inicio',[$today->startOfYear(),$today])
-						->where(function($query) use ($today){
-							$query
-								->where('fecha_final','<=',$today)
-								->orWhere('fecha_final','>=',$today)
-								->orWhere('fecha_final',null);
-						});
-				})*/
 				// los que estuvieron ausentes durante el curso del año pero iniciaron ausentismo antes de este año y volvieron dsp
 				->orWhere(function($query) use ($today){
 					$query
@@ -465,8 +449,8 @@ class GruposResumenController extends Controller
 				$query
 					->select('id')
 					->from('nominas')
-					//->where('deleted_at',null)
-					->where('estado',1)
+					->where('deleted_at',null)
+					//->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')

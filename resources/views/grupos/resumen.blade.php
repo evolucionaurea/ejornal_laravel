@@ -30,7 +30,7 @@
 								<th scope="col"> <b>Nombre</b></th>
 								<th class="text-right">Total Nómina</th>
 								{{-- <th class="text-right">Ausentes hoy <i class="fa fa-question-circle fa-fw" data-swal="Se contabilizan sólamente los trabajadores activos."></i></th> --}}
-								<th class="text-right">Ausentismos Mes Actual <i class="fa fa-question-circle fa-fw" data-swal="Porcentaje de ausentismos en relación a la nómina actual."></i></th>
+								<th class="text-right">Ausentismos Mes Actual <i class="fa fa-question-circle fa-fw" data-swal="Porcentaje de ausentismos en relación a la nómina actual. NO incluye Accidentes o Incidentes"></i></th>
 								<th class="text-right">Ausentismos Mes Anterior</th>
 								<th class="text-right">Ausentismos Mismo Mes Año Anterior</th>
 								<th class="text-right">Ausentismos del Año</th>
@@ -44,10 +44,10 @@
 								<td>{{$cliente->nombre}}</td>
 								<td class="text-right">{{$cliente->nominas_count}}</td>
 								{{-- <td class="text-right">{{$cliente->ausentismos_count}}</td> --}}
-								<td class="text-right">{{$cliente->ausentismos->ausentismos_mes_actual}}%</td>
-								<td class="text-right">{{$cliente->ausentismos->ausentismos_mes_pasado}}%</td>
-								<td class="text-right">{{$cliente->ausentismos->ausentismos_mes_anio_anterior}}%</td>
-								<td class="text-right">{{$cliente->ausentismos->ausentismos_anio_actual}}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_actual_indice+$cliente->ausentismos->accidentes_mes_actual_indice+$cliente->ausentismos->incidentes_mes_actual_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_pasado_indice+$cliente->ausentismos->accidentes_mes_pasado_indice+$cliente->ausentismos->incidentes_mes_pasado_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_anio_anterior_indice+$cliente->ausentismos->accidentes_mes_anio_anterior_indice+$cliente->ausentismos->incidentes_mes_anio_anterior_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_anio_actual_indice+$cliente->ausentismos->accidentes_anio_actual_indice+$cliente->ausentismos->incidentes_anio_actual_indice,2,',','.') }}%</td>
 							</tr>
 							@endforeach
 						</tbody>
@@ -106,7 +106,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot class="d-none">
+								<tfoot>
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>
@@ -135,7 +135,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot class="d-none">
+								<tfoot>
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>
@@ -164,7 +164,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot class="d-none">
+								<tfoot>
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>
@@ -193,7 +193,7 @@
 								<tbody>
 									{{-- Se carga por JS --}}
 								</tbody>
-								<tfoot class="d-none">
+								<tfoot>
 									<tr class="alert-info">
 										<th>Total</th>
 										<th data-content="total-ausentismos"></th>

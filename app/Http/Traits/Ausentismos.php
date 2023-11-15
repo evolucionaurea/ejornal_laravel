@@ -474,8 +474,8 @@ trait Ausentismos {
 			) dias,
 
 			count(*) as total,
-			id_tipo"
-		)
+			id_tipo
+		")
 			->with(['tipo'=>function($query){
 				$query
 					->select('id','nombre','color');
@@ -484,12 +484,6 @@ trait Ausentismos {
 				$query->where(function($query) use ($today){
 					$query
 						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
-						/*->where(function($query) use($today){
-							$query
-								->where('fecha_final','<=',$today)
-								->orWhere('fecha_final','>=',$today)
-								->orWhere('fecha_final',null);
-						});*/
 				})
 				->orWhere(function($query) use ($today){
 					// los que siguen ausentes fuera del mes actual
@@ -545,7 +539,6 @@ trait Ausentismos {
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->whereBetween('fecha_inicio',[$today->startOfMonth()->subMonth(),$today->startOfMonth()->subMonth()->endOfMonth()])
 				/*$query->where(function($query) use ($today){
@@ -605,7 +598,6 @@ trait Ausentismos {
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->where(function($query) use ($today){
 					$query
@@ -626,13 +618,15 @@ trait Ausentismos {
 						});
 				});
 			})
-
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
 					//->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
+			})
+			->whereHas('tipo',function($query){
+				$query->where('incluir_indice',1);
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -666,7 +660,6 @@ trait Ausentismos {
 			->with(['tipo'=>function($query){
 				$query->select('id','nombre','color');
 			}])
-
 			->where(function($query) use ($today){
 				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
 				// los que estuvieron ausentes durante el curso del año pero iniciaron ausentismo antes de este año y volvieron dsp
