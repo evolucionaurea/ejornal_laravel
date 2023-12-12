@@ -49,7 +49,7 @@ class EmpleadosPreocupacionalesController extends Controller
 	 */
 	public function create()
 	{
-		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
 		$clientes = $this->getClientesUser();
 		return view('empleados.preocupacionales.create', compact('clientes', 'trabajadores'));
 

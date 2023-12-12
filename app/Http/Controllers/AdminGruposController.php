@@ -44,7 +44,7 @@ class AdminGruposController extends Controller
    */
   public function create()
   {
-      $clientes = Cliente::all();
+      $clientes = Cliente::orderBy('nombre', 'asc')->get();
       return view('admin.grupos.create', compact('clientes'));
   }
 
@@ -93,7 +93,7 @@ class AdminGruposController extends Controller
       $grupo = Grupo::findOrFail($id);
       $busqueda = ClienteGrupo::where('id_grupo', $id)->get();
       $clientes_seleccionados = array_column($busqueda->toArray(), 'id_cliente');
-      $clientes = Cliente::all();
+      $clientes = Cliente::orderBy('nombre', 'asc')->get();
 
       return view('admin.grupos.edit', compact('grupo', 'clientes', 'clientes_seleccionados'));
     }

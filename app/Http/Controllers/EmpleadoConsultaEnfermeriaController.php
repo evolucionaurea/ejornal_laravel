@@ -95,7 +95,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 
 		$clientes = $this->getClientesUser();
 
-		$diagnostico_consultas = DiagnosticoConsulta::all();
+		$diagnostico_consultas = DiagnosticoConsulta::orderBy('nombre', 'asc')->get();
 
 		$stock_medicamentos = StockMedicamento::join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
 		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')

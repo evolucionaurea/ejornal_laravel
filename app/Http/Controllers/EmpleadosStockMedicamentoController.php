@@ -88,7 +88,7 @@ class EmpleadosStockMedicamentoController extends Controller
 
 	  $clientes = $this->getClientesUser();
 
-	  $medicamentos = Medicamento::orderBy('nombre')->get();
+	  $medicamentos = Medicamento::orderBy('nombre', 'asc')->get();
 	  return view('empleados.medicamentos.create', compact('clientes', 'medicamentos'));
 
 	}

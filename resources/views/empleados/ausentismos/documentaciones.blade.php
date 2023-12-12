@@ -88,7 +88,7 @@
                                     @if ($ausencia->archivo == null)
                                     No se adjuntó un archivo
                                     @else
-                                    <a class="btn-ejornal btn-ejornal-dark"
+                                    <a target="_blank" class="btn-ejornal btn-ejornal-dark"
                                         href="{{route('ausentismos.archivo', $ausencia->id)}}">
                                         <i class="fa fa-file"></i>{{$ausencia->archivo}}
                                     </a>
@@ -183,7 +183,7 @@
                                                 </small>
                                                 <small class="text-muted">
                                                     <h6 class="ml-4 mb-3">Archivo subido: </h6>
-                                                    <a class="btn-ejornal btn-ejornal-gris-claro ml-4"
+                                                    <a target="_blank" class="btn-ejornal btn-ejornal-gris-claro ml-4"
                                                         href="{{route('documentacion_ausentismo.archivo', $documentacion->id)}}">
                                                         <i class="fa fa-file"></i>{{$documentacion->archivo}}
                                                     </a>

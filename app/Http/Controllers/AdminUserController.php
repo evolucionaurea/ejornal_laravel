@@ -32,7 +32,7 @@ class AdminUserController extends Controller
 		$users = User::join('roles', 'users.id_rol', '=', 'roles.id')
 		->leftJoin('especialidades', 'users.id_especialidad', 'especialidades.id')
 		->select('users.*', DB::raw( 'roles.nombre rol'), DB::raw( 'especialidades.nombre especialidad'))
-		->orderBy('nombre')
+		->orderBy('nombre', 'asc')
 		->get();
 
 		$users_sin_empresas = [];
@@ -44,9 +44,9 @@ class AdminUserController extends Controller
 			}
 		}
 
-		$roles = Rol::all();
-		$clientes = Cliente::all();
-		$grupos = Grupo::all();
+		$roles = Rol::orderBy('nombre', 'asc')->get();
+		$clientes = Cliente::orderBy('nombre', 'asc')->get();
+		$grupos = Grupo::orderBy('nombre', 'asc')->get();
 
 		return view('admin.users', compact('users', 'users_sin_empresas', 'roles', 'clientes', 'grupos'));
 	}
@@ -55,7 +55,7 @@ class AdminUserController extends Controller
 		$query_users = User::select('users.*',DB::raw( 'roles.nombre rol'), DB::raw( 'especialidades.nombre especialidad'))
 			->join('roles', 'users.id_rol', '=', 'roles.id')
 			->leftJoin('especialidades', 'users.id_especialidad', 'especialidades.id')
-			->orderBy('nombre');
+			->orderBy('nombre', 'asc');
 
 		if(isset($request->especialidad)) $query_users->where('users.id_especialidad',$request->especialidad);
 		if(isset($request->rol)) $query_users->where('users.id_rol',$request->rol);
@@ -95,10 +95,10 @@ class AdminUserController extends Controller
 	 */
 	public function create()
 	{
-		$roles = Rol::all();
-		$clientes = Cliente::all();
-		$especialidades = Especialidad::all();
-		$grupos = Grupo::all();
+		$roles = Rol::orderBy('nombre', 'asc')->get();
+		$clientes = Cliente::orderBy('nombre', 'asc')->get();
+		$especialidades = Especialidad::orderBy('nombre', 'asc')->get();
+		$grupos = Grupo::orderBy('nombre', 'asc')->get();
 		return view('admin.users.create', compact('roles', 'clientes', 'especialidades', 'grupos'));
 	}
 
@@ -257,9 +257,9 @@ class AdminUserController extends Controller
 	{
 		$user = User::findOrFail($id);
 		// dd($user);
-		$roles = Rol::all();
-		$clientes = Cliente::all();
-		$especialidades = Especialidad::all();
+		$roles = Rol::orderBy('nombre', 'asc')->get();
+		$clientes = Cliente::orderBy('nombre', 'asc')->get();
+		$especialidades = Especialidad::orderBy('nombre', 'asc')->get();
 		$buscar_clientes_asignados = ClienteUser::where('id_user', $id)->get();
 		$clientes_seleccionados = [];
 		foreach ($buscar_clientes_asignados as $asignados) {

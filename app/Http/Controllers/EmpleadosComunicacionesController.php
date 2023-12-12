@@ -107,7 +107,7 @@ class EmpleadosComunicacionesController extends Controller
 	  ->orderBy('comunicaciones.created_at', 'desc')
 	  ->get();
 
-	  $tipo_comunicaciones = TipoComunicacion::all();
+	  $tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
 
 
 	  $clientes = $this->getClientesUser();

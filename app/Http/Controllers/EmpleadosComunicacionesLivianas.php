@@ -112,7 +112,7 @@ class EmpleadosComunicacionesLivianas extends Controller
       'comunicaciones_livianas.updated_at')
 	  ->get();
 
-	  $tipos_comunicaciones_livianas = TipoComunicacionLiviana::all();
+	  $tipos_comunicaciones_livianas = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();
 
 
 	  $clientes = $this->getClientesUser();
