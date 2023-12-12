@@ -41,54 +41,54 @@
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Nombre *</label>
-						<input required name="nombre" type="text" class="form-control form-control-sm" placeholder="">
+						<input required name="nombre" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nombre')}}">
 					</div>
 					<div class="form-group col-md-3">
-						<label>Email/CUIL *</label>
-						<input required name="email" type="text" class="form-control form-control-sm" placeholder="">
+						<label>CUIL</label>
+						<input name="email" type="text" class="form-control form-control-sm" placeholder="" value="{{old('email')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Teléfono</label>
-						<input name="telefono" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="telefono" type="text" class="form-control form-control-sm" placeholder="" value="{{old('telefono')}}">
 					</div>
 					<div class="form-group col-md-3">
-						<label>DNI</label>
-						<input name="dni" type="text" class="form-control form-control-sm" placeholder="">
+						<label>DNI *</label>
+						<input required name="dni" type="number" class="form-control form-control-sm" placeholder="solamente números, sin puntos" step="1" value="{{old('dni')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Estado *</label>
-						<select name="estado" class="form-control form-control-sm">
-							<option value="1">Activo</option>
-							<option value="0">Inactivo</option>
+						<select required name="estado" class="form-control form-control-sm">
+							<option value="1" {{ old('estado')=='1' ? 'selected' : '' }}>Activo</option>
+							<option value="0" {{ old('estado')=='0' ? 'selected' : '' }}>Inactivo</option>
 						</select>
 					</div>
 					<div class="form-group col-md-3">
 						<label>Sector *</label>
-						<input required name="sector" type="text" class="form-control form-control-sm" placeholder="">
+						<input required name="sector" type="text" class="form-control form-control-sm" placeholder="" value="{{old('sector')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Calle</label>
-						<input name="calle" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="calle" type="text" class="form-control form-control-sm" placeholder="" value="{{old('calle')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Nro</label>
-						<input name="nro" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="nro" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nro')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Entre calles</label>
-						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="" value="{{old('entre_calles')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Localidad</label>
-						<input name="localidad" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="localidad" type="text" class="form-control form-control-sm" placeholder="" value="{{old('localidad')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Partido</label>
-						<input name="partido" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="partido" type="text" class="form-control form-control-sm" placeholder="" value="{{old('partido')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Codigo postal</label>
-						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="">
+						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="" value="{{old('cod_postal')}}">
 					</div>
 
 					<div class="form-group col-md-3">
@@ -106,7 +106,7 @@
 					<div class="form-group col-md-12">
 						<label>Observaciones</label>
 						<textarea class="form-control form-control-sm" name="observaciones" rows="2"
-							cols="80"></textarea>
+							cols="80">{{old('observaciones')}}</textarea>
 					</div>
 				</div>
 				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear trabajador</button>

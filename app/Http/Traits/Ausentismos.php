@@ -343,11 +343,21 @@ trait Ausentismos {
 		$today = CarbonImmutable::now();
 
 		/// NOMINAS
-		$nomina_actual = NominaHistorial::select('*')
+		$q_nomina = NominaHistorial::select('*')
 			->where('year_month',$today->format('Ym'))
 			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
+			->first();
+		if(!$q_nomina){
+			\Artisan::call('db:seed', [
+				'--class' => 'NominaHistorialSeeder'
+			]);
+			$q_nomina = NominaHistorial::select('*')
+			->where('year_month',$today->format('Ym'))
+			->where('cliente_id',$id_cliente)
+			->first();
+		}
+		$nomina_actual = $q_nomina->cantidad;
+
 		$nomina_mes_anterior = NominaHistorial::select('*')
 			->where('year_month',$today->firstOfMonth()->subMonth()->format('Ym'))
 			->where('cliente_id',$id_cliente)

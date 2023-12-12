@@ -30,6 +30,17 @@
 
 		@include('mensajes_validacion')
 
+		@if (\Session::has('errores'))
+		<div class="alert alert-danger alert-dismissible fade show mt-2 mr-4 ml-4" role="alert">
+			<p>Se encontraron los siguientes errores al importar el archivo:</p>
+			<ul class="list-group list-group-flush small">
+				@foreach(\Session::get('errores') as $error)
+				<li class="list-group-item py-1 px-0">Fila: {{ $error->fila }} | Columna: {{ $error->columna }} | Error: {{ $error->error }}</li>
+				@endforeach
+			</ul>
+		</div>
+		@endif
+
 
 		<div class="tarjeta">
 

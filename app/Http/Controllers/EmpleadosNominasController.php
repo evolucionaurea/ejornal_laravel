@@ -79,7 +79,7 @@ class EmpleadosNominasController extends Controller
 
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
-			'email' => 'required',
+			'dni' => 'required|numeric|digits:8',
 			'estado' => 'required',
 			'sector' => 'required'
 		]);
@@ -120,7 +120,7 @@ class EmpleadosNominasController extends Controller
 		if (isset($request->observaciones) && !empty($request->observaciones)) {
 			$trabajador->observaciones = $request->observaciones;
 		}
-		$trabajador->dni = $request->dni;
+		$trabajador->dni = preg_replace('/[^0-9]/', '', $request->dni);
 		$trabajador->estado = $request->estado;
 		$trabajador->sector = $request->sector;
 		if ($request->estado == 0) {
@@ -128,6 +128,8 @@ class EmpleadosNominasController extends Controller
 		}else{
 			$trabajador->fecha_baja =  null;
 		}
+
+		dd($trabajador);
 
 		$trabajador->save();
 
@@ -420,7 +422,7 @@ class EmpleadosNominasController extends Controller
 		while (($fila = fgetcsv($fichero, 0, ";", '"')) !== false) {
 
 			if($indice!==0){
-
+				/*
 				if(
 					empty($fila[0]) ||
 					empty($fila[1]) ||
@@ -429,7 +431,7 @@ class EmpleadosNominasController extends Controller
 				){
 					$error = true;
 					break;
-				}
+				}*/
 
 				$registros[] = (object) [
 					'nombre'=>$fila[0],
@@ -457,7 +459,7 @@ class EmpleadosNominasController extends Controller
 					!isset($fila[4]) ||
 					!isset($fila[5])
 				){
-					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');
+					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, cuil, telefono, dni, estado y sector obligatoriamente');
 					break;
 				}
 
@@ -467,12 +469,8 @@ class EmpleadosNominasController extends Controller
 		fclose($fichero);
 
 		if($error){
-			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, email, estado y sector son obligatorios.');
+			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, cuil, estado y sector son obligatorios.');
 		}
-
-
-		//dd($registros);
-
 
 
 		///dd($registros[0]);
@@ -508,7 +506,50 @@ class EmpleadosNominasController extends Controller
 		$empleados_actualizados = [];
 		$empleados_existentes = [];
 
-		//dd(count($nomina_actual));
+
+
+		///validar registros
+		$errores = [];
+		foreach($registros as $kr=>$registro){
+			$dni = preg_replace('/[^0-9]/', '', $registro->dni);
+			if(strlen($dni)!=8){
+				$errores[] = (object) [
+					'fila'=>$kr+2,
+					'columna'=>'DNI',
+					'valor'=>$registro->dni,
+					'error'=>'Ingrese un valor válido para este campo. (sólamente números)'
+				];
+			}
+			if(!$registro->nombre){
+				$errores[] = (object) [
+					'fila'=>$kr+2,
+					'columna'=>'Nombre',
+					'valor'=>$registro->nombre,
+					'error'=>'Falta ingresar un valor en este campo.'
+				];
+			}
+			if(!$registro->estado ){
+				$errores[] = (object) [
+					'fila'=>$kr+2,
+					'columna'=>'Estado',
+					'valor'=>$registro->estado,
+					'error'=>'Falta ingresar un valor en este campo. Valores válidos: Activo | Baja'
+				];
+			}
+			if(!$registro->sector){
+				$errores[] = (object) [
+					'fila'=>$kr+2,
+					'columna'=>'Sector',
+					'valor'=>$registro->sector,
+					'error'=>'Falta ingresar un valor en este campo.'
+				];
+			}
+		}
+
+		if(!empty($errores)){
+			return back()->with(compact('errores'));
+		}
+		///dd($errores);
 
 
 		foreach ($registros as $kr=>$registro){
@@ -529,7 +570,10 @@ class EmpleadosNominasController extends Controller
 			if(!$empleado_id || ($empleado_id && $request->coincidencia==1)){
 				$nomina->nombre = $registro->nombre;
 				$nomina->email = strtolower($registro->email);
-				$nomina->dni = $registro->dni;
+
+				$nomina->dni = preg_replace('/[^0-9]/', '', $registro->dni);
+
+
 				$nomina->telefono = $registro->telefono;
 				$nomina->sector = $registro->sector;
 				$nomina->calle = $registro->calle;
@@ -545,6 +589,8 @@ class EmpleadosNominasController extends Controller
 
 			}
 		}
+
+
 		foreach ($nomina_actual as $ke=>$empleado){
 			if(!$this->buscar_en_csv($registros,$empleado)){
 				$empleados_borrables[] = $empleado->id;
@@ -574,6 +620,8 @@ class EmpleadosNominasController extends Controller
 
 		///dd($now->startOfMonth()->subMonth());
 		//dd($values);
+
+
 		NominaImportacion::updateOrCreate(
 			[
 				'year_month'=>$now->format('Ym'),

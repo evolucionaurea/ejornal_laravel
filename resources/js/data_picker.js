@@ -18,7 +18,8 @@ $(document).ready(function($){
 		#reporte_comunicaciones_desde,
 		#reporte_comunicaciones_hasta,
 		#fecha_vencimiento_matricula,
-		#ausentismo_fecha_final
+		#ausentismo_fecha_final,
+		#fecha_estudio_complementario
 	`).datepicker()
 
 	/*#ausentismo_fecha_inicio,

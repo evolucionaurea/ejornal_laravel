@@ -76,7 +76,7 @@ class GruposResumenController extends Controller
 
 		$id_grupo = auth()->user()->id_grupo;
 
-		$nomina_actual = NominaHistorial::select('*')
+		$q_nomina = NominaHistorial::select('*')
 			->where('year_month',$today->format('Ym'))
 			->whereIn('cliente_id',function($query) use ($id_grupo){
 				$query
@@ -84,8 +84,18 @@ class GruposResumenController extends Controller
 					->from('cliente_grupo')
 					->where('id_grupo',$id_grupo);
 			})
-			->first()
-			->cantidad;
+			->first();
+		if(!$q_nomina){
+			\Artisan::call('db:seed', [
+				'--class' => 'NominaHistorialSeeder'
+			]);
+			$q_nomina = NominaHistorial::select('*')
+			->where('year_month',$today->format('Ym'))
+			->where('cliente_id',$id_cliente)
+			->first();
+		}
+		$nomina_actual = $q_nomina->cantidad;
+
 		$nomina_mes_anterior = NominaHistorial::select('*')
 			->where('year_month',$today->firstOfMonth()->subMonth()->format('Ym'))
 			->whereIn('cliente_id',function($query) use ($id_grupo){

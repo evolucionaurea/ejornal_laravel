@@ -40,7 +40,8 @@ trait Nominas
 
 
 		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['data'];
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			///dd($sort);
 			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
