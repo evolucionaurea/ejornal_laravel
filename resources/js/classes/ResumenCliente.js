@@ -37,20 +37,15 @@ export default class ResumenCliente {
 		if(obj.data.length>0){
 			let count = 0;
 			let colour_assign = {}
+			let total_dias = []
 
 			obj.data.map(item=>{
-
-
-				//if(count>this.colores.length) count = 0
-				//if(!colour_assign.hasOwnProperty(item.id_tipo)) colour_assign[item.id_tipo] = this.colores[count]
-
-
 				data_labels.labels.push(item.tipo.nombre)
-				data_labels.datasets[0].data.push(item.dias)
+				//data_labels.datasets[0].data.push(item.dias)
+				data_labels.datasets[0].data.push( obj.nomina!=0 ? (item.dias/(obj.nomina*obj.dias_periodo)*100).toFixed(2) : 0 )
 				data_labels.datasets[0].backgroundColor.push(item.tipo.color)
-
+				total_dias.push(item.dias)
 				count++
-				//ausentismos_count += item.total
 			})
 
 			///console.log(colour_assign)
@@ -60,7 +55,12 @@ export default class ResumenCliente {
 				callbacks:{
 					label:(tooltipItem,data)=>{
 						const indx = tooltipItem.index
-						return `Cant. días: ${data.datasets[0].data[indx]}`
+						//return `Cant. días: ${data.datasets[0].data[indx]}`
+						return [
+							`Indice: ${ data.datasets[0].data[indx] }%`,
+							`Nómina: ${ obj.nomina }`,
+							`Total días: ${total_dias[indx]}`
+						]
 					}
 				}
 			}
@@ -130,7 +130,6 @@ export default class ResumenCliente {
 				//const percent = (row.total/total_count*100)
 				//const percent = nomina_actual*
 
-
 				td_nombre.html( `<i class="fa fa-square" style="color:${row.tipo.color}"></i> ${row.tipo.nombre}` )
 				///console.log(row.tipo)
 				td_value.text( row.total )
@@ -142,6 +141,7 @@ export default class ResumenCliente {
 				td_percent.text(`${percent.toFixed(2)} %`)
 				total_dias += parseInt(row.dias)
 				total_percent += percent
+				//total_nomina += this.data[dt.nomina]
 
 				tr.append(td_nombre,td_value,td_dias,td_percent)
 				$(`[data-table="${dt.tabla}"]`).append(tr)
@@ -149,7 +149,6 @@ export default class ResumenCliente {
 			})
 
 			//console.log(dt.data,total_dias,this.data[dt.nomina],this.data[dt.dias_periodo],total_percent)
-
 			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-ausentismos"]').text(total_ausentismos)
 			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-dias"]').text(total_dias)
 			$(`[data-table="${dt.tabla}"] tfoot`).find('[data-content="total-percent"]').text(`${total_percent.toFixed(2)} %`)
@@ -162,9 +161,6 @@ export default class ResumenCliente {
 			})
 
 		})
-
-
-
 
 
 	}
@@ -228,14 +224,18 @@ export default class ResumenCliente {
 		this.render_chart({
 			chart_canvas:'#chart_ausentismos_mes',
 			data:this.data.ausentismos_mes,
-			title:'Ausentismos Mes Actual'
+			title:'Ausentismos Mes Actual',
+			nomina:this.data.nomina_actual,
+			dias_periodo:this.data.cant_dias_mes
 		})
 
 		// chart ausentismos año actual
 		this.render_chart({
 			chart_canvas:'#chart_ausentismos_anual',
 			data:this.data.ausentismos_anual,
-			title:'Ausentismos del Año'
+			title:'Ausentismos del Año',
+			nomina:this.data.nomina_promedio_actual,
+			dias_periodo:this.data.cant_dias_anio
 		})
 
 
@@ -248,7 +248,19 @@ export default class ResumenCliente {
 		if('indices_mes_a_mes' in this.data){
 			const chart_canvas = document.querySelector(`#chart_indice_ausentismos_anual`)
 			const chart_test = chart_canvas.getContext("2d");
-			const colours = ['ff0029', '377eb8', '66a61e', '984ea3', '00d2d5', 'ff7f00', 'af8d00', '7f80cd', 'b3e900', 'c42e60', 'a65628']
+			const colours = [
+				'ff0029',
+				'377eb8',
+				'66a61e',
+				'984ea3',
+				'00d2d5',
+				'ff7f00',
+				'af8d00',
+				'7f80cd',
+				'b3e900',
+				'c42e60',
+				'a65628'
+			]
 
 			const data = {
 				labels:[],
@@ -263,7 +275,7 @@ export default class ResumenCliente {
 				data.datasets[0].data.push(row.indice)
 				data.datasets[0].backgroundColor.push(`#9c27b0`)
 				data.datasets[0].row.push(row)
-				console.log(row)
+				//console.log(row)
 			})
 			const tooltips = {
 
@@ -288,9 +300,9 @@ export default class ResumenCliente {
 							label:(tooltipItem,data)=>{
 								const indx = tooltipItem.index
 								return [
-									`Indice: ${data.datasets[0].data[indx].toFixed(2)}%`,
-									`Nómina: ${data.datasets[0].row[indx].nomina}`,
-									`Días: ${data.datasets[0].row[indx].dias}`
+									`Indice: ${ data.datasets[0].data[indx].toFixed(2) }%`,
+									`Nómina: ${ data.datasets[0].row[indx].nomina }`,
+									`Total días: ${ data.datasets[0].row[indx].dias }`
 								]
 							}
 						}

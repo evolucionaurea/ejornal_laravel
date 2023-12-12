@@ -39,7 +39,7 @@
 
 		<div class="tarjeta">
 			<form
-				action="{{action('EmpleadosAusentismosController@update', $ausentismo->id)}}?{{$_SERVER['QUERY_STRING']}}"
+				action="{{ action('EmpleadosAusentismosController@update', $ausentismo->id) }}?{{ $_SERVER['QUERY_STRING'] }}"
 				accept-charset="UTF-8" method="post">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
@@ -52,7 +52,7 @@
 					<div class="form-group col-md-4">
 						<label>Tipo</label>
 						@if($ausentismo_tipos)
-						<select name="tipo" class="form-control">
+						<select name="tipo" class="form-control" required>
 							@foreach($ausentismo_tipos as $tipo)
 							<option value="{{$tipo->id}}" {{ $ausentismo->tipo->id==$tipo->id ? 'selected' : '' }}
 								>{{$tipo->nombre}}</option>
@@ -62,12 +62,12 @@
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha inicio</label>
-						<input name="fecha_inicio" type="text" class="form-control"
+						<input name="fecha_inicio" type="text" class="form-control" required
 							value="{{ (!empty($ausentismo->fecha_inicio)) ? date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}">
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha final</label>
-						<input name="fecha_final" type="text" class="form-control"
+						<input name="fecha_final" type="text" class="form-control" required
 							value="{{ (!empty($ausentismo->fecha_final)) ? date('d/m/Y',strtotime($ausentismo->fecha_final)) : "" }}">
 					</div>
 					<div class="form-group col-md-4">

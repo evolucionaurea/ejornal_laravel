@@ -11,7 +11,7 @@
 		<h5 class="mb-0 font-weight-bold">AUSENTISMOS</h5>
 		<div class="small font-italic text-muted">Los porcentajes se calculan en base al total de días ausentes según el período seleccionado.</div>
 		<div class="small font-italic text-muted"><b>Nómina actual:</b> Valor de la última nómina disponible.</div>
-		<div class="small font-italic text-muted"><b>Nómina Año Atual:</b> Valor promedio de nominas mes a mes.</div>
+		<div class="small font-italic text-muted"><b>Nómina Año Actual:</b> Valor promedio de nominas mes a mes.</div>
 	</div>
 
 	<!-- Mes Actual -->
@@ -19,10 +19,10 @@
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-actual' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_actual }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($ausentismos_mes_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mes Actual</div>
 					<div class="mb-0 small font-italic">Nómina: {{$nomina_actual}}</div>
-					<div class="mb-0 small font-italic"></div>
+					<div class="mb-0 small font-italic">Total Días: {{ $dias_mes_actual }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -37,9 +37,10 @@
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-anterior' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_pasado }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($ausentismos_mes_pasado_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mes Anterior</div>
 					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anterior}}</div>
+					<div class="mb-0 small font-italic">Total Días: {{ $dias_mes_pasado }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -54,9 +55,10 @@
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=mes-anio-anterior' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_mes_anio_anterior }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($ausentismos_mes_anio_anterior_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
 					<div class="mb-0 small font-italic">Nómina: {{$nomina_mes_anio_anterior}}</div>
+					<div class="mb-0 small font-italic">Total Días: {{ $dias_mes_anio_anterior }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -70,9 +72,10 @@
 		<a href="{{ '/'.$route[0].'/ausentismos?ausentes=anio-actual' }}" class="card purple white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $ausentismos_anio_actual }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($ausentismos_anio_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Año actual</div>
 					<div class="mb-0 small font-italic">Nómina: {{$nomina_promedio_actual}}</div>
+					<div class="mb-0 small font-italic">Total Días: {{ $dias_anio_actual }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-minus fa-3x text-black-40"></i>
@@ -99,9 +102,9 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($accidentes_mes_actual/($nomina_actual*$now->format('d')),5))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($accidentes_mes_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mes Actual</div>
-					<div class="mb-0 small font-italic">Total: {{$accidentes_mes_actual}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_accidentes_mes_actual }}</div>
 				</div>
 				<div>
 					<i class="fas fa-users-medical fa-3x text-black-40"></i>
@@ -115,9 +118,9 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? (round($accidentes_mes_pasado/($nomina_mes_anterior*$now->subMonth()->endOfMonth()->format('d')),5))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($accidentes_mes_pasado_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mes Anterior</div>
-					<div class="mb-0 small font-italic">Total: {{$accidentes_mes_pasado}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_accidentes_mes_pasado }}</div>
 				</div>
 				<div>
 					<i class="fas fa-users-medical fa-3x text-black-40"></i>
@@ -131,9 +134,9 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($accidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$now->subYear()->endOfMonth()->format('d')),5)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($accidentes_mes_anio_anterior_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
-					<div class="mb-0 small font-italic">Total: {{$accidentes_mes_anio_anterior}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_accidentes_mes_anio_anterior }}</div>
 				</div>
 				<div>
 					<i class="fas fa-users-medical fa-3x text-black-40"></i>
@@ -147,9 +150,9 @@
 		<div class="card teal white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($accidentes_anio_actual/($nomina_actual*$now->dayOfYear()),5)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($accidentes_anio_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Año actual</div>
-					<div class="mb-0 small font-italic">Total: {{$accidentes_anio_actual}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_accidentes_anio_actual }}</div>
 				</div>
 				<div>
 					<i class="fas fa-users-medical fa-3x text-black-40"></i>
@@ -160,7 +163,6 @@
 
 
 </div>
-
 
 
 
@@ -177,9 +179,9 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? (round($incidentes_mes_actual/($nomina_actual*$now->format('d')),5))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($incidentes_mes_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mes Actual</div>
-					<div class="mb-0 small font-italic">Total: {{$incidentes_mes_actual}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_incidentes_mes_actual }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-times fa-3x text-black-40"></i>
@@ -193,9 +195,9 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_mes_anterior ? (round($incidentes_mes_pasado/($nomina_mes_anterior*$now->subMonth()->endOfMonth()->format('d')),5))*100 : 0 }}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($incidentes_mes_pasado_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mes Anterior</div>
-					<div class="mb-0 small font-italic">Total: {{$incidentes_mes_pasado}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_incidentes_mes_pasado }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-times fa-3x text-black-40"></i>
@@ -209,9 +211,9 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{$nomina_mes_anio_anterior ? round($incidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$now->subYear()->endOfMonth()->format('d')),5)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($incidentes_mes_anio_anterior_indice,2,',','.') }}%</div>
 					<div class="mb-0">Mismo Mes Año Anterior</div>
-					<div class="mb-0 small font-italic">Total: {{$incidentes_mes_anio_anterior}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_incidentes_mes_anio_anterior }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-times fa-3x text-black-40"></i>
@@ -225,9 +227,9 @@
 		<div class="card pink white-text">
 			<div class="card-body d-flex justify-content-between align-items-center p-3">
 				<div>
-					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ $nomina_actual ? round($incidentes_anio_actual/($nomina_actual*$now->dayOfYear()),5)*100 : 0}}%</div>
+					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($incidentes_anio_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Año actual</div>
-					<div class="mb-0 small font-italic">Total: {{$incidentes_anio_actual}}</div>
+					<div class="mb-0 small font-italic">Total días: {{ $dias_incidentes_anio_actual }}</div>
 				</div>
 				<div>
 					<i class="fas fa-user-times fa-3x text-black-40"></i>
@@ -245,6 +247,8 @@
 
 <!-- CHARTS -->
 <div class="row">
+
+
 	<div class="col-lg-6 ">
 		<div class="tarjeta" >
 			<h2 class="text-center">Ausentismos de {{ $now->formatLocalized('%B') }}</h2>
@@ -262,17 +266,15 @@
 		</div>
 	</div>
 
-	<div class="col-lg-12">
 
+	<div class="col-lg-12">
 		<div class="tarjeta">
 			<h2 class="text-center">Índice de Ausentismos del año actual</h2>
 			<hr>
 			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
 			<canvas id="chart_indice_ausentismos_anual" height="480"></canvas>
 		</div>
-
 	</div>
-
 </div>
 
 

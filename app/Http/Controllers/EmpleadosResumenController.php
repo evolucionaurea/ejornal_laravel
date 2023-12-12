@@ -9,6 +9,7 @@ use App\Http\Traits\Clientes;
 use App\Nomina;
 use App\Ausentismo;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use App\CovidTesteo;
 use App\ConsultaMedica;
@@ -47,7 +48,8 @@ class EmpleadosResumenController extends Controller
 
 		//////////////////
 
-		$fecha_actual = Carbon::now();
+		$fecha_actual = CarbonImmutable::now();
+		//$fecha_actual = CarbonImmutable::create()
 
 		$clientes = $this->getClientesUser();
 
@@ -62,9 +64,9 @@ class EmpleadosResumenController extends Controller
 		->where(function($query) use ($fecha_actual){
 			$query
 				->where('ausentismos.fecha_final',null)
-				->orWhere('ausentismos.fecha_final','>',$fecha_actual);
+				->orWhere('ausentismos.fecha_final','>=',$fecha_actual->format('Y-m-d'));
 		})
-		->where('ausentismos.fecha_inicio', '<=', $fecha_actual)
+		->where('ausentismos.fecha_inicio', '<=', $fecha_actual->format('Y-m-d'))
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->where('nominas.deleted_at', null)
 		->where('nominas.estado',1)

@@ -44,10 +44,10 @@
 						<div class="col-lg-9 col-md-7 col-sm-12">
 							<ul class="list-group list-group-flush">
 								<li class="list-group-item">
-									<b>Trabajador/a: </b> {{$ausencias[0]->nombre}}
+									<b>Trabajador/a: </b> {{$ausencias[0]->trabajador->nombre}}
 								</li>
 								<li class="list-group-item">
-									<b>Email: </b> {{$ausencias[0]->email}}
+									<b>Email: </b> {{$ausencias[0]->trabajador->email}}
 								</li>
 								<li class="list-group-item"><b>Estado: </b>
 									@if ($ausencias[0]->estado == 1)
@@ -57,22 +57,23 @@
 									@endif
 								</li>
 								<li class="list-group-item">
-									<b>Telefono: </b> {{$ausencias[0]->telefono}}
+									<b>Telefono: </b> {{$ausencias[0]->trabajador->telefono}}
 								</li>
 							</ul>
 						</div>
 					</div>
 				</div>
 				<div class="col-md-12">
+					<div class="row">
 					@foreach ($ausencias as $ausencia)
-					<div class="accordion mb-4" id="accordionExample">
+					<div class="accordion mb-4 col-lg-6" id="accordionExample">
 						<div class="card">
 							<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingOne">
 								<h2 class="mb-0 d-flex">
 									<button class="btn btn-link btn-block text-left" type="button"
 										data-toggle="collapse" data-target="#collapse_{{ $ausencia->id }}"
 										aria-expanded="true" aria-controls="collapse_{{ $ausencia->id }}">
-										<b>Ausencia por:</b> {{$ausencia->nombre_ausentismo}}
+										<b>Ausencia por:</b> {{$ausencia->tipo->nombre}}
 									</button>
 									<i class="fal fa-chevron-circle-down text-white"></i>
 								</h2>
@@ -81,7 +82,7 @@
 								data-parent="#accordionExample">
 								<div class="card-body">
 									<div class="card_consultas">
-										<div class="card_consulta">
+										<div class="card_consulta w-100">
 											<ul class="list-group list-group-flush">
 												<li class="list-group-item">
 													<span style="font-weight: 600;" class="text_black">Fecha inicio:
@@ -126,6 +127,12 @@
 													</a>
 													@endif
 												</li>
+
+												<li class="list-group-item">
+													@if($ausencia->comunicacion)
+													<span>Comunicación/{{ $ausencia->comunicacion->tipo->nombre }}: {{ $ausencia->comunicacion->descripcion }}</span>
+													@endif
+												</li>
 											</ul>
 										</div>
 									</div>
@@ -134,6 +141,7 @@
 						</div>
 					</div>
 					@endforeach
+					</div>
 				</div>
 			</div>
 		</div>

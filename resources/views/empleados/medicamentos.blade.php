@@ -29,7 +29,7 @@
 
 				@include('../../modulos.busqueda_fecha')
 
-				<table class="table table-striped table-hover table-sm tabla_movimientos_empleado_listado table-bordered dt-responsive" style="width:100%">
+				<table data-table="movimientos-medicamentos" class="table table-striped table-hover table-sm table-bordered dt-responsive" style="width:100%">
 
 					<!--Table head-->
 					<thead>
@@ -91,7 +91,7 @@
 							</ul>
 							<br>
 							<label>Egreso</label>
-							<input name="egreso" type="text" class="form-control form-control-sm" placeholder="">
+							<input name="egreso" type="number" class="form-control form-control-sm" placeholder="" step="1">
 						</div>
 						<button type="submit" class="btn-ejornal btn-ejornal-success">Guardar cambios</button>
 						<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</button>

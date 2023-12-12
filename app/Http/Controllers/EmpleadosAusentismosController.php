@@ -202,18 +202,32 @@ class EmpleadosAusentismosController extends Controller
 	public function show($id)
 	{
 		// Aqui veremos el historial de ausencias
-		$ausencias = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-		->where('ausentismos.id_trabajador', $id)
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
-		DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio',
-		'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo',
-		'ausentismos.id', DB::raw('ausentismos.user user'))
-		->orderBy('ausentismos.fecha_inicio', 'desc')
-		->get();
+		/*$ausencias = Ausentismo::
+			join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+			->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+			->where('ausentismos.id_trabajador', $id)
+			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+
+
+			->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
+			DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio',
+			'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo',
+			'ausentismos.id', DB::raw('ausentismos.user user'))
+
+			->orderBy('ausentismos.fecha_inicio', 'desc')
+			->get();*/
+
+		$ausencias = Ausentismo::where('id_trabajador',$id)
+			->with('trabajador')
+			->with('tipo')
+			///->with('comunicacion')
+			->with('comunicacion.tipo')
+			->orderBy('fecha_inicio', 'desc')
+			->get();
 
 		$clientes = $this->getClientesUser();
+
+		///dd($ausencias[1]->comunicacion->tipo->nombre);
 
 		return view('empleados.ausentismos.show', compact('ausencias', 'clientes'));
 	}
@@ -245,11 +259,7 @@ class EmpleadosAusentismosController extends Controller
 
 		$clientes = $this->getClientesUser();
 		$ausentismo_tipos = AusentismoTipo::orderBy('nombre', 'asc')->get();
-
 		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
-
-
-		//dump($ausentismo);
 
 		return view('empleados.ausentismos.edit', compact('ausentismo', 'clientes', 'ausentismo_tipos', 'tipo_comunicaciones'));
 	}

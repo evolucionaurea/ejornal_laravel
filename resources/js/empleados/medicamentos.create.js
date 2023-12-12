@@ -7,5 +7,7 @@ $(document).ready(() => {
       console.log('valor de stock' + $(".medicamentos_stock").val());
   	});
 
+  	$('[name="fecha_ingreso"]').datepicker()
+
 
 });

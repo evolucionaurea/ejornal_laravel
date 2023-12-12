@@ -124,7 +124,7 @@
 					@if (auth()->user()->fichada == 1)
 					<ol data-route="tareas_livianas.create" class="{{ setActiveSub('tareas_livianas.create') }}"
 						onclick="javascript:location.href='{{url('/empleados/tareas_livianas/create')}}'">
-						<a href="{{url('/empleados/tareas_livianas/create')}}">Agregar Ausentismo</a>
+						<a href="{{url('/empleados/tareas_livianas/create')}}">Agregar Tarea Adecuada</a>
 					</ol>
 					@endif
 					<ol data-route="/empleados/comunicaciones_livianas"
