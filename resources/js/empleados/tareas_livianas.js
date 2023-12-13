@@ -78,21 +78,27 @@ $(()=>{
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1) return ''
-
+						
 						let regreso_trabajar = null;
 						let hoy;
 						let mostrar_extension;
-						if(v.fecha_final == null){
+
+						if (v.fecha_final == null) {
 							regreso_trabajar = null;
 							mostrar_extension = true;
-						}else{
+						} else {
 							let str = v.fecha_final;
 							let [dia, mes, anio] = str.split('/');
 							regreso_trabajar = new Date(+anio, mes - 1, +dia);
 							hoy = new Date();
-							if (regreso_trabajar > hoy) {
-								mostrar_extension = true
-							}else{
+							hoy.setHours(0, 0, 0, 0);
+
+							// Calcula la fecha actual más 72 horas
+							let limiteSuperior = new Date(hoy.getTime() + (72 * 60 * 60 * 1000));
+
+							if (regreso_trabajar >= hoy && regreso_trabajar < limiteSuperior) {
+								mostrar_extension = true;
+							} else {
 								mostrar_extension = false;
 							}
 						}

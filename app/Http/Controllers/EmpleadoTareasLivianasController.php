@@ -29,7 +29,8 @@ class EmpleadoTareasLivianasController extends Controller
 		//$fecha_actual = Carbon::now();
 		$clientes = $this->getClientesUser();
 		$tipos = TareaLivianaTipo::get();
-		return view('empleados.tareas_livianas', compact('clientes','tipos'));
+		$tipos_comunicacion = TipoComunicacionLiviana::get();
+		return view('empleados.tareas_livianas', compact('clientes','tipos', 'tipos_comunicacion'));
 	}
 
 
@@ -261,7 +262,6 @@ class EmpleadoTareasLivianasController extends Controller
 		$clientes = $this->getClientesUser();
 		$tareas_livianas_tipos = TareaLivianaTipo::orderBy('nombre', 'asc')->get();
 		$tipo_comunicaciones = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();
-		//dd($tipo_comunicaciones->toArray());
 
 		return view('empleados.tareas_livianas.edit', compact('tarea_liviana', 'clientes', 'tareas_livianas_tipos', 'tipo_comunicaciones'));
 	}
@@ -320,7 +320,7 @@ class EmpleadoTareasLivianasController extends Controller
 		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
 			$tarea_liviana->fecha_regreso_trabajar = $fecha_regreso_trabajar;
 		}else {
-			$tarea_liviana->fecha_regreso_trabajar = null;
+			$tarea_liviana->fecha_regreso_trabajar = $fecha_final;
 		}
 		$tarea_liviana->user = auth()->user()->nombre;
 		$tarea_liviana->save();
@@ -398,6 +398,34 @@ class EmpleadoTareasLivianasController extends Controller
 	{
 		//Traits > Tareas Livianas
 		return $this->exportTareasLivianas(auth()->user()->id_cliente_actual,$request);
+	}
+
+
+	public function extensionComunicacion(Request $request)
+	{
+		$validatedData = $request->validate([
+			'fecha_final' => 'required',
+			'descripcion' => 'required'
+		]);
+		
+		$tarea_liviana = TareaLiviana::findOrFail($request->id_tarea_liviana);
+		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
+		if ($fecha_final->lessThan($tarea_liviana->fecha_inicio)) {
+			return back()->with('error', 'La fecha final es menor a la de inicio');
+		}
+		$tarea_liviana->fecha_final = $fecha_final;
+		$tarea_liviana->fecha_regreso_trabajar = $fecha_final;
+		$tarea_liviana->save();
+
+		$comunicacion = new ComunicacionLiviana();
+	  	$comunicacion->id_tarea_liviana = $request->id_tarea_liviana;
+	  	$comunicacion->id_tipo = $request->id_tipo;
+	  	$comunicacion->descripcion = $request->descripcion;
+	  	$comunicacion->user = auth()->user()->nombre;
+	  	$comunicacion->save();
+
+	  	return redirect('empleados/comunicaciones_livianas/'.$request->id_tarea_liviana)->with('success', 'Comunicación adecuada guardada con éxito');
+
 	}
 
 

@@ -34,7 +34,8 @@
 		@endif
 
 		<div class="tarjeta">
-			<form action="{{ action('EmpleadoTareasLivianasController@update', $tarea_liviana->id) }}?{{ $_SERVER['QUERY_STRING'] }}"
+			<form
+				action="{{ action('EmpleadoTareasLivianasController@update', $tarea_liviana->id) }}?{{ $_SERVER['QUERY_STRING'] }}"
 				accept-charset="UTF-8" method="post">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
@@ -42,7 +43,7 @@
 					<div class="form-group col-md-4">
 						<label>Trabajador</label>
 						<input disabled name="nombre" type="text" class="form-control"
-						value="{{$tarea_liviana->nombre}}" placeholder="">
+							value="{{$tarea_liviana->trabajador->nombre}}" placeholder="">
 					</div>
 					<div class="form-group col-md-4">
 						<label>Tipo</label>
@@ -69,7 +70,8 @@
 					</div>
 					<div class="form-group col-md-4">
 						<label>Fecha en que regresó</label>
-						<input style="background-color: #f0f0f0; pointer-events: none;" name="fecha_regreso_trabajar" type="datetime" class="form-control"
+						<input style="background-color: #f0f0f0; pointer-events: none;" name="fecha_regreso_trabajar"
+							type="datetime" class="form-control"
 							value="{{ (!empty($tarea_liviana->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($tarea_liviana->fecha_regreso_trabajar)) : "" }}">
 					</div>
 				</div>

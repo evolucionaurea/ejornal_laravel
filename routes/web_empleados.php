@@ -67,7 +67,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/tareas_livianas/tipo', 'EmpleadoTareasLivianasController@tipo')->name('/empleados/tareas_livianas/tipo');
 	Route::delete('empleados/tareas_livianas/tipo_delete/{id_tipo}', 'EmpleadoTareasLivianasController@tipo_destroy')->name('tareas_livianas.tipo_delete');
 	Route::get('empleados/tareas_livianas/archivo/{id}', 'EmpleadoTareasLivianasController@descargar_archivo')->name('tareas_livianas.archivo');
-
+	Route::post('empleados/tareas_livianas/extension_comunicacion','EmpleadoTareasLivianasController@extensionComunicacion');
 
 	// DOCUMENTACIONES LIVIANAS
 	Route::resource('empleados/documentaciones_livianas', 'EmpleadosTareasLivianasDocumentacion', [
