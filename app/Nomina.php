@@ -32,10 +32,10 @@ class Nomina extends Model
   public function scopeWithAusentismoEstado($query)
   {
     $today = Carbon::now();
-    $query->addSelect(['fecha_regreso_trabajar'=>Ausentismo::select('fecha_regreso_trabajar')
+    $query->addSelect(['fecha_regreso_trabajar'=>Ausentismo::select('fecha_final')
       ->whereColumn('id_trabajador','nominas.id')
-      ->where('fecha_regreso_trabajar',null)
-      ->orWhere('fecha_regreso_trabajar','>',$today)
+      ->where('fecha_final',null)
+      ->orWhere('fecha_final','>=',$today)
     ]);
   }
 

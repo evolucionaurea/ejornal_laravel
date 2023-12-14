@@ -71,11 +71,11 @@ $(()=>{
 						let ausente = false
 						v.ausentismos.map(ausentismo=>{
 
-							if(ausentismo.fecha_regreso_trabajar==null) {
+							if(ausentismo.fecha_final==null) {
 								ausente = true
 								nombre = `<div class="small text-muted font-italic">${ausentismo.tipo.nombre}</div>`
 							}else{
-								const fecha_arr = ausentismo.fecha_regreso_trabajar.split('/')
+								const fecha_arr = ausentismo.fecha_final.split('/')
 								const fecha_regreso = new Date(fecha_arr[2],fecha_arr[1],fecha_arr[0],0,0,0)
 								const ahora = new Date
 								if(fecha_regreso>ahora){

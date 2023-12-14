@@ -41,12 +41,12 @@
 				<input name="_method" type="hidden" value="PUT">
 				<div class="form-row">
 					<div class="form-group col-md-3">
-						<label>Nombre</label>
+						<label>Nombre*</label>
 						<input name="nombre" type="text" class="form-control form-control-sm"
 							value="{{$trabajador->nombre}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
-						<label>Email/CUIL</label>
+						<label>CUIL</label>
 						<input name="email" type="text" class="form-control form-control-sm"
 							value="{{$trabajador->email}}" placeholder="">
 					</div>
@@ -56,13 +56,13 @@
 							value="{{$trabajador->telefono}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
-						<label>DNI</label>
-						<input name="dni" type="text" class="form-control form-control-sm" value="{{$trabajador->dni}}"
-							placeholder="">
+						<label>DNI*</label>
+						<input name="dni" type="number" class="form-control form-control-sm" value="{{$trabajador->dni}}"
+							placeholder="" step="1" required>
 					</div>
 					<div class="form-group col-md-3">
-						<label>Estado</label>
-						<select name="estado" class="form-control form-control-sm">
+						<label>Estado*</label>
+						<select name="estado" class="form-control form-control-sm" required>
 							@if ($trabajador->estado == 1)
 							<option selected value="1">Activo</option>
 							<option value="0">Inactivo</option>
@@ -73,9 +73,9 @@
 						</select>
 					</div>
 					<div class="form-group col-md-3">
-						<label>Sector</label>
+						<label>Sector*</label>
 						<input name="sector" type="text" class="form-control form-control-sm"
-							value="{{$trabajador->sector}}" placeholder="">
+							value="{{$trabajador->sector}}" placeholder="" required>
 					</div>
 					<div class="form-group col-md-3">
 						<label>Calle</label>

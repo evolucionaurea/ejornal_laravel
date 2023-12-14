@@ -51,9 +51,17 @@ trait Nominas
 			if($request->ausentes=='hoy'){
 				$query->whereHas(
 					'ausentismos',function($query) use ($today) {
-						$query
-							->where('fecha_final',null)
-							->orWhere('fecha_final','>',$today);
+
+						$query->where(function($query) use ($today) {
+							$query
+								->where('fecha_final',null)
+								->orWhere('fecha_final','>=',$today->format('Y-m-d'));
+						})
+						->where('fecha_inicio','<=',$today->format('Y-m-d'))
+						->with(['tipo'=>function($query){
+							$query->where('incluir_indice',1);
+						}]);
+
 					}
 				);
 			}else{
