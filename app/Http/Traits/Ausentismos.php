@@ -22,6 +22,8 @@ trait Ausentismos {
 		//dd($request->toArray());
 
 		$now = CarbonImmutable::now();
+		DB::statement("SET time_zone = '-03:00'");
+
 		DB::enableQueryLog();
 
 

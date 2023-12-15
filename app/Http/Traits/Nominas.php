@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 trait Nominas
 {
@@ -16,11 +17,23 @@ trait Nominas
 
 		$today = CarbonImmutable::now();
 
+		DB::statement("SET time_zone = '-03:00'");
+
 		$query = Nomina::select('*')
 			->with(['ausentismos'=>function($query){
 				$query->with(['tipo'=>function($query){
-					$query->select('id','nombre');
-				}]);
+					$query
+						->select('id','nombre');
+				}])
+				->selectRaw("
+					*,
+					IF(
+						IFNULL(fecha_final,DATE(NOW())) >= DATE(NOW()),
+						1,
+						0
+					) ausente_hoy,
+					NOW() fecha_servidor"
+				);
 			}])
 			->where('id_cliente',$idcliente);
 
