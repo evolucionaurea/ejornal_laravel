@@ -689,7 +689,7 @@ class EmpleadosNominasController extends Controller
 	}
 	public function buscar_en_csv($registros,$empleado){
 		foreach($registros as $kr=>$registro){
-			if($empleado->dni==$registro->dni || $empleado->email==$registro->email) return true;
+			if($empleado->dni==$registro->dni) return true;
 		}
 		return false;
 	}
