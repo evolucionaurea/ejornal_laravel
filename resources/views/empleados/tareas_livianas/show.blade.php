@@ -120,6 +120,14 @@
                                                     </a>
                                                     @endif
                                                 </li>
+                                                <li class="list-group-item">
+                                                    @if($tarea_liviana->nombre_tarea_liviana)
+                                                    <span style="font-weight: 600;" class="text_black">
+                                                        Comunicación/{{ $tarea_liviana->tipo_comunicacion_liviana }}:
+                                                    </span>
+                                                    {{ $tarea_liviana->descripcion_comunicacion_liviana }}
+                                                    @endif
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
