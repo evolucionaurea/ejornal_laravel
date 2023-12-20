@@ -1,5 +1,5 @@
-nombre;email;telefono;dni;estado;sector;calle;nro;entre_calles;localidad;partido;cod_postal;observaciones
-Romina Paz;rom@prueba.com;45564789;35628974;Activo;administrativo;;;;;;;
-Pedro Zinc;pedro@prueba.com;45268794;34205987;Activo;contable;;;;;;;
-Manuel Isac;manuel@prueba.com;12569875;34569897;Activo;tesoreria;;;;;;;
-Melisa Gomez;mel@prueba.com;45269823;35206587;Inactivo;sector;;;;;;;
+nombre*;cuil;telefono;dni*;estado*;sector*;calle;nro;entre_calles;localidad;partido;cod_postal;observaciones
+Romina Paz;20-35628974-6;45564789;35628974;Activo;administrativo;;;;;;;
+Pedro Zinc;20-34205987-5;45268794;34205987;Activo;contable;;;;;;;
+Manuel Isac;20-34569897-6;12569875;34569897;Activo;tesoreria;;;;;;;
+Melisa Gomez;20-35206587-5;45269823;35206587;Inactivo;sector;;;;;;;

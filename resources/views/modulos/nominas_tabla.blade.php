@@ -49,7 +49,7 @@
 		<tr>
 			<th>Foto</th>
 			<th>Nombre</th>
-			<th>Email</th>
+			<th>CUIL</th>
 			<th>Tel</th>
 			<th>DNI</th>
 			<th>Estado</th>

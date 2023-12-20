@@ -85,7 +85,14 @@ class EmpleadosNominasController extends Controller
 		]);
 
 		if(!auth()->user()->id_cliente_actual){
-			back()->with('error','Debes fichar para poder agregar un nuevo trabajador.');
+			return back()->with('error','Debes fichar para poder agregar un nuevo trabajador.');
+		}
+
+
+		///Chequear qe no exista por el dni!
+		$existing_nomina = Nomina::where('dni',$request->dni)->where('id_cliente',auth()->user()->id_cliente_actual)->first();
+		if($existing_nomina){
+			return back()->with('error','El trabajador que intentas crear ya existe en la base de datos');
 		}
 
 
@@ -129,7 +136,7 @@ class EmpleadosNominasController extends Controller
 			$trabajador->fecha_baja =  null;
 		}
 
-		dd($trabajador);
+		//dd($trabajador);
 
 		$trabajador->save();
 
@@ -258,13 +265,27 @@ class EmpleadosNominasController extends Controller
 
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
-			'email' => 'required',
+			'dni' => 'required|numeric|digits:8',
 			'estado' => 'required',
 			'sector' => 'required'
 		]);
 
+
+
+
 		//Actualizar en base
 		$trabajador = Nomina::findOrFail($id);
+
+		///Chequear que el dno no exista!
+		$existing_nomina = Nomina::where('dni',$request->dni)
+			->where('id_cliente',auth()->user()->id_cliente_actual)
+			->where('id','!=',$id)
+			->first();
+		if($trabajador->dni != $request->dni && $existing_nomina){
+			return back()->with('error','El dni que intentas poner ya existe en otro trabajador');
+		}
+
+
 		$trabajador->nombre = $request->nombre;
 		$trabajador->email = $request->email;
 
@@ -662,13 +683,13 @@ class EmpleadosNominasController extends Controller
 
 	public function buscar_en_dbb($empleados,$registro){
 		foreach($empleados as $ke=>$empleado){
-			if($empleado->dni==$registro->dni || $empleado->email==$registro->email) return $empleado->id;
+			if($empleado->dni==$registro->dni) return $empleado->id;
 		}
 		return false;
 	}
 	public function buscar_en_csv($registros,$empleado){
 		foreach($registros as $kr=>$registro){
-			if($empleado->dni==$registro->dni || $empleado->email==$registro->email) return true;
+			if($empleado->dni==$registro->dni) return true;
 		}
 		return false;
 	}
