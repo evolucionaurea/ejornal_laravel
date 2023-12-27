@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Nomina;
+use App\NominaHistorial;
 use App\Ausentismo;
 use App\ClienteGrupo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -23,6 +24,10 @@ class Cliente extends Model
   public function nominas()
   {
   	return $this->hasMany(Nomina::class,'id_cliente');
+  }
+  public function nominas_historial()
+  {
+    return $this->hasMany(NominaHistorial::class,'cliente_id');
   }
 
   public function ausentismos()

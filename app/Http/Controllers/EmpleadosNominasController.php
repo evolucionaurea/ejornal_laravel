@@ -429,8 +429,16 @@ class EmpleadosNominasController extends Controller
 
 		$file = $request->file('archivo');
 
+
+		//$contents_utf8 = mb_convert_encoding($file, 'UTF-8', mb_detect_encoding($file,mb_list_encodings(), true));
+		//dd($contents_utf8);
+
 		// $registros = array();
 		if(($fichero = fopen($file, "r"))===false) return back()->with('error','No se pudo leer el archivo. Intenta nuevamente.');
+
+
+		//dd(fgetcsv($fichero, 0, ";", '"'));
+		///dd(mb_detect_encoding($fichero->uri,mb_list_encodings(), true));
 
 		// Lee los nombres de los campos
 		$nombres_campos = [];
@@ -442,7 +450,10 @@ class EmpleadosNominasController extends Controller
 		// Lee los registros
 		while (($fila = fgetcsv($fichero, 0, ";", '"')) !== false) {
 
+
 			if($indice!==0){
+
+
 				/*
 				if(
 					empty($fila[0]) ||
@@ -494,7 +505,9 @@ class EmpleadosNominasController extends Controller
 		}
 
 
-		///dd($registros[0]);
+		///dd( $registros[0]->sector );
+		///dd(mb_convert_encoding($registros[0]->sector, 'UTF-8', 'ISO-8859-1'));
+		//dd(mb_detect_encoding($registros[0]->sector));
 
 
 		/*$errores = false;
