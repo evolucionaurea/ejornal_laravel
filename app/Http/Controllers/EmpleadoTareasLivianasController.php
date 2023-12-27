@@ -210,6 +210,8 @@ class EmpleadoTareasLivianasController extends Controller
 		// Aqui veremos el historial de tareas livianas
 		$tareas_livianas = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 		->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
+		->join('comunicaciones_livianas', 'tareas_livianas.id', 'comunicaciones_livianas.id_tarea_liviana')
+		->join('tipos_comunicaciones_livianas', 'comunicaciones_livianas.id_tipo', 'tipos_comunicaciones_livianas.id')
 		->where('tareas_livianas.id_trabajador', $id)
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->select(
@@ -223,7 +225,9 @@ class EmpleadoTareasLivianasController extends Controller
 			'tareas_livianas.fecha_regreso_trabajar',
 			'tareas_livianas.archivo',
 			'tareas_livianas.id',
-			DB::raw('tareas_livianas.user user')
+			DB::raw('tareas_livianas.user user'),
+			DB::raw('comunicaciones_livianas.descripcion descripcion_comunicacion_liviana'),
+			DB::raw('tipos_comunicaciones_livianas.nombre tipo_comunicacion_liviana')
 		)
 		->get();
 
