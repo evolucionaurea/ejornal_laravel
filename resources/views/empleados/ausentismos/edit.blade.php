@@ -44,12 +44,12 @@
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
 				<div class="row">
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-3">
 						<label>Trabajador</label>
 						<input disabled name="nombre" type="text" class="form-control"
 							value="{{$ausentismo->trabajador->nombre}}" placeholder="">
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-3">
 						<label>Tipo</label>
 						@if($ausentismo_tipos)
 						<select name="tipo" class="form-control" required>
@@ -60,21 +60,27 @@
 						</select>
 						@endif
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-2">
 						<label>Fecha inicio</label>
 						<input name="fecha_inicio" type="text" class="form-control" required
 							value="{{ (!empty($ausentismo->fecha_inicio)) ? date('d/m/Y',strtotime($ausentismo->fecha_inicio)) : "" }}">
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-2">
 						<label>Fecha final</label>
 						<input name="fecha_final" type="text" class="form-control" required
 							value="{{ (!empty($ausentismo->fecha_final)) ? date('d/m/Y',strtotime($ausentismo->fecha_final)) : "" }}">
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-2">
 						<label>Fecha en que regresó</label>
 						<input style="background-color: #f0f0f0; pointer-events: none;" name="fecha_regreso_trabajar"
 							type="text" class="form-control"
 							value="{{ (!empty($ausentismo->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}">
+					</div>
+
+					<div class="form-group col-md-12">
+						<label>Comentario</label>
+						<textarea name="comentario" class="form-control"
+							rows="3">{{ $ausentismo->comentario }}</textarea>
 					</div>
 				</div>
 

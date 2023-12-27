@@ -19,7 +19,10 @@ class Ausentismo extends Model
 	protected $table = 'ausentismos';
 
 	// Campos habilitados para ingresar
-	protected $fillable = ['id_trabajador', 'user', 'id_tipo', 'fecha_inicio', 'fecha_final', 'fecha_regreso_trabajar', 'archivo', 'hash_archivo'];
+	protected $fillable = [
+		'id_trabajador', 'user', 'id_tipo', 'fecha_inicio', 'fecha_final', 'fecha_regreso_trabajar', 
+		'archivo', 'hash_archivo', 'comentario'
+	];
 
 	protected $casts = [
 		'fecha_inicio'=>'date:d/m/Y',

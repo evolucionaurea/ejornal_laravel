@@ -112,6 +112,11 @@
 						{{-- <input name="archivo" type="file" class="form-control-file"> --}}
 					</div>
 
+					<div class="form-group col-md-6">
+						<label>Comentario</label>
+						<textarea name="comentario" class="form-control" rows="3">{{ old("comentario") }}</textarea>
+					</div>
+
 				</div>
 
 				<hr>
@@ -237,11 +242,12 @@
 										<span>no</span>
 										@endif
 									</td>
-									<td class="align-middle" >
+									<td class="align-middle">
 										<div class="acciones_tabla text-right justify-content-end">
 
 											<a data-id="{{ $tipo->id }}" data-text="{{ $tipo->nombre }}"
-												data-color="{{ $tipo->color }}" data-indice="{{ $tipo->incluir_indice }}"
+												data-color="{{ $tipo->color }}"
+												data-indice="{{ $tipo->incluir_indice }}"
 												class=" btn_editar_tipo_ausentismo" title="Edit" data-toggle="modal"
 												data-target="#editar_tipo_ausentismo">
 												<i class="fas fa-pen"></i>

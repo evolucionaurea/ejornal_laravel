@@ -150,6 +150,7 @@ class EmpleadosAusentismosController extends Controller
 		$ausentismo->id_tipo = $request->tipo;
 		$ausentismo->fecha_inicio = $fecha_inicio;
 		$ausentismo->fecha_final = $fecha_final;
+		$ausentismo->comentario = ($request->comentario) ? $request->comentario : null;
 
 		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
 			$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
@@ -306,6 +307,7 @@ class EmpleadosAusentismosController extends Controller
 		$ausentismo = Ausentismo::findOrFail($id);
 		$ausentismo->fecha_inicio = $fecha_inicio;
 		$ausentismo->id_tipo = $request->tipo;
+		$ausentismo->comentario = ($request->comentario) ? $request->comentario : null;
 
 		//Guardar en base Comunicacion
 		$ausentismo->comunicacion->id_tipo = $request->tipo_comunicacion;
