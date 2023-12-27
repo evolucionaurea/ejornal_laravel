@@ -27,12 +27,12 @@ trait Clientes {
 
 		$today = CarbonImmutable::now();
 
-
 		$route = explode('/',Route::currentRouteName());
 		$route = array_values(array_filter($route));
 
-		///dd($route[0]);
+		if(!$id_cliente) return redirect($route[0])->with('error', 'Debes seleccionar un cliente primero!');
 
+		///dd($route[0]);
 		// NOMINAS
 		$q_nomina = NominaHistorial::select('*')
 			->where('year_month',$today->format('Ym'))
@@ -50,6 +50,7 @@ trait Clientes {
 			->first();
 		}
 		$nomina_actual = $q_nomina->cantidad;
+		//dd($nomina_actual);
 
 
 		$nomina_mes_anterior = NominaHistorial::select('*')
@@ -104,7 +105,7 @@ trait Clientes {
 					// los que siguen ausentes fuera del mes actual
 					$query->where('fecha_inicio','<',$today->startOfMonth())
 					->where(function($query) use($today){
-						$query->where('fecha_final','>',$today)
+						$query->where('fecha_final','>=',$today->startOfMonth())
 							->orWhere('fecha_final',null);
 					});
 				});
@@ -172,7 +173,7 @@ trait Clientes {
 			->orWhere(function($query) use ($today){
 				$query->where('fecha_inicio','<',$today->startOfMonth()->subMonth())
 					->where(function($query) use ($today){
-						$query->where('fecha_final','>',$today->startOfMonth()->subMonth()->endOfMonth())
+						$query->where('fecha_final','>=',$today->startOfMonth()->subMonth())
 							->orWhere('fecha_final',null);
 					});
 			});
@@ -235,7 +236,7 @@ trait Clientes {
 				$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
 					->where(function($query) use ($today){
 						$query
-							->where('fecha_final','>',$today->startOfMonth()->subYear()->endOfMonth())
+							->where('fecha_final','>=',$today->startOfMonth()->subYear())
 							->orWhere('fecha_final',null);
 					});
 			});
@@ -305,7 +306,7 @@ trait Clientes {
 					->where('fecha_inicio','<',$today->startOfYear())
 					->where(function($query) use ($today){
 						$query
-							->where('fecha_final','>',$today->startOfYear())
+							->where('fecha_final','>=',$today->startOfYear())
 							->orWhere('fecha_final',null);
 					});
 			});

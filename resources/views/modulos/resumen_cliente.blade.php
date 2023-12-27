@@ -74,7 +74,7 @@
 				<div>
 					<div class="h3-responsive font-weight-bold mt-n2 mb-0">{{ number_format($ausentismos_anio_actual_indice,2,',','.') }}%</div>
 					<div class="mb-0">Año actual</div>
-					<div class="mb-0 small font-italic">Nómina: {{$nomina_promedio_actual}}</div>
+					<div class="mb-0 small font-italic">Prom. Nómina: {{$nomina_promedio_actual}}</div>
 					<div class="mb-0 small font-italic">Total Días: {{ $dias_anio_actual }}</div>
 				</div>
 				<div>
@@ -269,7 +269,7 @@
 
 	<div class="col-lg-12">
 		<div class="tarjeta">
-			<h2 class="text-center">Índice de Ausentismos del año actual</h2>
+			<h2 class="text-center">Índice de Ausentismos y Accidentes del año actual</h2>
 			<hr>
 			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
 			<canvas id="chart_indice_ausentismos_anual" height="480"></canvas>

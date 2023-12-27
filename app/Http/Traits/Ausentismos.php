@@ -422,8 +422,8 @@ trait Ausentismos {
 						->whereBetween('fecha_inicio',[$inicio_mes,$fin_mes])
 						->orWhere(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
 							$query->where('fecha_inicio','<',$inicio_mes)
-								->where(function($query) use ($fin_mes,$date_immutable){
-									$query->where('fecha_final','>',$fin_mes)
+								->where(function($query) use ($fin_mes,$inicio_mes,$date_immutable){
+									$query->where('fecha_final','>=',$inicio_mes)
 										->orWhere('fecha_final',null);
 								});
 						});
@@ -503,7 +503,7 @@ trait Ausentismos {
 						->where('fecha_inicio','<',$today->startOfMonth())
 						->where(function($query) use($today){
 							$query
-								->where('fecha_final','>',$today->startOfMonth())
+								->where('fecha_final','>=',$today->startOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -565,7 +565,7 @@ trait Ausentismos {
 				->orWhere(function($query) use ($today){
 					$query->where('fecha_inicio','<',$today->startOfMonth()->subMonth())
 						->where(function($query) use ($today){
-							$query->where('fecha_final','>',$today->startOfMonth()->subMonth()->endOfMonth())
+							$query->where('fecha_final','>=',$today->startOfMonth()->subMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -625,7 +625,7 @@ trait Ausentismos {
 					$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>',$today->startOfMonth()->subYear()->endOfMonth())
+								->where('fecha_final','>=',$today->startOfMonth()->subYear())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -680,7 +680,7 @@ trait Ausentismos {
 						->where('fecha_inicio','<',$today->startOfYear())
 						->where(function($query) use ($today){
 							$query
-								->where('fecha_final','>',$today->startOfYear())
+								->where('fecha_final','>=',$today->startOfYear())
 								->orWhere('fecha_final',null);
 						});
 				});
