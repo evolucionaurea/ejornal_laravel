@@ -223,8 +223,6 @@ class GruposResumenController extends Controller
 				'fin_mes'=>$fin_mes_formatted
 				///'dia'=>$today->format('Ym')==$date->format('Ym') ? $today->format('d') : $date->endOfMonth()->format('d')
 			];
-
-			////$indices_mes_a_mes[$date->format('Ym')]['month'] = Str::ucfirst($date->formatLocalized('%B'));
 		}
 
 
@@ -269,7 +267,7 @@ class GruposResumenController extends Controller
 						->where('fecha_inicio','<',$today->startOfMonth())
 						->where(function($query) use($today){
 							$query
-								->where('fecha_final','>',$today->startOfMonth())
+								->where('fecha_final','>=',$today->startOfMonth())
 								->orWhere('fecha_final',null);
 						});
 				});
@@ -294,6 +292,7 @@ class GruposResumenController extends Controller
 			->orderBy('dias','desc')
 			->get();
 		$query_log = DB::getQueryLog();
+		///dd($query_log);
 
 
 
