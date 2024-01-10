@@ -9,6 +9,7 @@ $(()=>{
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		datatable_options:{order:[[ 6, "desc" ]]},
 		render_row: medicamento => {
+			console.log(medicamento);
 			const formatDate = (date) => {
 				if (!date) return '';
 				const d = new Date(date);
@@ -22,7 +23,11 @@ $(()=>{
 		
 			return $(`
 				<tr>
-					<td>${medicamento.nombre}</td>
+					<td>${medicamento.medicamento}</td>
+					<td>${medicamento.tipo_consulta}</td>
+					<td>${medicamento.user}</td>
+					<td>${medicamento.trabajador != null ? medicamento.trabajador : 'No disponible'}</td>
+					<td>${medicamento.cliente}</td>
 					<td>${medicamento.ingreso == null ? '' : medicamento.ingreso}</td>
 					<td>${medicamento.suministrados != null && medicamento.suministrados != 0 ? medicamento.suministrados : ''}</td>
 					<td>${medicamento.egreso != null && medicamento.egreso != 0 ? medicamento.egreso : ''}</td>

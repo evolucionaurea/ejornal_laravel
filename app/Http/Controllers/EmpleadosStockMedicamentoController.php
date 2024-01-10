@@ -53,30 +53,53 @@ class EmpleadosStockMedicamentoController extends Controller
 	  return view('empleados.medicamentos_movimientos', compact('clientes'));
 
 	}
+	
+
 	public function busquedaMovimientos(Request $request)
 	{
-
 		$query = StockMedicamentoHistorial::select(
-			'medicamentos.nombre',
-			'stock_medicamentos_historial.*'
+			'medicamentos.nombre as medicamento',
+			'stock_medicamentos_historial.ingreso',
+			'stock_medicamentos_historial.stock',
+			'stock_medicamentos_historial.suministrados',
+			'stock_medicamentos_historial.motivo',
+			'stock_medicamentos_historial.fecha_ingreso',
+			'stock_medicamentos_historial.created_at',
+			'stock_medicamentos_historial.updated_at',
+			'users.nombre as user',
+			'clientes.nombre as cliente',
+			'nominas.nombre as trabajador',
+			DB::raw('IF(stock_medicamentos_historial.id_consulta_enfermeria IS NOT NULL, "enfermeria", "medica") as tipo_consulta')
 		)
 		->join('stock_medicamentos', 'stock_medicamentos_historial.id_stock_medicamentos', 'stock_medicamentos.id')
 		->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
+		->join('users', 'stock_medicamentos.id_user', 'users.id')
+		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
+		->leftJoin('consultas_enfermerias', 'stock_medicamentos_historial.id_consulta_enfermeria', 'consultas_enfermerias.id')
+		->leftJoin('consultas_medicas', 'stock_medicamentos_historial.id_consulta_medica', 'consultas_medicas.id')
+		->leftJoin('nominas', function ($join) {
+			$join->on('consultas_enfermerias.id_nomina', '=', 'nominas.id')
+				->orOn('consultas_medicas.id_nomina', '=', 'nominas.id');
+		})
 		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual)
 		->orderBy('stock_medicamentos_historial.created_at', 'DESC');
-
-
-		if($request->from) $query->whereDate('stock_medicamentos_historial.fecha_ingreso','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('stock_medicamentos_historial.fecha_ingreso','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-
-
+	
+		if ($request->from) {
+			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+	
+		if ($request->to) {
+			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
+	
 		return [
-			'results'=>$query->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'request'=>$request->all()
+			'results' => $query->get(),
+			'fichada_user' => auth()->user()->fichada,
+			'request' => $request->all()
 		];
-
 	}
+	
+
 
 	/**
 	 * Show the form for creating a new resource.

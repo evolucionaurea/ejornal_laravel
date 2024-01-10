@@ -268,6 +268,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				$historial_stock_medicamentos = new StockMedicamentoHistorial();
 				$historial_stock_medicamentos->id_stock_medicamentos = $stock_medicacion->id;
 				$historial_stock_medicamentos->suministrados = $value['suministrados'];
+				$historial_stock_medicamentos->id_consulta_enfermeria = $consulta->id; // consulta de enfermeria
 				if (isset($request->fecha)) {
 					$historial_stock_medicamentos->fecha_ingreso = $fecha;
 				}

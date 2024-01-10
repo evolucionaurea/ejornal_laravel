@@ -16,7 +16,7 @@
 			<p>Aquí puede ver el movimiento de cada cambio que fue sucediendo en los medicamentos</p>
 		</div>
 
-		 @include('../mensajes_validacion')
+		@include('../mensajes_validacion')
 
 		<div class="tarjeta">
 
@@ -27,7 +27,11 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th>Nombre</th>
+						<th>Medicamento</th>
+						<th>Consulta</th>
+						<th>Cargado por</th>
+						<th>Para</th>
+						<th>Empresa</th>
 						<th>Ingreso</th>
 						<th>Suministrados</th>
 						<th>Egreso</th>
