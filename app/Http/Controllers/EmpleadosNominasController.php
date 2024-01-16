@@ -90,7 +90,7 @@ class EmpleadosNominasController extends Controller
 
 
 		///Chequear qe no exista por el dni!
-		$existing_nomina = Nomina::where('dni',$request->dni)->where('id_cliente',auth()->user()->id_cliente_actual)->first();
+		$existing_nomina = Nomina::where('dni',$request->dni)->first();
 		if($existing_nomina){
 			return back()->with('error','El trabajador que intentas crear ya existe en la base de datos');
 		}

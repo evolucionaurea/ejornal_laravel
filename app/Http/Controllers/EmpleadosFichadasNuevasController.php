@@ -15,9 +15,13 @@ class EmpleadosFichadasNuevasController extends Controller
 
       public function clienteActual(Request $request)
       {
-        $user = User::findOrFail(auth()->user()->id);
-        $user->id_cliente_actual = intval(request()->all()['cliente']);
+        $cliente = $request->input('cliente');
+        $id = $request->input('id');
+
+        $user = User::findOrFail($id);
+        $user->id_cliente_actual = intval($cliente);
         $user->save();
+        return response()->json($user->id_cliente_actual);
       }
 
       public function horarioUltimaFichada()

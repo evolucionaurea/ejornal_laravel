@@ -18,6 +18,7 @@ $(()=>{
 		{roles:[2],class:'.mostrar_localidad'},
 		{roles:[2],class:'.mostrar_partido'},
 		{roles:[2],class:'.mostrar_cod_postal'},
+		{roles:[2],class:'.mostrar_permitir_fichada'},
 		{roles:[2],class:'.mostrar_observaciones'},
 		{roles:[2],class:'.select_contratacion_users'},
 		{roles:[2],class:'.liquidacion_onedrive_creacion_users'},

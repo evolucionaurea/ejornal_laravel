@@ -107,7 +107,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 	// Actualizar el cliente actual del User Empleado
 	// Route::post('empleados/actualizar_cliente_actual', 'EmpleadosFichadasController@clienteActual')->name('empleados/actualizar_cliente_actual');
-	Route::post('empleados/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@clienteActual')->name('empleados/actualizar_cliente_actual');
+	// Route::post('empleados/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@clienteActual')->name('empleados/actualizar_cliente_actual');
 
 
 	// COMUNICACIONES

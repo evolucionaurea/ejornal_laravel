@@ -22,3 +22,5 @@ Route::get('/ausentismos_hoy/{token}', 'EndpointsController@ausentismosHoy');
 Route::get('/get_nominas/{token}', 'EndpointsController@getNominas');
 Route::post('/set_nominas', 'EndpointsController@setNominas');
 Route::delete('/delete_nominas', 'EndpointsController@deleteNominas');
+
+Route::post('/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@clienteActual')->name('actualizar_cliente_actual');

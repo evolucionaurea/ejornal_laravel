@@ -18,6 +18,7 @@ trait Clientes {
 		->where('cliente_user.id_user', '=', auth()->user()->id)
 		->where('clientes.deleted_at', '=', null)
 		->select('clientes.nombre', 'clientes.id')
+		->orderBy('clientes.nombre', 'ASC')
 		->get();
 
 	}

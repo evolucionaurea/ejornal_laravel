@@ -159,6 +159,7 @@ class AdminUserController extends Controller
 			$user->id_especialidad = $request->especialidad;
 			$user->id_cliente_actual = $request->clientes[0];
 			$user->onedrive = $request->onedrive;
+			$user->fichar = $request->fichar;
 
 			if($request->calle != null){
 				$user->calle = $request->calle;
@@ -290,6 +291,11 @@ class AdminUserController extends Controller
 			if (!isset($request->clientes) || empty($request->clientes) || count($request->clientes) == 0 || is_null($request->clientes)) {
 				return back()->withInput($request->input())->with('error', 'No puede crear a un usuario empleado sin definir en que empresa/s trabajará.');
 			}
+			$user = User::findOrFail($id);
+			if ($user->fichada == 1 && $request->fichar == 0) {
+				return back()->withInput($request->input())->with('error', 'El usuario está con la fichada activa y trabajando. Pidale que termine
+				con su trabajo y fiche su salida antes de realizar esta accion');
+			}
 		}
 
 		if ($request->cuil != null) {
@@ -315,6 +321,7 @@ class AdminUserController extends Controller
 		if ($request->rol == 2) {
 			$user->permiso_desplegables = $request->permiso_desplegables;
 			$user->id_especialidad = $request->especialidad;
+			$user->fichar = $request->fichar;
 			if ($user->id_cliente_actual == null) {
 				$user->id_cliente_actual = $request->clientes[0];
 			}
