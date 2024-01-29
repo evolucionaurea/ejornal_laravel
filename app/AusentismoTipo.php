@@ -16,4 +16,14 @@ class AusentismoTipo extends Model
   // Campos habilitados para ingresar
   protected $fillable = ['nombre', 'agrupamiento'];
 
+
+  protected static function boot()
+  {
+  	parent::boot();
+
+  	static::addGlobalScope('ordered',function($query){
+  		$query->orderBy('nombre','asc');
+  	});
+  }
+
 }
