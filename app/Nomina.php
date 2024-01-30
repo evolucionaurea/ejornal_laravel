@@ -21,8 +21,11 @@ class Nomina extends Model
   protected $fillable = ['id_cliente', 'nombre', 'email', 'telefono', 'dni', 'estado', 'foto', 'hash_foto'];
 
   protected $casts = [
-    'created_at'=>'date:d/m/Y'
+    'created_at'=>'date:d/m/Y',
+    'fecha_nacimiento'=>'date:d/m/Y'
   ];
+
+  protected $appends = ['edad'];
 
 
   public function ausentismos()
@@ -49,6 +52,11 @@ class Nomina extends Model
   }
   public function getThumbnailUrlAttribute(){
     return $this->foto ? asset('storage/nominas/fotos/'.$this->id.'/'.$this->hash_thumbnail) : '';
+  }
+
+  public function getEdadAttribute(){
+    if(!$this->fecha_nacimiento) return null;
+    return $this->fecha_nacimiento->diffInYears(now());
   }
 
 

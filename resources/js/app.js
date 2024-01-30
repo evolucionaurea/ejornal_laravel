@@ -67,6 +67,8 @@ if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='medicas.create') require('./empleados/consultas.medicas.create')
 if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
 if(route=='/empleados/nominas/historial') require('./empleados/nominas_historial')
+if(route=='nominas.edit') require('./empleados/nominas_edit')
+if(route=='nominas.create') require('./empleados/nominas_create')
 
 
 //CLIENTES

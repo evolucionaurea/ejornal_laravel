@@ -46,6 +46,15 @@ $(()=>{
 					}
 				},
 				{
+					data:row=>row,
+					name:'fecha_nacimiento',
+					className:'align-middle border-left',
+					render:v=>{
+						if(v.fecha_nacimiento==null) return '<span class="text-muted font-italic">[no cargado]</span>'
+						return `${v.fecha_nacimiento}<br><small>Edad: ${v.edad}</small>`
+					}
+				},
+				{
 					data:'estado',
 					name:'estado',
 					render:v=>{

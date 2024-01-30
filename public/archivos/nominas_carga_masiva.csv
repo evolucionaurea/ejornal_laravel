@@ -1,5 +1,5 @@
-nombre*;cuil;telefono;dni*;estado*;sector*;calle;nro;entre_calles;localidad;partido;cod_postal;observaciones
-Romina Paz;20-35628974-6;45564789;35628974;Activo;administrativo;;;;;;;
-Pedro Zinc;20-34205987-5;45268794;34205987;Activo;contable;;;;;;;
-Manuel Isac;20-34569897-6;12569875;34569897;Activo;tesoreria;;;;;;;
-Melisa Gomez;20-35206587-5;45269823;35206587;Inactivo;sector;;;;;;;
+nombre*;dni*;estado*;sector*;cuil;telefono;Fecha de Nacimiento (dd/mm/aaaa);calle;nro;entre_calles;localidad;partido;cod_postal;observaciones
+Romina Paz;35628974;Activo;administrativo;20-35628974-6;45564789;10/08/1985;;;;;;;
+Pedro Zinc;34205987;Activo;contable;20-34205987-5;45268794;14/05/1986;;;;;;;
+Manuel Isac;34569897;Activo;tesoreria;20-34569897-6;12569875;01/11/1989;;;;;;;
+Melisa Gomez;35206587;Inactivo;sector;20-35206587-5;45269823;08/09/1990;;;;;;;

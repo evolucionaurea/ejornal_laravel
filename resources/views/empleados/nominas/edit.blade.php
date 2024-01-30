@@ -60,6 +60,14 @@
 						<input name="dni" type="number" class="form-control form-control-sm" value="{{$trabajador->dni}}"
 							placeholder="" step="1" required>
 					</div>
+
+					<div class="form-group col-md-3">
+						<label>Fecha de Nacimiento</label>
+						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm" value="{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '' }}"
+							placeholder="">
+					</div>
+
+
 					<div class="form-group col-md-3">
 						<label>Estado*</label>
 						<select name="estado" class="form-control form-control-sm" required>

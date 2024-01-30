@@ -52,6 +52,7 @@
 			<th>CUIL</th>
 			<th>Tel</th>
 			<th>DNI</th>
+			<th>Fecha Nac.</th>
 			<th>Estado</th>
 			<th>Sector</th>
 			<th>Hoy</th>

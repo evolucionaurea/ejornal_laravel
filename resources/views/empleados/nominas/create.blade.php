@@ -55,6 +55,13 @@
 						<label>DNI *</label>
 						<input required name="dni" type="number" class="form-control form-control-sm" placeholder="solamente números, sin puntos" step="1" value="{{old('dni')}}">
 					</div>
+
+					<div class="form-group col-md-3">
+						<label>Fecha de Nacimiento</label>
+						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm" value="{{ old('fecha_nacimiento') }}"
+							placeholder="">
+					</div>
+
 					<div class="form-group col-md-3">
 						<label>Estado *</label>
 						<select required name="estado" class="form-control form-control-sm">

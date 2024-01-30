@@ -71,8 +71,12 @@
 					<div class="card-body">
 						<p class="card-text">Descarge este excel modelo. Completelo con los campos solicitados y subalo
 							en el paso 2</p>
-						<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/nominas_carga_masiva.csv')}}"
-							download target="_blank"><i class="fa fa-fw fa-download"></i> Descargar excel</a>
+
+						<div class="">
+							<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/nominas_carga_masiva.csv')}}" download target="_blank"><i class="fa fa-fw fa-download"></i> Descargar excel</a>
+						</div>
+						<div class="small text-muted mt-3">Archivo actualizado al 30/01/2024</div>
+
 					</div>
 				</div>
 				<div class="card mb-4">

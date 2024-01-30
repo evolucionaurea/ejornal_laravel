@@ -85,15 +85,16 @@ class EmpleadosNominasController extends Controller
 		]);
 
 		if(!auth()->user()->id_cliente_actual){
-			return back()->with('error','Debes fichar para poder agregar un nuevo trabajador.');
+			return back()->withInput()->with('error','Debes fichar para poder agregar un nuevo trabajador.');
 		}
 
 
 		///Chequear qe no exista por el dni!
 		$existing_nomina = Nomina::where('dni',$request->dni)->first();
 		if($existing_nomina){
-			return back()->with('error','El trabajador que intentas crear ya existe en la base de datos');
+			return back()->withInput()->with('error','El trabajador que intentas crear ya existe en la base de datos');
 		}
+
 
 
 		//Guardar en base
@@ -127,6 +128,11 @@ class EmpleadosNominasController extends Controller
 		if (isset($request->observaciones) && !empty($request->observaciones)) {
 			$trabajador->observaciones = $request->observaciones;
 		}
+
+		if($request->fecha_nacimiento){
+			$trabajador->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_nacimiento);
+		}
+
 		$trabajador->dni = preg_replace('/[^0-9]/', '', $request->dni);
 		$trabajador->estado = $request->estado;
 		$trabajador->sector = $request->sector;
@@ -250,6 +256,7 @@ class EmpleadosNominasController extends Controller
 		$trabajador = Nomina::findOrFail($id);
 		$clientes = $this->getClientesUser();
 
+		///dd($trabajador->toArray());
 		return view('empleados.nominas.edit', compact('trabajador', 'clientes'));
 	}
 
@@ -283,6 +290,10 @@ class EmpleadosNominasController extends Controller
 			->first();
 		if($trabajador->dni != $request->dni && $existing_nomina){
 			return back()->with('error','El dni que intentas poner ya existe en otro trabajador');
+		}
+
+		if($request->fecha_nacimiento){
+			$trabajador->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_nacimiento);
 		}
 
 
@@ -467,19 +478,20 @@ class EmpleadosNominasController extends Controller
 
 				$registros[] = (object) [
 					'nombre'=>$fila[0],
-					'email'=>$fila[1],
-					'telefono'=>$fila[2],
-					'dni'=>$fila[3],
-					'estado'=>$fila[4],
-					'sector'=>$fila[5],
+					'dni'=>$fila[1],
+					'estado'=>$fila[2],
+					'sector'=>$fila[3],
+					'email'=>$fila[4],
+					'telefono'=>$fila[5],
+					'fecha_nacimiento'=>$fila[6],
 
-					'calle'=>isset($fila[6]) ? $fila[6] : null,
-					'nro'=>isset($fila[7]) ? $fila[7] : null,
-					'entre_calles'=>isset($fila[8]) ? $fila[8] : null,
-					'localidad'=>isset($fila[9]) ? $fila[9] : null,
-					'partido'=>isset($fila[10]) ? $fila[10] : null,
-					'cod_postal'=>isset($fila[11]) ? $fila[11] : null,
-					'observaciones'=>isset($fila[12]) ? $fila[12] : null
+					'calle'=>isset($fila[7]) ? $fila[7] : null,
+					'nro'=>isset($fila[8]) ? $fila[8] : null,
+					'entre_calles'=>isset($fila[9]) ? $fila[9] : null,
+					'localidad'=>isset($fila[10]) ? $fila[10] : null,
+					'partido'=>isset($fila[11]) ? $fila[11] : null,
+					'cod_postal'=>isset($fila[12]) ? $fila[12] : null,
+					'observaciones'=>isset($fila[13]) ? $fila[13] : null
 
 				];
 			}else{
@@ -487,11 +499,11 @@ class EmpleadosNominasController extends Controller
 				if(
 					!isset($fila[0]) ||
 					!isset($fila[1]) ||
+					!isset($fila[2]) ||
 					!isset($fila[3]) ||
-					!isset($fila[4]) ||
-					!isset($fila[5])
+					!isset($fila[4])
 				){
-					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, cuil, telefono, dni, estado y sector obligatoriamente');
+					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, dni, estado y sector obligatoriamente');
 					break;
 				}
 
@@ -505,7 +517,7 @@ class EmpleadosNominasController extends Controller
 		}
 
 
-		///dd( $registros[0]->sector );
+		//dd( $registros );
 		///dd(mb_convert_encoding($registros[0]->sector, 'UTF-8', 'ISO-8859-1'));
 		//dd(mb_detect_encoding($registros[0]->sector));
 
@@ -578,12 +590,26 @@ class EmpleadosNominasController extends Controller
 					'error'=>'Falta ingresar un valor en este campo.'
 				];
 			}
+
+			if($registro->fecha_nacimiento){
+				$f_nac = explode('/',$registro->fecha_nacimiento);
+				if(count($f_nac)!==3){
+					$errores[] = (object) [
+						'fila'=>$kr+2,
+						'columna'=>'Fecha de Nacimiento',
+						'valor'=>$registro->fecha_nacimiento,
+						'error'=>'La fecha de nacimiento debe tener el formato dd/mm/aaaa. Ej: 01/01/1980'
+					];
+				}
+
+			}
+
 		}
 
+		//dd($errores);
 		if(!empty($errores)){
 			return back()->with(compact('errores'));
 		}
-		///dd($errores);
 
 
 		foreach ($registros as $kr=>$registro){
@@ -607,6 +633,9 @@ class EmpleadosNominasController extends Controller
 
 				$nomina->dni = preg_replace('/[^0-9]/', '', $registro->dni);
 
+				/*$f_nac_arr = explode('/',$registro->fecha_nacimiento);
+				$nomina->fecha_nacimiento = $f_nac_arr[2].'-'.$f_nac_arr[1].'-'.$f_nac_arr[0];*/
+				$nomina->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $registro->fecha_nacimiento);
 
 				$nomina->telefono = $registro->telefono;
 				$nomina->sector = $registro->sector;

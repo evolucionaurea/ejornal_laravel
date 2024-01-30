@@ -47,7 +47,16 @@ $(()=>{
 					name:'dni',
 					className:'align-middle border-left',
 					render:v=>{
-						return v.dni==null ? '[no cargado]' : v.dni
+						return v.dni==null ? '<span class="text-muted font-italic">[no cargado]</span>' : v.dni
+					}
+				},
+				{
+					data:row=>row,
+					name:'fecha_nacimiento',
+					className:'align-middle border-left',
+					render:v=>{
+						if(v.fecha_nacimiento==null) return '<span class="text-muted font-italic">[no cargado]</span>'
+						return `${v.fecha_nacimiento}<br><small>Edad: ${v.edad}</small>`
 					}
 				},
 				{
