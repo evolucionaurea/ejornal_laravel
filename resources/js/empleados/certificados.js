@@ -7,8 +7,64 @@ $(()=>{
 		get_path:'/busqueda',
 		table:$('.tabla_certificados_ausentismo_listado'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
-		datatable_options:{order:[[ 4, "desc" ]]},
-		render_row:certificado=>{
+		datatable_options:{
+			order:[[ 4, "desc" ]],
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
+			columns:[
+				{
+					data:row=>row,
+					className:'align-middle',
+					name:'nominas.nombre',
+					render:v=>{
+						return v.ausentismo.trabajador.nombre
+					}
+				},
+				{
+					data:'medico',
+					className:'align-middle',
+					name:'medico'
+				},
+				{
+					data:'institucion',
+					className:'align-middle',
+					name:'institucion'
+				},
+				{
+					data:row=>row,
+					className:'align-middle',
+					name:'ausentismos.fecha_inicio',
+					render:v=>{
+						return v.ausentismo.fecha_inicio
+					}
+				},
+				{
+					data:row=>row,
+					className:'align-middle',
+					name:'ausentismos.fecha_final',
+					render:v=>{
+						return v.ausentismo.fecha_final
+					}
+				},
+				{
+					data:row=>row,
+					className:'align-middle',
+					name:'ausentismos.fecha_regreso_trabajar',
+					render:v=>{
+						return v.ausentismo.fecha_regreso_trabajar
+					}
+				},
+				{
+					data:'matricula_nacional',
+					className:'align-middle',
+					name:'matricula_nacional',
+					render:v=>{
+						return v==null ? '<span class="text-muted font-italic">[no cargada]</span>' : v
+					}
+				},
+			]
+		},
+		server_side:true,
+		/*render_row:certificado=>{
 
 			// Creamos las variables con las fechas en inglés (pueden ser null)
 			let fechaInicioEnIngles = certificado.fecha_inicio;
@@ -37,7 +93,7 @@ $(()=>{
 					<td>${certificado.matricula_nacional==null ? 'no cargada' : certificado.matricula_nacional}</td>
 				</tr>`
 			)
-		}
+		}*/
 	})
 
 })

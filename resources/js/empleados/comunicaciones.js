@@ -6,30 +6,42 @@ $(()=>{
 		get_path:'/busqueda',
 		table:$('.tabla_comunicaciones_listado'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
+		server_side:true,
 		datatable_options: {
-            order: [[3, "desc"]]
-        },
-		render_row:comunicacion=>{
-			 // Formatear la fecha
-			 /*const fecha = new Date(comunicacion.created_at);
-			 const dia = fecha.getDate().toString().padStart(2, '0');
-			 const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
-			 const anio = fecha.getFullYear();*/
-
-			return $(`
-				<tr>
-					<td>${comunicacion.nombre}</td>
-					<td>${(comunicacion.email == null) ? 'No fue cargado' : comunicacion.email}</td>
-					<td>${comunicacion.tipo}</td>
-					<td>
-						${comunicacion.created_at}
-					</td>
-					<td>
-						<span class="tag_ejornal tag_ejornal_${comunicacion.estado==1?'success':'danger'}">${comunicacion.estado==1?'Activo':'Inactivo'}</span>
-					</td>
-				</tr>`
-			)
+			order: [[3, "desc"]],
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
+			columns:[
+				{
+					data:'nombre',
+					className:'align-middle',
+					name:'nombre'
+				},
+				{
+					data:'email',
+					className:'align-middle',
+					name:'email'
+				},
+				{
+					data:'tipo',
+					className:'align-middle',
+					name:'tipo'
+				},
+				{
+					data:'created_at',
+					className:'align-middle',
+					name:'created_at'
+				},
+				{
+					data:'estado',
+					className:'align-middle',
+					name:'estado',
+					render:v=>{
+						return `<span class="tag_ejornal tag_ejornal_${v==1?'success':'danger'}">${v==1?'Activo':'Inactivo'}</span>`
+					}
+				}
+			]
 		}
+
 	})
 
 })

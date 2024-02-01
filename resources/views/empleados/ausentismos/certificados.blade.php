@@ -27,13 +27,13 @@
 			  <!--Table head-->
 			  <thead>
 				<tr>
-				  <th class="th-lg">Trabajador</th>
-				  <th class="th-lg">Médico</th>
-				  <th class="th-lg">Institución</th>
-				  <th class="th-lg">Fecha inicio</th>
-				  <th class="th-lg">Fecha final</th>
-				  <th class="th-lg">Fecha en que regresó</th>
-				  <th class="th-lg">Matricula nacional</th>
+				  <th>Trabajador</th>
+				  <th>Médico</th>
+				  <th>Institución</th>
+				  <th>Fecha inicio</th>
+				  <th>Fecha final</th>
+				  <th>Fecha en que regresó</th>
+				  <th>Matricula nacional</th>
 				</tr>
 			  </thead>
 			  <!--Table head-->

@@ -39,15 +39,36 @@ class EmpleadosComunicacionesController extends Controller
 		->join('tipo_comunicacion', 'comunicaciones.id_tipo', 'tipo_comunicacion.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
+
+		$total = $query->count();
+
 		if($request->from) $query->whereDate('comunicaciones.created_at','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('comunicaciones.created_at','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
 
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
 		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all(),
+			'fichada_user'=>auth()->user()->fichada,
+		];
+
+
+		/*return [
 			'results'=>$query->get(),
 			'fichada_user'=>auth()->user()->fichada,
 			'request'=>$request->all()
-		];
+		];*/
 	}
 
 	/**

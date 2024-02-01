@@ -22,4 +22,10 @@ class AusentismoDocumentacion extends Model
   	'fecha_documento'=>'date:d/m/Y'
   ];
 
+
+  public function ausentismo()
+  {
+  	return $this->belongsTo(Ausentismo::class,'id_ausentismo');
+  }
+
 }

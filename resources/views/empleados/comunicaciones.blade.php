@@ -32,11 +32,11 @@
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th class="th-lg">Trabajador</th>
-						<th class="th-lg">Email</th>
-						<th class="th-lg">Tipo</th>
-						<th class="th-lg">Cargado</th>
-						<th class="th-lg">Estado</th>
+						<th>Trabajador</th>
+						<th>CUIL</th>
+						<th>Tipo</th>
+						<th>Cargado</th>
+						<th>Estado</th>
 					</tr>
 				</thead>
 				<!--Table head-->

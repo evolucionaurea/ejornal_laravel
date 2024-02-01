@@ -39,6 +39,11 @@ if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones'
 
 //EMPLEADOS
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
+if(route=='/empleados/nominas/historial') require('./empleados/nominas_historial')
+if(route=='nominas.edit') require('./empleados/nominas_edit')
+if(route=='nominas.create') require('./empleados/nominas_create')
+if(route=='nominas.show') require('./empleados/nominas_show')
+
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos_extension_licencia')
 if(route=='ausentismos.create') require('./empleados/ausentismos_create')
@@ -66,9 +71,7 @@ if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicament
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='medicas.create') require('./empleados/consultas.medicas.create')
 if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
-if(route=='/empleados/nominas/historial') require('./empleados/nominas_historial')
-if(route=='nominas.edit') require('./empleados/nominas_edit')
-if(route=='nominas.create') require('./empleados/nominas_create')
+
 
 
 //CLIENTES

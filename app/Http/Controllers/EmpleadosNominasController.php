@@ -195,6 +195,8 @@ class EmpleadosNominasController extends Controller
 
 		$trabajador = Nomina::findOrFail($id);
 
+		//dd($trabajador->fecha_nacimiento);
+
 		$consultas_medicas = ConsultaMedica::join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id_nomina', $id)
 		->select('consultas_medicas.fecha', 'consultas_medicas.amerita_salida', 'consultas_medicas.peso',
@@ -477,21 +479,21 @@ class EmpleadosNominasController extends Controller
 				}*/
 
 				$registros[] = (object) [
-					'nombre'=>$fila[0],
+					'nombre'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[0]),
 					'dni'=>$fila[1],
 					'estado'=>$fila[2],
-					'sector'=>$fila[3],
+					'sector'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[3]),
 					'email'=>$fila[4],
 					'telefono'=>$fila[5],
 					'fecha_nacimiento'=>$fila[6],
 
-					'calle'=>isset($fila[7]) ? $fila[7] : null,
+					'calle'=>isset($fila[7]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[7]) : null,
 					'nro'=>isset($fila[8]) ? $fila[8] : null,
-					'entre_calles'=>isset($fila[9]) ? $fila[9] : null,
-					'localidad'=>isset($fila[10]) ? $fila[10] : null,
-					'partido'=>isset($fila[11]) ? $fila[11] : null,
+					'entre_calles'=>isset($fila[9]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[9]) : null,
+					'localidad'=>isset($fila[10]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[10]) : null,
+					'partido'=>isset($fila[11]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[11]) : null,
 					'cod_postal'=>isset($fila[12]) ? $fila[12] : null,
-					'observaciones'=>isset($fila[13]) ? $fila[13] : null
+					'observaciones'=>isset($fila[13]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[13]) : null
 
 				];
 			}else{
@@ -516,8 +518,6 @@ class EmpleadosNominasController extends Controller
 			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, cuil, estado y sector son obligatorios.');
 		}
 
-
-		//dd( $registros );
 		///dd(mb_convert_encoding($registros[0]->sector, 'UTF-8', 'ISO-8859-1'));
 		//dd(mb_detect_encoding($registros[0]->sector));
 

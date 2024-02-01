@@ -38,5 +38,5 @@ Route::group(['middleware' => ['autenticacion']], function () {
 
 // Ruta Error 404. Si no machea con ninguna ruta creada va a ésta
 Route::fallback(function(){
-	return view('error404');
+	return view('errors.404');
 });
