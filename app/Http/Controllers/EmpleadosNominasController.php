@@ -502,8 +502,7 @@ class EmpleadosNominasController extends Controller
 					!isset($fila[0]) ||
 					!isset($fila[1]) ||
 					!isset($fila[2]) ||
-					!isset($fila[3]) ||
-					!isset($fila[4])
+					!isset($fila[3])
 				){
 					return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, dni, estado y sector obligatoriamente');
 					break;
@@ -635,7 +634,11 @@ class EmpleadosNominasController extends Controller
 
 				/*$f_nac_arr = explode('/',$registro->fecha_nacimiento);
 				$nomina->fecha_nacimiento = $f_nac_arr[2].'-'.$f_nac_arr[1].'-'.$f_nac_arr[0];*/
-				$nomina->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $registro->fecha_nacimiento);
+				if($registro->fecha_nacimiento){
+					$nomina->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $registro->fecha_nacimiento);
+				}else{
+					$nomina->fecha_nacimiento = null;
+				}
 
 				$nomina->telefono = $registro->telefono;
 				$nomina->sector = $registro->sector;
