@@ -34,10 +34,13 @@
 		@endif
 
 		<div class="tarjeta">
-			<form action="{{action('AdminUserController@update', $user->id)}}" accept-charset="UTF-8" method="post">
+			<form id="form_edit_user_por_admin" action="{{action('AdminUserController@update', $user->id)}}"
+				accept-charset="UTF-8" method="post">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
 				<input type="hidden" name="rol" value="{{$user->id_rol}}">
+				<input id="validacion_submit" type="hidden" name="validacion_submit" data-fichada="{{ $user->fichada }}"
+					data-fichar="{{ $user->fichar }}">
 				<div class="form-row">
 					<div class="form-group col-lg-3 col-md-4 col-sm-12">
 						<label>Nombre completo</label>
@@ -335,7 +338,8 @@
 					</div>
 					@endif
 					<div class="col-12">
-						<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar
+						<button id="admin_edit_user" class="btn-ejornal btn-ejornal-base" type="submit"
+							name="button">Guardar
 							cambios</button>
 						@if (auth()->user()->id == $user->id)
 						<button data-toggle="modal" data-target="#cambiar_pass"

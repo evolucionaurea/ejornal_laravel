@@ -14,19 +14,19 @@
 		<div class="cabecera">
 			<h2>Listado de estudios medicos complementarios</h2>
 			<p>Aquí puede ver el listado de estudios medicos complementarios de la empresa</p>
-			@if (auth()->user()->fichada == 1)
-			  <div class="cabecera_acciones">
+			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('preocupacionales.create')}}">
-				  <i class="fas fa-plus-circle"></i>
-				  Nuevo estudio medico complementario
+					<i class="fas fa-plus-circle"></i>
+					Nuevo estudio medico complementario
 				</a>
-			  </div>
+			</div>
 			@else
 			<div class="small text-muted"><i>[Debe fichar para agregar un nuevo estudio médico complementario]</i></div>
 			@endif
 		</div>
 
-		 @include('../mensajes_validacion')
+		@include('../mensajes_validacion')
 
 		<div class="tarjeta">
 
@@ -42,7 +42,7 @@
 						<th>Tel</th>
 						<th>Fecha</th>
 						<th>Documentación</th>
-						@if (auth()->user()->fichada == 1)
+						@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
 						<th>Acciones</th>
 						@endif
 					</tr>

@@ -15,12 +15,15 @@
 		<div class="cabecera">
 			<h2>Listado de trabajadores</h2>
 			<p>Aquí puede ver el listado de trabajadores de la empresa</p>
-			@if (auth()->user()->fichada == 1)
+			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('nominas.create')}}"><i class="fas fa-plus-circle fa-fw"></i> Nuevo trabajador</a>
-				<a data-toggle="modal" data-target="#cargar_nominas_excel" class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-file-excel fa-fw"></i>Carga masiva</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('nominas.create')}}"><i
+						class="fas fa-plus-circle fa-fw"></i> Nuevo trabajador</a>
+				<a data-toggle="modal" data-target="#cargar_nominas_excel" class="btn-ejornal btn-ejornal-success"
+					href="#"><i class="fas fa-file-excel fa-fw"></i>Carga masiva</a>
 
-				<a href="{{route('/empleados/nominas/historial')}}" class="btn-ejornal btn-dark" ><i class="fas fa-file-excel fa-fw"></i> Historial</a>
+				<a href="{{route('/empleados/nominas/historial')}}" class="btn-ejornal btn-dark"><i
+						class="fas fa-file-excel fa-fw"></i> Historial</a>
 			</div>
 			@else
 			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo trabajador</i></div>
@@ -35,7 +38,8 @@
 			<p>Se encontraron los siguientes errores al importar el archivo:</p>
 			<ul class="list-group list-group-flush small">
 				@foreach(\Session::get('errores') as $error)
-				<li class="list-group-item py-1 px-0">Fila: {{ $error->fila }} | Columna: {{ $error->columna }} | Error: {{ $error->error }}</li>
+				<li class="list-group-item py-1 px-0">Fila: {{ $error->fila }} | Columna: {{ $error->columna }} | Error:
+					{{ $error->error }}</li>
 				@endforeach
 			</ul>
 		</div>
@@ -73,7 +77,9 @@
 							en el paso 2</p>
 
 						<div class="">
-							<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/nominas_carga_masiva.csv')}}" download target="_blank"><i class="fa fa-fw fa-download"></i> Descargar excel</a>
+							<a class="btn-ejornal btn-ejornal-dark"
+								href="{{asset('archivos/nominas_carga_masiva.csv')}}" download target="_blank"><i
+									class="fa fa-fw fa-download"></i> Descargar excel</a>
 						</div>
 						<div class="small text-muted mt-3">Archivo actualizado al 30/01/2024</div>
 

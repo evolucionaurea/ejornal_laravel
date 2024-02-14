@@ -79,13 +79,13 @@ class EmpleadosNominasController extends Controller
 
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
-			'dni' => 'required|numeric|digits:8',
+			'dni' => 'required|digits:8',
 			'estado' => 'required',
 			'sector' => 'required'
 		]);
 
 		if(!auth()->user()->id_cliente_actual){
-			return back()->withInput()->with('error','Debes fichar para poder agregar un nuevo trabajador.');
+			return back()->withInput()->with('error','Debes estar trabajando en algun cliente para poder realizar esta accion.');
 		}
 
 
@@ -94,8 +94,6 @@ class EmpleadosNominasController extends Controller
 		if($existing_nomina){
 			return back()->withInput()->with('error','El trabajador que intentas crear ya existe en la base de datos');
 		}
-
-
 
 		//Guardar en base
 		$trabajador = new Nomina();

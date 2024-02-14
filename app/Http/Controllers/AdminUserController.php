@@ -12,6 +12,9 @@ use App\Especialidad;
 use App\FichadaNueva;
 use App\Grupo;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Jenssegers\Agent\Agent;
+use DateTime;
 
 class AdminUserController extends Controller
 {
@@ -286,15 +289,38 @@ class AdminUserController extends Controller
 			'estado' => 'required|numeric',
 		]);
 
-
 		if ($request->rol == 2) {
 			if (!isset($request->clientes) || empty($request->clientes) || count($request->clientes) == 0 || is_null($request->clientes)) {
 				return back()->withInput($request->input())->with('error', 'No puede crear a un usuario empleado sin definir en que empresa/s trabajará.');
 			}
 			$user = User::findOrFail($id);
 			if ($user->fichada == 1 && $request->fichar == 0) {
-				return back()->withInput($request->input())->with('error', 'El usuario está con la fichada activa y trabajando. Pidale que termine
-				con su trabajo y fiche su salida antes de realizar esta accion');
+
+				// Desficho al user que tiene una fichada iniciada y guardo la informacion
+				$egreso = Carbon::now();
+				$user->fichada = 0;
+				$user->save();
+
+				$agent = new Agent();
+      			$device = $agent->platform();
+
+
+				//Actualizar en base
+				$fichada = FichadaNueva::where('id_user', $user->id)->latest()->first();
+				$fichada->egreso = $egreso;
+
+				$f_ingreso = new DateTime($fichada->ingreso);
+				$f_egreso = new DateTime();
+				$time = $f_ingreso->diff($f_egreso);
+				$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
+
+				$fichada->id_user = $id;
+				$fichada->id_cliente = $user->id_cliente_actual;
+				$fichada->ip = \Request::ip();
+				$fichada->dispositivo = $device;
+				$fichada->tiempo_dedicado = $tiempo_dedicado;
+				$fichada->save();
+
 			}
 		}
 

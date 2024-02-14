@@ -23,7 +23,6 @@ $(document).ready(() => {
 		let id_user = $('.id_usuario').val();
 		cliente_select = this.value;
 
-
 		if (debe_fichar !== 0) {
 			
 			// Validar si está trabajando o no empezó

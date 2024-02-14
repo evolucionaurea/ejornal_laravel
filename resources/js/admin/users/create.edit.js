@@ -1,5 +1,6 @@
-$(()=>{
+const { Alert } = require("bootstrap")
 
+$(()=>{
 	const roles = [
 		{id:1,name:'admin'},
 		{id:2,name:'empleado'},
@@ -65,5 +66,36 @@ $(()=>{
 	}).trigger('change');*/
 
 
+	$("#admin_edit_user").click(function(e){
+		e.preventDefault();
+	
+		// Si el usuario es Empleado
+		let rol = $('[name="rol"]').val();
+		if (rol == 2) {
+			let fichada = $('#validacion_submit').data('fichada');
+			let fichar = $('#validacion_submit').data('fichar');
+			let usuario_debe_fichar = $('[name="fichar"]').val();
+		
+			if (fichada == 1 && usuario_debe_fichar == 0) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'El usuario tiene la fichada activa. Esta trabajando. Si continua ficharemos la salida del empleado y luego haremos que no sea necesario que éste vuelva a fichar.',
+					showCancelButton: true,
+					reverseButtons: true,
+					cancelButtonText: '<i class="fa fa-times fa-fw"></i> Cancelar',
+					confirmButtonText: '<i class="fa fa-check fa-fw"></i> Aceptar'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$('#form_edit_user_por_admin').submit();
+					}
+				});
+			} else {
+				$('#form_edit_user_por_admin').submit();
+			}
+		}else{
+			$('#form_edit_user_por_admin').submit();
+		}
+	});
+	
 
 })
