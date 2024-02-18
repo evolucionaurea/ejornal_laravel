@@ -251,7 +251,8 @@
 
 	<div class="col-lg-6 ">
 		<div class="tarjeta" >
-			<h2 class="text-center">Ausentismos, Accidentes e Incidentes de {{ $now->formatLocalized('%B') }}</h2>
+			<h2 class="text-center">Ausentismos de {{ $now->formatLocalized('%B') }}</h2>
+			<div class="small text-muted text-center">(no incluye Accidentes e Incidentes)</div>
 			<hr>
 			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
 			<canvas id="chart_ausentismos_mes" height="480"></canvas>
@@ -259,7 +260,8 @@
 	</div>
 	<div class="col-lg-6">
 		<div class="tarjeta">
-			<h2 class="text-center">Ausentismos, Accidentes e Incidentes del año</h2>
+			<h2 class="text-center">Ausentismos del año</h2>
+			<div class="small text-muted text-center">(no incluye Accidentes e Incidentes)</div>
 			<hr>
 			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
 			<canvas id="chart_ausentismos_anual" height="480"></canvas>
@@ -269,7 +271,8 @@
 
 	<div class="col-lg-12">
 		<div class="tarjeta">
-			<h2 class="text-center">Índice de Ausentismos, Accidentes e Incidentes del año actual</h2>
+			<h2 class="text-center">Índice de Ausentismos del año actual</h2>
+			<div class="small text-muted text-center">(no incluye Accidentes e Incidentes)</div>
 			<hr>
 			<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
 			<canvas id="chart_indice_ausentismos_anual" height="480"></canvas>
@@ -287,8 +290,9 @@
 	<!-- Mes Actual -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_mes_porcentajes">
-			<h4 class="mb-0">Ausentismos, Accidentes e Incidentes en este mes</h4>
+			<h4 class="mb-1">Ausentismos en este mes</h4>
 			<h6>{{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
+			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 			<table data-table="ausentismos-mes" class="table table-striped tabla table-sm small">
 				<thead>
 					<tr>
@@ -316,8 +320,9 @@
 	<!-- Mes Anterior -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_mes_porcentajes">
-			<h4 class="mb-0">Ausentismos, Accidentes e Incidentes en el mes pasado</h4>
+			<h4 class="mb-0">Ausentismos en el mes pasado</h4>
 			<h6>{{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
+			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 			<table data-table="ausentismos-mes-anterior" class="table table-striped tabla table-sm small">
 				<thead>
 					<tr>
@@ -345,8 +350,9 @@
 	<!-- Mes Año Anterior -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_mes_porcentajes">
-			<h4 class="mb-0">Ausentismos, Accidentes e Incidentes en el mismo mes del año anterior</h4>
+			<h4 class="mb-0">Ausentismos en el mismo mes del año anterior</h4>
 			<h6>{{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h6>
+			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 			<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla table-sm small">
 				<thead>
 					<tr>
@@ -374,7 +380,9 @@
 	<!-- Año Actual -->
 	<div class="col-lg-6">
 		<div class="tarjeta ausentismos_anio_porcentajes">
-			<h4>Ausentismos, Accidentes e Incidentes del año actual ({{ $now->firstOfYear()->formatLocalized('%B') }} - {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }})</h4>
+			<h4 class="mb-0">Ausentismos del año actual</h4>
+			<h6>{{ $now->firstOfYear()->formatLocalized('%B') }} - {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
+			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 			<table data-table="ausentismos-anual" class="table table-striped table-sm small">
 				<thead>
 					<tr>

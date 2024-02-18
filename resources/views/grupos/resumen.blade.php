@@ -44,10 +44,10 @@
 								<td>{{$cliente->nombre}}</td>
 								<td class="text-right">{{$cliente->nominas_count}}</td>
 								{{-- <td class="text-right">{{$cliente->ausentismos_count}}</td> --}}
-								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_actual_indice+$cliente->ausentismos->accidentes_mes_actual_indice+$cliente->ausentismos->incidentes_mes_actual_indice,2,',','.') }}%</td>
-								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_pasado_indice+$cliente->ausentismos->accidentes_mes_pasado_indice+$cliente->ausentismos->incidentes_mes_pasado_indice,2,',','.') }}%</td>
-								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_anio_anterior_indice+$cliente->ausentismos->accidentes_mes_anio_anterior_indice+$cliente->ausentismos->incidentes_mes_anio_anterior_indice,2,',','.') }}%</td>
-								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_anio_actual_indice+$cliente->ausentismos->accidentes_anio_actual_indice+$cliente->ausentismos->incidentes_anio_actual_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_actual_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_pasado_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_mes_anio_anterior_indice,2,',','.') }}%</td>
+								<td class="text-right">{{ number_format($cliente->ausentismos->ausentismos_anio_actual_indice,2,',','.') }}%</td>
 							</tr>
 							@endforeach
 						</tbody>
@@ -56,26 +56,32 @@
 
 
 
-				<!-- CHART -->
+				{{-- CHARTS --}}
 				<div class="row d-flex justify-content-center">
+
 					<div class="col-lg-6">
 						<div class="tarjeta">
-							<h4 class="text-center">Ausentismos, Accidentes e Incidentes de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
+							<h4 class="text-center mb-1">Ausentismos de {{ Str::ucfirst($carbon::now()->formatLocalized('%B')) }}</h4>
+							<div class="small text-muted text-center">no incluye Accidentes e Incidentes</div>
 							<div data-toggle="blank-chart" class="alert alert-info text-center d-none">No hay datos</div>
 							<canvas id="chart_ausentismos_mes" height="380"></canvas>
 						</div>
 					</div>
 					<div class="col-lg-6">
 						<div class="tarjeta">
-							<h4 class="text-center">Ausentismos, Accidentes e Incidentes del año</h4>
+							<h4 class="text-center mb-1">Ausentismos del año</h4>
+							<div class="small text-muted text-center">no incluye Accidentes e Incidentes</div>
 							<div data-toggle="blank-chart-ausentismos" class="alert alert-info text-center d-none">No hay datos</div>
 							<canvas id="chart_ausentismos_anual" height="380"></canvas>
 						</div>
 					</div>
 
+
+					{{-- MES A MES --}}
 					<div class="col-lg-12">
 						<div class="tarjeta">
-							<h2 class="text-center">Índice de Ausentismos, Accidentes e Incidentes del año actual</h2>
+							<h2 class="text-center">Índice de Ausentismos del año actual</h2>
+							<div class="small text-muted text-center">no incluye Accidentes e Incidentes</div>
 							<hr>
 							<div data-toggle="blank-chart" class="alert alert-info d-none">No hay datos</div>
 							<canvas id="chart_indice_ausentismos_anual" height="480"></canvas>
@@ -86,14 +92,16 @@
 
 
 
+				{{-- TABLAS --}}
 
 				<div class="row">
 
 					<!-- Mes Actual -->
 					<div class="col-lg-6">
 						<div class="tarjeta ausentismos_mes_porcentajes">
-							<h4 class="mb-0">Ausentismos, Accidentes e Incidentes del mes actual</h4>
+							<h4 class="mb-0">Ausentismos del mes actual</h4>
 							<h6>{{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h6>
+							<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 							<table data-table="ausentismos-mes" class="table table-striped tabla table-sm small">
 								<thead>
 									<tr>
@@ -121,8 +129,9 @@
 					<!-- Mes Anterior -->
 					<div class="col-lg-6">
 						<div class="tarjeta ausentismos_mes_porcentajes">
-							<h4 class="mb-0">Ausentismos, Accidentes e Incidentes del mes pasado</h4>
+							<h4 class="mb-0">Ausentismos del mes pasado</h4>
 							<h6>{{ $carbon::now()->subMonth()->formatLocalized('%B') }} {{ $carbon::now()->subMonth()->formatLocalized('%Y') }}</h6>
+							<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 							<table data-table="ausentismos-mes-anterior" class="table table-striped tabla table-sm small">
 								<thead>
 									<tr>
@@ -150,8 +159,9 @@
 					<!-- Mes Año Anterior -->
 					<div class="col-lg-6">
 						<div class="tarjeta ausentismos_mes_porcentajes">
-							<h4 class="mb-0">Ausentismos, Accidentes e Incidentes mismo mes del año anterior</h4>
+							<h4 class="mb-0">Ausentismos en el mismo mes del año anterior</h4>
 							<h6>{{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->subYear()->formatLocalized('%Y') }}</h6>
+							<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 							<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla table-sm small">
 								<thead>
 									<tr>
@@ -179,8 +189,9 @@
 					<!-- Año Actual -->
 					<div class="col-lg-6">
 						<div class="tarjeta ausentismos_anio_porcentajes">
-							<h4 class="mb-0">Ausentismos, Accidentes e Incidentes del año actual</h4>
+							<h4 class="mb-0">Ausentismos del año actual</h4>
 							<h6>{{ $carbon::now()->firstOfYear()->formatLocalized('%B') }} a {{ $carbon::now()->formatLocalized('%B') }} {{ $carbon::now()->formatLocalized('%Y') }}</h6>
+							<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
 							<table data-table="ausentismos-anual" class="table table-striped table-sm small">
 								<thead>
 									<tr>
@@ -207,13 +218,9 @@
 
 				</div>
 
-
 			</section>
 
-
 		</div>
-
-
 
 	</div>
 

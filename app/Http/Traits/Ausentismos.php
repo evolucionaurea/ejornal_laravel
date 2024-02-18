@@ -435,7 +435,15 @@ trait Ausentismos {
 						->where('id_cliente',$id_cliente);
 				})
 				->whereHas('tipo',function($query){
-					$query->where('incluir_indice',1);
+					$query
+						//->where('incluir_indice',1);
+						->where('incluir_indice',1)
+						->where('nombre','NOT LIKE','%incidente%')
+						->where(function($query){
+							$query
+								->where('agrupamiento','!=','ART')
+								->orWhere('agrupamiento',null);
+						});
 				})
 				->first();
 
@@ -516,7 +524,14 @@ trait Ausentismos {
 					->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
@@ -578,7 +593,14 @@ trait Ausentismos {
 					->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -638,7 +660,14 @@ trait Ausentismos {
 					->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -693,7 +722,14 @@ trait Ausentismos {
 					->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')

@@ -208,7 +208,14 @@ class GruposResumenController extends Controller
 						});
 				})
 				->whereHas('tipo',function($query){
-					$query->where('incluir_indice',1);
+					$query
+						->where('incluir_indice',1)
+						->where('nombre','NOT LIKE','%incidente%')
+						->where(function($query){
+							$query
+								->where('agrupamiento','!=','ART')
+								->orWhere('agrupamiento',null);
+						});
 				})
 				->first();
 
@@ -286,7 +293,14 @@ class GruposResumenController extends Controller
 					});
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
@@ -353,7 +367,14 @@ class GruposResumenController extends Controller
 					});
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -417,7 +438,14 @@ class GruposResumenController extends Controller
 					});
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->get();
@@ -479,7 +507,14 @@ class GruposResumenController extends Controller
 					});
 			})
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice',1);
+				$query
+					->where('incluir_indice',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
