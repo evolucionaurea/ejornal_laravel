@@ -27,7 +27,7 @@
 
 	<!-- Data Table -->
 	{{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/jszip-2.5.0/dt-1.10.21/b-1.6.2/b-flash-1.6.2/b-html5-1.6.2/r-2.2.5/sc-2.0.2/datatables.min.css"/> --}}
-	<link rel="stylesheet" href="{{asset('css/lib/datatables.min.css')}}">
+	{{-- <link rel="stylesheet" href="{{asset('css/lib/datatables.min.css')}}"> --}}
 
 	<!-- Data Table para que funcione Admin - Reportes -->
 	{{-- <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> --}}

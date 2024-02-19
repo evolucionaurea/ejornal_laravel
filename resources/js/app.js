@@ -89,3 +89,14 @@ if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
 if(route=='/grupos/nominas_historial') require('./grupos/nominas_historial')
 
 console.log(`route: ${route}`)
+
+
+fetch('/clientes/resumen')
+	.then(response=>{
+		if(response.status===503){
+			setTimeout(()=>{
+				window.location.reload()
+			},10000)
+		}
+
+	})

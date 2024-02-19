@@ -13,6 +13,10 @@
     <h3 class="font-weight-bold mb-4 pb-2">Sitio en Mantenimiento</h3>
     <p>En estos momentos estamos actualizando el sitio.<br />Refresca esta pantalla en unos minutos y podrás volver a usar el sistema.<br><br>Muchas Gracias.</p>
 
+		<div class="progress">
+			<div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+		</div>
+
   </div>
 
 </section>
