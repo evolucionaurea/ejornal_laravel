@@ -46,6 +46,7 @@ class EmpleadosComunicacionesLivianas extends Controller
 		return [
 			'results'=>$query->get(),
 			'fichada_user'=>auth()->user()->fichada,
+            'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
 		];
 
@@ -74,7 +75,7 @@ class EmpleadosComunicacionesLivianas extends Controller
         $validatedData = $request->validate([
             'descripcion' => 'required'
           ]);
-    
+
           //Guardar en base Comunicaciones
           $comunicacion_liviana = new ComunicacionLiviana();
           $comunicacion_liviana->id_tarea_liviana = $request->id_tarea_liviana;
@@ -82,7 +83,7 @@ class EmpleadosComunicacionesLivianas extends Controller
           $comunicacion_liviana->descripcion = $request->descripcion;
           $comunicacion_liviana->user = auth()->user()->nombre;
           $comunicacion_liviana->save();
-    
+
           return redirect('empleados/comunicaciones_livianas/'.$request->id_tarea_liviana)->with('success', 'Comunicación liviana guardada con éxito');
 
     }
@@ -95,20 +96,20 @@ class EmpleadosComunicacionesLivianas extends Controller
      */
     public function show($id)
     {
-        
+
        $tarea_liviana = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 	  ->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
 	  ->where('tareas_livianas.id', $id)
 	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-	  ->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono', 
-      DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio', 'tareas_livianas.fecha_final', 
+	  ->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
+      DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio', 'tareas_livianas.fecha_final',
       'tareas_livianas.fecha_regreso_trabajar', 'tareas_livianas.archivo', 'tareas_livianas.id')
 	  ->first();
 
-	  $comunicacione_tarea_liviana = ComunicacionLiviana::join('tipos_comunicaciones_livianas', 'comunicaciones_livianas.id_tipo', 
+	  $comunicacione_tarea_liviana = ComunicacionLiviana::join('tipos_comunicaciones_livianas', 'comunicaciones_livianas.id_tipo',
       'tipos_comunicaciones_livianas.id')
 	  ->where('id_tarea_liviana', $id)
-	  ->select('comunicaciones_livianas.id', 'tipos_comunicaciones_livianas.nombre', 'comunicaciones_livianas.descripcion', 
+	  ->select('comunicaciones_livianas.id', 'tipos_comunicaciones_livianas.nombre', 'comunicaciones_livianas.descripcion',
       'comunicaciones_livianas.updated_at')
 	  ->get();
 
@@ -117,7 +118,7 @@ class EmpleadosComunicacionesLivianas extends Controller
 
 	  $clientes = $this->getClientesUser();
 
-	  return view('empleados.comunicaciones_livianas.show', compact('tarea_liviana', 'clientes', 'comunicacione_tarea_liviana', 
+	  return view('empleados.comunicaciones_livianas.show', compact('tarea_liviana', 'clientes', 'comunicacione_tarea_liviana',
       'tipos_comunicaciones_livianas'));
 
     }

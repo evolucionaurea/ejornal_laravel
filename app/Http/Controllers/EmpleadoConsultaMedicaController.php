@@ -83,6 +83,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			'recordsFiltered'=>$query->count(),
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
 		];
 	}

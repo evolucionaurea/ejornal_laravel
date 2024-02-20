@@ -38,6 +38,7 @@ class EmpleadosPreocupacionalesController extends Controller
 		return [
 			'results'=>$query->get(),
 			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
 		];
 	}

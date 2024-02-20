@@ -61,14 +61,9 @@ class EmpleadosComunicacionesController extends Controller
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'request'=>$request->all(),
 			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar
 		];
 
-
-		/*return [
-			'results'=>$query->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'request'=>$request->all()
-		];*/
 	}
 
 	/**

@@ -74,6 +74,7 @@ class EmpleadoTareasLivianasController extends Controller
 			'recordsFiltered'=>$query->count(),
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
 		];
 
@@ -411,7 +412,7 @@ class EmpleadoTareasLivianasController extends Controller
 			'fecha_final' => 'required',
 			'descripcion' => 'required'
 		]);
-		
+
 		$tarea_liviana = TareaLiviana::findOrFail($request->id_tarea_liviana);
 		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
 		if ($fecha_final->lessThan($tarea_liviana->fecha_inicio)) {

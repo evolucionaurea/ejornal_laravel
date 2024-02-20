@@ -52,7 +52,10 @@ class EmpleadosNominasController extends Controller
 		//Traits > Nominas
 		$resultados = $this->searchNomina($idcliente,$request);
 
-		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
+		return array_merge($resultados,[
+			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar
+		]);
 
 	}
 

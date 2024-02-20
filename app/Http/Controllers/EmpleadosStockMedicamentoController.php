@@ -41,6 +41,7 @@ class EmpleadosStockMedicamentoController extends Controller
 		return [
 			'results'=>$query->get(),
 			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
 		];
 
@@ -53,7 +54,7 @@ class EmpleadosStockMedicamentoController extends Controller
 	  return view('empleados.medicamentos_movimientos', compact('clientes'));
 
 	}
-	
+
 
 	public function busquedaMovimientos(Request $request)
 	{
@@ -83,22 +84,23 @@ class EmpleadosStockMedicamentoController extends Controller
 		})
 		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual)
 		->orderBy('stock_medicamentos_historial.created_at', 'DESC');
-	
+
 		if ($request->from) {
 			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
-	
+
 		if ($request->to) {
 			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
-	
+
 		return [
 			'results' => $query->get(),
 			'fichada_user' => auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
 			'request' => $request->all()
 		];
 	}
-	
+
 
 
 	/**

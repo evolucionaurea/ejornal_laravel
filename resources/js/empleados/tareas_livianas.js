@@ -77,8 +77,8 @@ $(()=>{
 					orderable:false,
 					render:(v,type,row,meta)=>{
 
-						if(meta.settings.json.fichada_user!=1) return ''
-						
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user!=0) return ''
+
 						let regreso_trabajar = null;
 						let hoy;
 						let mostrar_extension;

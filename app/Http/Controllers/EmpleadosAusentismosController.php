@@ -40,7 +40,10 @@ class EmpleadosAusentismosController extends Controller
 		//Traits > Ausentismos
 		$resultados = $this->searchAusentismos(auth()->user()->id_cliente_actual,$request);
 
-		return array_merge($resultados,['fichada_user'=>auth()->user()->fichada]);
+		return array_merge($resultados,[
+			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar
+		]);
 
 	}
 
