@@ -143,6 +143,7 @@
 						<th>Email</th>
 						<th>Especialidad</th>
 						<th>Estado</th>
+						<th>Aplica Fichada</th>
 						<th style="width:120px">Rol</th>
 						<th>Acciones</th>
 					</tr>

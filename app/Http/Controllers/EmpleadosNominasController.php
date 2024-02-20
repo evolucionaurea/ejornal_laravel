@@ -244,6 +244,9 @@ class EmpleadosNominasController extends Controller
 		->orderBy('preocupacionales.fecha', 'desc')
 		->get();
 
+		//dd($preocupacionales[0]);
+
+
 		return view('empleados.nominas.show', compact('trabajador', 'consultas_medicas',
 		'consultas_enfermeria', 'ausentismos', 'clientes', 'vacunas', 'testeos', 'preocupacionales'));
 	}

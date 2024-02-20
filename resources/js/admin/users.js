@@ -39,10 +39,13 @@ $(()=>{
 				<td>${user.nombre}</td>
 				<td>${user.email}</td>
 				<td>${user.especialidad!=null?user.especialidad:''}</td>
-				<td><span class="tag_ejornal tag_ejornal_${user.estado==1?'success':'danger'}">${user.estado==1?'Activo':'Inactivo'}</span></td>
+				<td><span class="badge badge-${user.estado==1?'success':'danger'}">${user.estado==1?'Activo':'Inactivo'}</span></td>
 				<td>
+					<span class="badge badge-${user.fichar==1?'success':'danger'}">${user.fichar==1 ? 'Si' : 'No'}</span>
+				</td>
+				<td style="width:420px">
 					<div><b>${user.rol.capitalize()}</b></div>
-					<div class="small text-muted font-italic">${clientes.join(', ')}</div>
+					<div class="small text-muted font-italic" style="line-height:1.15">${clientes.join(', ')}</div>
 					<div class="small text-muted font-italic">${grupo}</div>
 				</td>
 

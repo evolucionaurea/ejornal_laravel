@@ -130,7 +130,7 @@
 			{{-- TESTEOS Y VACUNAS --}}
 			<div class="row">
 				<div class="col-md-6 col-lg-6 mb-4 col-sm-12">
-					<div class="card mdb-color" style="height:420px;overflow-y:auto;">
+					<div class="card mdb-color" style="max-height:420px;overflow-y:auto;">
 						<div class="card-body">
 							<p class="d-flex align-items-center">
 								<i class="fas fa-notes-medical fa-3x text-info"></i>
@@ -158,7 +158,7 @@
 				</div>
 
 				<div class="col-md-6 col-lg-6 mb-4 col-sm-12">
-					<div class="card mdb-color" style="height:420px;overflow-y:auto;">
+					<div class="card mdb-color" style="max-height:420px;overflow-y:auto;">
 						<div class="card-body">
 							<p class="d-flex align-items-center">
 								<i class="fas fa-vial fa-3x text-info"></i>
@@ -195,7 +195,7 @@
 							<button class="btn btn-link btn-block text-left" type="button"
 								data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
 								aria-controls="collapseOne">
-								<h6>Consultas medicas</h6>
+								<h6>Consultas médicas ({{count($consultas_medicas)}})</h6>
 							</button>
 							<i class="fal fa-chevron-circle-down text-white"></i>
 						</h2>
@@ -351,7 +351,7 @@
 							<button class="btn btn-link btn-block text-left collapsed" type="button"
 								data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
 								aria-controls="collapseTwo">
-								<h6>Consultas Enfermeria</h6>
+								<h6>Consultas Enfermería ({{ count($consultas_enfermeria) }})</h6>
 							</button>
 							<i class="fal fa-chevron-circle-down text-white"></i>
 						</h2>
@@ -497,7 +497,7 @@
 							<button class="btn btn-link btn-block text-left collapsed" type="button"
 								data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
 								aria-controls="collapseThree">
-								<h6>Examemes medicos complementarios</h6>
+								<h6>Exámemes médicos complementarios ({{ count($preocupacionales) }})</h6>
 							</button>
 							<i class="fal fa-chevron-circle-down text-white"></i>
 						</h2>
@@ -518,11 +518,11 @@
 								<tbody>
 									@foreach ($preocupacionales as $preocupacional)
 									<tr>
-										<td>{{$preocupacional->fecha->format('d/m/Y')}}</td>
+										<td>{{ (!empty($preocupacional->fecha)) ? date('d/m/Y',strtotime($preocupacional->fecha)) : "" }}</td>
 										<td>{{$preocupacional->observaciones}}</td>
 										<td>
 											@if ($preocupacional->archivo)
-											<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('preocupacional.archivo', $preocupacional->id)}}">
+											<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('preocupacionales.archivo', $preocupacional->id)}}">
 												<i class="fa fa-file"></i>{{$preocupacional->archivo}}
 											</a>
 											@else
@@ -597,7 +597,7 @@
 							<button class="btn btn-link btn-block text-left collapsed" type="button"
 								data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
 								aria-controls="collapseFour">
-								<h6>Ausentismos</h6>
+								<h6>Ausentismos ({{count($ausentismos)}})</h6>
 							</button>
 							<i class="fal fa-chevron-circle-down text-white"></i>
 						</h2>
