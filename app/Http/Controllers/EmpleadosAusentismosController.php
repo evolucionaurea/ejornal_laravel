@@ -221,19 +221,18 @@ class EmpleadosAusentismosController extends Controller
 			->orderBy('ausentismos.fecha_inicio', 'desc')
 			->get();*/
 
-		$ausencias = Ausentismo::where('id_trabajador',$id)
+		$ausentismos = Ausentismo::where('id_trabajador',$id)
 			->with('trabajador')
 			->with('tipo')
-			///->with('comunicacion')
 			->with('comunicacion.tipo')
 			->orderBy('fecha_inicio', 'desc')
 			->get();
 
 		$clientes = $this->getClientesUser();
 
-		///dd($ausencias[1]->comunicacion->tipo->nombre);
+		//dd($documentacion);
 
-		return view('empleados.ausentismos.show', compact('ausencias', 'clientes'));
+		return view('empleados.ausentismos.show', compact('ausentismos', 'clientes'));
 	}
 
 

@@ -35,34 +35,57 @@
 		@endif
 
 		<div class="tarjeta">
+
 			<div class="row">
-				<div class="col-md-12">
-					<div class="row">
-						<div class="col-lg-3 col-md-5 col-sm-12">
-							<i class="fas fa-user fa-10x"></i>
-						</div>
-						<div class="col-lg-9 col-md-7 col-sm-12">
-							<ul class="list-group list-group-flush">
-								<li class="list-group-item">
-									<b>Trabajador/a: </b> {{$ausencias[0]->trabajador->nombre}}
-								</li>
-								<li class="list-group-item">
-									<b>Email: </b> {{$ausencias[0]->trabajador->email}}
-								</li>
-								<li class="list-group-item"><b>Estado: </b>
-									@if ($ausencias[0]->estado == 1)
-									Activo
-									@else
-									Inactivo
-									@endif
-								</li>
-								<li class="list-group-item">
-									<b>Telefono: </b> {{$ausencias[0]->trabajador->telefono}}
-								</li>
-							</ul>
-						</div>
-					</div>
+				<div class="col-lg-3 col-md-5 col-sm-12">
+					<i class="fas fa-user fa-10x"></i>
 				</div>
+				<div class="col-lg-9 col-md-7 col-sm-12">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">
+							<b>Trabajador/a: </b> {{$ausentismos[0]->trabajador->nombre}}
+						</li>
+						<li class="list-group-item">
+							<b>Email: </b> {{$ausentismos[0]->trabajador->email}}
+						</li>
+						<li class="list-group-item"><b>Estado: </b>
+							@if ($ausentismos[0]->estado == 1)
+							Activo
+							@else
+							Inactivo
+							@endif
+						</li>
+						<li class="list-group-item">
+							<b>Telefono: </b> {{$ausentismos[0]->trabajador->telefono}}
+						</li>
+					</ul>
+				</div>
+			</div>
+
+
+			{{-- AUSENTISMOS --}}
+			<div class="card">
+				<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingFour">
+					<h2 class="mb-0 d-flex">
+						<button class="btn btn-link btn-block text-left collapsed" type="button"
+							data-toggle="collapse" data-target="#collapseFour" aria-expanded="true"
+							aria-controls="collapseFour">
+							<h6>Ausentismos ({{count($ausentismos)}})</h6>
+						</button>
+						<i class="fal fa-chevron-circle-down text-white"></i>
+					</h2>
+				</div>
+				<div id="collapseFour" class="collapse show" aria-labelledby="headingFour"
+					data-parent="#accordionExample">
+					<div class="card-body">
+						@include('modulos.ausentismos_historial_tabla')
+					</div>
+
+				</div>
+			</div>
+
+
+			{{-- <div class="row">
 				<div class="col-md-12">
 					<div class="row">
 						@foreach ($ausencias as $ausencia)
@@ -147,7 +170,7 @@
 						@endforeach
 					</div>
 				</div>
-			</div>
+			</div> --}}
 		</div>
 
 		{{-- Contenido de la pagina --}}

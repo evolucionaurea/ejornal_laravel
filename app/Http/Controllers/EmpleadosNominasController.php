@@ -217,12 +217,20 @@ class EmpleadosNominasController extends Controller
 		->orderBy('consultas_enfermerias.fecha', 'desc')
 		->get();
 
-		$ausentismos = Ausentismo::join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+		/*$ausentismos = Ausentismo::join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
 		->where('ausentismos.id_trabajador', $id)
 		->select('ausentismos.id', 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar',
 		'ausentismos.archivo', 'ausentismos.hash_archivo', DB::raw('ausentismo_tipo.nombre tipo'), 'ausentismos.created_at')
 		->orderBy('ausentismos.fecha_inicio', 'desc')
-		->get();
+		->get();*/
+
+		$ausentismos = Ausentismo::where('id_trabajador',$id)
+			->with('trabajador')
+			->with('tipo')
+			->with('comunicacion.tipo')
+			->with('documentaciones')
+			->orderBy('fecha_inicio', 'desc')
+			->get();
 
 		$testeos = CovidTesteo::where('id_nomina', $id)
 		->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
@@ -244,11 +252,18 @@ class EmpleadosNominasController extends Controller
 		->orderBy('preocupacionales.fecha', 'desc')
 		->get();
 
-		//dd($preocupacionales[0]);
 
 
-		return view('empleados.nominas.show', compact('trabajador', 'consultas_medicas',
-		'consultas_enfermeria', 'ausentismos', 'clientes', 'vacunas', 'testeos', 'preocupacionales'));
+		return view('empleados.nominas.show', compact(
+			'trabajador',
+			'consultas_medicas',
+			'consultas_enfermeria',
+			'ausentismos',
+			'clientes',
+			'vacunas',
+			'testeos',
+			'preocupacionales'
+		));
 	}
 
 	/**

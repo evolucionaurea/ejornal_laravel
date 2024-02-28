@@ -187,7 +187,7 @@
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label>Incluir en índices de ausentismos</label>
+								<label>Se incluye en Estadística</label>
 								<select class="form-control form-control-sm" name="incluir_indice">
 									<option value="1">Si</option>
 									<option value="0">No</option>
@@ -227,7 +227,7 @@
 							<thead>
 								<tr>
 									<th>Tipo</th>
-									<th class="text-center">Genera Ausentismo</th>
+									<th class="text-center">Se incluye en Estadística</th>
 									<th class="text-right">Acciones</th>
 								</tr>
 							</thead>
@@ -309,7 +309,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label>Incluir en indice de ausentismo</label>
+								<label>Se incluye en Estadística</label>
 								<select class="form-control form-control-sm" name="editar_incluir_indice">
 									<option value="0">No</option>
 									<option value="1">Si</option>
