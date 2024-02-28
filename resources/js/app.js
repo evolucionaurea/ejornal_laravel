@@ -59,6 +59,7 @@ if(route=='/empleados/certificados') require('./empleados/certificados')
 if(route=='/empleados/comunicaciones_livianas') require('./empleados/comunicaciones_livianas')
 if(route=='/empleados/certificados_livianos') require('./empleados/certificados_livianos')
 
+if(route=='empleados.consultas.todas') require('./empleados/consultas.todas')
 if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
 if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')
 

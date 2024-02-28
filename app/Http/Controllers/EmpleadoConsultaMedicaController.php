@@ -380,10 +380,12 @@ class EmpleadoConsultaMedicaController extends Controller
 	}
 
 
-	public function exportar(Request $request){
+	public function exportar(Request $request)
+	{
 
-
-		if(!auth()->user()->id_cliente_actual) dd('Debes fichar para utilizar esta funcionalidad.');
+		if (!auth()->user()->id_cliente_actual) {
+			return back()->with('error', 'No se encontraron consultas');
+		}
 
 		$query = ConsultaMedica::select('consultas_medicas.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
 		->join('nominas','nominas.id','consultas_medicas.id_nomina')
@@ -395,7 +397,9 @@ class EmpleadoConsultaMedicaController extends Controller
 
 		$consultas = $query->get();
 
-		if(!$consultas) dd('No se han encontrado consultas');
+		if (!$consultas) {
+			return back()->with('error', 'No se han encontrado consultas');
+		}
 
 		$hoy = Carbon::now();
 		$file_name = 'consultas-medicas-'.$hoy->format('YmdHis').'.csv';

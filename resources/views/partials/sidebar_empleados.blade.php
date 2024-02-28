@@ -149,6 +149,11 @@
 				</div>
 				<div class="dropdownContent">
 					<ul>
+						<ol data-route="empleados.consultas.todas"
+							class="{{ setActiveSub('empleados.consultas.todas') }}"
+							onclick="javascript:location.href='{{url('/empleados/consultas/todas')}}'">
+							<a href="{{url('/empleados/consultas/todas')}}">Ver todas</a>
+						</ol>
 						<ol data-route="empleados.consultas.medicas"
 							class="{{ setActiveSub('empleados.consultas.medicas') }}"
 							onclick="javascript:location.href='{{url('/empleados/consultas/medicas')}}'">

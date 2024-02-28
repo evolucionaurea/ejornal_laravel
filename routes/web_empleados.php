@@ -203,6 +203,11 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/covid/vacunas/tipo_delete/{id_tipo}', 'EmpleadosCovidVacunasController@tipo_destroy')->name('covid.vacunas.tipo_delete');
 
 
+	// CONSULTAS TODAS
+	Route::get('empleados/consultas/todas','EmpleadoConsultasTodasController@index')->name('empleados.consultas.todas');
+	Route::post('empleados/consultas/todas/busqueda','EmpleadoConsultasTodasController@busqueda');
+	Route::get('empleados.consultas.todas/exportar','EmpleadoConsultasTodasController@exportar');
+
 
 	// CONSULTAS MEDICAS
 	Route::get('empleados.consultas.medicas/exportar','EmpleadoConsultaMedicaController@exportar');

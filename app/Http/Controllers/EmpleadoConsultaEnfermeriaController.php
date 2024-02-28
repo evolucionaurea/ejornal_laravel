@@ -382,7 +382,9 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 	public function exportar(Request $request){
 
 
-		if(!auth()->user()->id_cliente_actual) dd('Debes fichar para utilizar esta funcionalidad.');
+		if (!auth()->user()->id_cliente_actual) {
+			return back()->with('error', 'Debes fichar para utilizar esta funcionalidad.');
+		}
 
 		$query = ConsultaEnfermeria::select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
 		->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
@@ -393,7 +395,10 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
 		$consultas = $query->get();
-		if(!$consultas) dd('No se han encontrado consultas');
+
+		if (!$consultas) {
+			return back()->with('error', 'No se han encontrado consultas.');
+		}
 
 		$hoy = Carbon::now();
 		$file_name = 'consultas-medicas-'.$hoy->format('YmdHis').'.csv';

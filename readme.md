@@ -18,6 +18,7 @@ Es importante destacar que los Clientes tambien se pueden loggear y hasta tienen
 - PHP 7.2
 - Javascript/Jquery
 - composer 2
+- Node 14.19.3
 
 ## Laravel Auditing
 
