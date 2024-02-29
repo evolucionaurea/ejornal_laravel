@@ -23,7 +23,7 @@ $(()=>{
 					render:v=>{
 						return `
 							<div class="table-thumbnail">
-								<div class="image" style="background-image:url(${v.thumb_url})"></div>
+								<div class="image" style="background-image:url(${v.photo_url})"></div>
 							</div>`
 					}
 				},

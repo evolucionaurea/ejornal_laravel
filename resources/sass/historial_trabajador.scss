@@ -34,15 +34,15 @@
     & h4{
       color: $ejornal;
     }
-  
+
     & .card_consultas_titulo{
       background: #ebebeb;
       padding: 10px 20px 10px 20px;
-  
+
       & h6{
         color: black;
       }
-  
+
     }
 
   }
@@ -56,4 +56,18 @@
   & li{
     color: #e3e3e3;
   }
+}
+
+
+.foto-perfil{
+
+  background-size:cover;
+  background-position:center;
+  border-radius: 50%;
+  border:1px solid rgb(200,200,200);
+  box-shadow:1px 4px 8px rgba(0,0,0,.2);
+  height:200px;
+  margin: 0 auto;
+  padding: 0;
+  width:200px;
 }

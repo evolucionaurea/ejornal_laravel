@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\CovidVacunaTipo;
 
 class CovidVacuna extends Model
 {
@@ -12,5 +13,10 @@ class CovidVacuna extends Model
 
   // Campos habilitados para ingresar
   protected $fillable = ['id_nomina', 'id_tipo', 'fecha', 'institucion'];
+
+
+  public function tipo(){
+    return $this->belongsTo(CovidVacunaTipo::class,'id_tipo');
+  }
 
 }

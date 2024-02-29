@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 // use OwenIt\Auditing\Contracts\Auditable;
+use App\DiagnosticoConsulta;
 
 class ConsultaEnfermeria extends Model
 // class ConsultaEnfermeria extends Model implements Auditable
@@ -24,5 +25,10 @@ class ConsultaEnfermeria extends Model
   protected $casts = [
     'fecha'=>'date:d/m/Y'
   ];
+
+
+  public function diagnostico(){
+    return $this->belongsTo(DiagnosticoConsulta::class,'id_diagnostico_consulta');
+  }
 
 }

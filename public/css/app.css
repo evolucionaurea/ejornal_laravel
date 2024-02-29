@@ -771,6 +771,18 @@ table th {
   color: #e3e3e3;
 }
 
+.foto-perfil {
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  border: 1px solid #c8c8c8;
+  box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.2);
+  height: 200px;
+  margin: 0 auto;
+  padding: 0;
+  width: 200px;
+}
+
 .liquidacion_datos_personales li {
   list-style: none;
 }

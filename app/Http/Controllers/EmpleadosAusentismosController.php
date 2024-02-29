@@ -12,6 +12,11 @@ use App\Nomina;
 use App\AusentismoTipo;
 use App\TipoComunicacion;
 use App\Comunicacion;
+use App\ConsultaMedica;
+use App\ConsultaEnfermeria;
+use App\CovidVacuna;
+use App\CovidTesteo;
+use App\Preocupacional;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -205,34 +210,63 @@ class EmpleadosAusentismosController extends Controller
 	 */
 	public function show($id)
 	{
-		// Aqui veremos el historial de ausencias
-		/*$ausencias = Ausentismo::
-			join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-			->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-			->where('ausentismos.id_trabajador', $id)
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+
+		$clientes = $this->getClientesUser();
+
+		$trabajador = Nomina::findOrFail($id);
 
 
-			->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
-			DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio',
-			'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo',
-			'ausentismos.id', DB::raw('ausentismos.user user'))
+		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
+			->with('diagnostico')
+			->orderBy('fecha','desc')
+			->get();
 
-			->orderBy('ausentismos.fecha_inicio', 'desc')
-			->get();*/
+		$consultas_enfermeria = ConsultaEnfermeria::where('id_nomina',$id)
+			->with('diagnostico')
+			->orderBy('fecha','desc')
+			->get();
 
 		$ausentismos = Ausentismo::where('id_trabajador',$id)
 			->with('trabajador')
 			->with('tipo')
 			->with('comunicacion.tipo')
+			->with('documentaciones')
 			->orderBy('fecha_inicio', 'desc')
+			->get();
+
+
+		$testeos = CovidTesteo::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+		$vacunas = CovidVacuna::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+
+
+		$preocupacionales = Preocupacional::where('id_nomina',$id)
+			->with('trabajador')
+			->whereHas('trabajador',function($query){
+				$query->where('id_cliente', auth()->user()->id_cliente_actual);
+			})
+			->orderBy('fecha', 'desc')
 			->get();
 
 		$clientes = $this->getClientesUser();
 
 		//dd($documentacion);
 
-		return view('empleados.ausentismos.show', compact('ausentismos', 'clientes'));
+		return view('empleados.ausentismos.show', compact(
+			'trabajador',
+			'consultas_medicas',
+			'consultas_enfermeria',
+			'ausentismos',
+			'clientes',
+			'vacunas',
+			'testeos',
+			'preocupacionales'
+		));
 	}
 
 

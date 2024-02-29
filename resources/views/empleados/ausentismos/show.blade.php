@@ -23,6 +23,7 @@
 		</div>
 
 		@include('../../mensajes_validacion')
+
 		@if ($errors->any())
 		@foreach ($errors->all() as $error)
 		<div class="alert alert-danger alert-dismissible fade show mr-4 ml-4" role="alert">
@@ -36,141 +37,8 @@
 
 		<div class="tarjeta">
 
-			<div class="row">
-				<div class="col-lg-3 col-md-5 col-sm-12">
-					<i class="fas fa-user fa-10x"></i>
-				</div>
-				<div class="col-lg-9 col-md-7 col-sm-12">
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item">
-							<b>Trabajador/a: </b> {{$ausentismos[0]->trabajador->nombre}}
-						</li>
-						<li class="list-group-item">
-							<b>Email: </b> {{$ausentismos[0]->trabajador->email}}
-						</li>
-						<li class="list-group-item"><b>Estado: </b>
-							@if ($ausentismos[0]->estado == 1)
-							Activo
-							@else
-							Inactivo
-							@endif
-						</li>
-						<li class="list-group-item">
-							<b>Telefono: </b> {{$ausentismos[0]->trabajador->telefono}}
-						</li>
-					</ul>
-				</div>
-			</div>
+			@include('modulos.perfil_trabajador')
 
-
-			{{-- AUSENTISMOS --}}
-			<div class="card">
-				<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingFour">
-					<h2 class="mb-0 d-flex">
-						<button class="btn btn-link btn-block text-left collapsed" type="button"
-							data-toggle="collapse" data-target="#collapseFour" aria-expanded="true"
-							aria-controls="collapseFour">
-							<h6>Ausentismos ({{count($ausentismos)}})</h6>
-						</button>
-						<i class="fal fa-chevron-circle-down text-white"></i>
-					</h2>
-				</div>
-				<div id="collapseFour" class="collapse show" aria-labelledby="headingFour"
-					data-parent="#accordionExample">
-					<div class="card-body">
-						@include('modulos.ausentismos_historial_tabla')
-					</div>
-
-				</div>
-			</div>
-
-
-			{{-- <div class="row">
-				<div class="col-md-12">
-					<div class="row">
-						@foreach ($ausencias as $ausencia)
-						<div class="accordion mb-4 col-lg-6" id="accordionExample">
-							<div class="card">
-								<div class="card-header bg-dark text-white cabecera_consultas_historial"
-									id="headingOne">
-									<h2 class="mb-0 d-flex">
-										<button class="btn btn-link btn-block text-left" type="button"
-											data-toggle="collapse" data-target="#collapse_{{ $ausencia->id }}"
-											aria-expanded="true" aria-controls="collapse_{{ $ausencia->id }}">
-											<b>Ausencia por:</b> {{$ausencia->tipo->nombre}}
-										</button>
-										<i class="fal fa-chevron-circle-down text-white"></i>
-									</h2>
-								</div>
-								<div id="collapse_{{ $ausencia->id }}" class="collapse show"
-									aria-labelledby="headingOne" data-parent="#accordionExample">
-									<div class="card-body">
-										<div class="card_consultas">
-											<div class="card_consulta w-100">
-												<ul class="list-group list-group-flush">
-													<li class="list-group-item">
-														<span style="font-weight: 600;" class="text_black">Fecha inicio:
-														</span>
-														{{ (!empty($ausencia->fecha_inicio)) ?
-														date('d/m/Y',strtotime($ausencia->fecha_inicio)) : "" }}
-													</li>
-													<li class="list-group-item">
-														<span style="font-weight: 600;" class="text_black">Fecha final
-														</span>
-														{{ (!empty($ausencia->fecha_final)) ?
-														date('d/m/Y',strtotime($ausencia->fecha_final)) : "" }}
-													</li>
-													<li class="list-group-item">
-														<span style="font-weight: 600;" class="text_black">Fecha regreso
-															trabajar: </span>
-														{{ (!empty($ausencia->fecha_regreso_trabajar)) ?
-														date('d/m/Y',strtotime($ausencia->fecha_regreso_trabajar)) : ""
-														}}
-													</li>
-													<li class="list-group-item">
-														<span style="font-weight: 600;" class="text_black">Matrícula
-															provincial: </span>
-														{{ (!empty($documentacion->matricula_provincial)) ?
-														$documentacion->matricula_provincial : "No fue cargada" }}
-													</li>
-													</li>
-													@if ($ausencia->user != null)
-													<li class="list-group-item">
-														<span style="font-weight: 600;" class="text_black">User que
-															registró:</span> {{$ausencia->user}}
-													</li>
-													@endif
-													<li class="list-group-item">
-														Archivo:
-														@if ($ausencia->archivo == null)
-														<span style="font-weight: 600;" class="text_black">No se adjuntó
-															documentación</span>
-														@else
-														<a class="btn-ejornal btn-ejornal-gris-claro"
-															href="{{route('ausentismos.archivo', $ausencia->id)}}">
-															<i class="fa fa-file"></i>{{$ausencia->archivo}}
-														</a>
-														@endif
-													</li>
-													<li class="list-group-item">
-														@if($ausencia->comunicacion)
-														<span style="font-weight: 600;" class="text_black">
-															Comunicación/{{ $ausencia->comunicacion->tipo->nombre }}:
-														</span>
-														{{ $ausencia->comunicacion->descripcion }}
-														@endif
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						@endforeach
-					</div>
-				</div>
-			</div> --}}
 		</div>
 
 		{{-- Contenido de la pagina --}}
