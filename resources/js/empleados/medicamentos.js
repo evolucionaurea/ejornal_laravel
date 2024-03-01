@@ -26,10 +26,6 @@ $(()=>{
 					<td>${medicamento.suministrados}</td>
 					<td>${medicamento.egreso}</td>
 					<td>${medicamento.stock}</td>
-					<td>${fechaFormateada}</td>
-					<td>
-						<div style="max-width:180px">${medicamento.motivo}</div>
-					</td>
 					<td scope="row" class="acciones_tabla">
 						<a class="editar_stock_medicamentos" title="Editar" data-toggle="modal" data-target="#editar_stock_medicamentos" href="#" data-info="${medicamento.id}">
 							<i class="fas fa-minus"></i>

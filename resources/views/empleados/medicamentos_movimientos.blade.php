@@ -36,7 +36,6 @@
 						<th>Suministrados</th>
 						<th>Egreso</th>
 						<th>Motivo</th>
-						<th>Fecha ingreso</th>
 						<th>Registro creado</th>
 					</tr>
 				</thead>

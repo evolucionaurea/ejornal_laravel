@@ -435,8 +435,35 @@ trait Clientes {
 
 		/// TOP 10
 		DB::enableQueryLog();
-		$ausentismos_top_10 = Ausentismo::
-			selectRaw('SUM(DATEDIFF( IFNULL(fecha_final,DATE(NOW())),fecha_inicio ))+1 total_dias, id_trabajador')
+		/*$ausentismos_top_10 = Ausentismo::selectRaw("
+			SUM(
+				DATEDIFF(
+					IFNULL(
+						fecha_final,
+						DATE(NOW())
+					),
+					fecha_inicio
+				)
+			)+1 total_dias,
+			id_trabajador"
+		)*/
+		$ausentismos_top_10 = Ausentismo::selectRaw("
+			SUM(
+				ABS(DATEDIFF(
+					IF(
+						IFNULL(
+							fecha_final,
+							DATE(NOW())
+						) >= DATE(NOW()),
+						DATE(NOW()),
+						fecha_final
+					),
+					fecha_inicio
+				))+1
+			) total_dias,
+
+			id_trabajador
+		")
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
@@ -453,7 +480,14 @@ trait Clientes {
 				) as regreso_trabajo");
 			}])
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice','=',1);
+				$query
+					->where('incluir_indice','=',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->where('fecha_inicio','>=',$today->subYear())
 			->groupBy('id_trabajador')
@@ -476,7 +510,14 @@ trait Clientes {
 				$query->select('id','nombre');
 			}])
 			->whereHas('tipo',function($query){
-				$query->where('incluir_indice','=',1);
+				$query
+					->where('incluir_indice','=',1)
+					->where('nombre','NOT LIKE','%incidente%')
+					->where(function($query){
+						$query
+							->where('agrupamiento','!=','ART')
+							->orWhere('agrupamiento',null);
+					});
 			})
 			->where('fecha_inicio','>=',$today->subYear())
 			->groupBy('id_trabajador')

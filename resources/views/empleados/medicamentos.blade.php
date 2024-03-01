@@ -12,8 +12,8 @@
 		{{-- Contenido de la pagina --}}
 
 		<div class="cabecera">
-			<h2>Movimiento de medicamentos</h2>
-			<p>Aquí puede ver el movimiento de medicamentos de la empresa</p>
+			<h2>Listado de medicamentos</h2>
+			<p>Aquí puede ver el listado de medicamentos de la empresa</p>
 			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicamentos.create')}}"><i
@@ -41,8 +41,6 @@
 						<th>Suministrados</th>
 						<th>Egreso</th>
 						<th>Stock</th>
-						<th>Fecha ingreso</th>
-						<th>Motivo</th>
 
 						@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
 						<th>Acciones</th>

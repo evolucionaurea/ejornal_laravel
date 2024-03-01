@@ -144,6 +144,12 @@ class AdminUserController extends Controller
 		}
 
 
+		$email_existente = User::where('email', $request->email)->get();
+		if(count($email_existente)>0){
+			return back()->withInput($request->input())->with('error', 'Ya existe un usuario con el email ingresado.');
+		}
+
+
 
 		//Guardar en base
 		$user = new User();
@@ -185,7 +191,7 @@ class AdminUserController extends Controller
 			if($request->observaciones != null){
 				$user->observaciones = $request->observaciones;
 			}
-			
+
 		}
 		$user->cuil = $request->cuil;
 		if (isset($request->contratacion) && $request->contratacion != 0) {
