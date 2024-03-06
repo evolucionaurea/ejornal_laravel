@@ -34,12 +34,38 @@ class EmpleadosStockMedicamentoController extends Controller
 		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
 		->where('id_cliente', auth()->user()->id_cliente_actual);
 
-		if($request->from) $query->whereDate('stock_medicamentos.fecha_ingreso','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('stock_medicamentos.fecha_ingreso','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		$total = $query->count();
+
+		if($request->search){
+			$query->where(function($query) use($request){
+				$filtro = '%'.$request->search.'%';
+				$query->where('medicamentos.nombre','like',$filtro);
+			});
+		}
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			///dd($sort);
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+		/*if($request->from) $query->whereDate('stock_medicamentos.fecha_ingreso','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('stock_medicamentos.fecha_ingreso','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));*/
+
+
+		$records_filtered = $query->count();
+		$medicamentos = $query->skip($request->start)->take($request->length)->get();
 
 
 		return [
-			'results'=>$query->get(),
+
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$records_filtered,
+			'data'=>$medicamentos,
+
+			'results'=>$medicamentos,
 			'fichada_user'=>auth()->user()->fichada,
 			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
@@ -60,17 +86,21 @@ class EmpleadosStockMedicamentoController extends Controller
 	{
 		$query = StockMedicamentoHistorial::select(
 			'medicamentos.nombre as medicamento',
+			'stock_medicamentos_historial.id',
 			'stock_medicamentos_historial.ingreso',
+			'stock_medicamentos_historial.egreso',
 			'stock_medicamentos_historial.stock',
 			'stock_medicamentos_historial.suministrados',
 			'stock_medicamentos_historial.motivo',
 			'stock_medicamentos_historial.fecha_ingreso',
 			'stock_medicamentos_historial.created_at',
 			'stock_medicamentos_historial.updated_at',
+			'stock_medicamentos_historial.id_consulta_enfermeria',
+			'stock_medicamentos_historial.id_consulta_medica',
 			'users.nombre as user',
 			'clientes.nombre as cliente',
 			'nominas.nombre as trabajador',
-			DB::raw('IF(stock_medicamentos_historial.id_consulta_enfermeria IS NOT NULL, "enfermeria", "medica") as tipo_consulta')
+			DB::raw('IF(stock_medicamentos_historial.id_consulta_enfermeria IS NOT NULL, "Enfermería", "Médica") as tipo_consulta')
 		)
 		->join('stock_medicamentos', 'stock_medicamentos_historial.id_stock_medicamentos', 'stock_medicamentos.id')
 		->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
@@ -79,22 +109,60 @@ class EmpleadosStockMedicamentoController extends Controller
 		->leftJoin('consultas_enfermerias', 'stock_medicamentos_historial.id_consulta_enfermeria', 'consultas_enfermerias.id')
 		->leftJoin('consultas_medicas', 'stock_medicamentos_historial.id_consulta_medica', 'consultas_medicas.id')
 		->leftJoin('nominas', function ($join) {
-			$join->on('consultas_enfermerias.id_nomina', '=', 'nominas.id')
+			$join
+				->on('consultas_enfermerias.id_nomina', '=', 'nominas.id')
 				->orOn('consultas_medicas.id_nomina', '=', 'nominas.id');
 		})
 		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual)
-		->orderBy('stock_medicamentos_historial.created_at', 'DESC');
+		->orderBy('trabajador', 'ASC');
+
+		$total = $query->count();
+
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+
+		if($request->search){
+			$query->where(function($query) use($request){
+				$filtro = '%'.$request->search.'%';
+				$query
+					->where('medicamentos.nombre','like',$filtro)
+					->orWhere('nominas.nombre','like',$filtro)
+					->orWhere('users.nombre','like',$filtro)
+					->orWhere('clientes.nombre','like',$filtro);
+			});
+		}
+		if($request->tipo=='enfermeria'){
+			$query->whereNotNull('id_consulta_enfermeria');
+		}
+		if($request->tipo=='medica'){
+			$query->whereNotNull('id_consulta_medica');
+		}
 
 		if ($request->from) {
 			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
-
 		if ($request->to) {
 			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
+
+		$records_filtered = $query->count();
+		$movimientos = $query->skip($request->start)->take($request->length)->get();
+
 		return [
-			'results' => $query->get(),
+
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$records_filtered,
+			'data'=>$movimientos,
+			'sort'=>$sort.','.$dir,
+
+			'results' => $movimientos,
 			'fichada_user' => auth()->user()->fichada,
 			'fichar_user'=>auth()->user()->fichar,
 			'request' => $request->all()
@@ -236,6 +304,7 @@ class EmpleadosStockMedicamentoController extends Controller
 	  $stock_medicamento_historial->id_stock_medicamentos = $id;
 	  $stock_medicamento_historial->egreso = $stock_medicamento->egreso;
 	  $stock_medicamento_historial->fecha_ingreso = $stock_medicamento->fecha_ingreso;
+	  $stock_medicamento_historial->motivo = $request->motivo;
 	  $stock_medicamento_historial->save();
 
 	  return redirect('empleados/medicamentos')->with('success', 'Stock del medicamento actualizado correctamente');

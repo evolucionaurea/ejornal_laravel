@@ -98,7 +98,7 @@
 											H:i:s',strtotime($consulta_medica->created_at)) : "" }}
 										</li>
 										<li class="list-group-item">
-											<span style="font-weight: 600;" class="text_black">Temp. auxiliar: </span>
+											<span style="font-weight: 600;" class="text_black">Temp. axilar: </span>
 											{{ (!empty($consulta_medica->temperatura_auxiliar)) ?
 											$consulta_medica->temperatura_auxiliar : "" }}
 										</li>

@@ -51,6 +51,9 @@ export default class Tablas {
 			loading({show:false})
 			///console.log(settings.json)
 		}
+		/*datatable_options.createdRow = (row,data,dataIndex)=>{
+			$(row).attr('data-id',data.id)
+		}*/
 
 		$.extend(window.datatable_options,this.datatable_options)
 		this.datatable_instance = this.table.DataTable(window.datatable_options);

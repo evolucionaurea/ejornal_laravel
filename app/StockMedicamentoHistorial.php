@@ -14,4 +14,9 @@ class StockMedicamentoHistorial extends Model
   protected $fillable = ['id_stock_medicamentos', 'ingreso', 'suministrados', 'egreso', 'stock', 'fecha_ingreso'];
 
 
+  protected $casts = [
+  	'fecha_ingreso'=>'date:d/m/Y'
+  ];
+
+
 }

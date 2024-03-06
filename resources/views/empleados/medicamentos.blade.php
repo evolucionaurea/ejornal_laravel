@@ -28,7 +28,20 @@
 
 		<div class="tarjeta">
 
-			@include('../../modulos.busqueda_fecha')
+			<div data-toggle="busqueda-filtros" class="d-flex align-items-center flex-wrap">
+
+
+				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
+				<input name="search" class="form-control form-control-sm mr-2 mb-1" style="max-width:240px" placeholder="Filtrar..." value="{{ Request::get('search') }}">
+
+				<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-1" ><i class="fas fa-search"></i> Buscar</button>
+				<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-1" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+
+				<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-1" ><i class="fas fa-file-excel"></i> Exportar</button>
+
+
+			</div>
+			<hr>
 
 			<table data-table="movimientos-medicamentos"
 				class="table table-striped table-hover table-sm table-bordered dt-responsive" style="width:100%">
@@ -42,9 +55,8 @@
 						<th>Egreso</th>
 						<th>Stock</th>
 
-						@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
 						<th>Acciones</th>
-						@endif
+
 					</tr>
 				</thead>
 				<!--Table head-->
@@ -79,28 +91,36 @@
 						<form class="form_editar_stock_medicamentos" action="" accept-charset="UTF-8" method="post">
 							{{ csrf_field() }}
 							<input type="hidden" name="_method" value="PUT">
-							<div class="form-group">
-								<ul class="list-group list-group-flush">
-									<li class="list-group-item">
-										Si hubo alguna pérdida de este medicamento, ruptura o se retiró del stock
-										disponible por algún motivo
-										debe cargarlo aquí.
-									</li>
-									<li class="list-group-item">
-										Si usted a suministrado un medicamento a un paciente no debe cargarlo aquí. Los
-										medicamentos
-										suministrados se descuentan del stock automáticamente.
-									</li>
-								</ul>
-								<br>
-								<label>Egreso</label>
-								<input name="egreso" type="number" class="form-control form-control-sm" placeholder=""
-									step="1">
+
+							<div class="alert alert-info">
+								<i class="fa fa-info-circle fa-fw"></i> Si hubo alguna pérdida de este medicamento, ruptura o se retiró del stock disponible por algún motivo debe cargarlo aquí.
 							</div>
-							<button type="submit" class="btn-ejornal btn-ejornal-success">Guardar cambios</button>
-							<button type="button" class="btn-ejornal btn-ejornal-gris-claro"
-								data-dismiss="modal">Cerrar</button>
+
+							<div class="alert alert-danger">
+								<i class="fa fa-exclamation-triangle fa-fw"></i> Si usted a suministrado un medicamento a un paciente no debe cargarlo aquí. Los medicamentos suministrados se descuentan del stock automáticamente.
+							</div>
+
+							<hr>
+
+
+							<div class="row">
+								<div class="col-lg-4 form-group">
+									<label>Egreso</label>
+									<input name="egreso" type="number" class="form-control" placeholder="Ingrese la cantidad"
+										step="1" required>
+								</div>
+								<div class="col-lg-8 form-group">
+									<label>Motivo</label>
+									<textarea name="motivo" rows="4" class="form-control" required></textarea>
+								</div>
+							</div>
+							<hr>
+
+
+							<button type="submit" class="btn-ejornal btn-ejornal-success"><i class="fa fa-save fa-fw"></i> Guardar cambios</button>
 						</form>
+
+
 					</div>
 				</div>
 
