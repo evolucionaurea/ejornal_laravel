@@ -6,11 +6,10 @@ use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Sesion;
 
 class UserController extends Controller
 {
-
-
 
   public function login(Request $request)
   {
@@ -20,12 +19,36 @@ class UserController extends Controller
         'password' => 'required',
       ]);
 
-      $data = $request;
+      $data = $request->only('email', 'password');
 
-      if (Auth::attempt(['email' => $data->email, 'password' => $data->password])) {
-        $user = User::where('users.email', $data->email)
-        ->select('users.id_rol', 'users.estado', 'users.id')
-        ->first();
+        if (Auth::attempt($data)) {
+            $user = Auth::user();
+
+            // Verificar si el usuario ya está loggeado en otro dispositivo
+            $sesionActiva = Sesion::where('id_user', $user->id)->first();
+
+            if ($sesionActiva && $sesionActiva->loggeado == 1) {
+                Auth::logout();
+                return redirect('/')->with('error', 'Ya tienes una sesión activa en otro dispositivo');
+            }
+
+            // Marcar al usuario como loggeado
+            if ($sesionActiva) {
+                $sesionActiva->loggeado = 1;
+                $sesionActiva->save();
+            } else {
+                Sesion::create([
+                    'id_user' => $user->id,
+                    'loggeado' => 1,
+                ]);
+            }
+
+            // Redireccionar según el rol del usuario
+            // ...
+
+        } else {
+            return back()->withErrors(['mensaje' => 'Email o contraseña incorrectas']);
+        }
 
         if ($user->estado == 1) {
           switch ($user->id_rol) {
@@ -56,18 +79,23 @@ class UserController extends Controller
           return redirect('/')->with('error', 'Usuario sin permisos de acceso');
         }
 
-
-      }else {
-        return redirect('/')->with('error', 'Email o contraseña incorrectas');
-      }
   }
 
 
 
   public function logout()
   {
-      Auth::logout();
-      return redirect('/');
+    $user = Auth::user();
+
+    // Marcar al usuario como deslogueado
+    $sesion = Sesion::where('id_user', $user->id)->first();
+    if ($sesion) {
+        $sesion->loggeado = 0;
+        $sesion->save();
+    }
+
+    Auth::logout();
+    return redirect('/');
   }
 
 
