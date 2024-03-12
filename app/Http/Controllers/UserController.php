@@ -13,73 +13,64 @@ class UserController extends Controller
 
   public function login(Request $request)
   {
-
       $validatedData = $request->validate([
-        'email' => 'required',
-        'password' => 'required',
+          'email' => 'required|email',
+          'password' => 'required',
       ]);
 
-      $data = $request->only('email', 'password');
+      $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($data)) {
-            $user = Auth::user();
+      if (Auth::attempt($credentials)) {
+          $user = Auth::user();
 
-            // Verificar si el usuario ya está loggeado en otro dispositivo
-            $sesionActiva = Sesion::where('id_user', $user->id)->first();
+          // Verificar si el usuario ya tiene una sesión activa
+          $existingSession = Sesion::where('id_user', $user->id)->first();
 
-            if ($sesionActiva && $sesionActiva->loggeado == 1) {
-                Auth::logout();
-                return redirect('/')->with('error', 'Ya tienes una sesión activa en otro dispositivo');
-            }
-
-            // Marcar al usuario como loggeado
-            if ($sesionActiva) {
-                $sesionActiva->loggeado = 1;
-                $sesionActiva->save();
-            } else {
-                Sesion::create([
-                    'id_user' => $user->id,
-                    'loggeado' => 1,
-                ]);
-            }
-
-            // Redireccionar según el rol del usuario
-            // ...
-
-        } else {
-            return back()->withErrors(['mensaje' => 'Email o contraseña incorrectas']);
-        }
-
-        if ($user->estado == 1) {
-          switch ($user->id_rol) {
-            // Administrador
-            case 1:
-              return Redirect::route('/admin/resumen');
-              break;
-
-            // Empleado
-            case 2:
-              return Redirect::route('/empleados/resumen');
-              break;
-
-            // Clientes
-            case 3:
-              return Redirect::route('/clientes/resumen');
-              break;
-
-            case 4:
-              return Redirect::route('/grupos/resumen');
-              break;
-
-            default:
-            return redirect('/')->with('error', 'Hubo un problema con su usuario. Inténtelo de nuevo o pongase en contacto');
-            break;
+          if ($existingSession) {
+              // Si ya existe una sesión, actualizarla
+              $existingSession->update(['loggeado' => 1]);
+          } else {
+              // Si no existe una sesión, crear una nueva
+              Sesion::create([
+                  'id_user' => $user->id,
+                  'loggeado' => 1,
+              ]);
           }
-        }else {
-          return redirect('/')->with('error', 'Usuario sin permisos de acceso');
-        }
 
+          // Redireccionar según el rol del usuario
+          if ($user->estado == 1) {
+              switch ($user->id_rol) {
+                  // Administrador
+                  case 1:
+                      return redirect('/admin/resumen');
+                      break;
+
+                  // Empleado
+                  case 2:
+                      return redirect('/empleados/resumen');
+                      break;
+
+                  // Clientes
+                  case 3:
+                      return redirect('/clientes/resumen');
+                      break;
+
+                  case 4:
+                      return redirect('/grupos/resumen');
+                      break;
+
+                  default:
+                      return redirect('/')->with('error', 'Hubo un problema con su usuario. Inténtelo de nuevo o póngase en contacto');
+                      break;
+              }
+          } else {
+              return redirect('/')->with('error', 'Usuario sin permisos de acceso');
+          }
+      } else {
+          return back()->withErrors(['mensaje' => 'Email o contraseña incorrectas']);
+      }
   }
+
 
 
 
