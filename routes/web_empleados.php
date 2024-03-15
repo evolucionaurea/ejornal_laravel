@@ -158,6 +158,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// MEDICAMENTOS
+	Route::get('empleados/medicamentos/exportar','EmpleadosStockMedicamentoController@exportar');
+	Route::get('empleados/medicamentos_movimientos/exportar','EmpleadosStockMedicamentoController@exportarHistorial');
 	Route::resource('empleados/medicamentos', 'EmpleadosStockMedicamentoController', [
 		'names' => [
 			'index' => '/empleados/medicamentos'

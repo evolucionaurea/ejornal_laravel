@@ -31,6 +31,13 @@
 						<div class="col-lg-6">
 							<input name="search" class="form-control form-control-sm" placeholder="Filtrar..." value="{{ Request::get('search') }}">
 						</div>
+						<div class="col-lg-6">
+							<select name="tipo" class="form-control form-control-sm" >
+								<option value="">--Tipo de Consulta--</option>
+								<option value="enfermeria">Enfermería</option>
+								<option value="medica">Médica</option>
+							</select>
+						</div>
 
 						<div class="col-lg-6">
 							<div class="input-group input-group-sm">
@@ -50,13 +57,6 @@
 							</div>
 						</div>
 
-						<div class="col-lg-6">
-							<select name="tipo" class="form-control form-control-sm" >
-								<option value="">--Tipo de Consulta--</option>
-								<option value="enfermeria">Enfermería</option>
-								<option value="medica">Médica</option>
-							</select>
-						</div>
 
 					</div>
 

@@ -459,7 +459,7 @@ trait Clientes {
 						fecha_final
 					),
 					fecha_inicio
-				))+1
+				)) + 1
 			) total_dias,
 
 			id_trabajador

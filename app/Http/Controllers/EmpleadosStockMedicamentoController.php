@@ -4,17 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 use App\StockMedicamento;
-//use App\Cliente;
-use App\Http\Traits\Clientes;
 use App\Medicamento;
 use App\StockMedicamentoHistorial;
 use App\ClienteUser;
+use App\Cliente;
+
 use Carbon\Carbon;
+
+use App\Http\Traits\Clientes;
+use App\Http\Traits\StockMedicamentos;
+
 
 class EmpleadosStockMedicamentoController extends Controller
 {
-	use Clientes;
+	use Clientes,StockMedicamentos;
 
 	public function index()
 	{
@@ -23,55 +29,9 @@ class EmpleadosStockMedicamentoController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-		$query = StockMedicamento::select(
-			'medicamentos.nombre',
-			DB::raw('clientes.nombre cliente'),
-			DB::raw('users.nombre user'),
-			'stock_medicamentos.*'
-		)
-		->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
-		->join('users', 'stock_medicamentos.id_user', 'users.id')
-		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
-		->where('id_cliente', auth()->user()->id_cliente_actual);
-
-		$total = $query->count();
-
-		if($request->search){
-			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search.'%';
-				$query->where('medicamentos.nombre','like',$filtro);
-			});
-		}
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			///dd($sort);
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-
-		/*if($request->from) $query->whereDate('stock_medicamentos.fecha_ingreso','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('stock_medicamentos.fecha_ingreso','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));*/
-
-
-		$records_filtered = $query->count();
-		$medicamentos = $query->skip($request->start)->take($request->length)->get();
-
-
-		return [
-
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$records_filtered,
-			'data'=>$medicamentos,
-
-			'results'=>$medicamentos,
-			'fichada_user'=>auth()->user()->fichada,
-			'fichar_user'=>auth()->user()->fichar,
-			'request'=>$request->all()
-		];
-
+		return $this->searchStock($request);
 	}
+
 
 	public function movimientos()
 	{
@@ -80,93 +40,9 @@ class EmpleadosStockMedicamentoController extends Controller
 	  return view('empleados.medicamentos_movimientos', compact('clientes'));
 
 	}
-
-
 	public function busquedaMovimientos(Request $request)
 	{
-		$query = StockMedicamentoHistorial::select(
-			'medicamentos.nombre as medicamento',
-			'stock_medicamentos_historial.id',
-			'stock_medicamentos_historial.ingreso',
-			'stock_medicamentos_historial.egreso',
-			'stock_medicamentos_historial.stock',
-			'stock_medicamentos_historial.suministrados',
-			'stock_medicamentos_historial.motivo',
-			'stock_medicamentos_historial.fecha_ingreso',
-			'stock_medicamentos_historial.created_at',
-			'stock_medicamentos_historial.updated_at',
-			'stock_medicamentos_historial.id_consulta_enfermeria',
-			'stock_medicamentos_historial.id_consulta_medica',
-			'users.nombre as user',
-			'clientes.nombre as cliente',
-			'nominas.nombre as trabajador',
-			DB::raw('IF(stock_medicamentos_historial.id_consulta_enfermeria IS NOT NULL, "Enfermería", "Médica") as tipo_consulta')
-		)
-		->join('stock_medicamentos', 'stock_medicamentos_historial.id_stock_medicamentos', 'stock_medicamentos.id')
-		->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
-		->join('users', 'stock_medicamentos.id_user', 'users.id')
-		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
-		->leftJoin('consultas_enfermerias', 'stock_medicamentos_historial.id_consulta_enfermeria', 'consultas_enfermerias.id')
-		->leftJoin('consultas_medicas', 'stock_medicamentos_historial.id_consulta_medica', 'consultas_medicas.id')
-		->leftJoin('nominas', function ($join) {
-			$join
-				->on('consultas_enfermerias.id_nomina', '=', 'nominas.id')
-				->orOn('consultas_medicas.id_nomina', '=', 'nominas.id');
-		})
-		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual)
-		->orderBy('trabajador', 'ASC');
-
-		$total = $query->count();
-
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-
-
-		if($request->search){
-			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search.'%';
-				$query
-					->where('medicamentos.nombre','like',$filtro)
-					->orWhere('nominas.nombre','like',$filtro)
-					->orWhere('users.nombre','like',$filtro)
-					->orWhere('clientes.nombre','like',$filtro);
-			});
-		}
-		if($request->tipo=='enfermeria'){
-			$query->whereNotNull('id_consulta_enfermeria');
-		}
-		if($request->tipo=='medica'){
-			$query->whereNotNull('id_consulta_medica');
-		}
-
-		if ($request->from) {
-			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if ($request->to) {
-			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}
-
-
-		$records_filtered = $query->count();
-		$movimientos = $query->skip($request->start)->take($request->length)->get();
-
-		return [
-
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$records_filtered,
-			'data'=>$movimientos,
-			'sort'=>$sort.','.$dir,
-
-			'results' => $movimientos,
-			'fichada_user' => auth()->user()->fichada,
-			'fichar_user'=>auth()->user()->fichar,
-			'request' => $request->all()
-		];
+		return $this->searchHistorial($request);
 	}
 
 
@@ -327,8 +203,106 @@ class EmpleadosStockMedicamentoController extends Controller
 
 
 
+	public function exportarHistorial(Request $request){
+
+		if (!auth()->user()->id_cliente_actual) {
+			return back()->with('error', 'Debes seleccionar un cliente!');
+		}
+
+		$cliente = Cliente::findOrFail(auth()->user()->id_cliente_actual);
+
+		$response = $this->searchHistorial($request);
+		$historial = $response['data'];
 
 
+		$hoy = Carbon::now();
+		$file_name = 'movimiento_medicamentos_'.Str::slug($cliente->nombre,'_','es').'_'.$hoy->format('YmdHis').'.csv';
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp,[
+			'Medicamento',
+			'Tipo Consulta',
+			'Cargado por',
+			'Empresa',
+			'Para',
+			'Ingreso',
+			'Suministrados',
+			'Egreso',
+			'Motivo',
+			'Registro Creado'
+		],';');
+
+		foreach($historial as $history){
+			///$estado = $nomina->estado ? 'activo' : 'inactivo';
+			$tipo = '';
+			if($history->id_consulta_enfermeria) $tipo = 'Enfermería';
+			if($history->id_consulta_medica) $tipo = 'Médica';
+
+			fputcsv($fp,[
+				$history->medicamento,
+				$tipo,
+				$history->user,
+				$history->cliente,
+				($history->trabajador ?? ''),
+				(is_null($history->ingreso) || $history->ingreso==0 ? '' : $history->ingreso),
+				(is_null($history->suministrados) || $history->suministrados==0 ? '' : $history->suministrados),
+				(is_null($history->egreso) || $history->egreso==0 ? '' : $history->egreso),
+				$history->motivo,
+				$history->fecha_ingreso
+			],';');
+		}
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+	}
+
+	public function exportar(Request $request){
+
+		if (!auth()->user()->id_cliente_actual) {
+			return back()->with('error', 'Debes seleccionar un cliente!');
+		}
+
+		$cliente = Cliente::findOrFail(auth()->user()->id_cliente_actual);
+		///dd($cliente);
+
+		$response = $this->searchStock($request);
+		$medicamentos = $response['data'];
+
+		///dd($medicamentos);
+
+
+		$hoy = Carbon::now();
+		$file_name = 'listado_medicamentos_'.Str::slug($cliente->nombre,'_','es').'_'.$hoy->format('YmdHis').'.csv';
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp,[
+			'Medicamento',
+			'Ingreso',
+			'Suministrados',
+			'Egreso',
+			'Stock'
+		],';');
+
+		foreach($medicamentos as $medicamento){
+			//var_dump($medicamento->medicamento);
+			fputcsv($fp,[
+				$medicamento->nombre,
+				$medicamento->ingreso,
+				$medicamento->suministrados,
+				$medicamento->egreso,
+				$medicamento->stock
+			],';');
+		}
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+	}
 
 
 }
