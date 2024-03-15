@@ -29,7 +29,7 @@
 			<td class="align-middle">
 				@if ($ausentismo->archivo)
 				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('ausentismos.archivo', $ausentismo->id)}}">
-					<i class="fa fa-file"></i>{{$ausentismo->archivo}}
+					<i class="fa fa-file"></i>Archivo
 				</a>
 				@else
 				<span class="text-muted font-italic">[No se adjuntó ningún archivo]</span>
@@ -37,7 +37,8 @@
 			</td>
 			<td>
 				@if($ausentismo->documentaciones->count())
-				<a href="{{url('empleados/documentaciones/'.$ausentismo->id)}}" class="btn-ejornal btn-ejornal-success" target="_blank">Ver Certificados ({{$ausentismo->documentaciones->count()}})</a>
+				<a href="{{url('empleados/documentaciones/'.$ausentismo->id)}}" class="btn-ejornal btn-ejornal-success"
+					target="_blank">Ver Certificados ({{$ausentismo->documentaciones->count()}})</a>
 				@else
 				<span class="text-muted font-italic">[No se adjuntó documentación]</span>
 				@endif
