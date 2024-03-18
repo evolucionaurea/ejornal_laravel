@@ -166,7 +166,7 @@
 				</h2>
 			</div>
 			<div id="collapseFive" class="collapse show" aria-labelledby="headingFive" data-parent="#accordionExample">
-				<div class="card-body">
+				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.resumen_historial')
 				</div>
 
@@ -186,7 +186,7 @@
 				</h2>
 			</div>
 			<div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
-				<div class="card-body">
+				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.ausentismos_historial_tabla')
 				</div>
 
@@ -208,7 +208,7 @@
 
 			<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
 
-				<div class="card-body">
+				<div class="card-body table-responsive">
 
 					@include('modulos.perfil_trabajador.consultas_medicas_tabla')
 
@@ -231,7 +231,7 @@
 			</div>
 			<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
 
-				<div class="card-body">
+				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.consultas_enfermeria_tabla')
 				</div>
 
@@ -252,7 +252,7 @@
 			</div>
 			<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
 
-				<div class="card-body">
+				<div class="card-body table-responsive">
 
 					@include('modulos.perfil_trabajador.preocupacionales_tabla')
 

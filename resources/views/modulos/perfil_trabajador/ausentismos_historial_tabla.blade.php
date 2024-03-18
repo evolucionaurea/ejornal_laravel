@@ -16,7 +16,7 @@
 		<tr>
 			<td class="align-middle">{{ $ausentismo->fecha_inicio->format('d/m/Y') }}</td>
 			<td class="align-middle">{{ $ausentismo->fecha_final->format('d/m/Y') }}</td>
-			<td class="align-middle">{{ $ausentismo->fecha_regreso_trabajar->format('d/m/Y') }}</td>
+			<td class="align-middle">{{ $ausentismo->fecha_regreso_trabajar ? $ausentismo->fecha_regreso_trabajar->format('d/m/Y') : '[no cargada]' }}</td>
 			<td class="align-middle">{{ $ausentismo->tipo->nombre }}</td>
 			<td class="align-middle">{{ $ausentismo->user }}</td>
 			<td class="align-middle">
@@ -29,13 +29,13 @@
 			<td class="align-middle">
 				@if ($ausentismo->archivo)
 				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('ausentismos.archivo', $ausentismo->id)}}">
-					<i class="fa fa-file"></i>Archivo
+					<i class="fa fa-file fa-fw"></i> Archivo
 				</a>
 				@else
 				<span class="text-muted font-italic">[No se adjuntó ningún archivo]</span>
 				@endif
 			</td>
-			<td>
+			<td class="align-middle">
 				@if($ausentismo->documentaciones->count())
 				<a href="{{url('empleados/documentaciones/'.$ausentismo->id)}}" class="btn-ejornal btn-ejornal-success"
 					target="_blank">Ver Certificados ({{$ausentismo->documentaciones->count()}})</a>

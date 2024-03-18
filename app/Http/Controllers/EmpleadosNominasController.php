@@ -234,15 +234,15 @@ class EmpleadosNominasController extends Controller
 			->orderBy('fecha', 'desc')
 			->get();
 
-			
+
 			$resumen_historial = DB::table('consultas_medicas')
-			->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"ConsultaMedica" as evento'), 'consultas_medicas.observaciones as observaciones')
+			->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Médica" as evento'), 'consultas_medicas.observaciones as observaciones')
 			->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
 			->where('fecha', '<>', '0000-00-00')
 			->where('user', '<>', '')
 			->where('id_nomina', $id)
 			->unionAll(DB::table('consultas_enfermerias')
-				->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"ConsultaEnfermeria" as evento'), 'consultas_enfermerias.observaciones as observaciones')
+				->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Enfermería" as evento'), 'consultas_enfermerias.observaciones as observaciones')
 				->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
 				->where('fecha', '<>', '0000-00-00')
 				->where('user', '<>', '')
@@ -256,15 +256,15 @@ class EmpleadosNominasController extends Controller
 				->where('id_trabajador', $id)
 			)
 			->unionAll(DB::table('preocupacionales')
-				->select('fecha', DB::raw('"Archivo adjunto" as tipo'), 'nominas.nombre as usuario', DB::raw('"Examen Medico Complementario" as evento'), 'preocupacionales.observaciones as observaciones')
+				->select('fecha', DB::raw('"Archivo adjunto" as tipo'), 'nominas.nombre as usuario', DB::raw('"Exámen Médico Complementario" as evento'), 'preocupacionales.observaciones as observaciones')
 				->join('nominas', 'preocupacionales.id_nomina', '=', 'nominas.id')
 				->where('fecha', '<>', '0000-00-00')
 				->where('id_nomina', $id)
 			)
 			->orderBy('fecha')
 			->get();
-		
-		
+
+
 
 		// dd($resumen_historial);
 
