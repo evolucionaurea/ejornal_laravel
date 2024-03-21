@@ -210,7 +210,7 @@ class EmpleadosAusentismosController extends Controller
 	 */
 	public function show($id)
 	{
-
+	
 		$clientes = $this->getClientesUser();
 
 		$trabajador = Nomina::findOrFail($id);
@@ -244,7 +244,6 @@ class EmpleadosAusentismosController extends Controller
 			->orderBy('fecha', 'desc')
 			->get();
 
-
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
 			->with('trabajador')
 			->whereHas('trabajador',function($query){
@@ -255,7 +254,34 @@ class EmpleadosAusentismosController extends Controller
 
 		$clientes = $this->getClientesUser();
 
-		//dd($documentacion);
+		$resumen_historial = DB::table('consultas_medicas')
+			->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Médica" as evento'), 'consultas_medicas.observaciones as observaciones')
+			->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
+			->where('fecha', '<>', '0000-00-00')
+			->where('user', '<>', '')
+			->where('id_nomina', $id)
+			->unionAll(DB::table('consultas_enfermerias')
+				->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Enfermería" as evento'), 'consultas_enfermerias.observaciones as observaciones')
+				->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
+				->where('fecha', '<>', '0000-00-00')
+				->where('user', '<>', '')
+				->where('id_nomina', $id)
+			)
+			->unionAll(DB::table('ausentismos')
+				->select('fecha_inicio as fecha', 'ausentismo_tipo.nombre as tipo', 'user as usuario', DB::raw('"Ausentismo" as evento'), 'ausentismos.comentario as observaciones')
+				->join('ausentismo_tipo', 'ausentismos.id_tipo', '=', 'ausentismo_tipo.id')
+				->where('fecha_inicio', '<>', '0000-00-00')
+				->where('user', '<>', '')
+				->where('id_trabajador', $id)
+			)
+			->unionAll(DB::table('preocupacionales')
+				->select('fecha', DB::raw('"Archivo adjunto" as tipo'), 'nominas.nombre as usuario', DB::raw('"Exámen Médico Complementario" as evento'), 'preocupacionales.observaciones as observaciones')
+				->join('nominas', 'preocupacionales.id_nomina', '=', 'nominas.id')
+				->where('fecha', '<>', '0000-00-00')
+				->where('id_nomina', $id)
+			)
+			->orderBy('fecha')
+			->get();
 
 		return view('empleados.ausentismos.show', compact(
 			'trabajador',
@@ -265,7 +291,8 @@ class EmpleadosAusentismosController extends Controller
 			'clientes',
 			'vacunas',
 			'testeos',
-			'preocupacionales'
+			'preocupacionales',
+			'resumen_historial'
 		));
 	}
 
