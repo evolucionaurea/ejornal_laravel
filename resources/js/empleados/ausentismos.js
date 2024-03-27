@@ -136,6 +136,8 @@ $(()=>{
 							}
 						}
 
+						//console.log(v)
+
 
 						return `
 							<div class="acciones_tabla justify-content-end">
@@ -157,12 +159,14 @@ $(()=>{
 									 ''
 								}
 
-								<a title="Comunicaciones" href="comunicaciones/${v.id}">
+								<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
+									<span>(${v.comunicaciones_count})</span>
 								</a>
 
-								<a title="Certificados" href="documentaciones/${v.id}">
+								<a title="Certificados" href="documentaciones/${v.id}" class="btn-label">
 									<i title="Certificados" class="fas fa-files-medical"></i>
+									<span>(${v.documentaciones_count})</span>
 								</a>
 
 								<a title="Historial" href="ausentismos/${v.id_trabajador}">
@@ -172,7 +176,7 @@ $(()=>{
 								<a title="Editar" href="ausentismos/${v.id}/edit">
 									<i class="fas fa-pencil"></i>
 								</a>
-								<button data-toggle="delete" data-id="${v.id}" title="Eliminar" type="submit">
+								<button data-toggle="delete" data-id="${v.id}" title="Eliminar" >
 									<i class="fas fa-trash"></i>
 								</button>
 							</div>

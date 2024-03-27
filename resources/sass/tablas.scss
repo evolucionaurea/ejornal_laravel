@@ -37,6 +37,12 @@
 .acciones_tabla {
   display: flex;
 
+  & a,button{
+    &:hover{
+      text-decoration: none;
+      opacity:.75;
+    }
+  }
 
   & a {
     @include botones_tabla($ejornal);
@@ -45,8 +51,18 @@
   & button{
     @include botones_tabla($ejornal_red);
   }
-
+  & span{
+    color:white;
+    font-size: 10pt;
+    margin-left:3pt;
+  }
+  & .btn-label{
+    width:auto;
+    border-radius:10pt;
+    padding:0 .625rem;
+  }
 }
+
 
 
 .sorting_1.dtr-control::before{
