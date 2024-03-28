@@ -20,7 +20,7 @@ class Ausentismo extends Model
 
 	// Campos habilitados para ingresar
 	protected $fillable = [
-		'id_trabajador', 'user', 'id_tipo', 'fecha_inicio', 'fecha_final', 'fecha_regreso_trabajar', 
+		'id_trabajador', 'user', 'id_tipo', 'fecha_inicio', 'fecha_final', 'fecha_regreso_trabajar',
 		'archivo', 'hash_archivo', 'comentario'
 	];
 
@@ -47,6 +47,9 @@ class Ausentismo extends Model
 
 	public function comunicacion(){
 		return $this->hasOne(Comunicacion::class,'id_ausentismo');
+	}
+	public function comunicaciones(){
+		return $this->hasMany(Comunicacion::class,'id_ausentismo');
 	}
 
 }

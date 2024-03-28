@@ -79,7 +79,9 @@ trait Ausentismos {
 					0
 				) ausente"
 			))
-			->where('nominas.id_cliente',$id_cliente);
+			->where('nominas.id_cliente',$id_cliente)
+			->withCount('documentaciones')
+			->withCount('comunicaciones');
 
 		$query->where('nominas.deleted_at',null);
 

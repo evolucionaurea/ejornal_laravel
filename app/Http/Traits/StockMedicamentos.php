@@ -78,8 +78,7 @@ trait StockMedicamentos {
 				->on('consultas_enfermerias.id_nomina', '=', 'nominas.id')
 				->orOn('consultas_medicas.id_nomina', '=', 'nominas.id');
 		})
-		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual)
-		->orderBy('trabajador', 'ASC');
+		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual);
 
 		$total = $query->count();
 

@@ -300,6 +300,12 @@ select {
   display: flex;
 }
 
+.acciones_tabla a:hover,
+.acciones_tabla button:hover {
+  text-decoration: none;
+  opacity: .75;
+}
+
 .acciones_tabla a {
   background-color: #2e87b8;
   padding: 0;
@@ -332,6 +338,18 @@ select {
 .acciones_tabla button i {
   font-size: 10pt;
   color: white;
+}
+
+.acciones_tabla span {
+  color: white;
+  font-size: 10pt;
+  margin-left: 3pt;
+}
+
+.acciones_tabla .btn-label {
+  width: auto;
+  border-radius: 10pt;
+  padding: 0 .625rem;
 }
 
 .sorting_1.dtr-control::before {
