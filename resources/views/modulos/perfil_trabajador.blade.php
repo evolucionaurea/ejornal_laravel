@@ -154,7 +154,7 @@
 	<div class="accordion" id="accordionExample">
 
 		{{-- Resumen de Historial --}}
-		<div class="card">
+		{{-- <div class="card">
 			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingFive">
 				<h2 class="mb-0 d-flex">
 					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
@@ -171,7 +171,7 @@
 				</div>
 
 			</div>
-		</div>
+		</div> --}}
 
 		{{-- AUSENTISMOS --}}
 		<div class="card">
