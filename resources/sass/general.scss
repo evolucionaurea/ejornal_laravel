@@ -155,3 +155,7 @@ select{
 .progress-bar-striped {
   background-repeat: repeat-x;
 }
+
+hr.hr-line-dashed{
+  border-top: 1px dashed rgba(0,0,0,.1);
+}

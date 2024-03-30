@@ -15,8 +15,8 @@ require('./users.js');
 require('./nav_sup.js');
 //require('./medicamentos.js');
 ///require('./stock_medicamentos.js');
-require('./documentacion_ausentismo.js');
-require('./documentacion_tarea_liviana.js');
+if(route=='documentaciones.show') require('./documentacion_ausentismo.js');
+if(route=='documentaciones_livianas.show') require('./documentacion_tarea_liviana.js');
 
 
 //ADMIN

@@ -12,6 +12,7 @@ use App\Nomina;
 use App\AusentismoTipo;
 use App\TipoComunicacion;
 use App\Comunicacion;
+use App\AusentismoDocumentacion;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\CovidVacuna;
@@ -86,6 +87,16 @@ class EmpleadosAusentismosController extends Controller
 			'descripcion' => 'required|string'
 		]);
 
+		if($request->incluir_certificado=='on'){
+				$validatedData = $request->validate([
+				'cert_institucion' => 'required',
+				'cert_medico' => 'required',
+				'cert_diagnostico' => 'required',
+				'cert_fecha_documento' => 'required',
+				'cert_archivo' => 'required|file'
+			]);
+		}
+
 		$fecha_actual = Carbon::now();
 		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
 		$fecha_final = Carbon::createFromFormat('d/m/Y', $request->fecha_final);
@@ -151,6 +162,9 @@ class EmpleadosAusentismosController extends Controller
 		///chequear solapamiento de fechas
 
 
+		//dd($request->file('archivo')->hashName());
+
+
 
 		//Guardar en base Ausentismo
 		$ausentismo = new Ausentismo();
@@ -168,25 +182,21 @@ class EmpleadosAusentismosController extends Controller
 
 		// Si hay un archivo adjunto
 		if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
-
 			$archivo = $request->file('archivo');
 			$nombre = $archivo->getClientOriginalName();
 			$ausentismo->archivo = $nombre;
-
+			$ausentismo->hash_archivo = $archivo->hashName();
 		}
 		$ausentismo->user = auth()->user()->nombre;
 		$ausentismo->save();
 
 		// Si hay un archivo adjunto
 		if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
-
-		Storage::disk('local')->put('ausentismos/trabajador/'.$ausentismo->id, $archivo);
-
-		// Completar el base el hasg del archivo guardado
-		$ausentismo = Ausentismo::findOrFail($ausentismo->id);
-		$ausentismo->hash_archivo = $archivo->hashName();
-		$ausentismo->save();
-
+			Storage::disk('local')->put('ausentismos/trabajador/'.$ausentismo->id, $archivo);
+			// Completar el base el hasg del archivo guardado
+			//$ausentismo = Ausentismo::findOrFail($ausentismo->id);
+			//$ausentismo->hash_archivo = $archivo->hashName();
+			//$ausentismo->save();
 		}
 
 
@@ -197,6 +207,31 @@ class EmpleadosAusentismosController extends Controller
 		$comunicacion->descripcion = $request->descripcion;
 		$comunicacion->save();
 
+		//Guardar en base Documentación si tiene
+		if($request->incluir_certificado=='on'){
+			$documentacion = new AusentismoDocumentacion();
+
+			$documentacion->id_ausentismo = $ausentismo->id;
+			$documentacion->institucion = $request->cert_institucion;
+			$documentacion->medico = $request->cert_medico;
+			$documentacion->matricula_provincial = $request->cert_matricula_provincial;
+			$documentacion->matricula_nacional = $request->cert_matricula_nacional;
+			$documentacion->observaciones = $request->cert_observaciones;
+
+			$documentacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->cert_fecha_documento);
+			$documentacion->diagnostico = $request->cert_diagnostico;
+			$documentacion->user = auth()->user()->nombre;
+
+
+			$archivo_cert = $request->file('cert_archivo');
+			$nombre_archivo_cert = $archivo_cert->getClientOriginalName();
+			$documentacion->archivo = $nombre_archivo_cert;
+			$documentacion->hash_archivo = $archivo->hashName();
+
+			$documentacion->save();
+			Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $archivo_cert);
+
+		}
 
 		return redirect('empleados/ausentismos')->with('success', 'Ausentismo y Comunicación guardados con éxito');
 
@@ -210,7 +245,7 @@ class EmpleadosAusentismosController extends Controller
 	 */
 	public function show($id)
 	{
-	
+
 		$clientes = $this->getClientesUser();
 
 		$trabajador = Nomina::findOrFail($id);

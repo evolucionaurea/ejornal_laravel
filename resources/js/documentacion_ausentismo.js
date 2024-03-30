@@ -51,7 +51,7 @@ $(document).ready(() => {
       //     console.log(error);
       //   });
 
-      };
+  };
 
 
 
