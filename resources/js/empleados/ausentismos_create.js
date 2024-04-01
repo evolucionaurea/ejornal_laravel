@@ -69,6 +69,39 @@ $(()=>{
 		$('[name="matricula_validada"]').val(1)
 	})
 
+	$('[data-toggle="agregar-archivo-cert"]').click(btn=>{
+		const table = $('[data-table="certificaciones_archivos"]')
+		const tr = `
+		<tr>
+			<td data-content="file">
+				<div class="custom-file">
+					<input name="cert_archivo[]" type="file" class="custom-file-input" required>
+					<label class="custom-file-label">...</label>
+				</div>
+			</td>
+			<td class="text-right">
+				<button data-toggle="quitar-archivo-cert" class="btn btn-danger btn-tiny text-light" type="button">
+					<i class="fa fa-times"></i>
+				</button>
+			</td>
+		</tr>`
+		table.find('tbody').append($(tr))
+	})
+	$('[data-table="certificaciones_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo-cert"]',btn=>{
+		const tbody = $(btn.currentTarget).closest('tbody')
+		const tr = $(btn.currentTarget).closest('tr')
+		const indx = tr.index()
+		if(indx == 0){
+			Swal.fire({
+				icon:'warning',
+				title:'Debes subir al menos 1 archivo'
+			})
+			return false
+		}
+
+		tr.remove()
+	})
+
 	$('[name="cert_fecha_documento"]').datepicker()
 
 })

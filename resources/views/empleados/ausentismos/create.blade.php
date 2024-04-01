@@ -97,7 +97,7 @@
 
 
 
-					<div class="form-group col-lg-3">
+					{{-- <div class="form-group col-lg-3">
 						<label id="inputGroupFileAddon01">Documentación</label>
 
 						<div class="input-group mb-3">
@@ -107,9 +107,9 @@
 							</div>
 						</div>
 
-					</div>
+					</div> --}}
 
-					<div class="form-group col-lg-9">
+					<div class="form-group col-lg-12">
 						<label>Comentario</label>
 						<textarea name="comentario" class="form-control" rows="3">{{ old("comentario") }}</textarea>
 					</div>
@@ -177,7 +177,7 @@
 				</div>
 
 
-				<div id="certificado_content" class="tarjeta-body" style="display:none">
+				<div id="certificado_content" class="tarjeta-body" style="display:nonew">
 					<hr class="hr-line-dashed">
 
 					<div class="form-row">
@@ -224,13 +224,52 @@
 					<hr>
 
 					<div class="row">
-						<div class="form-group col-lg-3">
-							<label for="">Adjuntar archivo <span style="color: red;">*</span></label>
-							<div class="custom-file">
-								<input name="cert_archivo" type="file" class="custom-file-input" required>
-								<label class="custom-file-label">...</label>
+						<div class="form-group col-lg-6">
+
+							<div class="table-responsive">
+								<table data-table="certificaciones_archivos" class="table table-sm small w-100 table-bordered border">
+									<thead>
+										<tr class="bg-light">
+											<th colspan="2">
+												<label for="">Adjuntar archivo <span style="color: red;">*</span></label>
+											</th>
+										</tr>
+										{{-- <tr>
+											<th>Archivo</th>
+											<th class="text-right">Acciones</th>
+										</tr> --}}
+									</thead>
+									<tbody>
+
+										<tr>
+											<td data-content="file">
+												<div class="custom-file">
+													<input name="cert_archivo[]" type="file" class="custom-file-input" required>
+													<label class="custom-file-label">...</label>
+												</div>
+											</td>
+											<td class="text-right">
+												<button data-toggle="quitar-archivo-cert" class="btn btn-danger btn-tiny text-light" type="button">
+													<i class="fa fa-times"></i>
+												</button>
+											</td>
+										</tr>
+
+									</tbody>
+									<tfoot>
+										<tr class="bg-light">
+											<th colspan="2">
+												<button data-toggle="agregar-archivo-cert" class="btn btn-tiny btn-dark text-light" type="button">
+													<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
+												</button>
+											</th>
+										</tr>
+									</tfoot>
+								</table>
 							</div>
+
 						</div>
+
 					</div>
 				</div>
 
