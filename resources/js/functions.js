@@ -57,7 +57,7 @@ window.random = (min, max) => {
 }
 window.get_template = template => {
 	return new Promise((resolve,reject)=>{
-		axios.get(`${template}.blade.php`)
+		axios.get(template)
 			.then(response=>{
 				resolve(response.data);
 			})

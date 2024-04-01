@@ -13,6 +13,7 @@ use App\AusentismoTipo;
 use App\TipoComunicacion;
 use App\Comunicacion;
 use App\AusentismoDocumentacion;
+use App\AusentismoDocumentacionArchivos;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\CovidVacuna;
@@ -86,6 +87,11 @@ class EmpleadosAusentismosController extends Controller
 	public function store(Request $request)
 	{
 
+		//dd($request->cert_archivo);
+		/*foreach($request->cert_archivo as $file){
+			dd($file->hashName());
+		}*/
+
 		$validatedData = $request->validate([
 			'trabajador' => 'required',
 			'tipo' => 'required',
@@ -101,9 +107,10 @@ class EmpleadosAusentismosController extends Controller
 				'cert_medico' => 'required',
 				'cert_diagnostico' => 'required',
 				'cert_fecha_documento' => 'required',
-				'cert_archivo' => 'required|file'
+				'cert_archivos' => 'required'
 			]);
 		}
+
 
 		$fecha_actual = Carbon::now();
 		$fecha_inicio = Carbon::createFromFormat('d/m/Y', $request->fecha_inicio);
@@ -221,15 +228,25 @@ class EmpleadosAusentismosController extends Controller
 			$documentacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->cert_fecha_documento);
 			$documentacion->diagnostico = $request->cert_diagnostico;
 			$documentacion->user = auth()->user()->nombre;
-
-
-			$archivo_cert = $request->file('cert_archivo');
-			$nombre_archivo_cert = $archivo_cert->getClientOriginalName();
-			$documentacion->archivo = $nombre_archivo_cert;
-			$documentacion->hash_archivo = $archivo_cert->hashName();
-
 			$documentacion->save();
-			Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $archivo_cert);
+
+			foreach($request->cert_archivos as $file){
+
+				$doc_archivo = new AusentismoDocumentacionArchivos;
+				$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
+				$doc_archivo->archivo = $file->getClientOriginalName();
+				$doc_archivo->hash_archivo = $file->hashName();
+				$doc_archivo->save();
+				Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $file);
+
+				//$archivo_cert = $request->file('cert_archivo');
+				//$nombre_archivo_cert = $archivo_cert->getClientOriginalName();
+				//$documentacion->archivo = $nombre_archivo_cert;
+				//$documentacion->hash_archivo = $archivo_cert->hashName();
+
+			}
+
+
 
 		}
 

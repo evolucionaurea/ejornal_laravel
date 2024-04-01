@@ -7,12 +7,17 @@ use App\Cliente;
 use App\ClienteUser;
 use App\Ausentismo;
 use App\AusentismoDocumentacion;
+use App\AusentismoDocumentacionArchivos;
+use App\Http\Traits\Clientes;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
 class EmpleadosAusentismoDocumentacionController extends Controller
 {
+
+	use Clientes;
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -41,12 +46,20 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 	 */
 	public function store(Request $request)
 	{
+
+		////dd($request->all());
+
 		$validatedData = $request->validate([
 			'institucion' => 'required',
 			'medico' => 'required',
 			'diagnostico' => 'required',
-			'fecha_documento' => 'required'
+			'fecha_documento' => 'required',
+			//'cert_archivos' => 'required'
 		]);
+
+		if(!$request->cert_archivos){
+			return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
+		}
 
 		// Si viene de Extension de Ausentismo (icono listado de ausentismos), validar fechas
 		// Esto puede quedar en desuso
@@ -63,61 +76,91 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 			}
 		}
 
-		$fecha_documento = Carbon::createFromFormat('d/m/Y', $request->fecha_documento);
-		// Carbon\Carbon::createFromFormat('d/m/Y', '10/01/2019')->toDateTimeString();
 
-			// Si hay un archivo adjunto se va a guardar todo
-			if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
+		$documentacion = new AusentismoDocumentacion;
 
-				//Guardar en base AusentismoDocumentacion
-				$documentacion = new AusentismoDocumentacion();
-				$documentacion->id_ausentismo = $request->id_ausentismo;
-				$documentacion->institucion = $request->institucion;
-				$documentacion->medico = $request->medico;
-				if (isset($request->matricula_provincial) && !empty($request->matricula_provincial)) {
-					$documentacion->matricula_provincial = $request->matricula_provincial;
-				}else {
-					$documentacion->matricula_provincial = null;
-				}
-				if (isset($request->matricula_nacional) && !empty($request->matricula_nacional)) {
-					$documentacion->matricula_nacional = $request->matricula_nacional;
-				}else {
-					$documentacion->matricula_nacional = null;
-				}
-				if (isset($request->observaciones) && !empty($request->observaciones)) {
-					$documentacion->observaciones = $request->observaciones;
-				}else {
-					$documentacion->observaciones = null;
-				}
-				$documentacion->fecha_documento = $fecha_documento;
-				$documentacion->diagnostico = $request->diagnostico;
-				$archivo = $request->file('archivo');
-				$nombre = $archivo->getClientOriginalName();
-				$documentacion->archivo = $nombre;
-				$documentacion->user = auth()->user()->nombre;
-				$documentacion->save();
+		if($request->id){
+			$documentacion = AusentismoDocumentacion::findOrFail($request->id);
+			$archivos_guardados = AusentismoDocumentacionArchivos::where('ausentismo_documentacion_id',$request->id)->get();
+		}
 
-				Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $archivo);
+		$documentacion->id_ausentismo = $request->id_ausentismo;
+		$documentacion->institucion = $request->institucion;
+		$documentacion->medico = $request->medico;
+		$documentacion->matricula_provincial = $request->matricula_provincial;
+		$documentacion->matricula_nacional = $request->matricula_nacional;
+		$documentacion->observaciones = $request->observaciones;
+		$documentacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->fecha_documento);
+		$documentacion->diagnostico = $request->diagnostico;
+		$documentacion->user = auth()->user()->nombre;
+		$documentacion->save();
 
 
-				// Completar en base el hash del archivo guardado
-				$documentacion = AusentismoDocumentacion::findOrFail($documentacion->id);
-				$documentacion->hash_archivo = $archivo->hashName();
-				$documentacion->save();
+		foreach($request->cert_archivos as $file){
+			$doc_archivo = new AusentismoDocumentacionArchivos;
+			$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
+			$doc_archivo->archivo = $file->getClientOriginalName();
+			$doc_archivo->hash_archivo = $file->hashName();
 
-				// Si es una documentacion de ausentismo extendida (se carga en el listado de ausentismos)
-				// Esto puede quedar en desuso
-				if (isset($request->fecha_final) && !empty($request->fecha_final)) {
-					$ausentismo->fecha_final = $fecha_final;
-					$ausentismo->save();
-				}
+			$doc_archivo->save();
+			Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $file);
+		}
 
 
+		//////////////////////
+
+		// Si hay un archivo adjunto se va a guardar todo
+		/*if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
+
+			//Guardar en base AusentismoDocumentacion
+			$documentacion = new AusentismoDocumentacion();
+			$documentacion->id_ausentismo = $request->id_ausentismo;
+			$documentacion->institucion = $request->institucion;
+			$documentacion->medico = $request->medico;
+			if (isset($request->matricula_provincial) && !empty($request->matricula_provincial)) {
+				$documentacion->matricula_provincial = $request->matricula_provincial;
 			}else {
-				return back()->with('error', 'Debes adjuntar un archivo');
+				$documentacion->matricula_provincial = null;
+			}
+			if (isset($request->matricula_nacional) && !empty($request->matricula_nacional)) {
+				$documentacion->matricula_nacional = $request->matricula_nacional;
+			}else {
+				$documentacion->matricula_nacional = null;
+			}
+			if (isset($request->observaciones) && !empty($request->observaciones)) {
+				$documentacion->observaciones = $request->observaciones;
+			}else {
+				$documentacion->observaciones = null;
+			}
+			$documentacion->fecha_documento = $fecha_documento;
+			$documentacion->diagnostico = $request->diagnostico;
+			$archivo = $request->file('archivo');
+			$nombre = $archivo->getClientOriginalName();
+			$documentacion->archivo = $nombre;
+			$documentacion->user = auth()->user()->nombre;
+			$documentacion->save();
+
+			Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $archivo);
+
+
+			// Completar en base el hash del archivo guardado
+			$documentacion = AusentismoDocumentacion::findOrFail($documentacion->id);
+			$documentacion->hash_archivo = $archivo->hashName();
+			$documentacion->save();
+
+			// Si es una documentacion de ausentismo extendida (se carga en el listado de ausentismos)
+			// Esto puede quedar en desuso
+			if (isset($request->fecha_final) && !empty($request->fecha_final)) {
+				$ausentismo->fecha_final = $fecha_final;
+				$ausentismo->save();
 			}
 
-			return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
+
+		}else {
+			return back()->with('error', 'Debes adjuntar un archivo');
+		}*/
+
+		return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
 
 	}
 
@@ -130,20 +173,19 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 	public function show($id)
 	{
 
-		$ausencia = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-		->where('ausentismos.id', $id)
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo', 'ausentismos.id')
-		->first();
+		$ausencia = Ausentismo::where('id',$id)->with('trabajador')->with('tipo')->first();
 
-		$documentacion_ausentismo = AusentismoDocumentacion::where('id_ausentismo', $id)->orderBy('fecha_documento', 'desc')->get();
+		$documentacion_ausentismo = AusentismoDocumentacion::where('id_ausentismo', $id)
+			->with('archivos')
+			->orderBy('fecha_documento', 'desc')
+			->get();
 
-		$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')
-		->where('cliente_user.id_user', '=', auth()->user()->id)
-		->select('clientes.nombre', 'clientes.id')
-		->get();
-		return view('empleados.ausentismos.documentaciones', compact('ausencia', 'clientes', 'documentacion_ausentismo'));
+		$clientes = $this->getClientesUser();
+		return view('empleados.ausentismos.documentaciones', compact(
+			'ausencia',
+			'clientes',
+			'documentacion_ausentismo'
+		));
 
 	}
 
@@ -165,7 +207,7 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id)
+	/*public function update(Request $request, $id)
 	{
 
 			$validatedData = $request->validate([
@@ -246,7 +288,7 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 			return back()->with('success', 'Documentación actualizada con éxito');
 
 
-	}
+	}*/
 
 	/**
 	 * Remove the specified resource from storage.
@@ -263,8 +305,8 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 	public function descargar_archivo($id)
 	{
 
-		$ausentismo_documentacion = AusentismoDocumentacion::find($id);
-		$ruta = storage_path("app/documentacion_ausentismo/{$ausentismo_documentacion->id}/{$ausentismo_documentacion->hash_archivo}");
+		$archivo = AusentismoDocumentacionArchivos::find($id);
+		$ruta = storage_path("app/documentacion_ausentismo/{$archivo->ausentismo_documentacion_id}/{$archivo->hash_archivo}");
 		return response()->download($ruta);
 		return back();
 
@@ -302,6 +344,14 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		dump($response->getBody());
 		return $response->getBody();
 
+	}
+
+
+	public function find_ajax($id){
+
+		$doc = AusentismoDocumentacion::select('*')->where('id',$id)->with('archivos')->first();
+		//$doc = AusentismoDocumentacion::findOrFail($id)->with('archivos');
+		return $doc;
 	}
 
 

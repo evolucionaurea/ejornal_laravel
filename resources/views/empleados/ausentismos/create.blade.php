@@ -165,7 +165,7 @@
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<div class="input-group-text">
-								<input name="incluir_certificado" type="checkbox" >
+								<input name="incluir_certificado" type="checkbox" {{ old("incluir_certificado")=='on' ? 'checked' : '' }} >
 							</div>
 						</div>
 						<div class="input-group-append">
@@ -177,21 +177,21 @@
 				</div>
 
 
-				<div id="certificado_content" class="tarjeta-body" style="display:nonew">
+				<div id="certificado_content" class="tarjeta-body" style="{{ old("incluir_certificado")=='on' ? '' : 'display:none' }}">
 					<hr class="hr-line-dashed">
 
 					<div class="form-row">
 						<div class="form-group col-lg-3">
 							<label>Institución <span style="color: red;">*</span></label>
-							<input name="cert_institucion" type="text" class="form-control" placeholder="">
+							<input name="cert_institucion" type="text" class="form-control" placeholder="" value="{{ old('cert_institucion') }}">
 						</div>
 						<div class="form-group col-lg-3">
 							<label>Médico <span style="color: red;">*</span></label>
-							<input name="cert_medico" type="text" class="form-control" placeholder="">
+							<input name="cert_medico" type="text" class="form-control" placeholder="" value="{{ old('cert_medico') }}">
 						</div>
 						<div class="form-group col-lg-3">
 							<label>Matrícula provincial</label>
-							<input name="cert_matricula_provincial" type="text" class="form-control" placeholder="">
+							<input name="cert_matricula_provincial" type="text" class="form-control" placeholder="" value="{{ old('cert_matricula_provincial') }}">
 						</div>
 						<div class="form-group col-lg-3">
 							<label class="d-flex align-items-center">
@@ -200,7 +200,7 @@
 								<i data-toggle="certificado-validar-icon" data-value="fail" style="color: red; margin-left: 5px;" class="fas fa-times-circle d-none"></i>
 							</label>
 							<div class="d-flex">
-								<input style="max-width: 200px; margin-right: 5px;" name="cert_matricula_nacional" type="text" class="form-control" placeholder="">
+								<input style="max-width: 200px; margin-right: 5px;" name="cert_matricula_nacional" type="text" class="form-control" placeholder="" value="{{ old('cert_matricula_nacional') }}">
 								<button data-toggle="validar-matricula" class="btn-ejornal btn-ejornal-gris-claro" type="button">
 									<i class="fas fa-user-check"></i> Validar
 								</button>
@@ -208,16 +208,16 @@
 						</div>
 						<div class="form-group col-lg-2">
 							<label>Fecha documento <span style="color: red;">*</span></label>
-							<input name="cert_fecha_documento" type="text" readonly class="form-control" placeholder="">
+							<input name="cert_fecha_documento" type="text" readonly class="form-control" placeholder="" value="{{ old('cert_fecha_documento') }}">
 						</div>
 
 						<div class="form-group col-lg-5">
 							<label>Diagnóstico <span style="color: red;">*</span></label>
-							<textarea name="cert_diagnostico" class="form-control" rows="3"></textarea>
+							<textarea name="cert_diagnostico" class="form-control" rows="3">{{ old('cert_diagnostico') }}</textarea>
 						</div>
 						<div class="form-group col-lg-5">
 							<label>Observaciones</label>
-							<textarea name="cert_observaciones" class="form-control" rows="3"></textarea>
+							<textarea name="cert_observaciones" class="form-control" rows="3">{{ old('cert_observaciones') }}</textarea>
 						</div>
 					</div>
 
@@ -231,29 +231,14 @@
 									<thead>
 										<tr class="bg-light">
 											<th colspan="2">
-												<label for="">Adjuntar archivo <span style="color: red;">*</span></label>
+												<label for="" class="mb-0">Adjuntar archivos <span style="color: red;">*</span></label>
+												<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
 											</th>
 										</tr>
-										{{-- <tr>
-											<th>Archivo</th>
-											<th class="text-right">Acciones</th>
-										</tr> --}}
 									</thead>
 									<tbody>
 
-										<tr>
-											<td data-content="file">
-												<div class="custom-file">
-													<input name="cert_archivo[]" type="file" class="custom-file-input" required>
-													<label class="custom-file-label">...</label>
-												</div>
-											</td>
-											<td class="text-right">
-												<button data-toggle="quitar-archivo-cert" class="btn btn-danger btn-tiny text-light" type="button">
-													<i class="fa fa-times"></i>
-												</button>
-											</td>
-										</tr>
+										@include('templates.tr-certificado-ausentismo')
 
 									</tbody>
 									<tfoot>

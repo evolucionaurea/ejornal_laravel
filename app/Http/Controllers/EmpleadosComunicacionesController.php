@@ -85,19 +85,19 @@ class EmpleadosComunicacionesController extends Controller
 	public function store(Request $request)
 	{
 
-	  $validatedData = $request->validate([
+		$validatedData = $request->validate([
 		'descripcion' => 'required'
-	  ]);
+		]);
 
-	  //Guardar en base Comunicaciones
-	  $comunicacion = new Comunicacion();
-	  $comunicacion->id_ausentismo = $request->id_ausentismo;
-	  $comunicacion->id_tipo = $request->id_tipo;
-	  $comunicacion->descripcion = $request->descripcion;
-	  $comunicacion->user = auth()->user()->nombre;
-	  $comunicacion->save();
+		//Guardar en base Comunicaciones
+		$comunicacion = new Comunicacion();
+		$comunicacion->id_ausentismo = $request->id_ausentismo;
+		$comunicacion->id_tipo = $request->id_tipo;
+		$comunicacion->descripcion = $request->descripcion;
+		$comunicacion->user = auth()->user()->nombre;
+		$comunicacion->save();
 
-	  return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+		return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
 
 	}
 
@@ -110,25 +110,19 @@ class EmpleadosComunicacionesController extends Controller
 	public function show($id)
 	{
 
-	  $ausencia = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-	  ->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-	  ->where('ausentismos.id', $id)
-	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-	  ->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono', DB::raw('ausentismo_tipo.nombre nombre_ausentismo'), 'ausentismos.fecha_inicio', 'ausentismos.fecha_final', 'ausentismos.fecha_regreso_trabajar', 'ausentismos.archivo', 'ausentismos.id')
-	  ->first();
+		$ausencia = Ausentismo::where('id',$id)->with('trabajador')->with('tipo')->first();
 
-	  $comunicaciones_ausentismo = Comunicacion::join('tipo_comunicacion', 'comunicaciones.id_tipo', 'tipo_comunicacion.id')
-	  ->where('id_ausentismo', $id)
-	  ->select('comunicaciones.id', 'tipo_comunicacion.nombre', 'comunicaciones.descripcion', 'comunicaciones.updated_at')
-	  ->orderBy('comunicaciones.created_at', 'desc')
-	  ->get();
+		$comunicaciones_ausentismo = Comunicacion::where('id_ausentismo', $id)
+			->with('tipo')
+			->orderBy('comunicaciones.created_at', 'desc')
+			->get();
 
-	  $tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
+		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
 
 
-	  $clientes = $this->getClientesUser();
+		$clientes = $this->getClientesUser();
 
-	  return view('empleados.comunicaciones.show', compact('ausencia', 'clientes', 'comunicaciones_ausentismo', 'tipo_comunicaciones'));
+		return view('empleados.comunicaciones.show', compact('ausencia', 'clientes', 'comunicaciones_ausentismo', 'tipo_comunicaciones'));
 
 	}
 
@@ -171,7 +165,7 @@ class EmpleadosComunicacionesController extends Controller
 	{
 
 		$validatedData = $request->validate([
-		  'nombre' => 'required|string'
+			'nombre' => 'required|string'
 		]);
 
 		//Guardar en base
@@ -186,11 +180,11 @@ class EmpleadosComunicacionesController extends Controller
 	public function tipo_destroy($id_tipo)
 	{
 
-	  $comunicacion = Comunicacion::where('id_tipo', $id_tipo)->get();
+		$comunicacion = Comunicacion::where('id_tipo', $id_tipo)->get();
 
-	  if (!empty($comunicacion) && count($comunicacion) > 0) {
+		if (!empty($comunicacion) && count($comunicacion) > 0) {
 		return back()->with('error', 'Existen comunicaciones creadas con este tipo de comunicacion. No puedes eliminarla');
-	  }
+		}
 
 		//Eliminar en base
 		$tipo_comunicacion = TipoComunicacion::find($id_tipo)->delete();
@@ -201,8 +195,8 @@ class EmpleadosComunicacionesController extends Controller
 
 	public function getComunicacion($id)
 	{
-	  $comunicacion_de_ausentismo = Comunicacion::find($id);
-	  return response()->json($comunicacion_de_ausentismo);
+		$comunicacion_de_ausentismo = Comunicacion::find($id);
+		return response()->json($comunicacion_de_ausentismo);
 	}
 
 }
