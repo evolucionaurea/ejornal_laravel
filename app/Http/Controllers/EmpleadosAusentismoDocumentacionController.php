@@ -57,9 +57,15 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 			//'cert_archivos' => 'required'
 		]);
 
-		if(!$request->cert_archivos){
-			return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
+		$documentacion = new AusentismoDocumentacion;
+		if($request->id){
+			$documentacion = AusentismoDocumentacion::findOrFail($request->id);
+			$archivos_guardados = AusentismoDocumentacionArchivos::where('ausentismo_documentacion_id',$request->id)->get();
+			if(empty($archivos_guardados->toArray()) && !$request->cert_archivos) return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
+		}else{
+			if(!$request->cert_archivos) return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
 		}
+
 
 		// Si viene de Extension de Ausentismo (icono listado de ausentismos), validar fechas
 		// Esto puede quedar en desuso
@@ -77,12 +83,8 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		}
 
 
-		$documentacion = new AusentismoDocumentacion;
 
-		if($request->id){
-			$documentacion = AusentismoDocumentacion::findOrFail($request->id);
-			$archivos_guardados = AusentismoDocumentacionArchivos::where('ausentismo_documentacion_id',$request->id)->get();
-		}
+
 
 		$documentacion->id_ausentismo = $request->id_ausentismo;
 		$documentacion->institucion = $request->institucion;
@@ -95,15 +97,16 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		$documentacion->user = auth()->user()->nombre;
 		$documentacion->save();
 
+		if($request->cert_archivos){
+			foreach($request->cert_archivos as $file){
+				$doc_archivo = new AusentismoDocumentacionArchivos;
+				$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
+				$doc_archivo->archivo = $file->getClientOriginalName();
+				$doc_archivo->hash_archivo = $file->hashName();
 
-		foreach($request->cert_archivos as $file){
-			$doc_archivo = new AusentismoDocumentacionArchivos;
-			$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
-			$doc_archivo->archivo = $file->getClientOriginalName();
-			$doc_archivo->hash_archivo = $file->hashName();
-
-			$doc_archivo->save();
-			Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $file);
+				$doc_archivo->save();
+				Storage::disk('local')->put('documentacion_ausentismo/'.$documentacion->id, $file);
+			}
 		}
 
 

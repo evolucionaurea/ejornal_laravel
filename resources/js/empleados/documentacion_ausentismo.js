@@ -120,12 +120,11 @@ class Certificado {
 				return false
 			}
 			const data = response.data
-			console.log(data)
 
 			$.each(data, (k,v)=>{
 				this.modal.find(`[name="${k}"]`).val(v)
 			})
-			this.modal.find('[data-toggle="validar-matricula"]').trigger('click')
+			if(data.matricula_nacional!=null) this.modal.find('[data-toggle="validar-matricula"]').trigger('click')
 
 			this.table_archivos_cert.find('tbody').html('')
 
