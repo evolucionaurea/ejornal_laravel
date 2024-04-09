@@ -110,7 +110,7 @@ $(()=>{
 					className:'align-middle',
 					render:(v,type,row,meta)=>{
 
-						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user!=0) return ''
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 
 						let regreso_trabajar = null;
 						let hoy;

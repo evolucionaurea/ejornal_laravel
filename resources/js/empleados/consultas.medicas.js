@@ -33,7 +33,7 @@ $(()=>{
 					data:row=>row,
 					className:'text-right',
 					render:(v,type,row,meta)=>{
-						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user!=0) return ''
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 						return `
 						<div class="acciones_tabla justify-content-end">
 							<a title="Ver" href="medicas/${v.id}">

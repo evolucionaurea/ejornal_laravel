@@ -15,7 +15,7 @@
 		<div class="cabecera">
 			<h2>Listado de trabajadores</h2>
 			<p>Aquí puede ver el listado de trabajadores de la empresa</p>
-			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('nominas.create')}}"><i
 						class="fas fa-plus-circle fa-fw"></i> Nuevo trabajador</a>

@@ -14,11 +14,11 @@
 		<div class="cabecera">
 			<h2>Listado de consultas médicas</h2>
 			<p>Aquí puede ver el listado de consultas médicas de la empresa</p>
-			@if ((auth()->user()->fichada == 1 || auth()->user()->fichar == 1 || auth()->user()->fichar == null)
-			&& auth()->user()->id_especialidad == 1)
+			@if((auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicas.create')}}"><i
-						class="fas fa-plus-circle"></i> Nueva consulta médica</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicas.create')}}">
+					<i class="fas fa-plus-circle"></i> Nueva consulta médica
+				</a>
 			</div>
 			@endif
 		</div>

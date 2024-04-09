@@ -14,7 +14,7 @@
 		<div class="cabecera">
 			<h2>Listado de vacunas</h2>
 			<p>Aquí puede ver el listado de vacunas de la empresa</p>
-			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('vacunas.create')}}"><i
 						class="fas fa-plus-circle"></i> Nueva vacuna</a>
@@ -37,7 +37,7 @@
 						<th>Dosis</th>
 						<th>Fecha</th>
 						<th>Institución</th>
-						@if (auth()->user()->fichada || auth()->user()->fichar == 0)
+						@if (auth()->user()->fichada || !auth()->user()->fichar)
 						<th>
 							<a href="">Acciones</a>
 						</th>

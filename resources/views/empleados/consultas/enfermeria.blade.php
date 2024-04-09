@@ -14,11 +14,11 @@
 		<div class="cabecera">
 			<h2>Listado de consultas de enfermería</h2>
 			<p>Aquí puede ver el listado de consultas de enfermería de la empresa</p>
-			@if ((auth()->user()->fichada == 1 || auth()->user()->fichar == 1 || auth()->user()->fichar == null)
-			&& auth()->user()->id_especialidad == 2)
+			@if ((auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 2)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('enfermeria.create')}}"><i
-						class="fas fa-plus-circle"></i> Nueva consulta de enfermería</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('enfermeria.create')}}">
+					<i class="fas fa-plus-circle"></i> Nueva consulta de enfermería
+				</a>
 			</div>
 			@endif
 		</div>

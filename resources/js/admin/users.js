@@ -41,7 +41,7 @@ $(()=>{
 				<td>${user.especialidad!=null?user.especialidad:''}</td>
 				<td><span class="badge badge-${user.estado==1?'success':'danger'}">${user.estado==1?'Activo':'Inactivo'}</span></td>
 				<td>
-					<span class="badge badge-${user.fichar==1?'success':'danger'}">${user.fichar==1 ? 'Si' : 'No'}</span>
+					<span class="badge badge-${(user.fichar==1)?'success':'danger'}">${(user.fichar==1) ? 'Si' : 'No'}</span>
 				</td>
 				<td style="width:420px">
 					<div><b>${user.rol.capitalize()}</b></div>

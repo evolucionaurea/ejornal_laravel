@@ -14,7 +14,7 @@
 		<div class="cabecera">
 			<h2>Listado de estudios medicos complementarios</h2>
 			<p>Aquí puede ver el listado de estudios medicos complementarios de la empresa</p>
-			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('preocupacionales.create')}}">
 					<i class="fas fa-plus-circle"></i>
@@ -42,7 +42,7 @@
 						<th>Tel</th>
 						<th>Fecha</th>
 						<th>Documentación</th>
-						@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+						@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 						<th>Acciones</th>
 						@endif
 					</tr>

@@ -50,7 +50,7 @@ $(()=>{
 					className:'align-middle text-right border-left',
 					render:(v,type,row,meta)=>{
 
-						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user!=0) return ''
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 
 						return `
 							<div class="acciones_tabla justify-content-end">

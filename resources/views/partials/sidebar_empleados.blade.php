@@ -70,7 +70,7 @@
 							onclick="javascript:location.href='{{url('/empleados/nominas')}}'">
 							<a href="{{url('/empleados/nominas')}}">Listado</a>
 						</ol>
-						@if(auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+						@if(auth()->user()->fichada == 1 || !auth()->user()->fichar)
 						<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}"
 							onclick="javascript:location.href='{{route('nominas.create')}}'">
 							<a href="{{route('nominas.create')}}">Crear Trabajador</a>
@@ -91,7 +91,7 @@
 							onclick="javascript:location.href='{{url('/empleados/ausentismos')}}'">
 							<a href="{{url('/empleados/ausentismos')}}">Listado</a>
 						</ol>
-						@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+						@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 						<ol data-route="ausentismos.create" class="{{ setActiveSub('ausentismos.create') }}"
 							onclick="javascript:location.href='{{url('/empleados/ausentismos/create')}}'">
 							<a href="{{url('/empleados/ausentismos/create')}}">Agregar Ausentismo</a>
@@ -122,7 +122,7 @@
 							onclick="javascript:location.href='{{url('/empleados/tareas_livianas')}}'">
 							<a href="{{url('/empleados/tareas_livianas')}}">Listado</a>
 						</ol>
-						@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
+						@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 						<ol data-route="tareas_livianas.create" class="{{ setActiveSub('tareas_livianas.create') }}"
 							onclick="javascript:location.href='{{url('/empleados/tareas_livianas/create')}}'">
 							<a href="{{url('/empleados/tareas_livianas/create')}}">Agregar Tarea Adecuada</a>
