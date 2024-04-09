@@ -8,7 +8,7 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto mt-2 mt-lg-0 d-flex align-items-center">
-      @if (auth()->user()->fichar !== 0)
+      @if (auth()->user()->fichar)
       @if (auth()->user()->id_rol == 2)
       <li class="nav-item" style="margin-right: 15px;">
         <a class="click_fichada_huella" data-toggle="modal" data-target="#fichada_huella" class="nav-link" href="#">
