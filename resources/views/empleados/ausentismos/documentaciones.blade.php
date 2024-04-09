@@ -14,15 +14,17 @@
 		{{-- Contenido de la pagina --}}
 
 		<div class="cabecera">
+
 			<h2>Certificados de un ausentismo</h2>
 			<p>Aquí puedes ver y cargar nuevos certificados de ausentismo</p>
+
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro"
-					href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}"><i
-						class="fas fa-arrow-circle-left"></i>Volver</a>
-				<a data-toggle="modal" data-target="#cargar_documentos_ausentismo"
-					class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-plus-circle"></i>Crear
-					certificado</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}">
+					<i class="fas fa-arrow-circle-left fa-fw"></i> <span>Volver</span>
+				</a>
+				<button data-toggle="modal" data-target="#modal_certificado" class="btn-ejornal btn-ejornal-success" href="#">
+					<i class="fas fa-plus-circle fa-fw"></i> <span>Crear Certificado</span>
+				</button>
 			</div>
 		</div>
 
@@ -40,73 +42,91 @@
 
 		<div class="tarjeta">
 
+			{{-- HEADER --}}
 			<div class="row">
+
 				<div class="col-lg-4 col-md-3 col-sm-12 text-center">
-					{{-- <div class="user-profile-picture">
-						<div class="image">[IMAGE]</div>
-					</div> --}}
+					@if ($ausencia->trabajador->foto)
+					<div class="foto-perfil" style="background-image: url({{ $ausencia->trabajador->photo_url }})"></div>
+					@else
 					<i class="fas fa-user fa-10x"></i>
+					@endif
 					<br>
 					<br>
-					<h5>{{$ausencia->nombre}}</h5>
-				</div>
-				<div class="col-lg-4 col-md-5 col-sm-12">
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item">
-							<b>Tipo: </b> {{$ausencia->nombre_ausentismo}}
-						</li>
-						<li class="list-group-item">
-							<b>Fecha inicio: </b> {{ (!empty($ausencia->fecha_inicio)) ?
-							date('d/m/Y',strtotime($ausencia->fecha_inicio)) : "" }}
-						</li>
-						<li class="list-group-item">
-							<b>Fecha final: </b> {{ (!empty($ausencia->fecha_final)) ?
-							date('d/m/Y',strtotime($ausencia->fecha_final)) : "" }}
-						</li>
-						<li class="list-group-item">
-							<b>Fecha en que regresó: </b> {{ (!empty($ausencia->fecha_regreso_trabajar)) ?
-							date('d/m/Y',strtotime($ausencia->fecha_regreso_trabajar)) : "" }}
-						</li>
-					</ul>
+					<h5>
+						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info" title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
+					</h5>
 				</div>
 
-				<div class="col-lg-4 col-md-4 col-sm-12">
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item">
-							<b>Email: </b> {{$ausencia->email}}
-						</li>
-						<li class="list-group-item"><b>Estado: </b>
-							@if ($ausencia->estado == 1)
-							Activo
-							@else
-							Inactivo
-							@endif
-						</li>
-						<li class="list-group-item">
-							<b>Telefono: </b> {{$ausencia->telefono}}
-						</li>
-						<li class="list-group-item">
-							<b>Archivo adjunto: </b>
-							@if ($ausencia->archivo == null)
-							No se adjuntó un archivo
-							@else
-							<a target="_blank" class="btn-ejornal btn-ejornal-dark"
-								href="{{route('ausentismos.archivo', $ausencia->id)}}">
-								<i class="fa fa-file"></i>{{$ausencia->archivo}}
-							</a>
-							@endif
-						</li>
-					</ul>
+				<div class="col-lg-8 col-md-9 col-sm-12">
+					<h4 class="mb-1">Datos del Ausentismo</h4>
+					<hr class="hr-line-dashed">
+
+					<div class="row">
+						<div class="col-lg-6">
+
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">
+									<b>Tipo: </b> {{$ausencia->tipo->nombre}}
+								</li>
+								<li class="list-group-item">
+									<b>Fecha inicio: </b> {{ (!empty($ausencia->fecha_inicio)) ?
+									date('d/m/Y',strtotime($ausencia->fecha_inicio)) : "" }}
+								</li>
+								<li class="list-group-item">
+									<b>Fecha final: </b> {{ (!empty($ausencia->fecha_final)) ?
+									date('d/m/Y',strtotime($ausencia->fecha_final)) : "" }}
+								</li>
+								<li class="list-group-item">
+									<b>Fecha en que regresó: </b> {{ (!empty($ausencia->fecha_regreso_trabajar)) ?
+									date('d/m/Y',strtotime($ausencia->fecha_regreso_trabajar)) : "" }}
+								</li>
+								<li class="list-group-item">
+									<b>Usuario que lo cargó:</b> {{ $ausencia->user }}
+								</li>
+							</ul>
+						</div>
+
+						<div class="col-lg-6">
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">
+									<b>Email: </b> {{$ausencia->trabajador->email}}
+								</li>
+								<li class="list-group-item"><b>Estado: </b>
+									@if ($ausencia->estado == 1)
+									Activo
+									@else
+									Inactivo
+									@endif
+								</li>
+								<li class="list-group-item">
+									<b>Telefono: </b> {{$ausencia->trabajador->telefono}}
+								</li>
+								<li class="list-group-item">
+									<b>Archivo adjunto: </b>
+									@if ($ausencia->archivo == null)
+									No se adjuntó un archivo
+									@else
+									<a target="_blank" class="btn btn-info btn-tiny"
+										href="{{route('ausentismos.archivo', $ausencia->id)}}">
+										<i class="fa fa-file fa-fw"></i> {{$ausencia->archivo}}
+									</a>
+									@endif
+								</li>
+							</ul>
+
+						</div>
+					</div>
 				</div>
 
 			</div>
 
 
 			{{-- CERTIFICADOS --}}
-			<div class="mt-5">
-				<table data-table="ausentismos" class="table small table-bordered table-sm w-100">
+			<div class="mt-5 table-responsive">
+				<table data-table="ausentismos" class="table small table-bordered table-sm w-100 border">
 					<thead>
-						<tr>
+						<tr class="bg-light">
 							<th>Institución</th>
 							<th>Fecha</th>
 							<th>Última actualización</th>
@@ -116,31 +136,39 @@
 							<th>Diagnóstico</th>
 							<th>Observaciones</th>
 							<th>Ususario que registra</th>
-							<th>Archivo</th>
+							<th>Archivos</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
 						@if($documentacion_ausentismo) @foreach($documentacion_ausentismo as $documentacion)
 						<tr>
-							<td>{{ $documentacion->institucion }}</td>
-							<td>{{ $documentacion->fecha_documento->format('d/m/Y') }}</td>
-							<td>{{ $documentacion->updated_at->format('d/m/Y') }}</td>
-							<td>{{ $documentacion->medico }}</td>
-							<td>{{ $documentacion->matricula_provincial }}</td>
-							<td>{{ $documentacion->matricula_nacional }}</td>
-							<td>{{ $documentacion->diagnostico }}</td>
-							<td>{{ $documentacion->observaciones }}</td>
-							<td>{{ $documentacion->user }}</td>
-							<td>
-								<a target="_blank" class="btn-ejornal btn-ejornal-gris-claro ml-4" href="{{route('documentacion_ausentismo.archivo', $documentacion->id)}}">
-									<i class="fa fa-download fa-fw"></i> <span>descargar</span>
+							<td class="align-middle">{{ $documentacion->institucion }}</td>
+							<td class="align-middle">{{ $documentacion->fecha_documento->format('d/m/Y') }}</td>
+							<td class="align-middle">{{ $documentacion->updated_at->format('d/m/Y') }}</td>
+							<td class="align-middle">{{ $documentacion->medico }}</td>
+							<td class="align-middle">{{ $documentacion->matricula_provincial }}</td>
+							<td class="align-middle">{{ $documentacion->matricula_nacional }}</td>
+							<td class="align-middle">{{ $documentacion->diagnostico }}</td>
+							<td class="align-middle">{{ $documentacion->observaciones }}</td>
+							<td class="align-middle">{{ $documentacion->user }}</td>
+							<td class="align-middle">
+								@if($documentacion->archivos)
+
+								@foreach($documentacion->archivos as $archivo)
+								<a target="_blank" class="btn btn-info btn-tiny mr-3 mb-1 d-block" href="{{route('documentacion_ausentismo.archivo', $archivo->id)}}">
+									<i class="fa fa-download fa-fw"></i> <span>{{$archivo->archivo}}</span>
 								</a>
+								@endforeach
+
+								@else
+								<span>no se adjuntaron archivos</span>
+								@endif
 							</td>
-							<td>
-								<a class="editar_documentos_ausentismo btn-ejornal btn-ejornal-dark" href="#!" data-id="{{$documentacion->id}}">
+							<td class="align-middle">
+								<button data-toggle="editar-certificado" class="btn-ejornal btn-ejornal-dark" data-id="{{$documentacion->id}}">
 									<i class="fas fa-pen fa-fw"></i> <span>Editar</span>
-								</a>
+								</button>
 							</td>
 						</tr>
 						@endforeach @endif
@@ -150,124 +178,6 @@
 			</div>
 
 
-			<div class="row d-none">
-
-				<div class="col-md-12">
-
-					@if (isset($documentacion_ausentismo) && !empty($documentacion_ausentismo) &&
-					count($documentacion_ausentismo) > 0)
-
-					@foreach ($documentacion_ausentismo as $documentacion)
-					<div class="accordion mb-4" id="accordionExample">
-						<div class="card">
-							<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingOne">
-								<h2 class="mb-0 d-flex">
-									<button class="btn btn-link btn-block text-left" type="button"
-										data-toggle="collapse" data-target="#collapse_{{ $documentacion->id }}"
-										aria-expanded="true" aria-controls="collapse_{{ $documentacion->id }}">
-										<b>Institución:</b> {{$documentacion->institucion}}
-									</button>
-									<i class="fal fa-chevron-circle-down text-white"></i>
-								</h2>
-							</div>
-							<div id="collapse_{{ $documentacion->id }}" class="collapse show"
-								aria-labelledby="headingOne" data-parent="#accordionExample">
-								<div class="card-body">
-									<div class="card_consultas">
-										<div class="card_consulta">
-											<ul class="list-group list-group-flush">
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">Fecha del
-														documento:
-													</span>
-													{{ (!empty($documentacion->fecha_documento)) ?
-													date('d/m/Y',strtotime($documentacion->fecha_documento)) : "" }}
-												</li>
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">Fecha última
-														actualización:
-													</span>
-													{{ (!empty($documentacion->updated_at)) ?
-													date('d/m/Y',strtotime($documentacion->updated_at)) : "" }}
-												</li>
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">Médico: </span>
-													{{$documentacion->medico}}
-												</li>
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">Matrícula
-														provincial: </span>
-													{{ (!empty($documentacion->matricula_provincial)) ?
-													$documentacion->matricula_provincial : "No fue cargada" }}
-												</li>
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">
-														Matrícula nacional:
-													</span>
-													{{ (!empty($documentacion->matricula_nacional)) ?
-													$documentacion->matricula_nacional : "No fue cargada" }}
-												</li>
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">Diagnóstico:
-													</span>
-													<p>{{$documentacion->diagnostico}}</p>
-												</li>
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">Observaciones:
-													</span>
-													<p>{{$documentacion->observaciones}}</p>
-												</li>
-												@if ($documentacion->user != null)
-												<li class="list-group-item">
-													<span style="font-weight: 600;" class="text_black">User que
-														registra: </span>
-													<p>{{$documentacion->user}}</p>
-												</li>
-												@endif
-											</ul>
-											<br>
-											<h6 style="font-weight: 600;" class="text_black">Acciones:</h6>
-											<div class="d-flex mr-4">
-												<small class="text-muted">
-													<h6 class="">Editar: </h6>
-													<a class="editar_documentos_ausentismo btn btn-primary btn-sm"
-														href="#!" data-id="{{$documentacion->id}}">
-														<i class="fas fa-pen"></i>
-													</a>
-												</small>
-												<small class="text-muted">
-													<h6 class="ml-4 mb-3">Archivo subido: </h6>
-													<a target="_blank" class="btn-ejornal btn-ejornal-gris-claro ml-4"
-														href="{{route('documentacion_ausentismo.archivo', $documentacion->id)}}">
-														<i class="fa fa-file"></i>{{$documentacion->archivo}}
-													</a>
-												</small>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					@endforeach
-					@else
-					@if ($ausencia->archivo != null)
-					<div class="alert alert-info" role="alert">
-						<h4 class="alert-heading">Certificados cargados</h4>
-						<p>De momento solo lleva guardado el adjunto al momento de crear el ausentismo.</p>
-						<p>No lleva certificados cargados fuera de ello. Vaya al boton verde arriba llamado "Crear
-							certificado" para continuar trabajando.</p>
-					</div>
-					@else
-					<div class="alert alert-danger" role="alert">
-						<h4 class="alert-heading">Sin datos</h4>
-						<p>No hay certificados de este ausentismo</p>
-					</div>
-					@endif
-					@endif
-
-				</div>
-			</div>
 		</div>
 
 		{{-- Contenido de la pagina --}}
@@ -277,74 +187,108 @@
 
 
 
-<!-- Modal -->
-<div class="modal fade" id="cargar_documentos_ausentismo" tabindex="-1"
-	aria-labelledby="cargar_documentos_ausentismo_titulo" aria-hidden="true">
+<!-- Modal Certificado -->
+<div id="modal_certificado" class="modal fade" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
+
 			<div class="modal-header">
-				<h5 class="modal-title" id="cargar_documentos_ausentismo_titulo">Crear certificado</h5>
+				<h5 class="modal-title" >Crear certificado</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
+
 			<div class="modal-body">
 
 				<div class="row p-4">
-					<form id="form_crear_evento_ausentismo"
-						action="{{action('EmpleadosAusentismoDocumentacionController@store')}}"
-						enctype="multipart/form-data" accept-charset="UTF-8" method="post">
+					<form data-form="form-certificado" action="{{action('EmpleadosAusentismoDocumentacionController@store')}}" enctype="multipart/form-data" accept-charset="UTF-8" method="post">
+
 						{{ csrf_field() }}
+
 						<input type="hidden" name="id_ausentismo" value="{{$ausencia->id}}">
-						<input class="matricula_validada_hidden" type="hidden" name="" value="">
+						<input type="hidden" name="id" value="0">
+						<input type="hidden" name="matricula_validada" value="0">
+
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label>Institución <span style="color: red;">*</span></label>
 								<input required name="institucion" type="text" class="form-control" placeholder="">
 							</div>
 							<div class="form-group col-md-6">
-								<label>Medico <span style="color: red;">*</span></label>
+								<label>Médico <span style="color: red;">*</span></label>
 								<input required name="medico" type="text" class="form-control" placeholder="">
 							</div>
 							<div class="form-group col-md-6">
-								<label>Matricula provincial</label>
+								<label>Matrícula Provincial</label>
 								<input name="matricula_provincial" type="text" class="form-control" placeholder="">
 							</div>
 							<div class="form-group col-md-6">
 								<label class="d-flex align-items-center">
-									Matrícula nacional
-									<i style="color: green; margin-left: 5px;"
-										class="fas fa-check-circle matricula_tilde"></i>
-									<i style="color: red; margin-left: 5px;"
-										class="fas fa-times-circle matricula_cruz"></i>
+									Matrícula Nacional
+									<i data-toggle="certificado-validar-icon" data-value="ok" style="color: green; margin-left: 5px;" class="fas fa-check-circle d-none"></i>
+									<i data-toggle="certificado-validar-icon" data-value="fail" style="color: red; margin-left: 5px;" class="fas fa-times-circle d-none"></i>
 								</label>
 								<div class="d-flex">
-									<input style="max-width: 200px; margin-right: 5px;" name="matricula_nacional"
-										type="text" class="form-control nro_matricula_nacional" placeholder="">
-									<a id="validar_matricula" class="btn-ejornal btn-ejornal-gris-claro" href="#"><i
-											class="fas fa-user-check"></i> Validar</a>
+									<input style="max-width: 200px; margin-right: 5px;" name="matricula_nacional" type="text" class="form-control" placeholder="">
+									<button data-toggle="validar-matricula" type="button" class="btn-ejornal btn-ejornal-gris-claro" href="#">
+										<i class="fas fa-user-check fa-fw"></i> <span>Validar</span>
+									</button>
 								</div>
 							</div>
 							<div class="form-group col-md-6">
 								<label>Fecha documento <span style="color: red;">*</span></label>
-								<input name="fecha_documento" required id="data_picker_gral" type="datetime"
-									class="form-control" placeholder="">
+								<input name="fecha_documento" required id="data_picker_gral" type="text" class="form-control" placeholder="[click para desplegar calendario]" readonly>
 							</div>
-							<div class="form-group col-md-6">
+							<div class="form-group col-md-6"></div>
+							{{-- <div class="form-group col-md-6">
 								<label>Archivo <span style="color: red;">*</span> </label>
 								<input required name="archivo" type="file" class="form-control-file">
-							</div>
+							</div> --}}
 							<div class="form-group col-md-6">
-								<label>Diagnostico <span style="color: red;">*</span></label>
-								<textarea required name="diagnostico" class="form-control" rows="3"></textarea>
+								<label>Diagnóstico <span style="color: red;">*</span></label>
+								<textarea required name="diagnostico" class="form-control" rows="5"></textarea>
 							</div>
 							<div class="form-group col-md-6">
 								<label>Observaciones</label>
-								<textarea name="observaciones" class="form-control" rows="3"></textarea>
+								<textarea name="observaciones" class="form-control" rows="5"></textarea>
 							</div>
 						</div>
-						<a id="submit_crear_documentacion_ausentismo" class="btn-ejornal btn-ejornal-success">Crear
-							certificado</a>
+
+						<hr class="hr-line-dashed">
+
+						<div class="table-responsive">
+							<table data-table="certificaciones_archivos" class="table table-sm small w-100 table-bordered border">
+								<thead>
+									<tr class="bg-light">
+										<th colspan="2">
+											<label for="" class="mb-0">Adjuntar archivos <span style="color: red;">*</span></label>
+											<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+
+									@include('templates.tr-certificado-ausentismo')
+
+								</tbody>
+								<tfoot>
+									<tr class="bg-light">
+										<th colspan="2">
+											<button data-toggle="agregar-archivo-cert" class="btn btn-tiny btn-dark text-light" type="button">
+												<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
+											</button>
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+
+
+						<hr class="hr-line-dashed">
+
+						<button class="btn-ejornal btn-ejornal-success">Crear Certificado</button>
+
 					</form>
 				</div>
 
@@ -355,8 +299,8 @@
 </div>
 
 
-<!-- Modal -->
-<div class="modal fade" id="modal_edit_docu_ausentismo" tabindex="-1"
+<!-- Editar Certificado -->
+{{-- <div class="modal fade" id="modal_edit_docu_ausentismo" tabindex="-1"
 	aria-labelledby="editar_documentos_ausentismo_titulo" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -444,6 +388,6 @@
 		</div>
 	</div>
 </div>
-
+ --}}
 
 @endsection

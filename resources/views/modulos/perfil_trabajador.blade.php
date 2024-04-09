@@ -165,7 +165,7 @@
 						class="fal fa-chevron-circle-down text-white"></i>
 				</h2>
 			</div>
-			<div id="collapseFive" class="collapse show" aria-labelledby="headingFive" data-parent="#accordionExample">
+			<div id="collapseFive" class="collapse {{count($resumen_historial) ? 'show' : ''}}" aria-labelledby="headingFive" data-parent="#accordionExample">
 				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.resumen_historial')
 				</div>
@@ -185,7 +185,7 @@
 						class="fal fa-chevron-circle-down text-white"></i>
 				</h2>
 			</div>
-			<div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+			<div id="collapseFour" class="collapse {{count($ausentismos) ? 'show' : ''}}" aria-labelledby="headingFour" data-parent="#accordionExample">
 				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.ausentismos_historial_tabla')
 				</div>
@@ -206,7 +206,7 @@
 				</h2>
 			</div>
 
-			<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+			<div id="collapseOne" class="collapse {{count($consultas_medicas) ? 'show' : ''}}" aria-labelledby="headingOne" data-parent="#accordionExample">
 
 				<div class="card-body table-responsive">
 
@@ -229,7 +229,7 @@
 						class="fal fa-chevron-circle-down text-white"></i>
 				</h2>
 			</div>
-			<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+			<div id="collapseTwo" class="collapse {{count($consultas_enfermeria) ? 'show' : ''}}" aria-labelledby="headingTwo" data-parent="#accordionExample">
 
 				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.consultas_enfermeria_tabla')
@@ -250,7 +250,7 @@
 						class="fal fa-chevron-circle-down text-white"></i>
 				</h2>
 			</div>
-			<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+			<div id="collapseThree" class="collapse {{count($preocupacionales) ? 'show' : ''}}" aria-labelledby="headingThree" data-parent="#accordionExample">
 
 				<div class="card-body table-responsive">
 

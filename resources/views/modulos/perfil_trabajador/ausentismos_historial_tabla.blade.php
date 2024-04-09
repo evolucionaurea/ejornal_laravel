@@ -7,7 +7,7 @@
 			<th>Tipo</th>
 			<th>Ususario que registró</th>
 			<th>Comunicación</th>
-			<th>Archivo</th>
+			{{-- <th>Archivo</th> --}}
 			<th>Certificados</th>
 		</tr>
 	</thead>
@@ -20,13 +20,20 @@
 			<td class="align-middle">{{ $ausentismo->tipo->nombre }}</td>
 			<td class="align-middle">{{ $ausentismo->user }}</td>
 			<td class="align-middle">
-				@if($ausentismo->comunicacion)
-				<b>{{ $ausentismo->comunicacion->tipo->nombre }}:</b> {{ $ausentismo->comunicacion->descripcion}}
+
+				@if($ausentismo->comunicaciones_count)
+
+				<div><span class="font-weight-bold">1ra. Comunicación ({{ $ausentismo->comunicacion->tipo->nombre }}):</span> {{ $ausentismo->comunicacion->descripcion}}</div>
+
+				@if($ausentismo->comunicaciones_count>1)
+				<a href="{{ url('empleados/comunicaciones/'.$ausentismo->id) }}" class="small text-info">ver todas las comunicaciones ({{ $ausentismo->comunicaciones_count }})</a>
+				@endif
+
 				@else
 				<span class="text-muted font-italic">[No se cargó]</span>
 				@endif
 			</td>
-			<td class="align-middle">
+			{{-- <td class="align-middle">
 				@if ($ausentismo->archivo)
 				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('ausentismos.archivo', $ausentismo->id)}}">
 					<i class="fa fa-file fa-fw"></i> Archivo
@@ -34,7 +41,7 @@
 				@else
 				<span class="text-muted font-italic">[No se adjuntó ningún archivo]</span>
 				@endif
-			</td>
+			</td> --}}
 			<td class="align-middle">
 				@if($ausentismo->documentaciones->count())
 				<a href="{{url('empleados/documentaciones/'.$ausentismo->id)}}" class="btn-ejornal btn-ejornal-success"

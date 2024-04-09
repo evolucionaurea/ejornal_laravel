@@ -153,6 +153,10 @@ select {
   background-repeat: repeat-x;
 }
 
+hr.hr-line-dashed {
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
 .btn-ejornal {
   color: white !important;
   cursor: pointer;
@@ -174,6 +178,10 @@ select {
 .btn-ejornal:hover {
   text-decoration: none;
   color: white;
+}
+
+.btn-ejornal-lg {
+  font-size: 16px;
 }
 
 .btn-ejornal-base {
@@ -276,6 +284,12 @@ select {
 .tag_ejornal_dark:hover {
   color: white;
   opacity: 0.8;
+}
+
+.btn-tiny {
+  padding: .225rem .625rem !important;
+  font-size: 9pt !important;
+  text-transform: none !important;
 }
 
 .dt-buttons button {

@@ -28,4 +28,8 @@ class AusentismoDocumentacion extends Model
   	return $this->belongsTo(Ausentismo::class,'id_ausentismo');
   }
 
+  public function archivos(){
+    return $this->hasMany(AusentismoDocumentacionArchivos::class);
+  }
+
 }

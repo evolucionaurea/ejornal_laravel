@@ -24,6 +24,10 @@ Route::group(['middleware' => ['autenticacion']], function () {
 	require 'web_grupos.php';
 
 
+	// Templates
+	require 'web_templates.php';
+
+
 	//Logout
 	Route::get('logout', [
 		'as' => 'logout', 'uses' => 'UserController@logout'

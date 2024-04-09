@@ -15,8 +15,7 @@ require('./users.js');
 require('./nav_sup.js');
 //require('./medicamentos.js');
 ///require('./stock_medicamentos.js');
-require('./documentacion_ausentismo.js');
-require('./documentacion_tarea_liviana.js');
+
 
 
 //ADMIN
@@ -38,6 +37,9 @@ if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones'
 
 
 //EMPLEADOS
+if(route=='documentaciones.show') require('./empleados/documentacion_ausentismo.js');
+if(route=='documentaciones_livianas.show') require('./documentacion_tarea_liviana.js');
+
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
 if(route=='/empleados/nominas/historial') require('./empleados/nominas_historial')
 if(route=='nominas.edit') require('./empleados/nominas_edit')
