@@ -35,7 +35,7 @@
 	{{-- Este dato es para tomarlo por JS y saber si está trabajando actualmente (osea si fichó). En sidebar.js se usa
 	el dato --}}
 	<input class="id_usuario" type="hidden" name="" value="{{auth()->user()->id}}">
-	<input class="debe_fichar" type="hidden" name="" value="{{auth()->user()->fichar}}">
+	<input class="debe_fichar" type="hidden" name="" value="{{(int) auth()->user()->fichar}}">
 	<input class="empleado_trabajando_saber" type="hidden" name="" value="{{auth()->user()->fichada}}">
 	<input class="id_cliente_actual" type="hidden" name="" value="{{auth()->user()->id_cliente_actual}}">
 	{{-- Este dato es para tomarlo por JS y saber si está trabajando actualmente (osea si fichó). En sidebar.js se usa
