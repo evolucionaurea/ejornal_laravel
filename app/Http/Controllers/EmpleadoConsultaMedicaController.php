@@ -56,8 +56,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		)
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->orderBy('consultas_medicas.fecha', 'desc');
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
 		$total = $query->count();
 
@@ -76,11 +75,17 @@ class EmpleadoConsultaMedicaController extends Controller
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+		$total_filtered = $query->count();
 
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
-			'recordsFiltered'=>$query->count(),
+			'recordsFiltered'=>$total_filtered,
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'fichada_user'=>auth()->user()->fichada,
 			'fichar_user'=>auth()->user()->fichar,
