@@ -237,9 +237,7 @@
 										</tr>
 									</thead>
 									<tbody>
-
-										@include('templates.tr-certificado-ausentismo')
-
+										{{-- @include('templates.tr-certificado-ausentismo') --}}
 									</tbody>
 									<tfoot>
 										<tr class="bg-light">

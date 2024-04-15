@@ -107,8 +107,11 @@ class EmpleadosAusentismosController extends Controller
 				'cert_medico' => 'required',
 				'cert_diagnostico' => 'required',
 				'cert_fecha_documento' => 'required',
-				'cert_archivos' => 'required'
+				//'cert_archivos' => 'required'
 			]);
+			if(!$request->cert_archivos){
+				return back()->withInput()->with('error', 'Debes incluir al menos 1 archivo para el certificado.');
+			}
 		}
 
 
