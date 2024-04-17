@@ -27,6 +27,10 @@ class UserController extends Controller
           $existingSession = Sesion::where('id_user', $user->id)->first();
 
           if ($existingSession) {
+            
+            // Cerrar sesión en otros dispositivos
+              Auth::logoutOtherDevices($request->password);
+
               // Si ya existe una sesión, actualizarla
               $existingSession->update(['loggeado' => 1]);
           } else {

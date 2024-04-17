@@ -337,7 +337,7 @@ class EmpleadosAusentismosController extends Controller
 				->where('fecha', '<>', '0000-00-00')
 				->where('id_nomina', $id)
 			)
-			->orderBy('fecha')
+			->orderBy('fecha', 'desc')
 			->get();
 
 		return view('empleados.ausentismos.show', compact(

@@ -33,6 +33,7 @@ $(()=>{
 					name:'nominas.dni',
 					className:'align-middle',
 					render:v=>{
+						console.log('v.trabajador_dni', v.trabajador_dni);
 						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
 					}
 				},
@@ -135,9 +136,6 @@ $(()=>{
 								mostrar_extension = false;
 							}
 						}
-
-						//console.log(v)
-
 
 						return `
 							<div class="acciones_tabla justify-content-end">

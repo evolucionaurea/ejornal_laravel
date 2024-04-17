@@ -141,28 +141,53 @@ trait Ausentismos {
 				->whereDate('fecha_final','>=',$now);*/
 
 		}
+		// if($request->ausentes=='mes-anterior'){
+
+		// 	$query->where(function($query) use ($now){
+		// 		$query->where(function($query) use ($now){
+		// 			$query
+		// 				->whereBetween('fecha_inicio',[$now->startOfMonth()->subMonth(),$now->startOfMonth()->subMonth()->endOfMonth()])
+		// 				->where(function($query) use ($now){
+		// 					$query->where('fecha_final','<=',$now->startOfMonth()->subMonth()->endOfMonth())
+		// 						->orWhere('fecha_final',null);
+		// 				});
+		// 		})
+		// 		// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
+		// 		->orWhere(function($query) use ($now){
+		// 			$query->where('fecha_inicio','<',$now->startOfMonth()->subMonth())
+		// 				->where(function($query) use ($now){
+		// 					$query->where('fecha_final','>=',$now->startOfMonth()->subMonth()->endOfMonth())
+		// 						->orWhere('fecha_final',null);
+		// 				});
+		// 		});
+		// 	});
+
+		// }
 		if($request->ausentes=='mes-anterior'){
 
-			$query->where(function($query) use ($now){
-				$query->where(function($query) use ($now){
-					$query
-						->whereBetween('fecha_inicio',[$now->startOfMonth()->subMonth(),$now->startOfMonth()->subMonth()->endOfMonth()])
-						->where(function($query) use ($now){
-							$query->where('fecha_final','<=',$now->startOfMonth()->subMonth()->endOfMonth())
-								->orWhere('fecha_final',null);
-						});
-				})
-				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
-				->orWhere(function($query) use ($now){
-					$query->where('fecha_inicio','<',$now->startOfMonth()->subMonth())
-						->where(function($query) use ($now){
-							$query->where('fecha_final','>=',$now->startOfMonth()->subMonth()->endOfMonth())
-								->orWhere('fecha_final',null);
-						});
-				});
+			// Fecha del primer día del mes anterior
+			$startOfMonth = $now->subMonth()->startOfMonth();
+		
+			// Fecha del último día del mes anterior
+			$endOfMonth = $now->subMonth()->endOfMonth();
+		
+			$query->where(function($query) use ($startOfMonth, $endOfMonth){
+				$query
+					->whereBetween('fecha_inicio',[$startOfMonth, $endOfMonth])
+					->orWhere(function($query) use ($startOfMonth, $endOfMonth){
+						$query
+							->where('fecha_inicio','<', $startOfMonth)
+							->where(function($query) use ($startOfMonth, $endOfMonth){
+								$query
+									->where('fecha_final','>=', $startOfMonth)
+									->orWhere('fecha_final', null);
+							});
+					});
 			});
-
+		
 		}
+		
+		
 		if($request->ausentes=='mes-anio-anterior'){
 
 			$query->where(function($query) use ($now){
@@ -278,6 +303,8 @@ trait Ausentismos {
 		];
 
 	}
+
+
 	public function exportAusentismos($id_cliente=null,Request $request)
 	{
 
