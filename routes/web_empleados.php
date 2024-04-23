@@ -139,6 +139,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 	// CERTIFICADOS
 	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');
+	Route::get('empleados/certificados/exportar', 'EmpleadosCertificadosController@exportar');
 	Route::post('empleados/certificados/busqueda','EmpleadosCertificadosController@busqueda');
 
 

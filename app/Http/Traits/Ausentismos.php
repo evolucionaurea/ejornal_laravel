@@ -166,11 +166,11 @@ trait Ausentismos {
 		if($request->ausentes=='mes-anterior'){
 
 			// Fecha del primer día del mes anterior
-			$startOfMonth = $now->subMonth()->startOfMonth();
-		
+			$startOfMonth = $now->startOfMonth()->subMonth()->startOfMonth();
+
 			// Fecha del último día del mes anterior
-			$endOfMonth = $now->subMonth()->endOfMonth();
-		
+			$endOfMonth = $now->startOfMonth()->subMonth()->endOfMonth();
+
 			$query->where(function($query) use ($startOfMonth, $endOfMonth){
 				$query
 					->whereBetween('fecha_inicio',[$startOfMonth, $endOfMonth])
@@ -184,10 +184,10 @@ trait Ausentismos {
 							});
 					});
 			});
-		
+
 		}
-		
-		
+
+
 		if($request->ausentes=='mes-anio-anterior'){
 
 			$query->where(function($query) use ($now){
