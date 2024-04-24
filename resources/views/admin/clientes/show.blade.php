@@ -40,48 +40,54 @@
 				<div class="col-md-12">
 					<div class="row">
 						<div class="col-lg-4 col-sm-12">
-						  <div class="d-flex flex-column align-items-cente text-center">
-							<i class="fas fa-user fa-10x"></i>
-							<div class="alert alert-info mt-2">
-							@if ($cliente->token == null)
-							  No hay un token generado
-							@else
-							  <b>Token</b>
-							  <small>{{$cliente->token}}</small>
-							@endif
-						  </div>
-						  </div>
+							<div class="d-flex flex-column align-items-cente text-center">
+								<i class="fas fa-user fa-10x"></i>
+								<div class="alert alert-info mt-2">
+									@if ($cliente->token == null)
+									No hay un token generado
+									@else
+									<b>Token</b>
+									<small>{{$cliente->token}}</small>
+									@endif
+								</div>
+							</div>
 						</div>
 						<div class="col-lg-4 col-sm-12">
 							<ul class="list-group list-group-flush">
 								<li class="list-group-item">
 									<b>Grupo empresario: </b>
 									@if ($grupo != null)
-									  {{$grupo->nombre}}
-									  @else
-									  {{'No forma parte de un grupo'}}
+									{{$grupo->nombre}}
+									@else
+									{{'No forma parte de un grupo'}}
 									@endif
 								</li>
 								<li class="list-group-item">
 									<b>Cliente: </b> {{$cliente->nombre}}
 								</li>
 								<li class="list-group-item">
-									<b>Dirección: </b> {{$cliente->direccion}}</li>
+									<b>Dirección: </b> {{$cliente->direccion}}
+								</li>
 								<li class="list-group-item">
-									<b>Dado de alta: </b> {{ (!empty($cliente->created_at)) ? date('d/m/Y',strtotime($cliente->created_at)) : "" }}
+									<b>Dado de alta: </b> {{ (!empty($cliente->created_at)) ?
+									date('d/m/Y',strtotime($cliente->created_at)) : "" }}
 								</li>
 								<li class="list-group-item d-flex">
 									<b class="mr-2">Token:</b>
-									  <form action="{{action('AdminClientesController@generarToken')}}" accept-charset="UTF-8" method="post">
+									<form action="{{action('AdminClientesController@generarToken')}}"
+										accept-charset="UTF-8" method="post">
 										@csrf
 										<input type="hidden" name="id_cliente" value="{{$cliente->id}}">
 										@if ($cliente->token == null)
-											<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Generar token</button>
-										  @else
-											<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Generar nuevo token</button>
-											<a class="btn-ejornal tag_ejornal_danger" href="#" data-toggle="modal" data-target="#modal_eliminar_token_validation">Eliminar token</a>
+										<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Generar
+											token</button>
+										@else
+										<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Generar
+											nuevo token</button>
+										<a class="btn-ejornal tag_ejornal_danger" href="#" data-toggle="modal"
+											data-target="#modal_eliminar_token_validation">Eliminar token</a>
 										@endif
-									  </form>
+									</form>
 								</li>
 							</ul>
 						</div>
@@ -91,13 +97,13 @@
 									<b>Nuestro personal trabajando aquí:</b>
 									<br>
 									<div class="d-flex flex-wrap mt-2">
-									  @if (isset($empleados) && count($empleados) > 0 && $empleados != null)
+										@if (isset($empleados) && count($empleados) > 0 && $empleados != null)
 										@foreach ($empleados as $empleado)
-										  <span class="tag_ejornal tag_ejornal_dark mb-3">{{$empleado['empleado']}}</span>
+										<span class="tag_ejornal tag_ejornal_dark mb-3">{{$empleado['empleado']}}</span>
 										@endforeach
 										@else
-										  <span>No hay empleados trabajando aquí</span>
-									  @endif
+										<span>No hay empleados trabajando aquí</span>
+										@endif
 									</div>
 								</li>
 							</ul>
@@ -108,7 +114,7 @@
 
 			<div class="tarjeta">
 				<h4>Nómina</h4>
-				<table class="table table-striped table-hover table-sm tabla">
+				<table data-table="clientes" class="table table-striped table-hover table-sm tabla">
 					<thead>
 						<tr>
 							<th>Nombre</th>
@@ -133,7 +139,8 @@
 								Inactivo
 								@endif
 							</td>
-							<td>{{ (!empty($trabajador->created_at)) ? date('d/m/Y',strtotime($trabajador->created_at)) : "" }}</td>
+							<td>{{ (!empty($trabajador->created_at)) ? date('d/m/Y',strtotime($trabajador->created_at))
+								: "" }}</td>
 						</tr>
 						@endforeach
 					</tbody>
@@ -148,29 +155,33 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="modal_eliminar_token_validation" tabindex="-1" role="dialog" aria-labelledby="title_eliminar_token" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<h5 class="modal-title" id="title_eliminar_token">Eliminar token</h5>
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		  <span aria-hidden="true">&times;</span>
-		</button>
-	  </div>
-	  <div class="modal-body">
-		<div class="alert alert-danger" role="alert">
-		  <h4 class="alert-heading">¿Seguro desea eliminar el token?</h4>
-		  <p>Con esta acción no solo eliminará el token del cliente, sino que éste ya no tendrá acceso a utilizar la API</p>
-		  <form action="{{action('AdminClientesController@deleteToken')}}" accept-charset="UTF-8" method="post">
-			@csrf
-			<input type="hidden" name="_method" value="DELETE">
-			<input type="hidden" name="id_cliente" value="{{$cliente->id}}">
-			<button class="btn-ejornal tag_ejornal_danger" type="submit" name="button">Si, eliminar token y quitar acceso</button>
-		  </form>
+<div class="modal fade" id="modal_eliminar_token_validation" tabindex="-1" role="dialog"
+	aria-labelledby="title_eliminar_token" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="title_eliminar_token">Eliminar token</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="alert alert-danger" role="alert">
+					<h4 class="alert-heading">¿Seguro desea eliminar el token?</h4>
+					<p>Con esta acción no solo eliminará el token del cliente, sino que éste ya no tendrá acceso a
+						utilizar la API</p>
+					<form action="{{action('AdminClientesController@deleteToken')}}" accept-charset="UTF-8"
+						method="post">
+						@csrf
+						<input type="hidden" name="_method" value="DELETE">
+						<input type="hidden" name="id_cliente" value="{{$cliente->id}}">
+						<button class="btn-ejornal tag_ejornal_danger" type="submit" name="button">Si, eliminar token y
+							quitar acceso</button>
+					</form>
+				</div>
+			</div>
 		</div>
-	  </div>
 	</div>
-  </div>
 </div>
 
 @endsection

@@ -14,6 +14,7 @@ use App\Grupo;
 use App\ClienteGrupo;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminClientesController extends Controller
 {
@@ -24,8 +25,13 @@ class AdminClientesController extends Controller
      */
     public function index()
     {
+
         $clientes = Cliente::withTrashed()
+        ->leftJoin('cliente_grupo', 'clientes.id', '=', 'cliente_grupo.id_cliente')
+        ->leftJoin('grupos', 'cliente_grupo.id_grupo', '=', 'grupos.id')
+        ->select('clientes.*', DB::raw('IFNULL(grupos.nombre, "[Sin grupo]") as grupo'))
         ->get();
+
         return view('admin.clientes', compact('clientes'));
     }
 

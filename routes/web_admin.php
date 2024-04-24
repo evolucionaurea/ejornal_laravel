@@ -29,10 +29,17 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	// CLIENTES
 	Route::resource('admin/clientes', 'AdminClientesController', [
-			'names' => [
-					'index' => '/admin/clientes'
-			]
+		'names' => [
+			'index' => 'admin.clientes.index',
+			'create' => 'admin.clientes.create',
+			'store' => 'admin.clientes.store',
+			'show' => 'admin.clientes.show',
+			'edit' => 'admin.clientes.edit',
+			'update' => 'admin.clientes.update',
+			'destroy' => 'admin.clientes.destroy'
+		]
 	]);
+	
 	Route::post('admin/clientes/cargar_excel', 'AdminClientesController@cargar_excel')->name('/admin/clientes/cargar_excel');
 	Route::post('admin/generar_token', 'AdminClientesController@generarToken')->name('/admin/generar_token');
 	Route::post('admin/clientes/restaurar', 'AdminClientesController@restaurarCliente')->name('admin/clientes/restaurar');

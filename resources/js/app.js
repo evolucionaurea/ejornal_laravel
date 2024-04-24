@@ -19,11 +19,12 @@ require('./nav_sup.js');
 
 
 //ADMIN
-if(route=='/admin/clientes') require('./admin/clientes')
-if(route=='/admin/medicamentos') require('./admin/medicamentos')
-if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
-if(route=='/admin/resumen') require('./admin/resumen')
-if(route=='/admin/reportes_fichadas_nuevas') require('./admin/reportes/fichadas')
+if(route=='admin.clientes') require('./admin/clientes')
+if(route=='admin.clientes.show') require('./admin/admin_tablas')
+if(route=='admin.medicamentos') require('./admin/medicamentos')
+if(route=='admin.movimiento_medicamentos') require('./admin/admin_tablas')
+if(route=='admin.resumen') require('./admin/resumen')
+if(route=='admin.reportes_fichadas_nuevas') require('./admin/reportes/fichadas')
 
 if(route=='/admin/users') require('./admin/users')
 if(route=='users.create') require('./admin/users/create.edit')

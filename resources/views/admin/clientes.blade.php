@@ -16,7 +16,7 @@
 			<h2>Listado de clientes</h2>
 			<p>Aquí puedes ver el listado de los clientes del sistema.</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('clientes.create')}}"><i
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('admin.clientes.create')}}"><i
 						class="fas fa-plus-circle"></i> Nuevo cliente</a>
 				<a data-toggle="modal" data-target="#cargar_clientes_excel" class="btn-ejornal btn-ejornal-success"
 					href="#"><i class="fas fa-file-excel"></i>Carga masiva</a>
@@ -39,6 +39,7 @@
 			<table data-table="clientes" class="table table-striped table-hover table-sm">
 				<thead>
 					<tr>
+						<th>Grupo</th>
 						<th>Nombre</th>
 						<th>Dirección</th>
 						<th>Borrado Lógico</th>
@@ -48,6 +49,7 @@
 				<tbody>
 					@foreach ($clientes as $cliente)
 					<tr>
+						<td>{{$cliente->grupo}}</td>
 						<td>{{$cliente->nombre}}</td>
 						<td>{{$cliente->direccion}}</td>
 						<td>
@@ -62,13 +64,13 @@
 						</td>
 						<td class="acciones_tabla" scope="row">
 							@if (!$cliente->trashed())
-							<a title="Ver" href="{{route('clientes.show', $cliente->id)}}">
+							<a title="Ver" href="{{route('admin.clientes.show', $cliente->id)}}">
 								<i class="fas fa-eye"></i>
 							</a>
-							<a title="Editar" href="{{route('clientes.edit', $cliente->id)}}">
+							<a title="Editar" href="{{route('admin.clientes.edit', $cliente->id)}}">
 								<i class="fas fa-pen"></i>
 							</a>
-							<form class="" action="{{route('clientes.destroy', $cliente->id)}}" method="post">
+							<form class="" action="{{route('admin.clientes.destroy', $cliente->id)}}" method="post">
 								{{ csrf_field() }}
 								<input type="hidden" name="_method" value="DELETE">
 								<button title="Eliminar" type="submit">
@@ -142,7 +144,8 @@
 					<h5 class="card-header">Paso 1</h5>
 					<div class="card-body">
 						<h5 class="card-title">Descargar modelo de excel</h5>
-						<p class="card-text">Descarge este excel modelo. Complétalo con los campos solicitados y súbelo en el paso 2</p>
+						<p class="card-text">Descarge este excel modelo. Complétalo con los campos solicitados y súbelo
+							en el paso 2</p>
 						<a class="btn-ejornal btn-ejornal-dark" href="{{asset('archivos/clientes_carga_masiva.csv')}}"
 							download target="_blank">Descargar excel</a>
 					</div>
