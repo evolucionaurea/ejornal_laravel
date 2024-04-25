@@ -1,11 +1,10 @@
 <?php
-
 function setActive($route){
-  return request()->routeIs($route) ? 'activo' : '';
+	return request()->routeIs($route) ? 'activo' : '';
 }
 
 function setActiveSub($route){
-  return request()->routeIs($route) ? 'activo_sub' : '';
+	return request()->routeIs($route) ? 'activo_sub' : '';
 }
 
 function echo_json($obj,$exit=true){

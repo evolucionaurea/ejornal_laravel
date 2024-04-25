@@ -126,6 +126,8 @@ $(document).ready(() => {
 
 
 	$.each($('.sidebar_menu ol[data-route]'),(k,v)=>{
+		console.log($(v).attr('data-route'));
+		console.log(route);
 		if($(v).attr('data-route')==route){
 			let li = $(v).closest('li')
 			li.find('.dropdownButton').trigger('click')

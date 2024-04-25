@@ -28,13 +28,16 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/users" class="{{ setActiveSub('/admin/users') }}" onclick="javascript:location.href='{{url('/admin/users')}}'">
+					<ol data-route="/admin/users" class="{{ setActiveSub('/admin/users') }}"
+						onclick="javascript:location.href='{{url('/admin/users')}}'">
 						<a href="{{url('/admin/users')}}">Listado</a>
 					</ol>
-					<ol data-route="users.create" class="{{ setActiveSub('users.create') }}" onclick="javascript:location.href='{{url('admin/users/create')}}'">
+					<ol data-route="users.create" class="{{ setActiveSub('users.create') }}"
+						onclick="javascript:location.href='{{url('admin/users/create')}}'">
 						<a href="{{url('admin/users/create')}}">Crear usuario</a>
 					</ol>
-					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}" onclick="javascript:location.href='{{url('admin/users_fichadas_nuevas')}}'">
+					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}"
+						onclick="javascript:location.href='{{url('admin/users_fichadas_nuevas')}}'">
 						<a href="{{url('admin/users_fichadas_nuevas')}}">Fichadas</a>
 					</ol> --}}
 				</ul>
@@ -49,10 +52,12 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/clientes" class="{{ setActiveSub('/admin/clientes') }}" onclick="javascript:location.href='{{url('/admin/clientes')}}'">
+					<ol data-route="/admin/clientes" class="{{ setActiveSub('/admin/clientes') }}"
+						onclick="javascript:location.href='{{url('/admin/clientes')}}'">
 						<a href="{{url('/admin/clientes')}}">Listado</a>
 					</ol>
-					<ol data-route="clientes.create" class="{{ setActiveSub('clientes.create') }}" onclick="javascript:location.href='{{url('/admin/create')}}'">
+					<ol data-route="admin.clientes.create" class="{{ setActiveSub('clientes.create') }}"
+						onclick="javascript:location.href='{{url('/admin/create')}}'">
 						<a href="{{url('/admin/clientes/create')}}">Crear cliente</a>
 					</ol>
 				</ul>
@@ -66,10 +71,12 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/grupos" class="{{ setActiveSub('/admin/grupos') }}" onclick="javascript:location.href='{{url('/admin/grupos')}}'">
+					<ol data-route="/admin/grupos" class="{{ setActiveSub('/admin/grupos') }}"
+						onclick="javascript:location.href='{{url('/admin/grupos')}}'">
 						<a href="{{url('/admin/grupos')}}">Listado</a>
 					</ol>
-					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}" onclick="javascript:location.href='{{url('/admin/create')}}'">
+					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}"
+						onclick="javascript:location.href='{{url('/admin/create')}}'">
 						<a href="{{url('/admin/grupos/create')}}">Crear grupo</a>
 					</ol>
 				</ul>
@@ -83,10 +90,13 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}" onclick="javascript:location.href='{{url('/admin/medicamentos')}}'">
+					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}"
+						onclick="javascript:location.href='{{url('/admin/medicamentos')}}'">
 						<a href="{{url('/admin/medicamentos')}}">Listado</a>
 					</ol>
-					<ol data-route="/admin/movimiento_medicamentos" class="{{ setActiveSub('/admin/movimiento_medicamentos') }}" onclick="javascript:location.href='{{url('/admin/movimiento_medicamentos')}}'">
+					<ol data-route="/admin/movimiento_medicamentos"
+						class="{{ setActiveSub('/admin/movimiento_medicamentos') }}"
+						onclick="javascript:location.href='{{url('/admin/movimiento_medicamentos')}}'">
 						<a href="{{url('/admin/movimiento_medicamentos')}}">Movimientos</a>
 					</ol>
 				</ul>
@@ -100,29 +110,36 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/reportes_fichadas_nuevas" class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}" onclick="javascript:location.href='{{url('/admin/reportes_fichadas_nuevas')}}'">
+					<ol data-route="/admin/reportes_fichadas_nuevas"
+						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}"
+						onclick="javascript:location.href='{{url('/admin/reportes_fichadas_nuevas')}}'">
 						<a href="{{url('/admin/reportes_fichadas_nuevas')}}">Fichadas</a>
 					</ol>
-					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}" onclick="javascript:location.href='{{url('/admin/reportes_ausentismos')}}'">
+					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}"
+						onclick="javascript:location.href='{{url('/admin/reportes_ausentismos')}}'">
 						<a href="{{url('/admin/reportes_ausentismos')}}">Ausentismos</a>
 					</ol>
-					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('reportes_certificaciones') }}" onclick="javascript:location.href='{{url('/admin/reportes_certificaciones')}}'">
+					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('reportes_certificaciones') }}"
+						onclick="javascript:location.href='{{url('/admin/reportes_certificaciones')}}'">
 						<a href="{{url('/admin/reportes_certificaciones')}}">Certificaciones</a>
 					</ol>
-					<ol data-route="reportes_consultas" class="{{ setActiveSub('reportes_consultas') }}" onclick="javascript:location.href='{{url('/admin/reportes_consultas')}}'">
+					<ol data-route="reportes_consultas" class="{{ setActiveSub('reportes_consultas') }}"
+						onclick="javascript:location.href='{{url('/admin/reportes_consultas')}}'">
 						<a href="{{url('/admin/reportes_consultas')}}">Consultas</a>
 					</ol>
-					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}" onclick="javascript:location.href='{{url('/admin/reportes_comunicaciones')}}'">
+					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}"
+						onclick="javascript:location.href='{{url('/admin/reportes_comunicaciones')}}'">
 						<a href="{{url('/admin/reportes_comunicaciones')}}">Comunicaciones</a>
 					</ol>
 				</ul>
 			</div>
 		</li>
 		@if (auth()->user()->email == 'sebas_admin@ejornal.com.ar')
-			<li class="{{ setActive('/admin/migrar') }} menu_sin_sub_menu">
-			  <i class="fas fa-sync"></i>
-			  <a href="{{url('/admin/migrar')}}" class="list-group-item list-group-item-action sidebar_item">Migraciones de datos</a>
-			</li>
+		<li class="{{ setActive('/admin/migrar') }} menu_sin_sub_menu">
+			<i class="fas fa-sync"></i>
+			<a href="{{url('/admin/migrar')}}" class="list-group-item list-group-item-action sidebar_item">Migraciones
+				de datos</a>
+		</li>
 		@endif
 	</div>
 </div>

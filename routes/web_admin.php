@@ -30,7 +30,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	// CLIENTES
 	Route::resource('admin/clientes', 'AdminClientesController', [
 		'names' => [
-			'index' => 'admin.clientes.index',
+			'index' => '/admin/clientes',
 			'create' => 'admin.clientes.create',
 			'store' => 'admin.clientes.store',
 			'show' => 'admin.clientes.show',

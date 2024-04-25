@@ -92,8 +92,6 @@ if(route=='/grupos/nominas') require('./grupos/nominas')
 if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
 if(route=='/grupos/nominas_historial') require('./grupos/nominas_historial')
 
-console.log(`route: ${route}`)
-
 
 fetch('/clientes/resumen')
 	.then(response=>{
