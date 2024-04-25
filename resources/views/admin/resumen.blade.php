@@ -17,7 +17,7 @@
 				<div class="row">
 
 					<div class="col-lg-3 col-md-6 mb-4">
-						<a href="{{ route('admin.clientes') }}" class="media white z-depth-1 rounded">
+						<a href="{{ route('/admin/clientes') }}" class="media white z-depth-1 rounded">
 							<i class="fas fa-briefcase fa-lg blue z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Clientes</small></p>
