@@ -28,7 +28,8 @@ class AusentismoDocumentacionArchivosSeeder extends Seeder
       	if($aus_doc_archivos){
       		foreach($aus_doc_archivos as $s_archivo){
       			if($s_archivo->ausentismo_documentacion_id==$doc->id && $s_archivo->hash_archivo==$doc->hash_archivo){
-      				$au_doc_archivo->id = $s_archivo->id;
+      				//$au_doc_archivo->id = $s_archivo->id;
+              $au_doc_archivo = AusentismoDocumentacionArchivos::find($s_archivo->id);
       			}
       		}
       	}
