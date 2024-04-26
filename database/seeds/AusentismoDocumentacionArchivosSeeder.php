@@ -14,7 +14,7 @@ class AusentismoDocumentacionArchivosSeeder extends Seeder
      */
     public function run()
     {
-      $ausentismos_documentacion = AusentismoDocumentacion::select('id','archivo','hash_archivo')->take(10)->get();
+      $ausentismos_documentacion = AusentismoDocumentacion::select('id','archivo','hash_archivo')->get();
 
       $aus_doc_archivos = AusentismoDocumentacionArchivos::all();
 
