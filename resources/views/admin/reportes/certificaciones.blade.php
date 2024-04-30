@@ -75,7 +75,7 @@
 						<th>Fecha inicio</th>
 						<th>Fecha final</th>
 						<th>Días ausente</th>
-						<th style="width:300px">Documentaciones</th>
+						<th style="width:300px">Certificados</th>
 					</tr>
 				</thead>
 				<!--Table head-->

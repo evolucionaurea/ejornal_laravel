@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use DateTime;
 use App\Fichada;
 use App\FichadaNueva;
 use App\User;
 use App\Nomina;
 use App\AusentismoTipo;
 use App\AusentismoDocumentacion;
-use Carbon\Carbon;
-use DateTime;
+use App\AusentismoDocumentacionArchivos;
 use App\Ausentismo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
@@ -176,7 +177,7 @@ class AdminReporteController extends Controller
 						$query->select('id','nombre');
 					}]);
 			}])
-			->with('documentaciones');
+			->with('documentaciones.archivos');
 
 
 
@@ -426,8 +427,9 @@ class AdminReporteController extends Controller
 
 	public function descargar_archivo($id)
 	{
-		$ausentismo_documentacion = AusentismoDocumentacion::find($id);
-		$ruta = storage_path("app/documentacion_ausentismo/{$ausentismo_documentacion->id}/{$ausentismo_documentacion->hash_archivo}");
+		$archivo = AusentismoDocumentacionArchivos::where('ausentismo_documentacion_id',$id)->first();
+		$ruta = storage_path("app/documentacion_ausentismo/{$archivo->ausentismo_documentacion_id}/{$archivo->hash_archivo}");
+		////dd($ruta);
 		return response()->download($ruta);
 		return back();
 	}

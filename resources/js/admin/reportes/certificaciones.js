@@ -65,7 +65,11 @@ $(()=>{
 						let docs = []
 						v.map(doc=>{
 
-							docs.push( `
+							console.log(doc)
+
+							//
+
+							let el = `
 							<div class="mb-3">
 								<div class="mb-1 small">
 									<b>Institución</b>: ${doc.institucion} -
@@ -74,9 +78,16 @@ $(()=>{
 									<b>Matrícula Provincial</b>: ${doc.matricula_provincial} -
 									<b>Fecha documento</b>: ${doc.fecha_documento}
 								</div>
+							`
 
-								<a class="small text-success" target="_blank" href="documentacion_ausentismo/descargar/${doc.id}"><i class="fa fa-download fa-fw"></i> ${doc.archivo}</a>
-							</div>`)
+							doc.archivos.map(archivo=>{
+								el += `<a class="small text-success d-block" target="_blank" href="documentacion_ausentismo/descargar/${doc.id}"><i class="fa fa-download fa-fw"></i> ${archivo.archivo}</a>`
+							})
+							el += `</div>`
+
+							docs.push(el)
+
+
 						})
 						return docs.join('')
 					}

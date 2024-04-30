@@ -79,6 +79,13 @@
 
 
 
+    <script>
+        var route = '{{ Route::currentRouteName() }}';
+        var csfr = '{{ csrf_token() }}';
+    </script>
+
+
+
 
     <script src="{{ mix('js/app.js') }}" defer></script>
     {{-- Este es el JS de MDB (Material Design Bootstrap). Funciona solo si se carga desde aquí, luego compilar todo el Mix de JS --}}

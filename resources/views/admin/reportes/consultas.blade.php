@@ -23,7 +23,7 @@
 
         <div class="tarjeta">
           <div class="d-flex justify-content-between row">
-              <h4 class="col-md-2 col-lg-5">Consultas Medicas</h4>
+              <h4 class="col-md-2 col-lg-5">Consultas Médicas</h4>
               <div class="col-md-10 col-lg-7 d-flex">
                   <input placeholder="Desde" id="reporte_consultas_medicas_desde" name="fecha_inicio" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
                   <input placeholder="Hasta" id="reporte_consultas_medicas_hasta" name="fecha_final" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">

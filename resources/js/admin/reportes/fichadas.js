@@ -2,6 +2,8 @@ import Tablas from '../../classes/Tablas.js';
 
 $(()=>{
 
+	///$('[data-toggle="busqueda-fecha"]').find('[name="from"]').datepicker()
+
 	new Tablas({
 		controller:'/admin/reportes',
 		get_path:'/fichadas_ajax',
