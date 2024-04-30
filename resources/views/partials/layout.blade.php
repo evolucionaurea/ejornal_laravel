@@ -106,6 +106,25 @@
 	<script src="{{ mix('js/app.js') }}" ></script>
 
 
+
+	<!-- POPUPS -->
+	<div id="popups" class="modal fade" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body"></div>
+
+			</div>
+		</div>
+	</div>
+
+
 	<!-- LOADING -->
 	<div id="loading">
 		<div class="content">
@@ -113,6 +132,8 @@
 			<p class="text">trabajando....</p>
 		</div>
 	</div>
+
+
 
 </body>
 </html>

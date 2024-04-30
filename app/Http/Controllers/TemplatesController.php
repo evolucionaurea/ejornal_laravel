@@ -14,4 +14,8 @@ class TemplatesController extends Controller
 		return view('templates.tr-certificado-ausentismo-readonly');
 	}
 
+	public function form_certificado(){
+		return view('templates.form-certificado');
+	}
+
 }

@@ -24,31 +24,31 @@ $(document).ready(() => {
 		cliente_select = this.value;
 
 		if (debe_fichar !== 0) {
-			
+
 			// Validar si está trabajando o no empezó
 			let trabajando = $('.empleado_trabajando_saber').val();
-	
+
 			if (trabajando == 1) {
 				let id_cliente_actual = $('.id_cliente_actual').val();
 				$('#cliente_seleccionado_sidebar').val(id_cliente_actual);
 				$('#modal_alerta_cliente_trabajando').modal('show');
 			}else {
-	
+
 				// Session Storage
 				sessionStorage.setItem("cliente_seleccionado_storage", cliente_select);
 				obtenerDatoSessionStore = sessionStorage.getItem("cliente_seleccionado_storage");
-	
+
 				// Para actualizar en fichada
 				trabajando_para = $('#cliente_seleccionado_sidebar option:selected').text();
 				$('.trabajando_para').text(trabajando_para);
-	
+
 				let cliente_seleccionado_axios = {
 					cliente: parseInt(cliente_select),
 					id: id_user
 				}
 				let regex = /(\d+)/g;
 
-		
+
 				axios.post('/api/actualizar_cliente_actual', cliente_seleccionado_axios)
 				.then(response => {
 					console.log(response);
@@ -58,7 +58,7 @@ $(document).ready(() => {
 					console.error(error);
 					// Maneja los errores de autenticación aquí
 				});
-	
+
 			}
 		}else{
 
@@ -68,7 +68,7 @@ $(document).ready(() => {
 			}
 			let regex = /(\d+)/g;
 
-	
+
 			axios.post('/api/actualizar_cliente_actual', cliente_seleccionado_axios)
 			.then(response => {
 				console.log(response);
@@ -126,8 +126,8 @@ $(document).ready(() => {
 
 
 	$.each($('.sidebar_menu ol[data-route]'),(k,v)=>{
-		console.log($(v).attr('data-route'));
-		console.log(route);
+		//console.log($(v).attr('data-route'));
+		//console.log(route);
 		if($(v).attr('data-route')==route){
 			let li = $(v).closest('li')
 			li.find('.dropdownButton').trigger('click')

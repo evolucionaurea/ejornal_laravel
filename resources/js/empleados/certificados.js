@@ -1,11 +1,14 @@
 import Tablas from '../classes/Tablas.js';
+import Certificado from '../classes/Certificado.js'
 
 $(()=>{
 
 	new Tablas({
 		controller:'/empleados/certificados',
 		get_path:'/busqueda',
-		table:$('.tabla_certificados_ausentismo_listado'),
+
+		table:$('[data-table="certificados"]'),
+
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 		server_side:true,
 		datatable_options:{
@@ -67,22 +70,43 @@ $(()=>{
 					className:'align-middle',
 					name:'archivos',
 					orderable:false,
-					render:archivos=>{
+					render:(archivos,type,row,meta)=>{
 
-						//empleados/documentacion_ausentismo/archivo/${id}
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
 						if(archivos.length==0) return ''
 						let buttons = ''
-						archivos.map(archivo=>{
-							buttons += `
-							<a target="_blank" class="btn btn-info btn-tiny mr-3 mb-1 d-block" href="documentacion_ausentismo/archivo/${archivo.id}">
-								<i class="fa fa-download fa-fw"></i> <span>${archivo.archivo}</span>
-							</a>`
+						archivos.map((archivo,k)=>{
+							buttons += `<div class="flex flex-wrap">
+							<a target="_blank" class="btn btn-info btn-tiny mr-3 mb-1" href="documentacion_ausentismo/archivo/${archivo.id}" title="${archivo.archivo}">
+								<i class="fa fa-download fa-fw"></i> <span>Descargar archivo ${archivo.archivo}</span>
+							</a></div>`
 						})
+
 						return buttons
+					}
+				},
+
+				{
+					data:row=>row,
+					className:'align-middle',
+					name:'actions',
+					orderable:false,
+					render:(v,type,row,meta)=>{
+
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
+						return `
+						<button data-toggle="editar-certificado" class="btn-ejornal btn-ejornal-dark btn-tiny">
+							<i class="fa fa-pencil fa-fw"></i> <span>Editar</span>
+						</button>`
 					}
 				}
 			]
 		}
 	})
+
+
+	new Certificado
 
 })

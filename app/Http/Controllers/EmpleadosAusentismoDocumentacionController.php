@@ -47,8 +47,6 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 	public function store(Request $request)
 	{
 
-		////dd($request->all());
-
 		$validatedData = $request->validate([
 			'institucion' => 'required',
 			'medico' => 'required',

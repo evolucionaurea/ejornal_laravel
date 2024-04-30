@@ -32,36 +32,6 @@
 						<input name="search" class="form-control form-control-sm" placeholder="Buscar por trabajador, médico o institución..." value="{{ Request::get('search') }}"></input>
 					</div>
 
-
-					{{-- <div class="mb-1 col-md-6">
-						<select name="tipo" class="form-control form-control-sm select_2">
-							<option value="">--Todos los tipos--</option>
-							@foreach ($tipos as $tipo)
-							<option value="{{$tipo->id}}" {{ Request::get('tipo') == $tipo->id ? 'selected' : '' }} >{{$tipo->nombre}}</option>
-							@endforeach
-						</select>
-					</div> --}}
-
-					{{-- <div class="mb-1 col-md-6">
-						<select name="ausentes" class="form-control form-control-sm">
-							<option value="">--Seleccionar Filtro--</option>
-							<option value="hoy" {{ Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Ausentes Hoy</option>
-
-							<option value="mes-actual" {{ Request::get('ausentes')  == 'mes-actual' ? 'selected' : '' }} >Ausentismos mes actual</option>
-							<option value="mes-anterior" {{ Request::get('ausentes')  == 'mes-anterior' ? 'selected' : '' }} >Ausentismos mes anterior</option>
-							<option value="mes-anio-anterior" {{ Request::get('ausentes')  == 'mes-anio-anterior' ? 'selected' : '' }} >Ausentismos mismo mes año anterior</option>
-							<option value="anio-actual" {{ Request::get('ausentes')  == 'anio-actual' ? 'selected' : '' }} >Ausentismos año actual</option>
-						</select>
-					</div> --}}
-
-					{{-- <div class="mb-1 col-md-6" >
-						<select name="estado" class="form-control form-control-sm">
-							<option value="">--Seleccionar Filtro--</option>
-							<option value="activo" {{ Request::get('estado')  == 'activo' || Request::get('ausentes')  == 'hoy' ? 'selected' : '' }} >Trabajadores Activos</option>
-							<option value="inactivo" {{ Request::get('estado')  == 'inactivo' ? 'selected' : '' }} >Trabajadores Inactivos</option>
-						</select>
-					</div> --}}
-
 					<div class="mb-1 col-md-3" >
 						<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm"
 							value="{{Request::get('from')}}">
@@ -95,26 +65,27 @@
 
 
 
-			<table class="table table-striped table-hover table-sm tabla_certificados_ausentismo_listado w-100">
+			<table data-table="certificados" class="table table-striped table-hover table-sm w-100">
 
-			  <!--Table head-->
-			  <thead>
-				<tr>
-				  <th>Trabajador</th>
-				  <th>Médico</th>
-				  <th>Institución</th>
-				  <th>Fecha inicio</th>
-				  <th>Fecha final</th>
-				  <th>Fecha en que regresó</th>
-				  <th>Matricula nacional</th>
-				  <th>Archivos</th>
-				</tr>
-			  </thead>
-			  <!--Table head-->
+				<!--Table head-->
+				<thead>
+					<tr>
+						<th>Trabajador</th>
+						<th>Médico</th>
+						<th>Institución</th>
+						<th>Fecha inicio</th>
+						<th>Fecha final</th>
+						<th>Fecha en que regresó</th>
+						<th>Matricula nacional</th>
+						<th>Archivos</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<!--Table head-->
 
-			  <!--Table body-->
-			  <tbody></tbody>
-			  <!--Table body-->
+				<!--Table body-->
+				<tbody></tbody>
+				<!--Table body-->
 			</table>
 
 		</div>
