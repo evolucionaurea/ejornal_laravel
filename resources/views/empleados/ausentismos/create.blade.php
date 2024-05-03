@@ -36,7 +36,8 @@
 
 
 
-		<form action="{{action('EmpleadosAusentismosController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+		<form action="{{action('EmpleadosAusentismosController@store')}}" accept-charset="UTF-8" method="post"
+			enctype="multipart/form-data">
 
 			@csrf
 
@@ -61,7 +62,8 @@
 						<label>
 							Tipo *
 							@if (auth()->user()->permiso_desplegables == 1)
-							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal" data-target="#crear_tipo_ausentismo" href="#">
+							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
+								data-target="#crear_tipo_ausentismo" href="#">
 								<i class="fas fa-plus-circle"></i>
 							</a>
 							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_ausentismo" href="#">
@@ -72,7 +74,8 @@
 						<select required name="tipo" class="form-control form-control-sm select_2">
 							<option value="">--Seleccionar--</option>
 							@foreach ($ausentismo_tipos as $tipo)
-							<option value="{{$tipo->id}}" {{old("tipo")==$tipo->id || session('id_tipo')==$tipo->id ? 'selected' : ''}}>
+							<option value="{{$tipo->id}}" {{old("tipo")==$tipo->id || session('id_tipo')==$tipo->id ?
+								'selected' : ''}}>
 								{{$tipo->nombre}}
 							</option>
 							@endforeach
@@ -82,17 +85,20 @@
 
 					<div class="form-group col-lg-2">
 						<label>Fecha inicio *</label>
-						<input readonly required name="fecha_inicio" type="text" class="form-control" value="{{ old("fecha_inicio") }}">
+						<input readonly required name="fecha_inicio" type="text" class="form-control" value="{{ old("
+							fecha_inicio") }}">
 					</div>
 
 					<div class="form-group col-lg-2">
 						<label>Fecha final *</label>
-						<input readonly required name="fecha_final" type="text" class="form-control" value="{{ old("fecha_final") }}">
+						<input readonly required name="fecha_final" type="text" class="form-control" value="{{ old("
+							fecha_final") }}">
 					</div>
 
 					<div class="form-group col-lg-2">
 						<label>Fecha Regreso</label>
-						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="{{ old("fecha_regreso_trabajar") }}">
+						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="{{ old("
+							fecha_regreso_trabajar") }}">
 					</div>
 
 
@@ -102,7 +108,8 @@
 
 						<div class="input-group mb-3">
 							<div class="custom-file">
-								<input name="archivo" type="file" class="custom-file-input clickable" id="inputGroupFile01">
+								<input name="archivo" type="file" class="custom-file-input clickable"
+									id="inputGroupFile01">
 								<label class="custom-file-label" for="inputGroupFile01">...</label>
 							</div>
 						</div>
@@ -127,10 +134,12 @@
 					<div class="form-group col-lg-3">
 						<label>
 							Tipo *
-							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal" data-target="#crear_tipo_comunicacion" href="#">
+							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
+								data-target="#crear_tipo_comunicacion" href="#">
 								<i class="fas fa-plus-circle"></i>
 							</a>
-							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion" href="#">
+							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion"
+								href="#">
 								<i class="fas fa-eye"></i>
 							</a>
 						</label>
@@ -144,11 +153,13 @@
 					</div>
 					<div class="form-group col-lg-9">
 						<label>Descripción *</label>
-						<textarea required name="descripcion" class="form-control" rows="3">{{ old("descripcion") }}</textarea>
+						<textarea required name="descripcion" class="form-control"
+							rows="3">{{ old("descripcion") }}</textarea>
 					</div>
 				</div>
 
-				{{-- <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar ausencia y comunicación</button> --}}
+				{{-- <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar ausencia y
+					comunicación</button> --}}
 
 
 			</div>
@@ -165,11 +176,13 @@
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<div class="input-group-text">
-								<input name="incluir_certificado" type="checkbox" {{ old("incluir_certificado")=='on' ? 'checked' : '' }} >
+								<input name="incluir_certificado" type="checkbox" {{ old("incluir_certificado")=='on'
+									? 'checked' : '' }}>
 							</div>
 						</div>
 						<div class="input-group-append">
-							<small data-toggle="incluir-certificado" class="form-control clickable">Incluir Certificado</small>
+							<small data-toggle="incluir-certificado" class="form-control clickable">Incluir
+								Certificado</small>
 						</div>
 
 					</div>
@@ -177,47 +190,59 @@
 				</div>
 
 
-				<div id="certificado_content" class="tarjeta-body" style="{{ old("incluir_certificado")=='on' ? '' : 'display:none' }}">
+				<div id="certificado_content" class="tarjeta-body" style="{{ old(" incluir_certificado")=='on' ? ''
+					: 'display:none' }}">
 					<hr class="hr-line-dashed">
 
 					<div class="form-row">
 						<div class="form-group col-lg-3">
 							<label>Institución <span style="color: red;">*</span></label>
-							<input name="cert_institucion" type="text" class="form-control" placeholder="" value="{{ old('cert_institucion') }}">
+							<input name="cert_institucion" type="text" class="form-control" placeholder=""
+								value="{{ old('cert_institucion') }}">
 						</div>
 						<div class="form-group col-lg-3">
 							<label>Médico <span style="color: red;">*</span></label>
-							<input name="cert_medico" type="text" class="form-control" placeholder="" value="{{ old('cert_medico') }}">
+							<input name="cert_medico" type="text" class="form-control" placeholder=""
+								value="{{ old('cert_medico') }}">
 						</div>
 						<div class="form-group col-lg-3">
 							<label>Matrícula provincial</label>
-							<input name="cert_matricula_provincial" type="text" class="form-control" placeholder="" value="{{ old('cert_matricula_provincial') }}">
+							<input name="cert_matricula_provincial" type="text" class="form-control" placeholder=""
+								value="{{ old('cert_matricula_provincial') }}">
 						</div>
 						<div class="form-group col-lg-3">
 							<label class="d-flex align-items-center">
 								Matrícula nacional
-								<i data-toggle="certificado-validar-icon" data-value="ok" style="color: green; margin-left: 5px;" class="fas fa-check-circle d-none"></i>
-								<i data-toggle="certificado-validar-icon" data-value="fail" style="color: red; margin-left: 5px;" class="fas fa-times-circle d-none"></i>
+								<i data-toggle="certificado-validar-icon" data-value="ok"
+									style="color: green; margin-left: 5px;" class="fas fa-check-circle d-none"></i>
+								<i data-toggle="certificado-validar-icon" data-value="fail"
+									style="color: red; margin-left: 5px;" class="fas fa-times-circle d-none"></i>
 							</label>
 							<div class="d-flex">
-								<input style="max-width: 200px; margin-right: 5px;" name="cert_matricula_nacional" type="text" class="form-control" placeholder="" value="{{ old('cert_matricula_nacional') }}">
-								<button data-toggle="validar-matricula" class="btn-ejornal btn-ejornal-gris-claro" type="button">
+								<input style="max-width: 200px; margin-right: 5px;" name="cert_matricula_nacional"
+									type="text" class="form-control" placeholder=""
+									value="{{ old('cert_matricula_nacional') }}">
+								<button data-toggle="validar-matricula" class="btn-ejornal btn-ejornal-gris-claro"
+									type="button">
 									<i class="fas fa-user-check"></i> Validar
 								</button>
 							</div>
 						</div>
 						<div class="form-group col-lg-2">
 							<label>Fecha documento <span style="color: red;">*</span></label>
-							<input name="cert_fecha_documento" type="text" readonly class="form-control" placeholder="" value="{{ old('cert_fecha_documento') }}">
+							<input name="cert_fecha_documento" type="text" readonly class="form-control" placeholder=""
+								value="{{ old('cert_fecha_documento') }}">
 						</div>
 
 						<div class="form-group col-lg-5">
 							<label>Diagnóstico <span style="color: red;">*</span></label>
-							<textarea name="cert_diagnostico" class="form-control" rows="3">{{ old('cert_diagnostico') }}</textarea>
+							<textarea name="cert_diagnostico" class="form-control"
+								rows="3">{{ old('cert_diagnostico') }}</textarea>
 						</div>
 						<div class="form-group col-lg-5">
 							<label>Observaciones</label>
-							<textarea name="cert_observaciones" class="form-control" rows="3">{{ old('cert_observaciones') }}</textarea>
+							<textarea name="cert_observaciones" class="form-control"
+								rows="3">{{ old('cert_observaciones') }}</textarea>
 						</div>
 					</div>
 
@@ -227,12 +252,15 @@
 						<div class="form-group col-lg-6">
 
 							<div class="table-responsive">
-								<table data-table="certificaciones_archivos" class="table table-sm small w-100 table-bordered border">
+								<table data-table="certificaciones_archivos"
+									class="table table-sm small w-100 table-bordered border">
 									<thead>
 										<tr class="bg-light">
 											<th colspan="2">
-												<label for="" class="mb-0">Adjuntar archivos <span style="color: red;">*</span></label>
-												<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
+												<label for="" class="mb-0">Adjuntar archivos <span
+														style="color: red;">*</span></label>
+												<span class="small text-muted font-italic">Puedes adjuntar más de 1
+													archivo</span>
 											</th>
 										</tr>
 									</thead>
@@ -242,7 +270,8 @@
 									<tfoot>
 										<tr class="bg-light">
 											<th colspan="2">
-												<button data-toggle="agregar-archivo-cert" class="btn btn-tiny btn-dark text-light" type="button">
+												<button data-toggle="agregar-archivo-cert"
+													class="btn btn-tiny btn-dark text-light" type="button">
 													<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
 												</button>
 											</th>
@@ -260,7 +289,8 @@
 			</div>
 
 			<div class="text-center my-5">
-				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Cargar ausencia y comunicación</button>
+				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Cargar
+					ausencia y comunicación</button>
 			</div>
 
 
