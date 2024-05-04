@@ -2,7 +2,7 @@ class Ausentismo {
 
 	constructor(){
 
-		get_template('/templates/tr_certificado_ausentismo')
+		get_template('/templates/tr-certificado-ausentismo')
 			.then(template=>{
 				this.table_archivos_cert = $('[data-table="certificaciones_archivos"]')
 				this.tr_certificado_ausentismo = template
@@ -84,12 +84,12 @@ class Ausentismo {
 		})
 
 		$('[data-toggle="agregar-archivo-cert"]').click(btn=>{
-			console.log(this.table_archivos_cert);
+			//console.log(this.table_archivos_cert);
 			const tr = $(this.tr_certificado_ausentismo)
 			this.table_archivos_cert.find('tbody').append(tr)
 		})
 
-		
+
 		$('[data-table="certificaciones_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo-cert"]',btn=>{
 			const tbody = $(btn.currentTarget).closest('tbody')
 			const tr = $(btn.currentTarget).closest('tr')
