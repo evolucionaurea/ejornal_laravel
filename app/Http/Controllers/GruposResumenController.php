@@ -94,7 +94,8 @@ class GruposResumenController extends Controller
 		///dd($q_nomina);
 		if(!$q_nomina){
 			\Artisan::call('db:seed', [
-				'--class' => 'NominaHistorialSeeder'
+				'--class' => 'NominaHistorialSeeder',
+				'--force' => true
 			]);
 			$q_nomina = NominaHistorial::selectRaw("SUM(cantidad) cantidad")
 			->where('year_month',$today->format('Ym'))

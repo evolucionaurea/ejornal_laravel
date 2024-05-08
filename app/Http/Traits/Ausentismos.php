@@ -380,7 +380,8 @@ trait Ausentismos {
 			->first();
 		if(!$q_nomina){
 			\Artisan::call('db:seed', [
-				'--class' => 'NominaHistorialSeeder'
+				'--class' => 'NominaHistorialSeeder',
+				'--force'=> true
 			]);
 			$q_nomina = NominaHistorial::select('*')
 			->where('year_month',$today->format('Ym'))

@@ -42,7 +42,8 @@ trait Clientes {
 		///RESOLVER SI NO ESTÁ GENERADO EL REGISTRO CON EL CRON
 		if(!$q_nomina){
 			\Artisan::call('db:seed', [
-				'--class' => 'NominaHistorialSeeder'
+				'--class' => 'NominaHistorialSeeder',
+				'--force'=>true
 			]);
 
 			$q_nomina = NominaHistorial::select('*')
