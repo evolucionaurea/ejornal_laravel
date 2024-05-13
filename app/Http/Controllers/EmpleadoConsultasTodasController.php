@@ -74,29 +74,38 @@ class EmpleadoConsultasTodasController extends Controller
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		
 
+		if ($request->search) {
+			$filtro = '%' . $request->search['value'] . '%';
+	
+			$medicas->where(function ($query) use ($filtro) {
+				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
+					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
+					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
+					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
+			});
+	
+			$enfermerias->where(function ($query) use ($filtro) {
+				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
+					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
+			});
+		}
 
+		if ($request->from) {
+			$medicas->whereDate('consultas_medicas.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$enfermerias->whereDate('consultas_enfermerias.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+
+		if ($request->to) {
+			$medicas->whereDate('consultas_medicas.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$enfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
 
 		$query = $medicas->union($enfermerias);
 		$total = $query->count();
-
-
-		if ($request->from) {
-			$query->whereDate('fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if ($request->to) {
-			$query->whereDate('fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}
-
-		/*if ($request->search && $request->search['value']) {
-			$filtro = '%' . $request->search['value'] . '%';
-			$query->where(function ($query) use ($filtro) {
-				$query->where('nombre', 'like', $filtro)
-					->orWhere('derivacion_consulta', 'like', $filtro)
-					///->orWhere('tratamiento', 'like', $filtro)
-					->orWhere('nombre', 'like', $filtro);
-			});
-		}*/
 
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];

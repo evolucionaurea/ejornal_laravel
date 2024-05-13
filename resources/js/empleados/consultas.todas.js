@@ -14,6 +14,10 @@ $(()=>{
 			order:[[ 1, "desc" ]],
 			columns:[
 				{
+					name:'id',
+					data:'id'
+				},
+				{
 					name:'tipo',
 					data:'tipo'
 				},
@@ -36,7 +40,6 @@ $(()=>{
 					name:'acciones',
 					data:row=>row,
 					render:(v,type,row,meta)=>{
-						///console.log(v);
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 						return `
 						<div class="acciones_tabla">

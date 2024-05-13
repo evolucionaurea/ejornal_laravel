@@ -19,6 +19,16 @@ $(()=>{
 			columns:[
 				{
 					data:row=>row,
+					name:'ausentismos.id',
+					className:'align-middle',
+					render:v=>{
+						return `
+							<div><b>${v.id}</b></div>
+						`
+					}
+				},
+				{
+					data:row=>row,
 					name:'nominas.nombre',
 					className:'align-middle',
 					render:v=>{
@@ -33,7 +43,6 @@ $(()=>{
 					name:'nominas.dni',
 					className:'align-middle',
 					render:v=>{
-						console.log('v.trabajador_dni', v.trabajador_dni);
 						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
 					}
 				},
@@ -156,6 +165,8 @@ $(()=>{
 									 :
 									 ''
 								}
+
+							
 
 								<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>

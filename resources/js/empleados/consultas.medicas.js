@@ -14,6 +14,10 @@ $(()=>{
 			order:[[ 1, "desc" ]],
 			columns:[
 				{
+					name:'id',
+					data:'id'
+				},
+				{
 					name:'nombre',
 					data:'nombre'
 				},

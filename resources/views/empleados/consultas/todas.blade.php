@@ -32,6 +32,7 @@
                 <!--Table head-->
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Consulta</th>
                         <th>Trabajador</th>
                         <th>Fecha</th>
