@@ -120,18 +120,21 @@
 
 							<hr>
 
-							<h6>¿Borrar los trabajadores previamente guardados que no estén en el archivo excel?</h6>
+							<h6>
+								¿Que hacer con los trabajadores previamente guardados que no estén en el archivo excel?
+							</h6>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="borrar" id="no_borrar_trabajador"
 									value="0" checked>
-								<label class="form-check-label" for="no_borrar_trabajador">No borrar. Dejar el que está
+								<label class="form-check-label" for="no_borrar_trabajador">Dejar el que está
 									actualmente cargado.</label>
 							</div>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="borrar" id="borrar_trabajador"
 									value="1">
-								<label class="form-check-label" for="borrar_trabajador">Si, borrarlo de la base de
-									datos.</label>
+								<label class="form-check-label" for="borrar_trabajador">
+									Marcarlos como inactivos
+								</label>
 							</div>
 
 

@@ -15,7 +15,7 @@ Es importante destacar que los Clientes tambien se pueden loggear y hasta tienen
 ## Tecnologias
 
 - Laravel 6.2
-- PHP 7.2
+- PHP 7.4.19
 - Javascript/Jquery
 - composer 2
 - Node 14.19.3

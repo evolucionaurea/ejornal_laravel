@@ -697,9 +697,14 @@ class EmpleadosNominasController extends Controller
 			}
 		}
 
-		if($request->borrar==1){
-			Nomina::whereIn('id',$empleados_borrables)->delete();
+		// Antes se borrada el registro. Ahora se actualiza el estado a Inactivo
+		// if($request->borrar==1){
+		// 	Nomina::whereIn('id',$empleados_borrables)->delete();
+		// }
+		if ($request->borrar == 1) {
+			Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 		}
+		
 
 
 		// Registrar cantidad de empleados en cada carga
