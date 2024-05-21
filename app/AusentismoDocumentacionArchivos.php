@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class AusentismoDocumentacionArchivos extends Model
 {
 
+	protected $appends  = ['file_path'];
+
 
   protected $table = 'ausentismo_documentacion_archivos';
 
@@ -16,6 +18,11 @@ class AusentismoDocumentacionArchivos extends Model
   public function ausentismo_documentacion()
   {
   	return $this->belongsTo(AusentismoDocumentacion::class);
+  }
+
+  public function getFilePathAttribute()
+  {
+  	return url('empleados/documentacion_ausentismo/archivo/'.$this->id);
   }
 
 }

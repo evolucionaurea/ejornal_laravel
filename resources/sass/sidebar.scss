@@ -11,9 +11,14 @@
   padding: 0.875rem 1.25rem;
   font-size: 1.2rem;
 }
+#sidebar-wrapper .form-control {
+  max-width: 16rem;
+}
+
 
 #sidebar-wrapper .list-group {
   width: 16rem;
+  max-width: 16rem;
 }
 
 #page-content-wrapper {

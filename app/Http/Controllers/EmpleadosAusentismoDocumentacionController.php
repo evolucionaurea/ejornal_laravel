@@ -308,6 +308,27 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 
 		$archivo = AusentismoDocumentacionArchivos::find($id);
 		$ruta = storage_path("app/documentacion_ausentismo/{$archivo->ausentismo_documentacion_id}/{$archivo->hash_archivo}");
+
+		$mime = mime_content_type($ruta);
+		$open_in_browser = false;
+		///dd($mime);
+		if(
+			preg_match('/image/',$mime) ||
+			preg_match('/pdf/', $mime) ||
+			preg_match('/text\/plain/', $mime)
+		) $open_in_browser=true;
+		if(!$open_in_browser) return response()->download($ruta);
+
+		/*ob_start();
+		header("Content-Type: ".$mime);
+		header("Content-Length: ".filesize($ruta));
+		ob_clean();
+		flush();*/
+		$file = file_get_contents($ruta);
+		return response($file, 200)->header('Content-Type', $mime);
+
+
+		return readfile($ruta);
 		return response()->download($ruta);
 		return back();
 

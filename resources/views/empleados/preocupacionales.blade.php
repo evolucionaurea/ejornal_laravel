@@ -12,13 +12,13 @@
 		{{-- Contenido de la pagina --}}
 
 		<div class="cabecera">
-			<h2>Listado de estudios medicos complementarios</h2>
-			<p>Aquí puede ver el listado de estudios medicos complementarios de la empresa</p>
+			<h2>Listado de estudios médicos complementarios</h2>
+			<p>Aquí puede ver el listado de estudios médicos complementarios de la empresa.</p>
 			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('preocupacionales.create')}}">
 					<i class="fas fa-plus-circle"></i>
-					Nuevo estudio medico complementario
+					Nuevo estudio médico complementario
 				</a>
 			</div>
 			@else

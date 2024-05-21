@@ -12,22 +12,23 @@
 				@php
 				$url_actual = request()->url();
 				@endphp
+
 				@if (strpos($url_actual, 'create') == true || strpos($url_actual, 'edit') == true || strpos($url_actual,
 				'show') == true)
-				<select disabled name="select_clientes_sidebar" id="cliente_seleccionado_sidebar"
-					class="form-control form-control-sm">
+				<select disabled name="select_clientes_sidebar" id="cliente_seleccionado_sidebar" class="form-control form-control-sm">
+				@else
+				<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar" class="form-control form-control-sm">
+				@endif
+
+					@foreach ($clientes as $cliente)
+					@if ($cliente->id == auth()->user()->id_cliente_actual)
+					<option selected value="{{$cliente->id}}">{{$cliente->nombre}}</option>
 					@else
-					<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar"
-						class="form-control form-control-sm">
-						@endif
-						@foreach ($clientes as $cliente)
-						@if ($cliente->id == auth()->user()->id_cliente_actual)
-						<option selected value="{{$cliente->id}}">{{$cliente->nombre}}</option>
-						@else
-						<option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
-						@endif
-						@endforeach
-					</select>
+					<option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+					@endif
+					@endforeach
+
+				</select>
 			</div>
 			@endif
 	</div>

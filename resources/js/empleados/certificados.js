@@ -77,10 +77,13 @@ $(()=>{
 						if(archivos.length==0) return ''
 						let buttons = ''
 						archivos.map((archivo,k)=>{
+							///console.log(archivo.file_path)
+							/// /empleados/documentacion_ausentismo/archivo/${archivo.id}
 							buttons += `<div class="flex flex-wrap">
-							<a target="_blank" class="btn btn-info btn-tiny mr-3 mb-1" href="documentacion_ausentismo/archivo/${archivo.id}" title="${archivo.archivo}">
-								<i class="fa fa-download fa-fw"></i> <span>Descargar archivo ${archivo.archivo}</span>
-							</a></div>`
+								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${archivo.file_path}" title="${archivo.archivo}" >
+									<i class="fa fa-download fa-fw"></i> <span>Descargar archivo ${archivo.archivo}</span>
+								</button>
+							</div>`
 						})
 
 						return buttons
@@ -105,8 +108,13 @@ $(()=>{
 			]
 		}
 	})
-
-
 	new Certificado
+
+
+
+	$('[data-table="certificados"]').on('click','[data-toggle="open-file"]',btn=>{
+		const href = $(btn.currentTarget).attr('data-href')
+		window.open(href)
+	})
 
 })

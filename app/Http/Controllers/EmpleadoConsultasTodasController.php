@@ -53,8 +53,8 @@ class EmpleadoConsultasTodasController extends Controller
 			'consultas_medicas.id_diagnostico_consulta',
 			'consultas_medicas.fecha',
 			'consultas_medicas.derivacion_consulta',
-			'diagnostico_consulta.nombre as diagnostico',
-			DB::raw('"medica" as tipo') // Agregamos un campo tipo para identificar consultas médicas
+			'diagnostico_consulta.nombre as diagnóstico',
+			DB::raw('"Médica" as tipo') // Agregamos un campo tipo para identificar consultas médicas
 		)
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
@@ -68,17 +68,17 @@ class EmpleadoConsultasTodasController extends Controller
 			'consultas_enfermerias.id_diagnostico_consulta',
 			'consultas_enfermerias.fecha',
 			'consultas_enfermerias.derivacion_consulta',
-			'diagnostico_consulta.nombre as diagnostico',
-			DB::raw('"enfermeria" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
+			'diagnostico_consulta.nombre as diagnóstico',
+			DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
 		)
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
-		
+
 
 		if ($request->search) {
 			$filtro = '%' . $request->search['value'] . '%';
-	
+
 			$medicas->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
 					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
@@ -86,7 +86,7 @@ class EmpleadoConsultasTodasController extends Controller
 					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
 					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
 			});
-	
+
 			$enfermerias->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
 					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
@@ -111,6 +111,8 @@ class EmpleadoConsultasTodasController extends Controller
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
+		}else{
+			$query->orderBy('fecha','desc');
 		}
 
 
@@ -160,8 +162,6 @@ class EmpleadoConsultasTodasController extends Controller
 			'request' => $request->all()
 		];
 	}
-
-
 
 
 	public function exportar(Request $request) {
@@ -270,13 +270,6 @@ class EmpleadoConsultasTodasController extends Controller
 
 		return;
 	}
-
-
-
-
-
-
-
 
 
 }
