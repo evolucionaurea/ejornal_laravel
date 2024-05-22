@@ -1,5 +1,5 @@
+require('toastr')
 require('./bootstrap');
-
 require('./functions');
 require('../slick/slick.min.js');
 require('./slick.js');
@@ -38,6 +38,8 @@ if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones'
 
 
 //EMPLEADOS
+if(route=='/empleados/resumen') require('./empleados/resumen')
+
 if(route=='documentaciones.show') require('./empleados/documentacion_ausentismo.js');
 if(route=='documentaciones_livianas.show') require('./documentacion_tarea_liviana.js');
 

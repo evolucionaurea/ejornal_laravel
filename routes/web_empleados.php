@@ -150,6 +150,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/certificados_livianos/busqueda','EmpleadosCertificadosLivianosController@busqueda');
 
 	// PREOCUPACIONALES
+	Route::post('empleados/preocupacionales/completar/{id}','EmpleadosPreocupacionalesController@completar');
 	Route::resource('empleados/preocupacionales', 'EmpleadosPreocupacionalesController', [
 		'names' => [
 			'index' => '/empleados/preocupacionales'

@@ -1,4 +1,5 @@
 import Tablas from '../classes/Tablas.js';
+import toastr from 'toastr';
 
 $(()=>{
 
@@ -7,7 +8,7 @@ $(()=>{
 		get_path:'/busqueda',
 		delete_path:'/destroy',
 		table:$('[data-table="preocupacionales"]'),
-		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
+		modulo_busqueda:$('[data-toggle="busqueda-preocupacionales"]'),
 
 		delete_message:'¿Seguro deseas borrar este estudio médico?',
 
@@ -18,23 +19,23 @@ $(()=>{
 			columns:[
 				{
 					data:'trabajador.nombre',
-					className:'align-middle',
-					name:'nominas.nombre'
+					name:'nominas.nombre',
+					className:'align-middle'
 				},
 				{
 					data:'trabajador.email',
-					className:'align-middle',
-					name:'nominas.email'
+					name:'nominas.email',
+					className:'align-middle'
 				},
 				{
 					data:'trabajador.telefono',
-					className:'align-middle',
-					name:'nominas.telefono'
+					name:'nominas.telefono',
+					className:'align-middle'
 				},
 				{
 					data:'fecha',
-					className:'align-middle',
-					name:'fecha'
+					name:'fecha',
+					className:'align-middle'
 				},
 				{
 					data:null,
@@ -59,8 +60,8 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'file_path',
-					orderable:false,
 					className:'align-middle',
+					orderable:false,
 					render:v=>{
 						return `
 						<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${v.file_path}" title="${v.archivo}" >
@@ -71,31 +72,27 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'actions',
-					className:'text-right align-middle',
+					className:'text-right',
 					orderable:false,
 					render:v=>{
 						return `
 						<div class="acciones_tabla justify-content-end">
-							<a title="Editar" href="preocupacionales/${v.id}/edit" >
-								<i class="fas fa-pen"></i>
-							</a>
-
-							<button data-toggle="delete" data-id="${v.id}" title="Eliminar"  >
-								<i class="fas fa-trash"></i>
+							<button data-toggle="completado" data-id="${v.id}" title="Marcar como completado" class="btn-success" >
+								<i class="fas fa-check"></i>
 							</button>
-
 						</div>`
 					}
 				},
 			]
 		}
+
 	})
+
 
 	$('[data-table="preocupacionales"]').on('click','[data-toggle="open-file"]',btn=>{
 		const href = $(btn.currentTarget).attr('data-href')
 		window.open(href)
 	})
-
 	$('[data-table="preocupacionales"]').on('click','[data-toggle="completado"]',async btn=>{
 		const id = $(btn.currentTarget).attr('data-id')
 		const tr = $(btn.currentTarget).closest('tr')

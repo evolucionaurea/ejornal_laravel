@@ -34,6 +34,7 @@
 		"moment": "^2.29.4",
 		"pusher-js": "^7.0.0",
 		"sweetalert2": "^11.4.8",
+		"toastr": "^2.1.4",
 		"vuetify": "^2.6.15",
 		"yarn": "^1.22.4"
 	}

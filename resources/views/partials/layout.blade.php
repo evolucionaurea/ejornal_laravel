@@ -8,10 +8,6 @@
 	<title>@yield('title', 'Ejornal')</title>
 
 
-	<!-- Google Fonts -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-	<link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
 	{{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> --}}
 	<link rel="stylesheet" href="{{asset('css/lib/bootstrap.min.css')}}">
 
@@ -38,6 +34,7 @@
 	<link rel="stylesheet" href="{{asset('vuetify/vuetify.min.css')}}">
 
 
+	<link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
 	{{-- Select 2 --}}
 	{{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}

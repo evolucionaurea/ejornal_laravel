@@ -19,7 +19,7 @@ class Preocupacional extends Model
   	'fecha'=>'date:d/m/Y',
   	'fecha_vencimiento'=>'date:d/m/Y',
   ];
-  protected $appends = ['file_path','vencimiento_label'];
+  protected $appends = ['file_path','vencimiento_label','completado_label'];
 
 
   public function trabajador(){
@@ -38,9 +38,15 @@ class Preocupacional extends Model
     $now = Carbon::now();
     if($this->fecha_vencimiento > $now){
       $diff = $this->fecha_vencimiento->diffInDays($now);
-      return '<span class="badge badge-info">vence en '.$diff.' días</span>';
+      return '<span class="badge badge-secondary">vence en '.$diff.' días</span>';
     }
     return '<span class="badge badge-danger">vencido</span>';
+  }
+  public function getCompletadoLabelAttribute()
+  {
+    if(is_null($this->fecha_vencimiento)) return '';
+    return '<span class="badge badge-'.($this->completado?'success':'danger').'">'.($this->completado?'completado':'sin completar').'</span>';
+
   }
 
 

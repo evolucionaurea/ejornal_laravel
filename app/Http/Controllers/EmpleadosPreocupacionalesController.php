@@ -9,6 +9,7 @@ use App\Preocupacional;
 use App\Http\Traits\Clientes;
 use App\Nomina;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Storage;
 
 class EmpleadosPreocupacionalesController extends Controller
@@ -31,6 +32,8 @@ class EmpleadosPreocupacionalesController extends Controller
 		->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);*/
 
+		$now = CarbonImmutable::now();
+
 		$query = Preocupacional::with('trabajador')
 			->select('preocupacionales.*')
 			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
@@ -40,8 +43,18 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		$total = $query->count();
 
-		if($request->from) $query->whereDate('preocupacionales.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('preocupacionales.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->from){
+			$query->whereDate('preocupacionales.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+		if($request->to){
+			$query->whereDate('preocupacionales.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
+
+		if($request->vencimiento_from){
+			$query
+				->whereDate('fecha_vencimiento','<=',$now->addMonth())
+				->where('completado',0);
+		}
 
 		if(isset($request->search)){
 			$query->where(function($query) use($request) {
@@ -196,9 +209,23 @@ class EmpleadosPreocupacionalesController extends Controller
 		$preocupacional = Preocupacional::find($id);
 		$ruta = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}/{$preocupacional->hash_archivo}");
 		return download_file($ruta);
-		/*return response()->download($ruta);
-		return back();*/
 
+	}
+
+
+	public function completar($id){
+
+		if(!$preocupacional = Preocupacional::find($id)){
+			return false;
+		}
+
+		$preocupacional->completado = 1;
+		$preocupacional->save();
+
+		return [
+			'message'=>'El estudio se ha marcado como <b>Completado </b>correctamente.',
+			'status'=>'ok'
+		];
 	}
 
 

@@ -32,8 +32,10 @@
 
 		@else
 
+
 		<div class="container">
-			<section>
+			{{-- TARJETAS --}}
+			<section class="tarjeta">
 				<div class="row">
 
 
@@ -135,7 +137,37 @@
 
 				</div>
 			</section>
+
+
+			{{-- ESTUDIOS COMPLEMENTARIOS --}}
+			<div class="tarjeta table-responsive">
+				<h5 class="mb-1">Vencimientos de Estudios Complementarios</h5>
+				<hr>
+
+				<form data-toggle="busqueda-preocupacionales">
+					<input type="hidden" name="vencimiento_from" value="1">
+				</form>
+
+				<table data-table="preocupacionales" class="table table-striped table-sm small bg-light">
+					<thead>
+						<tr>
+							<th>Nombre</th>
+							<th>Email</th>
+							<th>Teléfono</th>
+							<th>Fecha</th>
+							<th>Vencimiento</th>
+							<th>Estado</th>
+							<th>Completado</th>
+							<th>Documentación</th>
+							<th class="text-right">Acciones</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
 		</div>
+
 
 		@endif
 
