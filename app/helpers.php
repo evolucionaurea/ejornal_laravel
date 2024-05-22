@@ -12,3 +12,17 @@ function echo_json($obj,$exit=true){
 	echo json_encode($obj);
 	if($exit) exit;
 }
+
+function download_file($ruta){
+	$mime = mime_content_type($ruta);
+	$open_in_browser = false;
+	///dd($mime);
+	if(
+		preg_match('/image/',$mime) ||
+		preg_match('/pdf/', $mime)
+	) $open_in_browser=true;
+	if(!$open_in_browser) return response()->download($ruta);
+
+	$file = file_get_contents($ruta);
+	return response($file, 200)->header('Content-Type', $mime);
+}

@@ -849,6 +849,13 @@ table th {
   display: none;
 }
 
+footer.footer {
+  background-color: #2f4050;
+  font-size: 9pt;
+  color: #c9c9c9;
+  text-align: center;
+}
+
 @media (max-width: 1300px) {
   .clientes_resumen_estadisticas {
     flex-direction: column;

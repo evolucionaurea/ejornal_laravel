@@ -81,7 +81,7 @@ $(()=>{
 							/// /empleados/documentacion_ausentismo/archivo/${archivo.id}
 							buttons += `<div class="flex flex-wrap">
 								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${archivo.file_path}" title="${archivo.archivo}" >
-									<i class="fa fa-download fa-fw"></i> <span>Descargar archivo ${archivo.archivo}</span>
+									<i class="fa fa-download fa-fw"></i> <span>${archivo.archivo}</span>
 								</button>
 							</div>`
 						})

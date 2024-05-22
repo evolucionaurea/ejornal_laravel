@@ -9,7 +9,7 @@ require('./data_picker.js');
 require('./swal_options.js');
 
 require('./sidebar');
-require('./footer.js');
+//require('./footer.js');
 require('./ajax.js');
 require('./users.js');
 require('./nav_sup.js');
@@ -73,6 +73,9 @@ if(route=='/empleados/medicamentos') require('./empleados/medicamentos')
 if(route=='medicamentos.create') require('./empleados/medicamentos.create')
 if(route=='/empleados/medicamentos_movimientos') require('./empleados/medicamentos_movimientos')
 if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
+if(route=='preocupacionales.create') require('./empleados/preocupacionales.create')
+if(route=='preocupacionales.edit') require('./empleados/preocupacionales.create')
+
 if(route=='medicas.create') require('./empleados/consultas.medicas.create')
 if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
 

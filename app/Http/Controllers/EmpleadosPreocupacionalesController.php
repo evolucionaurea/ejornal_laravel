@@ -24,19 +24,51 @@ class EmpleadosPreocupacionalesController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-		$query = Preocupacional::select(
+		/*$query = Preocupacional::select(
 			'nominas.nombre', 'nominas.email', 'nominas.telefono',
 			'preocupacionales.fecha', 'preocupacionales.archivo', 'preocupacionales.id'
 		)
 		->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);*/
+
+		$query = Preocupacional::with('trabajador')
+			->select('preocupacionales.*')
+			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
+			->whereHas('trabajador',function($query){
+			$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
+		});
+
+		$total = $query->count();
 
 		if($request->from) $query->whereDate('preocupacionales.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('preocupacionales.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
+		if(isset($request->search)){
+			$query->where(function($query) use($request) {
+				$filtro = '%'.$request->search['value'].'%';
+				$query->where('nominas.nombre','like',$filtro)
+					->orWhere('nominas.email','like',$filtro)
+					->orWhere('nominas.dni','like',$filtro)
+					->orWhere('nominas.telefono','like',$filtro);
+			});
+		}
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+
+		$total_filtered = $query->count();
+
 
 		return [
-			'results'=>$query->get(),
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+
+			'data'=>$query->get(),
 			'fichada_user'=>auth()->user()->fichada,
 			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
@@ -74,82 +106,52 @@ class EmpleadosPreocupacionalesController extends Controller
 		$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
 
 		// Si hay un archivo adjunto se va a guardar todo
-		if ($request->hasFile('archivo') && $request->file('archivo') > 0) {
-
-			//Guardar en base Preocupacional
-			$preocupacional = new Preocupacional();
-			$preocupacional->id_nomina = $request->trabajador;
-			$preocupacional->fecha = $fecha;
-			$preocupacional->observaciones = $request->observaciones;
-
-			$archivo = $request->file('archivo');
-			$nombre = $archivo->getClientOriginalName();
-			$preocupacional->archivo = $nombre;
-
-			$preocupacional->save();
-
-			Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $archivo);
-
-
-			// Completar en base el hash del archivo guardado
-			$preocupacional = Preocupacional::findOrFail($preocupacional->id);
-			$preocupacional->hash_archivo = $archivo->hashName();
-			$preocupacional->save();
-
-
-		}else {
+		if(!$request->hasFile('archivo')) {
 			return back()->withInput()->with('error', 'Debes adjuntar un archivo');
 		}
+
+
+		//Guardar en base Preocupacional
+		$preocupacional = new Preocupacional();
+		$preocupacional->id_nomina = $request->trabajador;
+		$preocupacional->fecha = $fecha;
+		$preocupacional->observaciones = $request->observaciones;
+
+		$archivo = $request->file('archivo');
+		$nombre = $archivo->getClientOriginalName();
+		$preocupacional->archivo = $nombre;
+
+		if($request->tiene_vencimiento){
+			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
+			$preocupacional->completado = $request->completado;
+		}
+		///$preocupacional->save();
+		// Completar en base el hash del archivo guardado
+		//$preocupacional = Preocupacional::findOrFail($preocupacional->id);
+		$preocupacional->hash_archivo = $archivo->hashName();
+		$preocupacional->save();
+
+		Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $archivo);
 
 		return redirect('empleados/preocupacionales')->with('success', 'Preocupacional guardado con éxito');
 
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
 	public function edit($id)
 	{
 
-		$preocupacional = Preocupacional::join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-		->where('preocupacionales.id', $id)
-		->select('preocupacionales.id', 'preocupacionales.fecha', 'preocupacionales.observaciones', 'preocupacionales.archivo', 'preocupacionales.hash_archivo', 'nominas.nombre')
-		->first();
-
+		$preocupacional = Preocupacional::with('trabajador')->where('id',$id)->first();
 		$clientes = $this->getClientesUser();
 
 		return view('empleados.preocupacionales.edit', compact('preocupacional', 'clientes'));
-
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(Request $request, $id)
 	{
 
 		$validatedData = $request->validate([
-		'fecha' => 'required',
-		'observaciones' => 'required'
+			'fecha' => 'required',
+			'observaciones' => 'required'
 		]);
 
 		$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
@@ -158,10 +160,13 @@ class EmpleadosPreocupacionalesController extends Controller
 		$preocupacional = Preocupacional::findOrFail($id);
 		$preocupacional->fecha = $fecha;
 		$preocupacional->observaciones = $request->observaciones;
+		if($request->tiene_vencimiento){
+			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
+			$preocupacional->completado = $request->completado;
+		}
 		$preocupacional->save();
 
 		return redirect('empleados/preocupacionales')->with('success', 'Preocupacional actualizado con éxito');
-
 	}
 
 	/**
@@ -190,8 +195,9 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		$preocupacional = Preocupacional::find($id);
 		$ruta = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}/{$preocupacional->hash_archivo}");
-		return response()->download($ruta);
-		return back();
+		return download_file($ruta);
+		/*return response()->download($ruta);
+		return back();*/
 
 	}
 

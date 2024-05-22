@@ -704,7 +704,7 @@ class EmpleadosNominasController extends Controller
 		if ($request->borrar == 1) {
 			Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 		}
-		
+
 
 
 		// Registrar cantidad de empleados en cada carga
@@ -715,7 +715,8 @@ class EmpleadosNominasController extends Controller
 			'nuevos'=>count($empleados_inexistentes),
 			'existentes'=>count($empleados_existentes),
 			'actualizados'=>count($empleados_actualizados),
-			'borrados'=>$request->borrar==1 ? count($empleados_borrables) : 0,
+			//'borrados'=>$request->borrar==1 ? count($empleados_borrables) : 0,
+			'borrados'=>0,
 			'year_month'=>(int) $now->format('Ym'),
 			'filename'=>$file->getClientOriginalName(),
 			'user_id'=>auth()->user()->id,

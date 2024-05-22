@@ -96,6 +96,14 @@
 
 
 
+	<footer class="footer">
+		<div class="container">
+			Jornal Salud. Copyright &copy; {{ date('Y') }} - Todos los derechos reservados.
+		</div>
+	</footer>
+
+
+
 
 
 	<script>

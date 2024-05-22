@@ -36,26 +36,56 @@
 			<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
 				@csrf
 				<div class="form-row">
+
 					<div class="form-group col-md-3">
 						<label>Trabajador</label>
-						<select name="trabajador" class="form-control form-control-sm select_2">
+						<select data-toggle="select2" name="trabajador" class="form-control form-control-sm select_2" required>
+							<option value="">--Seleccionar--</option>
 							@foreach ($trabajadores as $trabajador)
 							<option value="{{$trabajador->id}}">{{$trabajador->nombre}}</option>
 							@endforeach
 						</select>
 					</div>
+
 					<div class="form-group col-md-3">
 						<label>Fecha</label>
-						<input id="fecha_estudio_complementario" name="fecha" type="text" class="form-control" value="{{ old("fecha") }}">
+						<input name="fecha" type="text" class="form-control" value="{{ old("fecha") }}" required>
 					</div>
+
 					<div class="form-group col-md-6">
 						<label>Documentación</label>
-						<input name="archivo" type="file" class="form-control-file">
+						<div class="custom-file">
+							<input name="archivo" type="file" class="custom-file-input">
+							<label for="" class="custom-file-label">Seleccionar archivo...</label>
+						</div>
 					</div>
-					<div class="form-group col-md-6">
-						<label>Observaciones</label>
-						<textarea name="observaciones" class="form-control" rows="3">{{ old("observaciones") }}</textarea>
+
+					<div class="form-group col-md-3">
+						<label for="">¿Tiene Vencimiento?</label>
+						<select name="tiene_vencimiento" class="form-control" required>
+							<option value="0">No</option>
+							<option value="1">Si</option>
+						</select>
 					</div>
+
+					<div data-toggle="vencimiento" class="form-group col-md-3 d-none">
+						<label for="">Fecha de Vencimiento</label>
+						<input name="fecha_vencimiento" type="text" class="form-control" >
+					</div>
+					<div data-toggle="vencimiento" class="form-group col-md-3 d-none">
+						<label for="">Completado</label>
+						<select name="completado" class="form-control">
+							<option value="0">No</option>
+							<option value="1">Si</option>
+						</select>
+					</div>
+
+				</div>
+
+				<hr>
+				<div class="form-group">
+					<label>Observaciones</label>
+					<textarea name="observaciones" class="form-control" rows="6" required>{{ old("observaciones") }}</textarea>
 				</div>
 				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear preocupacional</button>
 			</form>
@@ -66,14 +96,3 @@
 </div>
 
 @endsection
-
-
-<script type="text/javascript">
-
-window.addEventListener("load", function(event) {
-
-	$('.select_2').select2();
-
-});
-
-</script>

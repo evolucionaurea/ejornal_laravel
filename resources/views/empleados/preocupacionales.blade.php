@@ -32,7 +32,7 @@
 
 			@include('../../modulos.busqueda_fecha')
 
-			<table class="table table-striped table-hover table-sm tabla_preocupacionales_listado">
+			<table data-table="preocupacionales" class="table table-striped table-hover table-sm">
 
 				<!--Table head-->
 				<thead>
@@ -41,10 +41,11 @@
 						<th>Email</th>
 						<th>Tel</th>
 						<th>Fecha</th>
+						<th>Vencimiento</th>
+						<th>Estado</th>
+						<th>Completado</th>
 						<th>Documentación</th>
-						@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 						<th>Acciones</th>
-						@endif
 					</tr>
 				</thead>
 				<!--Table head-->
