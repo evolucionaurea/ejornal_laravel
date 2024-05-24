@@ -87,7 +87,10 @@ class EmpleadoTareasLivianasController extends Controller
 	 */
 	public function create()
 	{
-		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
+		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
+		->where('estado', '=', 1)
+		->orderBy('nombre', 'asc')
+		->get();
 		$tareas_livianas_tipo = TareaLivianaTipo::orderBy('nombre', 'asc')->get();
 		$clientes = $this->getClientesUser();
 		$tipo_comunicacion_liviana = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();

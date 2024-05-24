@@ -69,7 +69,10 @@ class EmpleadosAusentismosController extends Controller
 	 */
 	public function create()
 	{
-		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
+		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
+		->where('estado', '=', 1)
+		->orderBy('nombre', 'asc')
+		->get();
 		$ausentismo_tipos = AusentismoTipo::orderBy('nombre', 'asc')->get();
 
 		$clientes = $this->getClientesUser();

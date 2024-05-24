@@ -110,7 +110,10 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		->select('medicamentos.nombre', 'stock_medicamentos.stock', 'stock_medicamentos.id')
 		->get();
 
-		$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->orderBy('nombre', 'asc')->get();
+		$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
+		->where('estado', '=', 1)
+		->orderBy('nombre', 'asc')
+		->get();
 
 		return view('empleados.consultas.enfermeria.create', compact('clientes', 'nominas', 'diagnostico_consultas', 'stock_medicamentos'));
 
