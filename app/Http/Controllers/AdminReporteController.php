@@ -308,32 +308,98 @@ class AdminReporteController extends Controller
 
 
 
-	public function consultas_medicas()
+	public function consultas_medicas(Request $request)
 	{
-		$medicas = ConsultaMedica::join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
-		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->join('clientes', 'nominas.id_cliente', 'clientes.id')
-		->select('nominas.nombre', 'consultas_medicas.fecha', 'consultas_medicas.peso', 'consultas_medicas.altura',
-		'consultas_medicas.derivacion_consulta', 'consultas_medicas.temperatura_auxiliar', DB::raw('diagnostico_consulta.nombre diagnostico'),
-		DB::raw('clientes.nombre cliente'))
-		->orderBy('consultas_medicas.fecha', 'desc')
-		->get();
 
-		return $medicas;
+		$query = ConsultaMedica::select('consultas_medicas.*')
+			->with('diagnostico')
+			->with('trabajador.cliente')
+			->whereHas('trabajador',function($query){
+				$query->where('deleted_at',null);
+			})
+			->join('nominas','consultas_medicas.id_nomina', 'nominas.id')
+			->join('clientes','nominas.id_cliente', 'clientes.id')
+			->join('diagnostico_consulta','consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id');
+
+		$total = $query->count();
+
+		if($request->fecha_inicio){
+			$fecha_inicio = Carbon::createFromFormat('d/m/Y',$request->fecha_inicio);
+			$query->where('fecha','>=',$fecha_inicio);
+		}
+		if($request->fecha_final){
+			$fecha_final = Carbon::createFromFormat('d/m/Y',$request->fecha_final);
+			$query->where('fecha','<=',$fecha_final);
+		}
+		if($request->keywords){
+			$query->whereHas('trabajador',function($query) use($request){
+				$query->where('nombre','LIKE',"%{$request->keywords}%");
+			});
+		}
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
+		];
+
 	}
 
-	public function consultas_enfermeria()
+	public function consultas_enfermeria(Request $request)
 	{
-		$enfermerias = ConsultaEnfermeria::join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
-		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->join('clientes', 'nominas.id_cliente', 'clientes.id')
-		->select('nominas.nombre', 'consultas_enfermerias.fecha', 'consultas_enfermerias.peso', 'consultas_enfermerias.altura',
-		'consultas_enfermerias.derivacion_consulta', 'consultas_enfermerias.temperatura_auxiliar', DB::raw('diagnostico_consulta.nombre diagnostico'),
-		DB::raw('clientes.nombre cliente'))
-		->orderBy('consultas_enfermerias.fecha', 'desc')
-		->get();
 
-		return $enfermerias;
+		$query = ConsultaEnfermeria::select('consultas_enfermerias.*')
+			->with('diagnostico')
+			->with('trabajador.cliente')
+			->whereHas('trabajador',function($query){
+				$query->where('deleted_at',null);
+			})
+			->join('nominas','consultas_enfermerias.id_nomina', 'nominas.id')
+			->join('clientes','nominas.id_cliente', 'clientes.id')
+			->join('diagnostico_consulta','consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id');
+
+		$total = $query->count();
+
+		if($request->fecha_inicio){
+			$fecha_inicio = Carbon::createFromFormat('d/m/Y',$request->fecha_inicio);
+			$query->where('fecha','>=',$fecha_inicio);
+		}
+		if($request->fecha_final){
+			$fecha_final = Carbon::createFromFormat('d/m/Y',$request->fecha_final);
+			$query->where('fecha','<=',$fecha_final);
+		}
+		if($request->keywords){
+			$query->whereHas('trabajador',function($query) use($request){
+				$query->where('nombre','LIKE',"%{$request->keywords}%");
+			});
+		}
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
+		];
+
 	}
 
 	public function comunicaciones()
@@ -487,9 +553,6 @@ class AdminReporteController extends Controller
 		}
 
 	}
-
-
-
 	public function filtrarConsultasEnfermeria(Request $request)
 	{
 
@@ -511,9 +574,6 @@ class AdminReporteController extends Controller
 		}
 
 	}
-
-
-
 	public function FiltrarComunicaciones(Request $request)
 	{
 

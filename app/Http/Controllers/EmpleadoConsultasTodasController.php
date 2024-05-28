@@ -169,17 +169,59 @@ class EmpleadoConsultasTodasController extends Controller
 			return back()->with('error', 'Debes trabajar para algun cliente para utilizar esta funcionalidad');
 		}
 
-		$queryMedicas = ConsultaMedica::select('consultas_medicas.*', 'nominas.nombre', 'nominas.email', 'diagnostico_consulta.nombre as diagnostico')
+		$queryMedicas = ConsultaMedica::select(
+				'nominas.nombre',
+				'nominas.email',
+				'consultas_medicas.id',
+				'consultas_medicas.id_nomina',
+				'consultas_medicas.id_diagnostico_consulta',
+				'consultas_medicas.fecha',
+				'consultas_medicas.derivacion_consulta',
+
+				'consultas_medicas.amerita_salida',
+				'consultas_medicas.peso',
+				'consultas_medicas.altura',
+				'consultas_medicas.imc',
+				'consultas_medicas.glucemia',
+				'consultas_medicas.saturacion_oxigeno',
+				'consultas_medicas.tension_arterial',
+				'consultas_medicas.frec_cardiaca',
+				'consultas_medicas.tratamiento',
+				'consultas_medicas.observaciones',
+
+				'diagnostico_consulta.nombre as diagnóstico',
+				DB::raw('"Médica" as tipo') // Agregamos un campo tipo para identificar consultas médicas
+			)
 			->join('nominas', 'nominas.id', 'consultas_medicas.id_nomina')
 			->join('diagnostico_consulta', 'diagnostico_consulta.id', 'consultas_medicas.id_diagnostico_consulta')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->orderBy('consultas_medicas.fecha', 'desc');
+			->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
-		$queryEnfermerias = ConsultaEnfermeria::select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.email', 'diagnostico_consulta.nombre as diagnostico')
+		$queryEnfermerias = ConsultaEnfermeria::select(
+				'nominas.nombre',
+				'nominas.email',
+				'consultas_enfermerias.id',
+				'consultas_enfermerias.id_nomina',
+				'consultas_enfermerias.id_diagnostico_consulta',
+				'consultas_enfermerias.fecha',
+				'consultas_enfermerias.derivacion_consulta',
+
+				'consultas_enfermerias.amerita_salida',
+				'consultas_enfermerias.peso',
+				'consultas_enfermerias.altura',
+				'consultas_enfermerias.imc',
+				'consultas_enfermerias.glucemia',
+				'consultas_enfermerias.saturacion_oxigeno',
+				'consultas_enfermerias.tension_arterial',
+				'consultas_enfermerias.frec_cardiaca',
+				'consultas_enfermerias.observaciones',
+				DB::raw('"" as tratamiento'),
+
+				'diagnostico_consulta.nombre as diagnóstico',
+				DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
+			)
 			->join('nominas', 'nominas.id', 'consultas_enfermerias.id_nomina')
 			->join('diagnostico_consulta', 'diagnostico_consulta.id', 'consultas_enfermerias.id_diagnostico_consulta')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->orderBy('consultas_enfermerias.fecha', 'desc');
+			->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
 		if ($request->from) {
 			$queryMedicas->whereDate('consultas_medicas.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
@@ -190,12 +232,21 @@ class EmpleadoConsultasTodasController extends Controller
 			$queryEnfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
-		$consultasMedicas = $queryMedicas->get();
-		$consultasEnfermerias = $queryEnfermerias->get();
+		//$consultasMedicas = $queryMedicas->get();
+		//$consultasEnfermerias = $queryEnfermerias->get();
 
-		if ($consultasMedicas->isEmpty() && $consultasEnfermerias->isEmpty()) {
+
+		$query = $queryMedicas->union($queryEnfermerias);
+		$total = $query->count();
+		if( !$total ) {
 			return back()->with('error', 'No se encontraron consultas');
 		}
+
+		$query->orderBy('fecha','desc');
+
+		$consultas = $query->get();
+
+		//dd($consultas->toArray());
 
 		$hoy = Carbon::now();
 		$file_name = 'consultas-' . $hoy->format('YmdHis') . '.csv';
@@ -210,6 +261,8 @@ class EmpleadoConsultasTodasController extends Controller
 			'Diagnóstico',
 			'Derivación',
 			'Amerita Salida',
+			'Tratamiento',
+			'Observaciones',
 			'Peso',
 			'Altura',
 			'IMC',
@@ -217,19 +270,22 @@ class EmpleadoConsultasTodasController extends Controller
 			'Saturación Oxígeno',
 			'Tensión Arterial',
 			'Frec. Cardíaca',
-			'Tratamiento',
-			'Observaciones',
 		], ';');
 
-		foreach ($consultasMedicas as $consulta) {
+		foreach ($consultas as $consulta) {
+
+			//$fecha = Carbon::createFromFormat('d/m/Y',$consulta->fecha);
+
 			fputcsv($fp, [
-				'Medica',
+				$consulta->tipo,
 				$consulta->nombre,
 				$consulta->email,
-				$consulta->fecha,
-				$consulta->diagnostico,
+				$consulta->fecha->format('d/m/Y'),
+				$consulta->diagnostico->nombre,
 				$consulta->derivacion_consulta,
 				($consulta->amerita_salida ? 'Si' : 'No'),
+				$consulta->tratamiento,
+				$consulta->observaciones,
 				$consulta->peso,
 				$consulta->altura,
 				$consulta->imc,
@@ -237,12 +293,10 @@ class EmpleadoConsultasTodasController extends Controller
 				$consulta->saturacion_oxigeno,
 				$consulta->tension_arterial,
 				$consulta->frec_cardiaca,
-				$consulta->tratamiento,
-				$consulta->observaciones
 			], ';');
 		}
 
-		foreach ($consultasEnfermerias as $consulta) {
+		/*foreach ($consultasEnfermerias as $consulta) {
 			fputcsv($fp, [
 				'Enfermeria',
 				$consulta->nombre,
@@ -261,7 +315,7 @@ class EmpleadoConsultasTodasController extends Controller
 				$consulta->tratamiento,
 				$consulta->observaciones
 			], ';');
-		}
+		}*/
 
 		fseek($fp, 0);
 		header('Content-Type: text/csv');

@@ -166,7 +166,7 @@ $(()=>{
 									 ''
 								}
 
-							
+
 
 								<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
 									<i title="Comunicaciones" class="fas fa-bullhorn"></i>

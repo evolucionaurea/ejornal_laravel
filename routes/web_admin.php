@@ -39,7 +39,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 			'destroy' => 'admin.clientes.destroy'
 		]
 	]);
-	
+
 	Route::post('admin/clientes/cargar_excel', 'AdminClientesController@cargar_excel')->name('/admin/clientes/cargar_excel');
 	Route::post('admin/generar_token', 'AdminClientesController@generarToken')->name('/admin/generar_token');
 	Route::post('admin/clientes/restaurar', 'AdminClientesController@restaurarCliente')->name('admin/clientes/restaurar');
@@ -106,10 +106,11 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	// Consultas
 	Route::get('admin/reportes_consultas', 'AdminReporteController@reportes_consultas')->name('reportes_consultas');
-	Route::get('admin/reportes/consultas_medicas', 'AdminReporteController@consultas_medicas')->name('reportes.consultas_medicas');
-	Route::post('admin/reportes/filtrar_consultas_medicas', 'AdminReporteController@filtrarConsultasMedicas')->name('reportes.filtrar_consultas_medicas');
-	Route::get('admin/reportes/consultas_enfermeria', 'AdminReporteController@consultas_enfermeria')->name('reportes.consultas_enfermeria');
-	Route::post('admin/reportes/filtrar_consultas_enfermeria', 'AdminReporteController@filtrarConsultasEnfermeria')->name('reportes.filtrar_consultas_enfermeria');
+	Route::post('admin/reportes/consultas_medicas', 'AdminReporteController@consultas_medicas');
+	Route::post('admin/reportes/consultas_enfermeria', 'AdminReporteController@consultas_enfermeria');
+
+	//Route::post('admin/reportes/filtrar_consultas_medicas', 'AdminReporteController@filtrarConsultasMedicas')->name('reportes.filtrar_consultas_medicas');
+	//Route::post('admin/reportes/filtrar_consultas_enfermeria', 'AdminReporteController@filtrarConsultasEnfermeria')->name('reportes.filtrar_consultas_enfermeria');
 
 	// Comunicaciones
 	Route::get('admin/reportes_comunicaciones', 'AdminReporteController@reportes_comunicaciones')->name('reportes_comunicaciones');

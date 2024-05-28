@@ -43,7 +43,7 @@ $(()=>{
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 						return `
 						<div class="acciones_tabla">
-							<a title="Ver" href="${(v.tipo == 'medica') ? 'medicas' : 'enfermeria'}/${v.id}">
+							<a title="Ver" href="${(v.tipo == 'Médica') ? 'medicas' : 'enfermeria'}/${v.id}">
 								<i class="fas fa-eye"></i>
 							</a>
 						</div>`

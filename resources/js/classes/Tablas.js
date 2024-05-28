@@ -44,6 +44,7 @@ export default class Tablas {
 			data:d=>{
 				d._token = csfr
 				$.extend(d,this.set_filters())
+				console.log(d)
 				loading()
 			}
 		}
@@ -160,6 +161,7 @@ export default class Tablas {
 
 			/*Buscar*/
 			this.modulo_busqueda.find('[data-toggle="search"]').click(async btn=>{
+				btn.preventDefault()
 
 				if(!('server_side' in this)) {
 					let response = await this.get()

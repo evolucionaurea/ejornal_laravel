@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 // use OwenIt\Auditing\Contracts\Auditable;
 use App\DiagnosticoConsulta;
+use App\Nomina;
 
 class ConsultaEnfermeria extends Model
 // class ConsultaEnfermeria extends Model implements Auditable
@@ -29,6 +30,9 @@ class ConsultaEnfermeria extends Model
 
   public function diagnostico(){
     return $this->belongsTo(DiagnosticoConsulta::class,'id_diagnostico_consulta');
+  }
+  public function trabajador(){
+    return $this->belongsTo(Nomina::class,'id_nomina');
   }
 
 }

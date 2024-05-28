@@ -20,7 +20,7 @@
 		</select>
 
 		<select name="estado" class="form-control form-control-sm mr-2" style="max-width:240px">
-			<option value="">--Seleccionar Filtro--</option>
+			<option value="">--Seleccionar Estado--</option>
 			<option value="1" {{Request::get('estado')=='1' ? 'selected' : '' }}>Sólo Activos</option>
 			<option value="0" {{Request::get('estado')=='0' ? 'selected' : '' }}>Sólo Inactivos</option>
 		</select>

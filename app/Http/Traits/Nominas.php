@@ -49,7 +49,7 @@ trait Nominas
 			});
 		}
 
-		if(!is_null($request->estado)) $query->where('estado','=',(int) $request->estado);
+		if(!is_null($request->estado)) $query->where('estado','=',$request->estado);
 
 
 		if($request->order){

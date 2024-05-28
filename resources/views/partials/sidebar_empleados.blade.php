@@ -213,16 +213,19 @@
 					{{-- Est Med Comp es: Estudios medicos complementarios. La seccion real se llama preocupacionales
 					pero luego
 					decidieron cambiarle el nombre. Solo cambio los "label digamos". Rutas y demas queda igual --}}
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Est Med Compl</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Estudio Médico Complementario</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/preocupacionales"
-							class="{{ setActiveSub('/empleados/preocupacionales') }}"
-							onclick="javascript:location.href='{{url('/empleados/preocupacionales')}}'">
+						<ol data-route="/empleados/preocupacionales" class="{{ setActiveSub('/empleados/preocupacionales') }}" >
 							<a href="{{url('/empleados/preocupacionales')}}">Listado</a>
 						</ol>
+
+						<ol data-route="preocupacionales.create" class="{{ setActiveSub('preocupacionales.create') }}">
+							<a href="{{url('/empleados/preocupacionales/create')}}">Nuevo estudio médico compl.</a>
+						</ol>
+
 					</ul>
 				</div>
 			</li>
