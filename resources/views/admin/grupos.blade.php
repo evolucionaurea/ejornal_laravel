@@ -9,15 +9,14 @@
 	<div id="page-content-wrapper">
 		@include('partials.nav_sup')
 
-
 		{{-- Contenido de la pagina --}}
-
 		<div class="cabecera">
 			<h2>Listado de grupos empresarios</h2>
 			<p>Aquí puedes ver el listado de los grupos empresarios del sistema</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('grupos.create')}}"><i
-						class="fas fa-plus-circle"></i> Nuevo grupo</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('grupos.create')}}">
+					<i class="fas fa-plus-circle"></i> Nuevo grupo
+				</a>
 			</div>
 		</div>
 
@@ -48,14 +47,12 @@
 					<tr>
 						<td>{{$grupo->nombre}}</td>
 						<td>{{$grupo->direccion}}</td>
-						{{-- <td>
-							{{$grupo->clientes->implode('nombre',', ')}}
-						</td> --}}
 						<td>
 							<a href="#" class="ver-clientes btn btn-info btn-sm"
-								data-grupo="{{ json_encode($grupo->clientes) }}">{{$grupo->clientes->count()}}</a>
+								data-grupo="{{ json_encode($grupo->clientes) }}">
+								{{$grupo->clientes->count()}}
+							</a>
 						</td>
-
 						<td class="acciones_tabla" scope="row">
 							<a title="Editar" href="{{route('grupos.edit', $grupo->id)}}">
 								<i class="fas fa-pen"></i>
@@ -66,7 +63,6 @@
 				</tbody>
 			</table>
 		</div>
-
 		{{-- Contenido de la pagina --}}
 	</div>
 </div>
@@ -81,8 +77,9 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<div class="modal-body" id="modalClientesBody">
-				<ul class="list-group">
+			<div class="modal-body">
+				<input type="text" id="buscarCliente" class="form-control mb-3" placeholder="Buscar cliente...">
+				<ul class="list-group" id="modalClientesBody">
 					<!-- Contenido de clientes asociados se actualizará aquí -->
 				</ul>
 			</div>
@@ -92,19 +89,28 @@
 
 <script>
 	$(document).ready(function(){
-    $('.ver-clientes').click(function(e){
-        e.preventDefault();
-        var clientesJson = JSON.stringify($(this).data('grupo'));
-        var clientes = JSON.parse(clientesJson);
-        var clientesHtml = '';
-        $.each(clientes, function(index, cliente){
-            clientesHtml += '<li class="list-group-item">' + cliente.nombre + '</li>';
-        });
-        $('#modalClientesBody').html('<ul>' + clientesHtml + '</ul>');
-        $('#modalClientes').modal('show');
-    });
-});
+        $('.ver-clientes').click(function(e){
+            e.preventDefault();
+            var clientes = $(this).data('grupo');
+            actualizarListaClientes(clientes);
 
+            $('#buscarCliente').on('input', function(){
+                var filtro = $(this).val().toLowerCase();
+                var clientesFiltrados = clientes.filter(cliente => cliente.nombre.toLowerCase().includes(filtro));
+                actualizarListaClientes(clientesFiltrados);
+            });
+
+            $('#modalClientes').modal('show');
+        });
+
+        function actualizarListaClientes(clientes) {
+            var clientesHtml = '';
+            $.each(clientes, function(index, cliente){
+                clientesHtml += '<li class="list-group-item"><strong>' + cliente.nombre + '</strong><br><small>' + cliente.direccion + '</small></li>';
+            });
+            $('#modalClientesBody').html(clientesHtml);
+        }
+    });
 </script>
 
 @endsection
