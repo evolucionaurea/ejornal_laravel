@@ -62,7 +62,10 @@ $(()=>{
 					name:'file_path',
 					className:'align-middle',
 					orderable:false,
-					render:v=>{
+					render:(v,type,row,meta)=>{
+
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
 						return `
 						<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${v.file_path}" title="${v.archivo}" >
 							<i class="fa fa-download fa-fw"></i> <span>${v.archivo}</span>
@@ -74,7 +77,11 @@ $(()=>{
 					name:'actions',
 					className:'text-right',
 					orderable:false,
-					render:v=>{
+					render:(v,type,row,meta)=>{
+
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
+
 						return `
 						<div class="acciones_tabla justify-content-end">
 							<button data-toggle="completado" data-id="${v.id}" title="Marcar como completado" class="btn-success" >

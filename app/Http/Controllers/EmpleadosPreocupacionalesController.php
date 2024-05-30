@@ -8,6 +8,8 @@ use App\Preocupacional;
 ///use App\ClienteUser;
 use App\Http\Traits\Clientes;
 use App\Nomina;
+use App\PreocupacionalTipoEstudio;
+use App\PreocupacionalArchivo;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +22,11 @@ class EmpleadosPreocupacionalesController extends Controller
 	public function index()
 	{
 		$clientes = $this->getClientesUser();
-		return view('empleados.preocupacionales', compact('clientes'));
+		$tipos = PreocupacionalTipoEstudio::all();
+		return view('empleados.preocupacionales', compact(
+			'clientes',
+			'tipos'
+		));
 
 	}
 	public function busqueda(Request $request)
@@ -37,6 +43,7 @@ class EmpleadosPreocupacionalesController extends Controller
 		$query = Preocupacional::with('trabajador')
 			->select('preocupacionales.*')
 			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
+			->with('archivos')
 			->whereHas('trabajador',function($query){
 			$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
 		});
@@ -96,11 +103,18 @@ class EmpleadosPreocupacionalesController extends Controller
 	public function create()
 	{
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
-		->where('estado', '=', 1)
-		->orderBy('nombre', 'asc')
-		->get();
+			->where('estado', '=', 1)
+			->orderBy('nombre', 'asc')
+			->get();
 		$clientes = $this->getClientesUser();
-		return view('empleados.preocupacionales.create', compact('clientes', 'trabajadores'));
+
+		$tipos = PreocupacionalTipoEstudio::all();
+
+		return view('empleados.preocupacionales.create', compact(
+			'clientes',
+			'trabajadores',
+			'tipos'
+		));
 
 	}
 
@@ -121,33 +135,54 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
 
-		// Si hay un archivo adjunto se va a guardar todo
-		if(!$request->hasFile('archivo')) {
+
+		if(!$request->hasFile('archivos')) {
 			return back()->withInput()->with('error', 'Debes adjuntar un archivo');
 		}
 
 
+		if($request->id){
+			$preocupacional = Preocupacional::findOrFail($request->id);
+		}else{
+			$preocupacional = new Preocupacional();
+		}
+
+
 		//Guardar en base Preocupacional
-		$preocupacional = new Preocupacional();
 		$preocupacional->id_nomina = $request->trabajador;
 		$preocupacional->fecha = $fecha;
 		$preocupacional->observaciones = $request->observaciones;
+		$preocupacional->tipo_estudio_id  = $request->tipo_estudio_id;
+		$preocupacional->resultado  = $request->resultado;
 
-		$archivo = $request->file('archivo');
-		$nombre = $archivo->getClientOriginalName();
-		$preocupacional->archivo = $nombre;
+		///$archivo = $request->file('archivo');
+		///$nombre = $archivo->getClientOriginalName();
+		///$preocupacional->archivo = $nombre;
 
 		if($request->tiene_vencimiento){
 			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
 			$preocupacional->completado = $request->completado;
+			$preocupacional->completado_comentarios  = $request->completado_comentarios;
 		}
 		///$preocupacional->save();
 		// Completar en base el hash del archivo guardado
 		//$preocupacional = Preocupacional::findOrFail($preocupacional->id);
-		$preocupacional->hash_archivo = $archivo->hashName();
+		//$preocupacional->hash_archivo = $archivo->hashName();
 		$preocupacional->save();
 
-		Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $archivo);
+
+		///ARCHIVOS
+		foreach($request->archivos as $file){
+			$archivo = new PreocupacionalArchivo;
+			$archivo->preocupacional_id = $preocupacional->id;
+			$archivo->archivo = $file->getClientOriginalName();
+			$archivo->hash_archivo = $file->hashName();
+			$archivo->save();
+			Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $file);
+		}
+
+
+		//Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $archivo);
 
 		return redirect('empleados/preocupacionales')->with('success', 'Preocupacional guardado con éxito');
 

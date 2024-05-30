@@ -117,7 +117,7 @@ class Certificado {
 			console.log(tr)
 			this.popup.find(this.table_archivos_cert).find('tbody').append(tr)
 		})
-		this.popup.on('click','button[data-toggle="quitar-archivo-cert"]',btn=>{
+		this.popup.on('click','button[data-toggle="quitar-archivo"]',btn=>{
 			const tbody = $(btn.currentTarget).closest('tbody')
 			const tr = $(btn.currentTarget).closest('tr')
 			const indx = tr.index()

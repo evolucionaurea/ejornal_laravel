@@ -4,7 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Nomina;
+use App\PreocupacionalArchivo;
 use Carbon\Carbon;
+
 
 class Preocupacional extends Model
 {
@@ -47,6 +49,11 @@ class Preocupacional extends Model
     if(is_null($this->fecha_vencimiento)) return '';
     return '<span class="badge badge-'.($this->completado?'success':'danger').'">'.($this->completado?'completado':'sin completar').'</span>';
 
+  }
+
+  public function archivos()
+  {
+    return $this->hasMany(PreocupacionalArchivo::class);
   }
 
 

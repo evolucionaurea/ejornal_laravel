@@ -57,15 +57,25 @@ $(()=>{
 					name:'completado'
 				},
 				{
-					data:row=>row,
+					data:'archivos',
 					name:'file_path',
 					orderable:false,
 					className:'align-middle',
-					render:v=>{
-						return `
-						<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${v.file_path}" title="${v.archivo}" >
-							<i class="fa fa-download fa-fw"></i> <span>${v.archivo}</span>
-						</button>`
+					render:(archivos,type,row,meta)=>{
+
+						if(archivos.length==0) return `<span class="text-muted font-style-italic">[sin archivos]</span>`
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
+						let buttons = ''
+						archivos.map((archivo,k)=>{
+							buttons += `<div class="flex flex-wrap">
+								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${archivo.file_path}" title="${archivo.archivo}" >
+									<i class="fa fa-download fa-fw"></i> <span>${archivo.archivo}</span>
+								</button>
+							</div>`
+						})
+
+						return buttons
 					}
 				},
 				{
@@ -73,7 +83,10 @@ $(()=>{
 					name:'actions',
 					className:'text-right align-middle',
 					orderable:false,
-					render:v=>{
+					render:(v,type,row,meta)=>{
+
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
 						return `
 						<div class="acciones_tabla justify-content-end">
 							<a title="Editar" href="preocupacionales/${v.id}/edit" >

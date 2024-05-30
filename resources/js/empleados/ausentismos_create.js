@@ -90,7 +90,7 @@ class Ausentismo {
 		})
 
 
-		$('[data-table="certificaciones_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo-cert"]',btn=>{
+		$('[data-table="certificaciones_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo"]',btn=>{
 			const tbody = $(btn.currentTarget).closest('tbody')
 			const tr = $(btn.currentTarget).closest('tr')
 			const indx = tr.index()
