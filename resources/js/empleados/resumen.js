@@ -64,18 +64,25 @@ $(()=>{
 					orderable:false,
 					render:(v,type,row,meta)=>{
 
+						if(v.archivos.length==0) return `<span class="text-muted font-style-italic">[sin archivos]</span>`
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
 
-						return `
-						<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${v.file_path}" title="${v.archivo}" >
-							<i class="fa fa-download fa-fw"></i> <span>${v.archivo}</span>
-						</button>`
+						let buttons = ''
+						v.archivos.map((archivo,k)=>{
+							buttons += `<div class="flex flex-wrap">
+								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${archivo.file_path}" title="${archivo.archivo}" >
+									<i class="fa fa-download fa-fw"></i> <span>${archivo.archivo}</span>
+								</button>
+							</div>`
+						})
+
+						return buttons
 					}
 				},
 				{
 					data:row=>row,
 					name:'actions',
-					className:'text-right',
+					className:'text-right align-middle',
 					orderable:false,
 					render:(v,type,row,meta)=>{
 
@@ -103,8 +110,24 @@ $(()=>{
 	$('[data-table="preocupacionales"]').on('click','[data-toggle="completado"]',async btn=>{
 		const id = $(btn.currentTarget).attr('data-id')
 		const tr = $(btn.currentTarget).closest('tr')
+		const swal = await Swal.fire({
+			input:'textarea',
+			inputLabel:'Marcar completado y dejar un comentario',
+			inputPlaceholder:'Ingresa un comentario',
+			inputAttributes:{
+				required:true
+			},
+			showCancelButton:true,
+			cancelButtonText:'Cancelar',
+			confirmButtonText:'Guardar',
+			reverseButtons:true
+		})
+		if(swal.isDismissed) return false
 		try{
-			const response = await axios.post(`preocupacionales/completar/${id}`)
+			const response = await axios.post(`preocupacionales/completar`,{
+				id:id,
+				comentarios:swal.value
+			})
 			toastr.success(response.data.message)
 			tr.remove()
 		}catch(e){

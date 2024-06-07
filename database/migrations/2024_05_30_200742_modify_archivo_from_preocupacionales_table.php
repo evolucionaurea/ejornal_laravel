@@ -14,8 +14,8 @@ class ModifyArchivoFromPreocupacionalesTable extends Migration
     public function up()
     {
         Schema::table('preocupacionales', function (Blueprint $table) {
-            $table->string('archivo')->nullable()->default('null')->change();
-            $table->string('hash_archivo')->nullable()->default('null')->change();
+            $table->string('archivo')->nullable()->default(null)->change();
+            $table->string('hash_archivo')->nullable()->default(null)->change();
         });
     }
 

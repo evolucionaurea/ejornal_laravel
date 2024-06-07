@@ -150,7 +150,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/certificados_livianos/busqueda','EmpleadosCertificadosLivianosController@busqueda');
 
 	// PREOCUPACIONALES
-	Route::post('empleados/preocupacionales/completar/{id}','EmpleadosPreocupacionalesController@completar');
+	Route::post('empleados/preocupacionales/completar','EmpleadosPreocupacionalesController@completar');
 	Route::resource('empleados/preocupacionales', 'EmpleadosPreocupacionalesController', [
 		'names' => [
 			'index' => '/empleados/preocupacionales'
@@ -158,7 +158,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	]);
 	Route::delete('empleados/preocupacionales/destroy/{id}','EmpleadosPreocupacionalesController@destroy');
 	Route::post('empleados/preocupacionales/busqueda','EmpleadosPreocupacionalesController@busqueda');
-	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
+	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo');
 
 
 	// MEDICAMENTOS

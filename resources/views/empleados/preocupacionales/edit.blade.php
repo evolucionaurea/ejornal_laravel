@@ -32,62 +32,144 @@
 		@endforeach
 		@endif
 
-		<div class="tarjeta">
-			<form action="{{action('EmpleadosPreocupacionalesController@update', $preocupacional->id)}}" accept-charset="UTF-8" method="post">
+
+
+			<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+
 				{{ csrf_field() }}
-				<input name="_method" type="hidden" value="PUT">
 
-				<div class="form-row">
+				<input type="hidden" class="form-control" name="id" value="{{ $preocupacional->id }}">
+				<input type="hidden" class="form-control" name="trabajador" value="{{ $preocupacional->id_nomina }}">
 
-					<div class="form-group col-lg-3 col-md-4 col-12">
-						<label>Trabajador</label>
-						<input disabled name="trabajador" type="text" class="form-control" value="{{$preocupacional->trabajador->nombre}}" placeholder="">
+
+				{{-- MAIN --}}
+				<div class="tarjeta">
+
+					<div class="form-row">
+
+						<div class="form-group col-lg-3">
+							<label for="">Tipo de Estudio</label>
+							<select name="tipo_estudio_id" class="form-control" required>
+								<option value="">--Seleccionar--</option>
+								@foreach($tipos as $tipo)
+								<option value="{{ $tipo->id }}" {{ $tipo->id==$preocupacional->tipo_estudio_id ? 'selected' : '' }} >{{ $tipo->name }}</option>
+								@endforeach
+							</select>
+						</div>
+
+						<div class="form-group col-lg-3 col-md-4 col-12">
+							<label>Trabajador</label>
+							<input disabled type="text" class="form-control" value="{{$preocupacional->trabajador->nombre}}" placeholder="">
+						</div>
+
+						<div class="form-group col-lg-3 col-md-4 col-12">
+							<label>Fecha</label>
+							<input id="ausentismo_fecha_inicio" name="fecha" type="datetime" class="form-control"
+							value="{{ !empty($preocupacional->fecha) ? date('d/m/Y',strtotime($preocupacional->fecha)) : "" }}">
+						</div>
+
+						<div class="form-group col-lg-3 col-md-4 col-12">
+							<label>Resultado</label>
+							<input name="resultado" type="datetime" class="form-control" value="{{ $preocupacional->resultado }}">
+						</div>
+
 					</div>
+				</div>
 
-					<div class="form-group col-lg-2 col-md-4 col-12">
-						<label>Fecha</label>
-						<input id="ausentismo_fecha_inicio" name="fecha" type="datetime" class="form-control"
-						value="{{ !empty($preocupacional->fecha) ? date('d/m/Y',strtotime($preocupacional->fecha)) : "" }}">
-					</div>
 
-					<div class="form-group col-lg-2 col-md-4 col-12">
-						<label for="">¿Tiene Vencimiento?</label>
-						<select name="tiene_vencimiento" class="form-control" required>
-							<option value="0" {{ !$preocupacional->fecha_vencimiento ? 'selected' : '' }} >No</option>
-							<option value="1" {{ $preocupacional->fecha_vencimiento ? 'selected' : '' }} >Si</option>
-						</select>
-					</div>
+				{{-- VENCIMIENTO --}}
+				<div class="tarjeta">
 
-					<div data-toggle="vencimiento" class="form-group col-lg-2 col-md-4 col-12 {{ !$preocupacional->fecha_vencimiento ? 'd-none' : ''}}">
-						<label for="">Vencimiento</label>
-						<input name="fecha_vencimiento" type="text" class="form-control" value="{{ $preocupacional->fecha_vencimiento ? $preocupacional->fecha_vencimiento->format('d/m/Y') : '' }}" >
-					</div>
-					<div data-toggle="vencimiento" class="form-group col-lg-2 col-md-4 col-12 {{ !$preocupacional->fecha_vencimiento ? 'd-none' : ''}}">
-						<label for="">Completado</label>
-						<select name="completado" class="form-control">
-							<option value="0" {{ !$preocupacional->completado ? 'selected' : '' }} >No</option>
-							<option value="1" {{ $preocupacional->completado ? 'selected'  : ''}} >Si</option>
-						</select>
-					</div>
+					<h4>Vencimiento</h4>
 
-					<div class="form-group col-lg-12">
-						<label>Observaciones</label>
-						<textarea name="observaciones" class="form-control" rows="6">{{$preocupacional->observaciones}}</textarea>
+					<div class="row">
+
+						<div class="form-group col-lg-3">
+							<label for="">¿Tiene Vencimiento?</label>
+							<select name="tiene_vencimiento" class="form-control" required>
+								<option value="0" {{ !$preocupacional->fecha_vencimiento ? 'selected' : '' }} >No</option>
+								<option value="1" {{ $preocupacional->fecha_vencimiento ? 'selected' : '' }} >Si</option>
+							</select>
+						</div>
+
+						<div data-toggle="vencimiento" class="col-lg-6 border-left p-4 {{ !is_null($preocupacional->fecha_vencimiento) ? '' : 'd-none' }}">
+							<div class="row">
+								<div class="form-group col-lg-6">
+									<label for="">Fecha de Vencimiento</label>
+									<input name="fecha_vencimiento" type="text" class="form-control" value="{{ $preocupacional->fecha_vencimiento->format('d/m/Y') }}" >
+								</div>
+								<div class="form-group col-lg-6">
+									<label for="">Completado</label>
+									<select name="completado" class="form-control">
+										<option value="0" {{ $preocupacional->completado===0 ? 'selected' : '' }}>No</option>
+										<option value="1" {{ $preocupacional->completado===1 ? 'selected' : '' }}>Si</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="">Comentarios</label>
+								<textarea name="completado_comentarios" rows="5" class="form-control" {{ $preocupacional->completado ? '' : 'disabled' }}>{{ $preocupacional->completado_comentarios }}</textarea>
+							</div>
+						</div>
+
 					</div>
 
 				</div>
-				<hr>
 
 
-				<label>Documentación</label>
-				<div class="form-group">
-					<a class="btn btn-info btn-tiny" href="{{route('preocupacionales.archivo', $preocupacional->id)}}" target="_blank">
-						<i class="fa fa-download fa-fw"></i> <span>{{$preocupacional->archivo}}</span>
-					</a>
+				{{-- ARCHIVOS --}}
+				<div class="tarjeta">
+					<label>Documentación / Observación</label>
+
+					<div class="row">
+
+						<div class="form-group col-lg-6">
+							<div class="table-responsive">
+								<table data-table="archivos"
+									class="table table-sm small w-100 table-bordered border">
+									<thead>
+										<tr class="bg-light">
+											<th colspan="2">
+												<label for="" class="mb-0">Adjuntar archivos <span style="color: red;">*</span></label>
+												<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										@if($preocupacional->archivos) @foreach($preocupacional->archivos as $archivo)
+										<tr>
+											<td colspan="2">
+												<a href="{{ $archivo->file_path }}" target="_blank" class="text-info">{{ $archivo->archivo }}</a>
+											</td>
+										</tr>
+										@endforeach @endif
+									</tbody>
+									<tfoot>
+										<tr class="bg-light">
+											<th colspan="2">
+												<button data-toggle="agregar-archivo"
+													class="btn btn-tiny btn-dark text-light" type="button">
+													<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
+												</button>
+											</th>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+
+
+						<div class="form-group col-lg-6">
+							<label>Observaciones</label>
+							<textarea name="observaciones" class="form-control" rows="6" required>{{ $preocupacional->observaciones }}</textarea>
+						</div>
+
+					</div>
 				</div>
 
-				<hr>
-				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
+				<div class="text-center m-5">
+					<button class="btn-ejornal btn-ejornal-base btn-ejornal-lg" type="submit" name="button">Guardar cambios</button>
+				</div>
 
 			</form>
 		</div>

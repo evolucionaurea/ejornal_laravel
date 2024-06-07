@@ -21,17 +21,17 @@ class Preocupacional extends Model
   	'fecha'=>'date:d/m/Y',
   	'fecha_vencimiento'=>'date:d/m/Y',
   ];
-  protected $appends = ['file_path','vencimiento_label','completado_label'];
+  protected $appends = ['vencimiento_label','completado_label'];
 
 
   public function trabajador(){
     return $this->belongsTo(Nomina::class,'id_nomina');
   }
 
-  public function getFilePathAttribute()
+  /*public function getFilePathAttribute()
   {
   	return url('empleados/preocupacionales/archivo/'.$this->id);
-  }
+  }*/
   public function getVencimientoLabelAttribute()
   {
     if(is_null($this->fecha_vencimiento)) return '';

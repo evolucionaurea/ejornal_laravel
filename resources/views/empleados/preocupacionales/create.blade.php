@@ -70,7 +70,7 @@
 
 					<div class="form-group col-lg-3">
 						<label for="">Resultado</label>
-						<input name="resultado" type="text" class="form-control" >
+						<input name="resultado" type="text" class="form-control" value="{{ old('resultado') }}" >
 					</div>
 
 				</div>
@@ -84,33 +84,25 @@
 
 				<div class="row">
 
-					{{-- <div class="form-group col-lg-6">
-						<label>Documentación</label>
-						<div class="custom-file">
-							<input name="archivo" type="file" class="custom-file-input">
-							<label for="" class="custom-file-label">Seleccionar archivo...</label>
-						</div>
-					</div> --}}
-
 					<div class="form-group col-lg-3">
 						<label for="">¿Tiene Vencimiento?</label>
 						<select name="tiene_vencimiento" class="form-control" required>
-							<option value="0">No</option>
-							<option value="1">Si</option>
+							<option value="0" {{ old('tiene_vencimiento')==='0' ? 'selected' : '' }} >No</option>
+							<option value="1" {{ old('tiene_vencimiento')==='1' ? 'selected' : '' }} >Si</option>
 						</select>
 					</div>
 
-					<div data-toggle="vencimiento" class="col-lg-6 d-none border-left p-4">
+					<div data-toggle="vencimiento" class="col-lg-6 border-left p-4 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
 						<div class="row">
 							<div class="form-group col-lg-6">
 								<label for="">Fecha de Vencimiento</label>
-								<input name="fecha_vencimiento" type="text" class="form-control" >
+								<input name="fecha_vencimiento" type="text" class="form-control" value="{{ old('fecha_vencimiento') }}" >
 							</div>
 							<div class="form-group col-lg-6">
 								<label for="">Completado</label>
 								<select name="completado" class="form-control">
-									<option value="0">No</option>
-									<option value="1">Si</option>
+									<option value="0" {{ old('completado')==='0' ? 'selected' : '' }}>No</option>
+									<option value="1" {{ old('completado')==='1' ? 'selected' : '' }}>Si</option>
 								</select>
 							</div>
 						</div>
@@ -119,9 +111,6 @@
 							<textarea name="completado_comentarios" rows="5" class="form-control" disabled>{{ old("completado_comentarios") }}</textarea>
 						</div>
 					</div>
-
-
-
 
 				</div>
 

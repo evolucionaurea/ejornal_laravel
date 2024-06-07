@@ -59,9 +59,9 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		if($request->id){
 			$documentacion = AusentismoDocumentacion::findOrFail($request->id);
 			$archivos_guardados = AusentismoDocumentacionArchivos::where('ausentismo_documentacion_id',$request->id)->get();
-			if(empty($archivos_guardados->toArray()) && !$request->cert_archivos) return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
+			if(empty($archivos_guardados->toArray()) && !$request->archivos) return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
 		}else{
-			if(!$request->cert_archivos) return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
+			if(!$request->archivos) return back()->with('error', 'Debes subir al menos 1 archivo al cargar o editar un certificado.');
 		}
 
 
@@ -95,8 +95,8 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 		$documentacion->user = auth()->user()->nombre;
 		$documentacion->save();
 
-		if($request->cert_archivos){
-			foreach($request->cert_archivos as $file){
+		if($request->archivos){
+			foreach($request->archivos as $file){
 				$doc_archivo = new AusentismoDocumentacionArchivos;
 				$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
 				$doc_archivo->archivo = $file->getClientOriginalName();

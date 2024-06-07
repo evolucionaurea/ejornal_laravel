@@ -136,14 +136,15 @@ class EmpleadosPreocupacionalesController extends Controller
 		$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
 
 
-		if(!$request->hasFile('archivos')) {
-			return back()->withInput()->with('error', 'Debes adjuntar un archivo');
-		}
-
-
 		if($request->id){
 			$preocupacional = Preocupacional::findOrFail($request->id);
+			if(!$preocupacional->archivos && !$request->archivos) {
+				return back()->withInput()->with('error', 'Debes adjuntar un archivo');
+			}
 		}else{
+			if(!$request->hasFile('archivos')) {
+				return back()->withInput()->with('error', 'Debes adjuntar un archivo');
+			}
 			$preocupacional = new Preocupacional();
 		}
 
@@ -191,10 +192,17 @@ class EmpleadosPreocupacionalesController extends Controller
 	public function edit($id)
 	{
 
-		$preocupacional = Preocupacional::with('trabajador')->where('id',$id)->first();
+		$preocupacional = Preocupacional::with('trabajador')->with('archivos')->where('id',$id)->first();
 		$clientes = $this->getClientesUser();
 
-		return view('empleados.preocupacionales.edit', compact('preocupacional', 'clientes'));
+		$tipos = PreocupacionalTipoEstudio::all();
+		//dd($preocupacional->toArray());
+
+		return view('empleados.preocupacionales.edit', compact(
+			'preocupacional',
+			'clientes',
+			'tipos'
+		));
 	}
 
 	public function update(Request $request, $id)
@@ -244,20 +252,21 @@ class EmpleadosPreocupacionalesController extends Controller
 	public function descargar_archivo($id)
 	{
 
-		$preocupacional = Preocupacional::find($id);
-		$ruta = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}/{$preocupacional->hash_archivo}");
+		$archivo = PreocupacionalArchivo::find($id);
+		$ruta = storage_path("app/preocupacionales/trabajador/{$archivo->preocupacional_id}/{$archivo->hash_archivo}");
 		return download_file($ruta);
 
 	}
 
 
-	public function completar($id){
+	public function completar(Request $request){
 
-		if(!$preocupacional = Preocupacional::find($id)){
+		if(!$preocupacional = Preocupacional::find($request->id)){
 			return false;
 		}
 
 		$preocupacional->completado = 1;
+		$preocupacional->completado_comentarios = $request->comentarios;
 		$preocupacional->save();
 
 		return [
