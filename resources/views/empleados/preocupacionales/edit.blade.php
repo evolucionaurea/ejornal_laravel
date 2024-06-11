@@ -96,7 +96,7 @@
 							<div class="row">
 								<div class="form-group col-lg-6">
 									<label for="">Fecha de Vencimiento</label>
-									<input name="fecha_vencimiento" type="text" class="form-control" value="{{ $preocupacional->fecha_vencimiento->format('d/m/Y') }}" >
+									<input name="fecha_vencimiento" type="text" class="form-control" value="{{ $preocupacional->fecha_vencimiento ? $preocupacional->fecha_vencimiento->format('d/m/Y') : '' }}" >
 								</div>
 								<div class="form-group col-lg-6">
 									<label for="">Completado</label>
