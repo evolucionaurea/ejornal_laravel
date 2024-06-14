@@ -173,13 +173,15 @@ class EmpleadosPreocupacionalesController extends Controller
 
 
 		///ARCHIVOS
-		foreach($request->archivos as $file){
-			$archivo = new PreocupacionalArchivo;
-			$archivo->preocupacional_id = $preocupacional->id;
-			$archivo->archivo = $file->getClientOriginalName();
-			$archivo->hash_archivo = $file->hashName();
-			$archivo->save();
-			Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $file);
+		if($request->archivos){
+			foreach($request->archivos as $file){
+				$archivo = new PreocupacionalArchivo;
+				$archivo->preocupacional_id = $preocupacional->id;
+				$archivo->archivo = $file->getClientOriginalName();
+				$archivo->hash_archivo = $file->hashName();
+				$archivo->save();
+				Storage::disk('local')->put('preocupacionales/trabajador/'.$preocupacional->id, $file);
+			}
 		}
 
 

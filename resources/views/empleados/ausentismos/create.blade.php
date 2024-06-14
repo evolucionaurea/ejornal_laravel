@@ -85,20 +85,17 @@
 
 					<div class="form-group col-lg-2">
 						<label>Fecha inicio *</label>
-						<input readonly required name="fecha_inicio" type="text" class="form-control" value="{{ old("
-							fecha_inicio") }}">
+						<input readonly required name="fecha_inicio" type="text" class="form-control" value="{{ old("fecha_inicio") }}">
 					</div>
 
 					<div class="form-group col-lg-2">
 						<label>Fecha final *</label>
-						<input readonly required name="fecha_final" type="text" class="form-control" value="{{ old("
-							fecha_final") }}">
+						<input readonly required name="fecha_final" type="text" class="form-control" value="{{ old("fecha_final") }}">
 					</div>
 
 					<div class="form-group col-lg-2">
 						<label>Fecha Regreso</label>
-						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="{{ old("
-							fecha_regreso_trabajar") }}">
+						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="{{ old("fecha_regreso_trabajar") }}">
 					</div>
 
 
@@ -190,7 +187,7 @@
 				</div>
 
 
-				<div id="certificado_content" class="tarjeta-body" style="{{ old(" incluir_certificado")=='on' ? ''
+				<div id="certificado_content" class="tarjeta-body" style="{{ old("incluir_certificado")=='on' ? ''
 					: 'display:none' }}">
 					<hr class="hr-line-dashed">
 

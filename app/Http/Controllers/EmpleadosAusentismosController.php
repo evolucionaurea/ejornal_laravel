@@ -112,7 +112,7 @@ class EmpleadosAusentismosController extends Controller
 				'cert_fecha_documento' => 'required',
 				//'cert_archivos' => 'required'
 			]);
-			if(!$request->cert_archivos){
+			if(!$request->archivos){
 				return back()->withInput()->with('error', 'Debes incluir al menos 1 archivo para el certificado.');
 			}
 		}
@@ -236,7 +236,7 @@ class EmpleadosAusentismosController extends Controller
 			$documentacion->user = auth()->user()->nombre;
 			$documentacion->save();
 
-			foreach($request->cert_archivos as $file){
+			foreach($request->archivos as $file){
 
 				$doc_archivo = new AusentismoDocumentacionArchivos;
 				$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
