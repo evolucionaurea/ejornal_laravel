@@ -15,20 +15,22 @@
 
 				@if (strpos($url_actual, 'create') == true || strpos($url_actual, 'edit') == true || strpos($url_actual,
 				'show') == true)
-				<select disabled name="select_clientes_sidebar" id="cliente_seleccionado_sidebar" class="form-control form-control-sm">
-				@else
-				<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar" class="form-control form-control-sm">
-				@endif
-
-					@foreach ($clientes as $cliente)
-					@if ($cliente->id == auth()->user()->id_cliente_actual)
-					<option selected value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+				<select disabled name="select_clientes_sidebar" id="cliente_seleccionado_sidebar"
+					class="form-control form-control-sm">
 					@else
-					<option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
-					@endif
-					@endforeach
+					<select name="select_clientes_sidebar" id="cliente_seleccionado_sidebar"
+						class="form-control form-control-sm">
+						@endif
 
-				</select>
+						@foreach ($clientes as $cliente)
+						@if ($cliente->id == auth()->user()->id_cliente_actual)
+						<option selected value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+						@else
+						<option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+						@endif
+						@endforeach
+
+					</select>
 			</div>
 			@endif
 	</div>
@@ -213,16 +215,20 @@
 					{{-- Est Med Comp es: Estudios medicos complementarios. La seccion real se llama preocupacionales
 					pero luego
 					decidieron cambiarle el nombre. Solo cambio los "label digamos". Rutas y demas queda igual --}}
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Estudio Médico Complementario</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Estudio Médico
+						Complementario</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/preocupacionales" class="{{ setActiveSub('/empleados/preocupacionales') }}" >
+						<ol data-route="/empleados/preocupacionales"
+							class="{{ setActiveSub('/empleados/preocupacionales') }}"
+							onclick="javascript:location.href='{{url('/empleados/preocupacionales')}}'">
 							<a href="{{url('/empleados/preocupacionales')}}">Listado</a>
 						</ol>
 
-						<ol data-route="preocupacionales.create" class="{{ setActiveSub('preocupacionales.create') }}">
+						<ol data-route="preocupacionales.create" class="{{ setActiveSub('preocupacionales.create') }}"
+							onclick="javascript:location.href='{{url('/empleados/preocupacionales/create')}}'">
 							<a href="{{url('/empleados/preocupacionales/create')}}">Nuevo estudio médico compl.</a>
 						</ol>
 

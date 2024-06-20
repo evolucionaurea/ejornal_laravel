@@ -39,7 +39,8 @@
 						<select name="nomina" class="form-control select_2" required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($nominas as $nomina)
-							<option value="{{$nomina->id}}" {{ old('nomina')==$nomina->id ? 'selected' : '' }} >{{$nomina->nombre}}</option>
+							<option value="{{$nomina->id}}" {{ old('nomina')==$nomina->id ? 'selected' : '' }}
+								>{{$nomina->nombre}}</option>
 							@endforeach
 						</select>
 					</div>
@@ -59,14 +60,17 @@
 						<select name="tipo" class="form-control" required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($diagnostico_consultas as $tipo)
-							<option value="{{$tipo->id}}" {{ old('tipo')==$tipo->id ? 'selected' : '' }}>{{$tipo->nombre}}</option>
+							<option value="{{$tipo->id}}" {{ old('tipo')==$tipo->id ? 'selected' : ''
+								}}>{{$tipo->nombre}}</option>
 							@endforeach
 						</select>
 					</div>
 					<div class="form-group col-md-3">
-						<label>Fecha <span style="color: red;">*</span></label>
-						<input readonly required id="data_picker_gral" name="fecha" type="text" class="form-control"
-							value="{{ old("fecha") }}">
+						<label>Fecha <span style="color: red;">*</span> </label>
+						<input disabled readonly required id="data_picker_gral" name="fecha_fija" type="text"
+							class="form-control" value="{{ old(" fecha_fija") }}">
+						<input required id="fecha_actual_oculta" name="fecha" type="hidden" class="form-control"
+							value="{{ old(" fecha") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Amerita salida <span style="color: red;">*</span></label>
@@ -94,16 +98,17 @@
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Temperatura axilar</label>
-						<input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("temperatura_auxiliar") }}" step="0.01">
+						<input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("
+							temperatura_auxiliar") }}" step="0.01">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Peso</label>
-						<input name="peso" type="number" class="form-control" value="{{ old("peso") }}">
+						<input name="peso" type="number" class="form-control" value="{{ old(" peso") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Altura</label>
 						<div class="input-group">
-							<input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
+							<input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
 							<div class="input-group-append">
 								<span class="input-group-text">cm.</span>
 							</div>
@@ -111,33 +116,37 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>IMC</label>
-						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
-						<input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
+						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
+						<input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Glucemia</label>
-						<input name="glucemia" type="number" class="form-control" value="{{ old("glucemia") }}">
+						<input name="glucemia" type="number" class="form-control" value="{{ old(" glucemia") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Saturacion oxígeno</label>
-						<input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("saturacion_oxigeno") }}">
+						<input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("
+							saturacion_oxigeno") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Tension arterial</label>
-						<input name="tension_arterial" type="text" class="form-control" value="{{ old("tension_arterial") }}">
+						<input name="tension_arterial" type="text" class="form-control" value="{{ old("
+							tension_arterial") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Frecuencia Cardíaca</label>
-						<input name="frec_cardiaca" type="number" class="form-control" value="{{ old("frec_cardiaca")
+						<input name="frec_cardiaca" type="number" class="form-control" value="{{ old(" frec_cardiaca")
 							}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Derivación consulta <span style="color: red;">*</span></label>
 						<select name="derivacion_consulta" class="form-control" required>
 							<option value="">--Seleccionar--</option>
-							<option value="Sanatorio" {{ old('derivacion_consulta')=='Sanatorio' ? 'selected' : '' }} >Sanatorio</option>
-							<option value="ART" {{ old('derivacion_consulta')=='ART' ? 'selected' : '' }} >ART</option>
-							<option value="Vuelve a trabajar" {{ old('derivacion_consulta')=='Vuelve a trabajar' ? 'selected' : '' }} >Vuelve a trabajar</option>
+							<option value="Sanatorio" {{ old('derivacion_consulta')=='Sanatorio' ? 'selected' : '' }}>
+								Sanatorio</option>
+							<option value="ART" {{ old('derivacion_consulta')=='ART' ? 'selected' : '' }}>ART</option>
+							<option value="Vuelve a trabajar" {{ old('derivacion_consulta')=='Vuelve a trabajar'
+								? 'selected' : '' }}>Vuelve a trabajar</option>
 						</select>
 					</div>
 					<div class="form-group col-md-4">
