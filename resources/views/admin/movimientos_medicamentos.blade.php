@@ -47,7 +47,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach ($stock_medicamentos as $stock)
+					{{-- @foreach ($stock_medicamentos as $stock)
 					<tr>
 						<td>{{$stock->nombre}}</td>
 						<td>{{$stock->cliente}}</td>
@@ -64,7 +64,7 @@
 						<td>{{$stock->motivo}}</td>
 						<td>{{$stock->created_at->format('d/m/Y - H:i \h\s.')}}</td>
 					</tr>
-					@endforeach
+					@endforeach --}}
 				</tbody>
 			</table>
 		</div>

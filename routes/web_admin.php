@@ -59,6 +59,8 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 			]
 	]);
 	Route::get('admin/movimiento_medicamentos', 'AdminMovimientoMedicamentosController@index')->name('/admin/movimiento_medicamentos');
+	Route::post('admin/movimiento/medicamentos', 'AdminMovimientoMedicamentosController@busqueda');
+
 	Route::delete('admin/medicamentos/destroy/{id}','AdminMedicamentosController@destroy');
 	Route::post('admin/medicamentos/busqueda','AdminMedicamentosController@busqueda');
 

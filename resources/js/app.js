@@ -22,7 +22,9 @@ require('./nav_sup.js');
 if(route=='/admin/clientes') require('./admin/clientes')
 if(route=='admin.clientes.show') require('./admin/admin_tablas')
 if(route=='/admin/medicamentos') require('./admin/medicamentos')
-if(route=='/admin/movimiento_medicamentos') require('./admin/admin_tablas')
+
+if(route=='/admin/movimiento_medicamentos') require('./admin/medicamentos/movimientos')
+
 if(route=='/admin/resumen') require('./admin/resumen')
 if(route=='/admin/reportes_fichadas_nuevas') require('./admin/reportes/fichadas')
 

@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Medicamento;
+use App\User;
+use App\Cliente;
 // use OwenIt\Auditing\Contracts\Auditable;
 
 class StockMedicamento extends Model
@@ -24,7 +26,15 @@ class StockMedicamento extends Model
 
 	public function medicamento()
 	{
-		return $this->belongsTo(Medicamento::class);
+		return $this->belongsTo(Medicamento::class,'id_medicamento');
+	}
+	public function user()
+	{
+		return $this->belongsTo(User::class,'id_user');
+	}
+	public function cliente()
+	{
+		return $this->belongsTo(Cliente::class,'id_cliente');
 	}
 
 

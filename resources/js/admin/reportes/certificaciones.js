@@ -18,6 +18,7 @@ $(()=>{
 					render:v=>{
 
 						if(v==null) return '<span class="text-muted font-italic">[sin asociar]</span>'
+						if(v.cliente==null) return '<span class="text-muted font-italic">[sin asociar]</span>'
 						return v.cliente.nombre
 					}
 				},

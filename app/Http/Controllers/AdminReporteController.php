@@ -166,7 +166,6 @@ class AdminReporteController extends Controller
 
 		$total_records = $query->count();
 
-		$filtro = '%'.$request->search['value'].'%';
 		$query
 			->with(['tipo'=>function($query){
 				$query
@@ -182,16 +181,11 @@ class AdminReporteController extends Controller
 			->with('documentaciones.archivos');
 
 
+		/// KEYWORDS
+		$filtro = '%'.$request->search['value'].'%';
+		$query->where(function($query) use ($filtro) {
 
-		/*$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
-			$query
-				->where('nominas.nombre','like',$filtro)
-				->orWhere('clientes.nombre','like',$filtro);
-		});*/
-		$query
-			->whereIn('id_trabajador',function($query) use ($filtro){
-
+			$query->whereIn('id_trabajador',function($query) use ($filtro){
 				$query->select('id')
 					->from('nominas')
 					->where(function($query) use ($filtro){
@@ -211,16 +205,21 @@ class AdminReporteController extends Controller
 					->where('nombre','like',$filtro);
 			});
 
+		});
 
 
-		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		if($request->tipo) $query->where('id_tipo',$request->tipo);
+		// FILTROS
+		if($request->from) $query->whereDate('ausentismos.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('ausentismos.fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->tipo) $query->where('ausentismos.id_tipo',$request->tipo);
+		if($request->cliente) $query->where('clientes.id',$request->cliente);
 
+
+		// ORDER
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
-			$relations = ['trabajador','tipo'];
+			//$relations = ['trabajador','tipo'];
 			$query->orderBy($sort,$dir);
 		}
 
@@ -236,7 +235,16 @@ class AdminReporteController extends Controller
 
 	public function reportes_certificaciones()
 	{
-		return view('admin.reportes.certificaciones');
+		$clientes = Cliente::all();
+		$ausentismo_tipos = AusentismoTipo::all();
+		return view('admin.reportes.certificaciones',compact(
+			'clientes',
+			'ausentismo_tipos'
+		));
+	}
+	public function certificaciones(Request $request)
+	{
+		return $this->ausentismos_ajax($request);
 	}
 
 
@@ -368,12 +376,6 @@ class AdminReporteController extends Controller
 		}
 		return $ausentismos;
 	}*/
-
-	public function certificaciones(Request $request)
-	{
-		$certificaciones = $this->ausentismos_ajax($request);
-		return $certificaciones;
-	}
 
 
 

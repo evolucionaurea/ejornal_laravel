@@ -21,45 +21,46 @@
 		@include('../mensajes_validacion')
 
 		<div class="tarjeta">
-		  {{-- <div class="d-flex justify-content-between row">
-			  <h4 class="col-md-2 col-lg-5">Certificaciones</h4>
-			  <div class="col-md-10 col-lg-7 d-flex">
-				  <input placeholder="Desde" id="reporte_certificaciones_desde" name="fecha_inicio" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
-				  <input placeholder="Hasta" id="reporte_certificaciones_hasta" name="fecha_final" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
-				  <a style="height: 35px; padding-top: 6px;" id="reporte_certificacion_filtro" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-search"></i> Buscar</a>
-				  <a style="height: 35px; padding-top: 6px;" id="reporte_certificacion_todo" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</a>
-			  </div>
-		  </div> --}}
 
+		  <div data-toggle="busqueda-fecha" class="d-flex align-items-center row">
 
-		  <div data-toggle="busqueda-fecha" class="row align-items-center">
+				<div class="col-lg-6">
+					<div class="row">
+						<div class="col-md-6">
+							<select name="cliente" class="form-control form-control-sm">
+								<option value="">--Seleccionar Cliente--</option>
+								@foreach($clientes as $cliente)
+								<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-6">
+							<select name="tipo" class="form-control form-control-sm">
+								<option value="">--Seleccionar Tipo de Ausentismo--</option>
+								@foreach($ausentismo_tipos as $ausentismo_tipo)
+								<option value="{{ $ausentismo_tipo->id }}">{{ $ausentismo_tipo->nombre }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-6">
+							<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="">
+						</div>
+						<div class="col-md-6">
+							<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="">
+						</div>
 
-				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
-
-				{{-- <div class="col-lg-3 form-group">
-					<select name="tipo" class="form-control form-control-sm select_2">
-						<option value="">--Todos los tipos--</option>
-						@foreach ($tipos as $tipo)
-						<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
-						@endforeach
-					</select>
-				</div> --}}
-
-				<div class="col-lg-2 form-group">
-					<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+					</div>
 				</div>
 
-				<div class="col-lg-2 form-group">
-					<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+				<div class="col-lg-4">
+					<div class="border-left p-4">
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-list"></i> Mostrar todo</button>
+					</div>
 				</div>
 
 
-				<div class="col-lg-3 form-group">
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
-				</div>
-
-			</div>
+		  </div>
 			<hr>
 
 
