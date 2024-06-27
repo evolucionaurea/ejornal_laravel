@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\TipoComunicacion;
+use App\Ausentismo;
 // use OwenIt\Auditing\Contracts\Auditable;
 
 class Comunicacion extends Model
@@ -24,6 +25,10 @@ class Comunicacion extends Model
 
   public function tipo(){
   	return $this->belongsTo(TipoComunicacion::class,'id_tipo');
+  }
+
+  public function ausentismo(){
+    return $this->belongsTo(Ausentismo::class,'id_ausentismo');
   }
 
 

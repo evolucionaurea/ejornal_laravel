@@ -18,6 +18,8 @@ use App\Ausentismo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Comunicacion;
+use App\Cliente;
+use App\TipoComunicacion;
 use App\Http\Traits\Ausentismos;
 
 class AdminReporteController extends Controller
@@ -245,7 +247,74 @@ class AdminReporteController extends Controller
 
 	public function reportes_comunicaciones()
 	{
-		return view('admin.reportes.comunicaciones');
+		$clientes = Cliente::all();
+		$ausentismo_tipos = AusentismoTipo::all();
+		$comunicacion_tipos = TipoComunicacion::all();
+
+		return view('admin.reportes.comunicaciones',compact(
+			'clientes',
+			'ausentismo_tipos',
+			'comunicacion_tipos'
+		));
+	}
+	public function comunicaciones(Request $request)
+	{
+
+		$query = Comunicacion::with([
+			'tipo',
+			'ausentismo.trabajador',
+			'ausentismo.cliente',
+			'ausentismo.tipo'
+		])
+		->select('comunicaciones.*')
+
+		->join('ausentismos', 'comunicaciones.id_ausentismo', 'ausentismos.id')
+		->join('tipo_comunicacion', 'comunicaciones.id_tipo', 'tipo_comunicacion.id')
+		->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
+		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
+		->join('clientes', 'nominas.id_cliente', 'clientes.id')
+
+		->whereHas('ausentismo.trabajador',function($query){
+			$query->where('deleted_at',null);
+		});
+
+		$total_records = $query->count();
+
+
+		// FILTROS
+		if($request->from) $query->whereDate('comunicaciones.created_at','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('comunicaciones.created_at','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->search) {
+			$query->where(function($query) use($request) {
+				$filtro = '%'.$request->search['value'].'%';
+				$query->where('descripcion','like',$filtro)
+					->orWhere('tipo_comunicacion.nombre','like',$filtro)
+					->orWhere('ausentismo_tipo.nombre','like',$filtro)
+					->orWhere('nominas.nombre','like',$filtro)
+					->orWhere('clientes.nombre','like',$filtro);
+			});
+		}
+		if($request->cliente) $query->where('clientes.id',$request->cliente);
+		if($request->ausentismo_tipo) $query->where('ausentismo_tipo.id',$request->ausentismo_tipo);
+		if($request->comunicacion_tipo) $query->where('tipo_comunicacion.id',$request->comunicacion_tipo);
+		///////
+
+		// SORT
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+		///////
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total_records,
+			'recordsFiltered'=>$query->count(),
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
+		];
+
 	}
 
 
@@ -402,21 +471,7 @@ class AdminReporteController extends Controller
 
 	}
 
-	public function comunicaciones()
-	{
-		$comunicaciones = Comunicacion::join('ausentismos', 'comunicaciones.id_ausentismo', 'ausentismos.id')
-		->join('tipo_comunicacion', 'comunicaciones.id_tipo', 'tipo_comunicacion.id')
-		->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-		->join('clientes', 'nominas.id_cliente', 'clientes.id')
-		->select('nominas.nombre', DB::raw('ausentismo_tipo.nombre tipo_ausentismo'),
-		DB::raw('tipo_comunicacion.nombre tipo_comunicacion'), 'comunicaciones.user', 'comunicaciones.descripcion',
-		'comunicaciones.created_at', DB::raw('clientes.nombre cliente'))
-		->orderBy('created_at', 'desc')
-		->get();
 
-		return $comunicaciones;
-	}
 
 
 	public function descargar_documentacion($id)

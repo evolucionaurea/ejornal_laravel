@@ -1,95 +1,102 @@
 @extends('partials.layout')
 
-@section('title', 'Admin')
+@section('title', 'Admin | Comunicaciones')
 
 @section('content')
 
 
 <div class="d-flex" id="wrapper">
-    @include('partials.sidebar_admin')
-    <div id="page-content-wrapper">
-        @include('partials.nav_sup')
+	@include('partials.sidebar_admin')
+	<div id="page-content-wrapper">
+		@include('partials.nav_sup')
 
 
-        {{-- Contenido de la pagina --}}
+		{{-- Contenido de la pagina --}}
 
-        <div class="cabecera">
-            <h2>Reportes</h2>
-            <p>Aquí puede ver los reportes del sistema</p>
-        </div>
+		<div class="cabecera">
+			<h2>Reportes / Comuinicaciones</h2>
+			<p>Aquí puede ver los reportes del sistema</p>
+		</div>
 
-        @include('../mensajes_validacion')
+		@include('../mensajes_validacion')
 
 
-        <div class="tarjeta">
-          <div class="d-flex justify-content-between row">
-              <h4 class="col-md-2 col-lg-5">Comunicaciones</h4>
-              <div class="col-md-10 col-lg-7 d-flex">
-                  <input placeholder="Desde" id="reporte_comunicaciones_desde" name="fecha_inicio" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
-                  <input placeholder="Hasta" id="reporte_comunicaciones_hasta" name="fecha_final" type="datetime" class="form-control form-control-sm mr-2 w-25 p-3" value="">
-                  <a style="height: 35px; padding-top: 6px;" id="reporte_comunicaciones_filtro" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-search"></i> Buscar</a>
-                  <a style="height: 35px; padding-top: 6px;" id="reporte_comunicaciones_todo" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</a>
-              </div>
-          </div>
-            <table class="table table-striped table-hover table-sm tabla_reporte_comunicaciones">
+		<div class="tarjeta">
 
-                <!--Table head-->
-                <thead>
-                    <tr>
-                      <th class="th-lg">
-                          <a>
-                              Trabajador
-                          </a>
-                      </th>
-                      <th class="th-lg">
-                          <a>
-                              Cliente
-                          </a>
-                      </th>
-                        <th class="th-lg">
-                            <a>
-                                Tipo ausentismo
-                            </a>
-                        </th>
-                        <th class="th-lg">
-                            <a>
-                                Tipo comunicacion
-                            </a>
-                        </th>
-                        <th class="th-lg">
-                            <a href="">
-                                User que registra
-                            </a>
-                        </th>
-                        <th class="th-lg">
-                            <a href="">
-                                Descripcion
-                            </a>
-                        </th>
-                        <th class="th-lg">
-                            <a href="">
-                                Fecha de carga
-                            </a>
-                        </th>
-                    </tr>
-                </thead>
-                <!--Table head-->
+			<div data-toggle="busqueda-fecha" class="d-flex align-items-center row">
 
-                <!--Table body-->
-                <tbody class="resultados_reporte_comunicaciones">
-                    {{-- Se llena por JS --}}
-                </tbody>
-                <!--Table body-->
-            </table>
-        </div>
+				<div class="col-lg-8">
+					<div class="row">
+						<div class="col-md-4">
+							<select name="cliente" class="form-control form-control-sm">
+								<option value="">--Seleccionar Cliente--</option>
+								@foreach($clientes as $cliente)
+								<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-4">
+							<select name="ausentismo_tipo" class="form-control form-control-sm">
+								<option value="">--Seleccionar Tipo de Ausentismo--</option>
+								@foreach($ausentismo_tipos as $ausentismo_tipo)
+								<option value="{{ $ausentismo_tipo->id }}">{{ $ausentismo_tipo->nombre }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-4">
+							<select name="comunicacion_tipo" class="form-control form-control-sm">
+								<option value="">--Seleccionar Tipo de Comunicación--</option>
+								@foreach($comunicacion_tipos as $comunicacion_tipo)
+								<option value="{{ $comunicacion_tipo->id }}">{{ $comunicacion_tipo->nombre }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-4">
+							<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="">
+						</div>
+						<div class="col-md-4">
+							<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="">
+						</div>
 
-        {{-- Contenido de la pagina --}}
-    </div>
+					</div>
+				</div>
+
+				<div class="col-lg-4">
+					<div class="border-left p-4">
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-list"></i> Mostrar todo</button>
+					</div>
+				</div>
+
+
+		  </div>
+
+		  <hr>
+
+		  <div class="table-responsive">
+				<table data-table="comunicaciones" class="table table-striped table-hover table-sm w-100">
+					<thead>
+						<tr>
+						  <th>Trabajador</th>
+						  <th>Cliente</th>
+							<th>Tipo ausentismo</th>
+							<th>Tipo comunicación</th>
+							<th>User que registra</th>
+							<th>Descripción</th>
+							<th>Fecha de carga</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+		  </div>
+
+
+		</div>
+
+	</div>
 </div>
 
 
-@include("../scripts_reportes_comunicaciones")
-@include("../modal_reportes")
-
+{{-- @include("../scripts_reportes_comunicaciones") --}}
 
 @endsection

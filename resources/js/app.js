@@ -35,6 +35,7 @@ if(route=='grupos.create') require('./admin/grupos/create.edit')
 if(route=='grupos.edit') require('./admin/grupos/create.edit')
 if(route=='reportes_ausentismos') require('./admin/reportes/ausentismos')
 if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones')
+if(route=='reportes_comunicaciones') require('./admin/reportes/comunicaciones')
 if(route=='reportes_consultas') require('./admin/reportes/consultas')
 
 
