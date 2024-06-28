@@ -161,6 +161,11 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
 
 
+	//Tipo Preocupacionales
+	Route::delete('empleados/preocupacionales_tipos/{id}','EmpleadosPreocupacionalesTipoController@destroy')->name('preocupacionales_tipos.delete');
+	Route::post('empleados/preocupacionales_tipos','EmpleadosPreocupacionalesTipoController@store');
+
+
 	// MEDICAMENTOS
 	Route::get('empleados/medicamentos/exportar','EmpleadosStockMedicamentoController@exportar');
 	Route::get('empleados/medicamentos_movimientos/exportar','EmpleadosStockMedicamentoController@exportarHistorial');

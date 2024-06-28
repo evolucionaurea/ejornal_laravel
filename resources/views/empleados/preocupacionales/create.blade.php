@@ -16,7 +16,8 @@
 			<h2>Creación de estudios médicos complementarios</h2>
 			<p>Aquí puedes cargar a los estudios médicos complementarios de la empresa.</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/preocupacionales')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/preocupacionales')}}"><i
+						class="fas fa-arrow-alt-circle-left"></i>Volver</a>
 			</div>
 		</div>
 
@@ -33,7 +34,8 @@
 		@endif
 
 
-		<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+		<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post"
+			enctype="multipart/form-data">
 
 			@csrf
 
@@ -44,33 +46,43 @@
 				<div class="row">
 
 					<div class="form-group col-lg-3">
-						<label for="">Tipo de Estudio</label>
+						<label for="">
+							Tipo de Estudio
+							<a data-toggle="modal" data-target="#tipoPreocupacional" href="">
+								<i class="fas fa-eye"></i>
+							</a>
+							<a data-toggle="modal" data-target="#tipoPreocupacionalAdd" href="">
+								<i class="fas fa-plus-circle"></i>
+							</a>
+						</label>
 						<select name="tipo_estudio_id" class="form-control" required>
-							<option value="">--Seleccionar--</option>
 							@foreach($tipos as $tipo)
-							<option value="{{ $tipo->id }}" {{ $tipo->id==old('tipo_estudio_id') ? 'selected' : '' }} >{{ $tipo->name }}</option>
+							<option value="{{ $tipo->id }}" {{ $tipo->id==old('tipo_estudio_id') ? 'selected' : '' }}
+								>{{ $tipo->name }}</option>
 							@endforeach
 						</select>
 					</div>
 
 					<div class="form-group col-lg-3">
 						<label>Trabajador</label>
-						<select data-toggle="select2" name="trabajador" class="form-control form-control-sm select_2" required>
+						<select data-toggle="select2" name="trabajador" class="form-control form-control-sm select_2"
+							required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($trabajadores as $trabajador)
-							<option value="{{$trabajador->id}}" {{ $trabajador->id==old('trabajador') ? 'selected' : '' }} >{{$trabajador->nombre}}</option>
+							<option value="{{$trabajador->id}}" {{ $trabajador->id==old('trabajador') ? 'selected' : ''
+								}} >{{$trabajador->nombre}}</option>
 							@endforeach
 						</select>
 					</div>
 
 					<div class="form-group col-lg-3">
 						<label>Fecha</label>
-						<input name="fecha" type="text" class="form-control" value="{{ old("fecha") }}" required>
+						<input name="fecha" type="text" class="form-control" value="{{ old(" fecha") }}" required>
 					</div>
 
 					<div class="form-group col-lg-3">
 						<label for="">Resultado</label>
-						<input name="resultado" type="text" class="form-control" value="{{ old('resultado') }}" >
+						<input name="resultado" type="text" class="form-control" value="{{ old('resultado') }}">
 					</div>
 
 				</div>
@@ -87,16 +99,18 @@
 					<div class="form-group col-lg-3">
 						<label for="">¿Tiene Vencimiento?</label>
 						<select name="tiene_vencimiento" class="form-control" required>
-							<option value="0" {{ old('tiene_vencimiento')==='0' ? 'selected' : '' }} >No</option>
-							<option value="1" {{ old('tiene_vencimiento')==='1' ? 'selected' : '' }} >Si</option>
+							<option value="0" {{ old('tiene_vencimiento')==='0' ? 'selected' : '' }}>No</option>
+							<option value="1" {{ old('tiene_vencimiento')==='1' ? 'selected' : '' }}>Si</option>
 						</select>
 					</div>
 
-					<div data-toggle="vencimiento" class="col-lg-6 border-left p-4 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
+					<div data-toggle="vencimiento"
+						class="col-lg-6 border-left p-4 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
 						<div class="row">
 							<div class="form-group col-lg-6">
 								<label for="">Fecha de Vencimiento</label>
-								<input name="fecha_vencimiento" type="text" class="form-control" value="{{ old('fecha_vencimiento') }}" >
+								<input name="fecha_vencimiento" type="text" class="form-control"
+									value="{{ old('fecha_vencimiento') }}">
 							</div>
 							<div class="form-group col-lg-6">
 								<label for="">Completado</label>
@@ -108,7 +122,8 @@
 						</div>
 						<div class="form-group">
 							<label for="">Comentarios</label>
-							<textarea name="completado_comentarios" rows="5" class="form-control" disabled>{{ old("completado_comentarios") }}</textarea>
+							<textarea name="completado_comentarios" rows="5" class="form-control"
+								disabled>{{ old("completado_comentarios") }}</textarea>
 						</div>
 					</div>
 
@@ -123,13 +138,14 @@
 
 					<div class="form-group col-lg-6">
 						<div class="table-responsive">
-							<table data-table="archivos"
-								class="table table-sm small w-100 table-bordered border">
+							<table data-table="archivos" class="table table-sm small w-100 table-bordered border">
 								<thead>
 									<tr class="bg-light">
 										<th colspan="2">
-											<label for="" class="mb-0">Adjuntar archivos <span style="color: red;">*</span></label>
-											<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
+											<label for="" class="mb-0">Adjuntar archivos <span
+													style="color: red;">*</span></label>
+											<span class="small text-muted font-italic">Puedes adjuntar más de 1
+												archivo</span>
 										</th>
 									</tr>
 								</thead>
@@ -153,19 +169,80 @@
 
 					<div class="form-group col-lg-6">
 						<label>Observaciones</label>
-						<textarea name="observaciones" class="form-control" rows="6" required>{{ old("observaciones") }}</textarea>
+						<textarea name="observaciones" class="form-control" rows="6"
+							required>{{ old("observaciones") }}</textarea>
 					</div>
 
 				</div>
 			</div>
 
 			<div class="text-center m-5">
-				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Crear preocupacional</button>
+				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Crear
+					preocupacional</button>
 			</div>
 		</form>
 
 
+
 		{{-- Contenido de la pagina --}}
+	</div>
+</div>
+
+
+<!-- Modal Ver y eliminar-->
+<div class="modal fade" id="tipoPreocupacional" tabindex="-1" aria-labelledby="tipoPreocupacionalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Tipos de preocupacional</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<ul class="list-group">
+					@foreach($tipos as $tipo)
+					<li class="list-group-item d-flex justify-content-between align-items-center">
+						{{ $tipo->name }}
+						<form action="{{route('preocupacionales_tipos.delete', $tipo->id)}}" method="post">
+							{{ csrf_field() }}
+							<input type="hidden" name="_method" value="DELETE">
+							<button title="Eliminar" type="submit">
+								<i style="color: rgb(116, 38, 38);" class="fas fa-trash"></i>
+							</button>
+						</form>
+					</li>
+					@endforeach
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Agregar-->
+<div class="modal fade" id="tipoPreocupacionalAdd" tabindex="-1" aria-labelledby="tipoPreocupacionalAddLabel"
+	aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Nuevo tipo de preocupacional</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="{{action('EmpleadosPreocupacionalesTipoController@store')}}" accept-charset="UTF-8"
+					method="post" enctype="multipart/form-data">
+					@csrf
+					<div class="form-group">
+						<label>Nombre</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<button type="submit" class="btn-ejornal btn-ejornal-success">Guardar</button>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 
