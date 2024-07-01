@@ -4,7 +4,7 @@
 Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	Route::get('admin/resumen', 'AdminResumenController@index')->name('/admin/resumen');
-	Route::get('admin/get_medicamentos', 'AdminResumenController@getMedicamentos');
+	Route::post('admin/get_medicamentos', 'AdminResumenController@getMedicamentos');
 
 
 	// USERS

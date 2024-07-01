@@ -42,7 +42,7 @@
 						<th>Grupo</th>
 						<th>Nombre</th>
 						<th>Dirección</th>
-						<th>Borrado Lógico</th>
+						<th>Borrado Lógico <i class="fa fa-question-circle fa-fw" data-swal="Click en la etiqueta <b>si</b> para restaurar al cliente"></i></th>
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -56,7 +56,7 @@
 							@if ($cliente->trashed())
 							<a data-toggle="modal" data-target="#restaurarClientModal" data-info="{{ $cliente->id }}"
 								style="cursor: pointer;" class="restaurar_cliente">
-								<span class="badge badge-danger">Yes</span>
+								<span class="badge badge-danger">Si</span>
 							</a>
 							@else
 							<span class="badge badge-success">No</span>

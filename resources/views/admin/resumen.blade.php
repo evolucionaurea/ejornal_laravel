@@ -21,7 +21,7 @@
 							<i class="fas fa-briefcase fa-lg blue z-depth-1 p-4 rounded-left text-white mr-3"></i>
 							<div class="media-body p-1">
 								<p class="text-uppercase text-muted mb-1"><small>Clientes</small></p>
-								<h5 class="font-weight-bold mb-0">{{$clientes}}</h5>
+								<h5 class="font-weight-bold mb-0">{{ $clientes->count() }}</h5>
 							</div>
 						</a>
 					</div>
@@ -86,11 +86,35 @@
 					@endif
 
 				</div>
+
+
+
 				<div class="row">
 					<div class="col-12">
 						<div class="tarjeta medicamentos_disponibles_por_empresa tabla">
 							<h4>Medicamentos disponibles</h4>
-							<table class="table table-striped">
+
+							<div data-toggle="search" class="row">
+								<div class="col-lg-3 form-group">
+									<select name="medicamento" class="form-control form-control-sm">
+										<option value="">--Seleccionar Medicamento--</option>
+										@foreach($medicamentos as $medicamento)
+										<option value="{{ $medicamento->id }}">{{ $medicamento->nombre }}</option>
+										@endforeach
+									</select>
+								</div>
+								<div class="col-lg-3 form-group">
+									<select name="cliente" class="form-control form-control-sm">
+										<option value="">--Seleccionar Cliente--</option>
+										@foreach($clientes as $cliente)
+										<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+										@endforeach
+									</select>
+								</div>
+							</div>
+							<hr>
+
+							<table data-table="medicamentos" class="table table-striped">
 								<thead>
 									<tr>
 										<th scope="col">Medicamento</th>
@@ -105,6 +129,8 @@
 						</div>
 					</div>
 				</div>
+
+
 			</section>
 		</div>
 

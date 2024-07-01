@@ -143,7 +143,8 @@ class AdminReporteController extends Controller
 	public function reportes_ausentismos()
 	{
 		$tipos = AusentismoTipo::get();
-		return view('admin.reportes.ausentismos',compact('tipos'));
+		$clientes = Cliente::get();
+		return view('admin.reportes.ausentismos',compact('tipos','clientes'));
 	}
 	public function ausentismos_ajax(Request $request)
 	{

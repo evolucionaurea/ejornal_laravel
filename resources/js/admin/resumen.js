@@ -1,36 +1,47 @@
+import Tablas from '../classes/Tablas.js';
+
+
 $(()=>{
 
-    let url = '/admin/get_medicamentos'
-    fetch(url)
-    .then(response => response.json())
-    .then(json => {
-      showMedicamentosDisponibles(json);
-    });
+	const table = new Tablas({
+		controller:'/admin',
+		get_path:'/get_medicamentos',
+		delete_path:'/destroy',
+		table:$('[data-table="medicamentos"]'),
 
-    function showMedicamentosDisponibles(datos){
-      for (let i = 0; i < datos.length; i++) {
-				$('.medicamentos_disponibles_por_empresa table tbody').append(
-					$('<tr>', {
-						'class': ''
-					}).append(
-						$('<td>', {
-							'text': datos[i].nombre
-						})
-					)
-					.append(
-						$('<td>', {
-							'text': datos[i].stock
-						})
-					)
-          .append(
-						$('<td>', {
-							'text': datos[i].cliente
-						})
-					)
-				)
-			}
+		modulo_busqueda:$('[data-toggle="search"]'),
 
-    }
+		server_side:true,
+
+		datatable_options:{
+			ordering:false,
+			columns:[
+				{
+					data:'medicamento.nombre',
+					className:'align-middle',
+					name:'medicamentos.nombre'
+				},
+				{
+					data:'stock',
+					className:'align-middle',
+					name:'stock'
+				},
+				{
+					data:'cliente',
+					className:'align-middle',
+					name:'clientes.nombre',
+					render:v=>{
+						if(v==null) return '<span class="text-muted font-italic">[no encontrado]</span>'
+						return v.nombre
+					}
+				}
+			]
+		}
+	})
+
+	$('[name="medicamento"],[name="cliente"]').on('change',select=>{
+		table.datatable_instance.ajax.reload()
+	})
 
 
 });

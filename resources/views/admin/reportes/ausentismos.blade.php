@@ -27,28 +27,47 @@
 
 				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-				<div class="col-lg-3 form-group">
-					<select name="tipo" class="form-control form-control-sm select_2">
-						<option value="">--Todos los tipos--</option>
-						@foreach ($tipos as $tipo)
-						<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
-						@endforeach
-					</select>
+
+
+				<div class="col-lg-6 border-right">
+
+
+					<div class="row align-items-center">
+
+						<div class="col-lg-6 form-group">
+							<select name="tipo" class="form-control form-control-sm select_2">
+								<option value="">--Todos los tipos--</option>
+								@foreach ($tipos as $tipo)
+								<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-lg-6 form-group">
+							<select name="cliente" class="form-control form-control-sm select_2">
+								<option value="">--Todos los clientes--</option>
+								@foreach ($clientes as $cliente)
+								<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+								@endforeach
+							</select>
+						</div>
+
+						<div class="col-lg-6 form-group">
+							<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+						</div>
+
+						<div class="col-lg-6 form-group">
+							<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+						</div>
+
+					</div>
+
 				</div>
 
-
-				<div class="col-lg-2 form-group">
-					<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
-				</div>
-
-				<div class="col-lg-2 form-group">
-					<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
-				</div>
-
-
-				<div class="col-lg-3 form-group">
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+				<div class="col-lg-4">
+					<div class="form-group">
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+					</div>
 				</div>
 
 			</div>
