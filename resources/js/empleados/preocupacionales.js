@@ -14,27 +14,29 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			order:[[ 3, "desc" ]],
+			order:[[ 1, "desc" ]],
 			columns:[
 				{
-					data:'trabajador.nombre',
+					data:'trabajador',
 					className:'align-middle',
-					name:'nominas.nombre'
-				},
-				{
-					data:'trabajador.email',
-					className:'align-middle',
-					name:'nominas.email'
-				},
-				{
-					data:'trabajador.telefono',
-					className:'align-middle',
-					name:'nominas.telefono'
+					name:'nominas.nombre',
+					render:v=>{
+						return `
+							<div>${v.nombre}<div>
+							<div class="small">DNI: ${v.dni}</div>
+							<div class="small">Tel: ${v.telefono}</div>
+						`
+					}
 				},
 				{
 					data:'fecha',
 					className:'align-middle',
 					name:'fecha'
+				},
+				{
+					data:'tipo.name',
+					className:'align-middle',
+					name:'preocupacionales_tipos_estudio.name'
 				},
 				{
 					data:null,
@@ -119,6 +121,20 @@ $(()=>{
 		}catch(e){
 			toastr.error('Hubo un error en la solicitud')
 		}
+	})
+
+	$('[data-toggle="busqueda-fecha"]').on('change','[name="vencimiento"]',select=>{
+		const value = $(select.currentTarget).val()
+		if(value=='1'){
+			$('[data-toggle="vencimiento"]').removeClass('d-none')
+		}else{
+
+			$('[data-toggle="vencimiento"]').addClass('d-none')
+			$('[data-toggle="vencimiento"] select').val(null)
+		}
+	})
+	$('[data-toggle="busqueda-fecha"] [data-toggle="clear"]').click(btn=>{
+		$('[data-toggle="busqueda-fecha"] [name="vencimiento"]').trigger('change')
 	})
 
 })

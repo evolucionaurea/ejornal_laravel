@@ -30,19 +30,72 @@
 
 		<div class="tarjeta">
 
-			@include('../../modulos.busqueda_fecha')
+			<div data-toggle="busqueda-fecha" class="d-flex align-items-center row">
+
+				<div class="col-lg-6">
+					<div class="row">
+						<div class="col-md-6">
+							<input placeholder="Fecha Desde" name="from" type="text" class="form-control form-control-sm" value="">
+						</div>
+						<div class="col-md-6">
+							<input placeholder="Fecha Hasta" name="to" type="text" class="form-control form-control-sm" value="">
+						</div>
+						<div class="col-md-6">
+							<select name="tipo" class="form-control form-control-sm">
+								<option value="">--Seleccionar Tipo de Ausentismo--</option>
+								@foreach($tipos as $tipo)
+								<option value="{{ $tipo->id }}">{{ $tipo->name }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-6">
+							<select name="vencimiento" class="form-control form-control-sm">
+								<option value="">--Con/Sin Vencimiento--</option>
+								<option value="1">Con Vencimiento</option>
+								<option value="0">Sin Vencimiento</option>
+							</select>
+						</div>
+						<div class="col-md-6 d-none" data-toggle="vencimiento">
+							<select name="vencimiento_estado" class="form-control form-control-sm">
+								<option value="">--Seleccionar Estado--</option>
+								<option value="1">Vencidos</option>
+								<option value="0">Vencimiento próximo</option>
+							</select>
+						</div>
+						<div class="col-md-6 d-none" data-toggle="vencimiento">
+							<select name="completado" class="form-control form-control-sm">
+								<option value="">--Completado / Sin Completar--</option>
+								<option value="1">Completados</option>
+								<option value="0">Sin Completar</option>
+							</select>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="col-lg-4">
+					<div class="border-left p-4">
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-list"></i> Mostrar todo</button>
+					</div>
+				</div>
+
+
+		  </div>
+
+			<hr>
+
 
 			<table data-table="preocupacionales" class="table table-striped table-hover table-sm">
 
 				<!--Table head-->
 				<thead>
 					<tr>
-						<th>Nombre</th>
-						<th>Email</th>
-						<th>Tel</th>
+						<th>Trabajador</th>
 						<th>Fecha</th>
+						<th>Tipo de Estudio</th>
 						<th>Vencimiento</th>
-						<th>Estado</th>
+						<th>Estado Venc.</th>
 						<th>Completado</th>
 						<th>Documentación</th>
 						<th>Acciones</th>

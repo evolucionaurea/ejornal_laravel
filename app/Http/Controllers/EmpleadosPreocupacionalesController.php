@@ -40,9 +40,10 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		$now = CarbonImmutable::now();
 
-		$query = Preocupacional::with('trabajador')
+		$query = Preocupacional::with(['trabajador','tipo'])
 			->select('preocupacionales.*')
 			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
+			->join('preocupacionales_tipos_estudio', 'preocupacionales_tipos_estudio.id', 'preocupacionales.tipo_estudio_id')
 			->with('archivos')
 			->whereHas('trabajador',function($query){
 			$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
@@ -50,26 +51,52 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		$total = $query->count();
 
+		// FILTROS
 		if($request->from){
 			$query->whereDate('preocupacionales.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 		if($request->to){
 			$query->whereDate('preocupacionales.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
-
-		if($request->vencimiento_from){
+		/*if($request->vencimiento_from){
 			$query
 				->whereDate('fecha_vencimiento','<=',$now->addMonth())
 				->where('completado',0);
+		}*/
+		if($request->tipo){
+			$query->where('tipo_estudio_id','=',$request->tipo);
+		}
+		if(!is_null($request->vencimiento)){
+			if($request->vencimiento==='1'){
+				$query->whereNotNull('fecha_vencimiento');
+			}
+			if($request->vencimiento==='0'){
+				$query->whereNull('fecha_vencimiento');
+			}
+		}
+		if(!is_null($request->vencimiento_estado)){
+			if($request->vencimiento_estado==='1'){
+				$query->whereDate('fecha_vencimiento','<',$now);
+			}
+			if($request->vencimiento_estado==='0'){
+				$query->whereDate('fecha_vencimiento','>=',$now);
+			}
+		}
+		if(!is_null($request->completado)){
+			$query->where('completado','=',$request->completado);
 		}
 
+
+
+		// BUSQUEDA
 		if(isset($request->search)){
 			$query->where(function($query) use($request) {
 				$filtro = '%'.$request->search['value'].'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('nominas.email','like',$filtro)
 					->orWhere('nominas.dni','like',$filtro)
-					->orWhere('nominas.telefono','like',$filtro);
+					->orWhere('nominas.telefono','like',$filtro)
+					->orWhere('preocupacionales_tipos_estudio.name','like',$filtro);
 			});
 		}
 

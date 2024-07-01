@@ -18,23 +18,25 @@ $(()=>{
 			order:[[ 3, "desc" ]],
 			columns:[
 				{
-					data:'trabajador.nombre',
+					data:'trabajador',
 					name:'nominas.nombre',
-					className:'align-middle'
-				},
-				{
-					data:'trabajador.email',
-					name:'nominas.email',
-					className:'align-middle'
-				},
-				{
-					data:'trabajador.telefono',
-					name:'nominas.telefono',
-					className:'align-middle'
+					className:'align-middle',
+					render:v=>{
+						return `
+							<div>${v.nombre}<div>
+							<div class="small">DNI: ${v.dni}</div>
+							<div class="small">Tel: ${v.telefono}</div>
+						`
+					}
 				},
 				{
 					data:'fecha',
 					name:'fecha',
+					className:'align-middle'
+				},
+				{
+					data:'tipo.name',
+					name:'preocupacionales_tipos_estudio.name',
 					className:'align-middle'
 				},
 				{

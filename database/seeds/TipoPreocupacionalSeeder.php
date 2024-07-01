@@ -36,11 +36,11 @@ class TipoPreocupacionalSeeder extends Seeder
           'updated_at' => date('Y-m-d H:m:s')
         ]);
 
-        PreocupacionalTipoEstudio::create([
+        /*PreocupacionalTipoEstudio::create([
           'name' => 'Estudio Complementario',
           'created_at' => date('Y-m-d H:m:s'),
           'updated_at' => date('Y-m-d H:m:s')
-        ]);
+        ]);*/
 
         PreocupacionalTipoEstudio::create([
           'name' => 'Interconsulta',

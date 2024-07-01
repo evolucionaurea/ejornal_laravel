@@ -145,22 +145,22 @@
 			<hr>
 
 			<form data-toggle="busqueda-preocupacionales">
-				<input type="hidden" name="vencimiento_from" value="1">
+				<input type="hidden" name="completado" value="0">
+				<input type="hidden" name="vencimiento" value="1">
 			</form>
 
 			<div class="table-responsivex">
 				<table data-table="preocupacionales" class="table table-striped table-sm small bg-light w-100">
 					<thead>
 						<tr>
-							<th>Nombre</th>
-							<th>Email</th>
-							<th>Teléfono</th>
+							<th>Trabajador</th>
 							<th>Fecha</th>
+							<th>Tipo de Estudio</th>
 							<th>Vencimiento</th>
-							<th>Estado</th>
+							<th>Estado Venc.</th>
 							<th>Completado</th>
 							<th>Documentación</th>
-							<th class="text-right">Acciones</th>
+							<th class="text-right">Acciones <i class="fa fa-question-circle fa-fw" data-swal="Click en el <i class='fa fa-check-circle text-success'></i> para marcar al estudio como completado"></i></th>
 						</tr>
 					</thead>
 					<tbody></tbody>

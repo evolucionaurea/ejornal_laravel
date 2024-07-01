@@ -48,7 +48,17 @@
 					<div class="form-row">
 
 						<div class="form-group col-lg-3">
-							<label for="">Tipo de Estudio</label>
+							<label for="">
+								<span>Tipo de Estudio</span>
+
+								<a data-toggle="modal" data-target="#tipoPreocupacional" href="">
+									<i class="fas fa-eye"></i>
+								</a>
+								<a data-toggle="modal" data-target="#tipoPreocupacionalAdd" href="">
+									<i class="fas fa-plus-circle"></i>
+								</a>
+
+							</label>
 							<select name="tipo_estudio_id" class="form-control" required>
 								<option value="">--Seleccionar--</option>
 								@foreach($tipos as $tipo)
@@ -177,5 +187,8 @@
 		{{-- Contenido de la pagina --}}
 	</div>
 </div>
+
+
+@include('../modulos/modales_crud_tipos_preocupacional')
 
 @endsection
