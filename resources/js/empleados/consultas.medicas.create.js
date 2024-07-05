@@ -140,11 +140,5 @@ $(()=>{
 	});
 
 	$('.select_2').select2();
-	let today = new Date();
-    let formattedDate = ('0' + today.getDate()).slice(-2) + '/' + ('0' + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
-
-    $('#data_picker_gral').val(formattedDate).prop('readonly', true);
-	$('#fecha_actual_oculta').val(formattedDate).prop('readonly', true);
-	$('#data_picker_gral').click(false);
 
 })

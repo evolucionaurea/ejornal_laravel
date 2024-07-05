@@ -67,9 +67,7 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>Fecha <span style="color: red;">*</span> </label>
-						<input disabled readonly required id="data_picker_gral" name="fecha_fija" type="text"
-							class="form-control" value="{{ old(" fecha_fija") }}">
-						<input required id="fecha_actual_oculta" name="fecha" type="hidden" class="form-control"
+						<input required id="data_picker_gral" name="fecha" type="text" class="form-control"
 							value="{{ old(" fecha") }}">
 					</div>
 					<div class="form-group col-md-3">

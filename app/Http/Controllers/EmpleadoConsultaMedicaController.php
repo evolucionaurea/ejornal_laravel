@@ -152,13 +152,18 @@ class EmpleadoConsultaMedicaController extends Controller
 			return back()->withInput($request->input())->with('error', 'Debes ingresar un diagnostico');
 		}
 
-		if (isset($request->fecha)) {
+		if (!isset($request->fecha) || empty($request->fecha) || $request->fecha == '' || $request->fecha == null) {
 			$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
-		}
-
-		if (!isset($fecha) || empty($fecha) || $fecha == '' || $fecha == null) {
+			$hoy = Carbon::today();
+			$hace30Dias = Carbon::today()->subDays(30);
+	
+			if ($fecha->lt($hace30Dias) || $fecha->gt($hoy)) {
+				return back()->withInput($request->input())->with('error', 'La fecha debe ser igual a hoy o hasta 30 días hacia atrás.');
+			}
+		}else{
 			return back()->withInput($request->input())->with('error', 'Debes ingresar una fecha');
 		}
+
 
 		if (!isset($request->tratamiento) || empty($request->tratamiento) || $request->tratamiento == '' || $request->tratamiento == null) {
 			return back()->withInput($request->input())->with('error', 'Debes completar el campo tratamiento');
