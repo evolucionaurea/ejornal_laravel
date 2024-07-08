@@ -11,6 +11,10 @@ class EmpleadosPreocupacionalesTipoController extends Controller
 
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+			'name' => 'required'
+		]);
+
         $tipo = new PreocupacionalTipoEstudio();
         $tipo->name = $request->name;
         $tipo->save();

@@ -142,8 +142,7 @@
 								<thead>
 									<tr class="bg-light">
 										<th colspan="2">
-											<label for="" class="mb-0">Adjuntar archivos <span
-													style="color: red;">*</span></label>
+											<label for="" class="mb-0">Adjuntar archivos</label>
 											<span class="small text-muted font-italic">Puedes adjuntar más de 1
 												archivo</span>
 										</th>

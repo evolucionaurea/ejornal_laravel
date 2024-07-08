@@ -153,7 +153,6 @@ class EmpleadosPreocupacionalesController extends Controller
 	 */
 	public function store(Request $request)
 	{
-
 		$validatedData = $request->validate([
 			'trabajador' => 'required',
 			'fecha' => 'required',
@@ -165,13 +164,7 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		if($request->id){
 			$preocupacional = Preocupacional::findOrFail($request->id);
-			if(!$preocupacional->archivos && !$request->archivos) {
-				return back()->withInput()->with('error', 'Debes adjuntar un archivo');
-			}
 		}else{
-			if(!$request->hasFile('archivos')) {
-				return back()->withInput()->with('error', 'Debes adjuntar un archivo');
-			}
 			$preocupacional = new Preocupacional();
 		}
 
