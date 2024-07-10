@@ -48,14 +48,15 @@ class Preocupacional {
 		this.table_archivos.on('click','tbody tr button[data-toggle="quitar-archivo"]',btn=>{
 			const tbody = $(btn.currentTarget).closest('tbody')
 			const tr = $(btn.currentTarget).closest('tr')
-			const indx = tr.index()
-			if(indx == 0){
-				Swal.fire({
-					icon:'warning',
-					title:'Debes subir al menos 1 archivo'
-				})
-				return false
-			}
+			// Se quita la validacion de que minimo debe subirse un archivo
+			// const indx = tr.index()
+			// if(indx == 0){
+			// 	Swal.fire({
+			// 		icon:'warning',
+			// 		title:'Debes subir al menos 1 archivo'
+			// 	})
+			// 	return false
+			// }
 
 			tr.remove()
 		})
