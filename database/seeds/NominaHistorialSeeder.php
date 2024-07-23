@@ -35,7 +35,7 @@ class NominaHistorialSeeder extends Seeder
 								->where('deleted_at',null)
 								->orWhereRaw("EXTRACT(YEAR_MONTH FROM deleted_at)>{$yearmonth}");
 						})
-						->where('estado','1')
+						->where('estado',1)
 						->count();
 
 					$nomina_historial = new NominaHistorial;
