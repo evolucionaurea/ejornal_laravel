@@ -148,57 +148,6 @@
 
 			</div>
 
-
-
-			{{-- @if (count($comunicaciones_ausentismo) > 0)
-			@foreach ($comunicaciones_ausentismo as $comunicacion)
-
-			<div class="accordion mb-4" id="accordionExample">
-				<div class="card">
-					<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingOne">
-						<h2 class="mb-0 d-flex">
-							<button class="btn btn-link btn-block text-left" type="button"
-								data-toggle="collapse" data-target="#collapse_{{ $comunicacion->id }}"
-								aria-expanded="true" aria-controls="collapse_{{ $comunicacion->id }}">
-								<h6><b>Comunicación:</b> {{$comunicacion->nombre}}</h6>
-							</button>
-							<i class="fal fa-chevron-circle-down text-white"></i>
-						</h2>
-					</div>
-					<div id="collapse_{{ $comunicacion->id }}" class="collapse show"
-						aria-labelledby="headingOne" data-parent="#accordionExample">
-						<div class="card-body">
-							<div class="card_consultas">
-								<div class="card_consulta">
-									<ul class="list-group list-group-flush">
-										<li class="list-group-item">
-											<span style="font-weight: 600;" class="text_black">Descripcion:
-											</span>
-											{{ (!empty($comunicacion->descripcion)) ?
-											$comunicacion->descripcion : "" }}
-										</li>
-										<li class="list-group-item">
-											<span style="font-weight: 600;" class="text_black">Última
-												actualización: </span>
-											{{ (!empty($comunicacion->updated_at)) ?
-											date('d/m/Y',strtotime($comunicacion->updated_at)) : "" }}
-										</li>
-									</ul>
-									<br>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			@endforeach
-
-			@else
-			<div class="alert alert-light" role="alert">
-				No hay ninguno
-			</div>
-			@endif --}}
-
 		</div>
 
 		{{-- Contenido de la pagina --}}
@@ -209,12 +158,11 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="cargar_comunicaciones_ausentismo" tabindex="-1"
-	aria-labelledby="cargar_comunicaciones_ausentismo_titulo" aria-hidden="true">
+<div class="modal fade" id="cargar_comunicaciones_ausentismo" tabindex="-1" aria-labelledby="cargar_comunicaciones_ausentismo_titulo" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="cargar_comunicaciones_ausentismo_titulo">Crear Comunicacion</h5>
+				<h5 class="modal-title" id="cargar_comunicaciones_ausentismo_titulo">Crear Comunicación</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -236,12 +184,11 @@
 								</select>
 							</div>
 							<div class="form-group col-md-12">
-								<label>Descripcion</label>
+								<label>Descripción</label>
 								<textarea required name="descripcion" class="form-control" rows="3"></textarea>
 							</div>
 						</div>
-						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear
-							comunicación</button>
+						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear comunicación</button>
 					</form>
 				</div>
 
@@ -251,47 +198,6 @@
 	</div>
 </div>
 
-
-<!-- Modal -->
-{{-- <div class="modal fade" id="modal_edit_comunicacion_ausentismo" tabindex="-1"
-	aria-labelledby="editar_comunicacion_ausentismo_titulo" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="editar_comunicacion_ausentismo_titulo">Editar comunicación</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-
-				<div class="row p-4">
-
-					<form id="form_editar_comunicacion_ausencia" action="" enctype="multipart/form-data"
-						accept-charset="UTF-8" method="post">
-						{{ csrf_field() }}
-						<input type="hidden" name="id_comunicacion" value="">
-						<input name="_method" type="hidden" value="PUT">
-						<div class="form-row">
-							<div class="form-group col-md-6">
-								<label>Tipo de ausentismo</label>
-								<input required name="id_tipo" type="text" class="form-control" placeholder="">
-							</div>
-							<div class="form-group col-md-6">
-								<label>Descripcion</label>
-								<textarea name="descripcion" class="form-control" rows="3"></textarea>
-							</div>
-						</div>
-						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Guardar
-							cambios</button>
-					</form>
-				</div>
-
-			</div>
-
-		</div>
-	</div>
-</div> --}}
 
 
 @endsection

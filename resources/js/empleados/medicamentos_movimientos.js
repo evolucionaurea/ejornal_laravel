@@ -11,7 +11,7 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			order:[[0,'asc']],
+			order:[[9,'desc']],
 
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 
@@ -34,9 +34,15 @@ $(()=>{
 					}
 				},
 				{
-					data:'user',
+					data:null,
 					name:'user',
-					className:'align-middle border-left'
+					orderable:false,
+					className:'align-middle border-left',
+					render:v=>{
+						if(v.id_consulta_enfermeria != null) return v.user_consulta_enfermeria
+						if(v.id_consulta_medica != null) return v.user_consulta_medica
+						return v.user
+					}
 				},
 				{
 					data:'cliente',
@@ -93,38 +99,6 @@ $(()=>{
 				}
 			]
 		}
-
-
-		/*render_row: medicamento => {
-			console.log(medicamento);
-			const formatDate = (date) => {
-				if (!date) return '';
-				const d = new Date(date);
-				const formattedDate = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-				const isoFormattedDate = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-				return { formattedDate, isoFormattedDate };
-			};
-
-			const { formattedDate: formattedFechaIngreso, isoFormattedDate: isoFechaIngreso } = formatDate(medicamento.fecha_ingreso);
-			const { formattedDate: formattedCreatedAt, isoFormattedDate: isoCreatedAt } = formatDate(medicamento.created_at);
-
-			return $(`
-				<tr>
-					<td>${medicamento.medicamento}</td>
-					<td>${medicamento.tipo_consulta}</td>
-					<td>${medicamento.user}</td>
-					<td>${medicamento.trabajador != null ? medicamento.trabajador : 'No disponible'}</td>
-					<td>${medicamento.cliente}</td>
-
-					<td>${medicamento.suministrados != null && medicamento.suministrados != 0 ? medicamento.suministrados : ''}</td>
-					<td>${medicamento.egreso != null && medicamento.egreso != 0 ? medicamento.egreso : ''}</td>
-					<td>${medicamento.motivo != null && medicamento.motivo != 0 ? medicamento.motivo : ''}</td>
-					<td data-order="${isoFechaIngreso}">${formattedFechaIngreso}</td>
-					<td data-order="${isoCreatedAt}">${formattedCreatedAt}</td>
-				</tr>`
-			);
-		}*/
-
 
 	})
 

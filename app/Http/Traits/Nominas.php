@@ -19,6 +19,8 @@ trait Nominas
 
 		DB::statement("SET time_zone = '-03:00'");
 
+		DB::enableQueryLog();
+
 		$query = Nomina::select('*')
 			->with(['ausentismos'=>function($query){
 				$query->with(['tipo'=>function($query){
@@ -49,7 +51,9 @@ trait Nominas
 			});
 		}
 
-		if(!is_null($request->estado)) $query->where('estado','=',$request->estado);
+		if(!is_null($request->estado)) {
+			$query->where('estado','=',(int) $request->estado);
+		}
 
 
 		if($request->order){
@@ -108,7 +112,8 @@ trait Nominas
 			'recordsTotal'=>$total,
 			'recordsFiltered'=>$records_filtered,
 			'data'=>$nominas,
-			'request'=>$request->all()
+			'request'=>$request->all(),
+			'queries'=>DB::getQueryLog()
 		];
 
 

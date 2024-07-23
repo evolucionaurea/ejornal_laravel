@@ -81,9 +81,8 @@ trait Ausentismos {
 			))
 			->where('nominas.id_cliente',$id_cliente)
 			->withCount('documentaciones')
-			->withCount('comunicaciones');
-
-		$query->where('nominas.deleted_at',null);
+			->withCount('comunicaciones')
+			->where('nominas.deleted_at',null);
 
 		$total = $query->count();
 
@@ -384,9 +383,9 @@ trait Ausentismos {
 				'--force'=> true
 			]);
 			$q_nomina = NominaHistorial::select('*')
-			->where('year_month',$today->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first();
+				->where('year_month',$today->format('Ym'))
+				->where('cliente_id',$id_cliente)
+				->first();
 		}
 		$nomina_actual = $q_nomina->cantidad;
 
@@ -462,11 +461,11 @@ trait Ausentismos {
 					$query->select('id')
 						->from('nominas')
 						->where('deleted_at',null)
+						->where('estado',1)
 						->where('id_cliente',$id_cliente);
 				})
 				->whereHas('tipo',function($query){
 					$query
-						//->where('incluir_indice',1);
 						->where('incluir_indice',1)
 						->where('nombre','NOT LIKE','%incidente%')
 						->where(function($query){
@@ -549,7 +548,7 @@ trait Ausentismos {
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					//->where('estado',1)
+					->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
@@ -618,7 +617,7 @@ trait Ausentismos {
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					//->where('estado',1)
+					->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
@@ -685,7 +684,7 @@ trait Ausentismos {
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					//->where('estado',1)
+					->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})
@@ -747,7 +746,7 @@ trait Ausentismos {
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					//->where('estado',1)
+					->where('estado',1)
 					->where('deleted_at',null)
 					->where('id_cliente',$id_cliente);
 			})

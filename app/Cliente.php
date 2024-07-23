@@ -23,7 +23,7 @@ class Cliente extends Model
 
   public function nominas()
   {
-  	return $this->hasMany(Nomina::class,'id_cliente');
+  	return $this->hasMany(Nomina::class,'id_cliente')->where('estado',1);
   }
   public function nominas_historial()
   {

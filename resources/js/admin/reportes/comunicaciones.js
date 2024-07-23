@@ -56,7 +56,8 @@ $(()=>{
 				{
 					data:'descripcion',
 					name:'descripcion',
-					width:320
+					width:320,
+					className:'small'
 				},
 				{
 					data:'created_at',

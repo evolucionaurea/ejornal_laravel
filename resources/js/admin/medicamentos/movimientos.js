@@ -60,7 +60,8 @@ $(()=>{
 				},
 				{
 					data:'motivo',
-					name:'motivo'
+					name:'motivo',
+					className:'small'
 				},
 				{
 					data:'created_at',

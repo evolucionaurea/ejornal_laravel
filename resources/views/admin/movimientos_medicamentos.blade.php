@@ -42,7 +42,7 @@
 						<th class="text-center">Egreso</th>
 						<th class="text-center">Stock</th>
 						<th>Fecha de ingreso</th>
-						<th style="width: 100px">Motivo</th>
+						<th>Motivo</th>
 						<th>Creado</th>
 					</tr>
 				</thead>

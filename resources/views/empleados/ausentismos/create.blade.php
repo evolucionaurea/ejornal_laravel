@@ -22,6 +22,16 @@
 			</div>
 		</div>
 
+		@if (\Session::has('consulta_success'))
+		<div class="alert alert-success alert-dismissible fade show mt-2 mr-4 ml-4" role="alert">
+			{{ \Session::get('consulta_success') }}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		@endif
+
+
 		@include('../../mensajes_validacion')
 		@if ($errors->any())
 		@foreach ($errors->all() as $error)
@@ -52,8 +62,16 @@
 						<select required name="trabajador" class="form-control form-control-sm select_2">
 							<option value="">--Seleccionar--</option>
 							@foreach ($trabajadores as $trabajador)
-							<option value="{{$trabajador->id}}" {{old("trabajador")==$trabajador->id ? 'selected' : ''}}
-								>{{$trabajador->nombre}}</option>
+							<option
+								value="{{$trabajador->id}}"
+								@if(\Session::has('consulta'))
+								{{ \Session::get('consulta')['nomina'] == $trabajador->id ? 'selected' : '' }}
+								@else
+								{{ old("trabajador")==$trabajador->id ? 'selected' : '' }}
+								@endif
+							>
+								{{$trabajador->nombre}}
+							</option>
 							@endforeach
 						</select>
 					</div>
@@ -85,37 +103,23 @@
 
 					<div class="form-group col-lg-2">
 						<label>Fecha inicio *</label>
-						<input readonly required name="fecha_inicio" type="text" class="form-control" value="{{ old("fecha_inicio") }}">
+						<input readonly required name="fecha_inicio" type="text" class="form-control" value="@if(\Session::has('consulta')){{ \Session::get('consulta')['fecha'] }}@else{{ old("fecha_inicio") }}@endif">
 					</div>
 
 					<div class="form-group col-lg-2">
 						<label>Fecha final *</label>
-						<input readonly required name="fecha_final" type="text" class="form-control" value="{{ old("fecha_final") }}">
+						<input readonly required name="fecha_final" type="text" class="form-control" value="@if(\Session::has('consulta')){{ \Session::get('consulta')['fecha_final'] }}@else{{ old("fecha_final") }}@endif">
 					</div>
 
 					<div class="form-group col-lg-2">
 						<label>Fecha Regreso</label>
-						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="{{ old("fecha_regreso_trabajar") }}">
+						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="@if(\Session::has('consulta')){{ \Session::get('consulta')['fecha_final'] }}@else{{ old("fecha_regreso_trabajar") }}@endif">
 					</div>
 
 
-
-					{{-- <div class="form-group col-lg-3">
-						<label id="inputGroupFileAddon01">Documentación</label>
-
-						<div class="input-group mb-3">
-							<div class="custom-file">
-								<input name="archivo" type="file" class="custom-file-input clickable"
-									id="inputGroupFile01">
-								<label class="custom-file-label" for="inputGroupFile01">...</label>
-							</div>
-						</div>
-
-					</div> --}}
-
 					<div class="form-group col-lg-12">
 						<label>Comentario</label>
-						<textarea name="comentario" class="form-control" rows="3">{{ old("comentario") }}</textarea>
+						<textarea name="comentario" class="form-control" rows="3">@if(\Session::has('consulta'))Generado desde Consulta {{ \Session::get('consulta')['consulta_tipo'] }}@else{{ old("comentario") }}@endif</textarea>
 					</div>
 
 				</div>
@@ -135,23 +139,30 @@
 								data-target="#crear_tipo_comunicacion" href="#">
 								<i class="fas fa-plus-circle"></i>
 							</a>
-							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion"
-								href="#">
+							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion" href="#">
 								<i class="fas fa-eye"></i>
 							</a>
 						</label>
 						<select required name="tipo_comunicacion" class="form-control form-control-sm select_2">
 							<option value="">--Seleccionar--</option>
 							@foreach ($tipo_comunicacion as $tipo_com)
-							<option value="{{$tipo_com->id}}" {{ old('tipo_comunicacion')==$tipo_com->id ? 'selected' :
-								'' }} >{{$tipo_com->nombre}}</option>
+							<option
+								value="{{$tipo_com->id}}"
+								@if(\Session::has('consulta'))
+									{{ strtolower($tipo_com->nombre) == 'presencial' ? 'selected' : ''}}
+								@else
+								{{ old('tipo_comunicacion')==$tipo_com->id ? 'selected' : '' }}
+								@endif
+							>
+								{{$tipo_com->nombre}}
+							</option>
 							@endforeach
 						</select>
 					</div>
 					<div class="form-group col-lg-9">
 						<label>Descripción *</label>
 						<textarea required name="descripcion" class="form-control"
-							rows="3">{{ old("descripcion") }}</textarea>
+							rows="3">@if(\Session::has('consulta'))Amerita salida por Consulta {{ \Session::get('consulta')['consulta_tipo'] }}@else{{ old("descripcion") }}@endif</textarea>
 					</div>
 				</div>
 

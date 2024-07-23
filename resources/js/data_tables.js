@@ -24,7 +24,7 @@ window.datatable_options = {
 		}
 	],
 	responsive: true,
-	"language": {
+	language: {
 		"ordering": false,
 		"sProcessing": "Procesando...",
 		"sLengthMenu": "Mostrar _MENU_ registros",

@@ -57,7 +57,7 @@
 						<a href="{{url('/admin/clientes')}}">Listado</a>
 					</ol>
 					<ol data-route="admin.clientes.create" class="{{ setActiveSub('clientes.create') }}"
-						onclick="javascript:location.href='{{url('/admin/create')}}'">
+						onclick="javascript:location.href='{{url('/admin/clientes/create')}}'">
 						<a href="{{url('/admin/clientes/create')}}">Crear cliente</a>
 					</ol>
 				</ul>
@@ -76,7 +76,7 @@
 						<a href="{{url('/admin/grupos')}}">Listado</a>
 					</ol>
 					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}"
-						onclick="javascript:location.href='{{url('/admin/create')}}'">
+						onclick="javascript:location.href='{{url('/admin/grupos/create')}}'">
 						<a href="{{url('/admin/grupos/create')}}">Crear grupo</a>
 					</ol>
 				</ul>

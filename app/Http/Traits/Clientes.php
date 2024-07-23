@@ -40,6 +40,7 @@ trait Clientes {
 			->where('cliente_id',$id_cliente)
 			->first();
 		///RESOLVER SI NO ESTÁ GENERADO EL REGISTRO CON EL CRON
+		//dd($q_nomina->cantidad);
 		if(!$q_nomina){
 			\Artisan::call('db:seed', [
 				'--class' => 'NominaHistorialSeeder',
@@ -52,7 +53,6 @@ trait Clientes {
 			->first();
 		}
 		$nomina_actual = $q_nomina->cantidad;
-		//dd($nomina_actual);
 
 
 		$nomina_mes_anterior = NominaHistorial::select('*')
@@ -116,7 +116,7 @@ trait Clientes {
 			$query->select('id')
 				->from('nominas')
 				->where('id_cliente',$id_cliente)
-				//->where('estado',1)
+				->where('estado',1)
 				->where('deleted_at',null);
 		})
 		->orderBy('dias','desc');
@@ -184,7 +184,7 @@ trait Clientes {
 			$query->select('id')
 				->from('nominas')
 				->where('id_cliente',$id_cliente)
-				//->where('estado',1)
+				->where('estado',1)
 				->where('deleted_at',null); ////consultar
 		});
 		$mes_pasado = clone $q_ausentismos_mes_pasado;
@@ -247,7 +247,7 @@ trait Clientes {
 			$query->select('id')
 				->from('nominas')
 				->where('id_cliente',$id_cliente)
-				//->where('estado',1)
+				->where('estado',1)
 				->where('deleted_at',null);
 		});
 		$mes_anio_anterior = clone $q_ausentismos_mes_anio_anterior;
@@ -317,7 +317,7 @@ trait Clientes {
 			$query->select('id')
 				->from('nominas')
 				->where('id_cliente',$id_cliente)
-				//->where('estado',1)
+				->where('estado',1)
 				->where('deleted_at',null);
 		})
 		->orderBy('dias','desc');
@@ -469,7 +469,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					//->where('estado',1)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){
@@ -504,7 +504,7 @@ trait Clientes {
 				$query->select('id')
 					->from('nominas')
 					->where('id_cliente',$id_cliente)
-					//->where('estado',1)
+					->where('estado',1)
 					->where('deleted_at',null);
 			})
 			->with(['trabajador'=>function($query){

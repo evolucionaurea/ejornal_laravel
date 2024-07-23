@@ -32,6 +32,10 @@ class EmpleadosComunicacionesController extends Controller
 			'nominas.email',
 			DB::raw('tipo_comunicacion.nombre tipo'),
 			'comunicaciones.created_at',
+			'comunicaciones.descripcion',
+
+			DB::raw('IF(comunicaciones.user IS NOT NULL,comunicaciones.user,ausentismos.user) as user'),
+
 			'nominas.estado'
 		)
 		->join('ausentismos', 'comunicaciones.id_ausentismo', 'ausentismos.id')
@@ -51,6 +55,20 @@ class EmpleadosComunicacionesController extends Controller
 			$dir  = $request->order[0]['dir'];
 			$query->orderBy($sort,$dir);
 		}
+		if($request->search){
+			$filtro = '%'.$request->search['value'].'%';
+
+			$query->where(function($query) use($filtro){
+				$query
+					->where('nominas.nombre','LIKE',$filtro)
+					->orWhere('tipo_comunicacion.nombre','LIKE',$filtro)
+					->orWhere('ausentismos.user','LIKE',$filtro)
+					->orWhere('comunicaciones.user','LIKE',$filtro)
+					->orWhere('comunicaciones.descripcion','LIKE',$filtro);
+			});
+
+		}
+
 
 		$total_filtered = $query->count();
 
@@ -112,17 +130,27 @@ class EmpleadosComunicacionesController extends Controller
 
 		$ausencia = Ausentismo::where('id',$id)->with('trabajador')->with('tipo')->first();
 
-		$comunicaciones_ausentismo = Comunicacion::where('id_ausentismo', $id)
+		$comunicaciones_ausentismo = Comunicacion::select(
+				'comunicaciones.*',
+				DB::raw('IF(comunicaciones.user IS NOT NULL,comunicaciones.user,ausentismos.user) as user')
+			)
+			->join('ausentismos','comunicaciones.id_ausentismo','ausentismos.id')
+			->where('id_ausentismo', $id)
 			->with('tipo')
 			->orderBy('comunicaciones.created_at', 'desc')
 			->get();
 
 		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
-
+		//dd($tipo_comunicaciones);
 
 		$clientes = $this->getClientesUser();
 
-		return view('empleados.comunicaciones.show', compact('ausencia', 'clientes', 'comunicaciones_ausentismo', 'tipo_comunicaciones'));
+		return view('empleados.comunicaciones.show', compact(
+			'ausencia',
+			'clientes',
+			'comunicaciones_ausentismo',
+			'tipo_comunicaciones'
+		));
 
 	}
 

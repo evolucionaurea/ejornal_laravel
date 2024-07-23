@@ -65,7 +65,7 @@ class GruposResumenController extends Controller
 		foreach($clientes_nominas->clientes as $kc=>$cliente){
 			$clientes_nominas->clientes[$kc]->ausentismos = (object) $this->resumen($cliente->id);
 		}
-		//dd( $clientes_nominas->clientes[0]->ausentismos );
+		//dd( $clientes_nominas->clientes[3]->ausentismos );
 		$output = array_merge($clientes_grupo,[
 			'clientes_nominas'=>$clientes_nominas
 		]);
@@ -91,7 +91,7 @@ class GruposResumenController extends Controller
 					->where('id_grupo',$id_grupo);
 			})
 			->first();
-		///dd($q_nomina);
+
 		if(!$q_nomina){
 			\Artisan::call('db:seed', [
 				'--class' => 'NominaHistorialSeeder',
@@ -99,8 +99,13 @@ class GruposResumenController extends Controller
 			]);
 			$q_nomina = NominaHistorial::selectRaw("SUM(cantidad) cantidad")
 			->where('year_month',$today->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first();
+			->whereIn('cliente_id',function($query) use ($id_grupo){
+				$query
+					->select('id_cliente')
+					->from('cliente_grupo')
+					->where('id_grupo',$id_grupo)
+					->first();
+			});
 		}
 		$nomina_actual = $q_nomina->cantidad;
 
@@ -200,7 +205,7 @@ class GruposResumenController extends Controller
 						->select('id')
 						->from('nominas')
 						->where('deleted_at',null)
-						///->where('estado',1)
+						->where('estado',1)
 						->whereIn('id_cliente',function($query) use ($id_grupo){
 							$query
 								->select('id_cliente')
@@ -285,7 +290,7 @@ class GruposResumenController extends Controller
 					->select('id')
 					->from('nominas')
 					->where('deleted_at',null)
-					///->where('estado',1)
+					->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
@@ -359,7 +364,7 @@ class GruposResumenController extends Controller
 					->select('id')
 					->from('nominas')
 					->where('deleted_at',null)
-					///->where('estado',1)
+					->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
@@ -430,7 +435,7 @@ class GruposResumenController extends Controller
 					->select('id')
 					->from('nominas')
 					->where('deleted_at',null)
-					//->where('estado',1)
+					->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
@@ -499,7 +504,7 @@ class GruposResumenController extends Controller
 					->select('id')
 					->from('nominas')
 					->where('deleted_at',null)
-					//->where('estado',1)
+					->where('estado',1)
 					->whereIn('id_cliente',function($query) use ($id_grupo){
 						$query
 							->select('id_cliente')
@@ -584,69 +589,5 @@ class GruposResumenController extends Controller
 		return ['status'=>'ok'];
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create()
-	{
-		//
-	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request)
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, $id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
 }

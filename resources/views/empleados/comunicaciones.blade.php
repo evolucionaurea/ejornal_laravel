@@ -33,10 +33,11 @@
 				<thead>
 					<tr>
 						<th>Trabajador</th>
-						<th>CUIL</th>
 						<th>Tipo</th>
+						<th>Usuario que registró</th>
 						<th>Cargado</th>
 						<th>Estado</th>
+						<th>Descripción</th>
 					</tr>
 				</thead>
 				<!--Table head-->

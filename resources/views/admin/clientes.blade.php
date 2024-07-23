@@ -42,6 +42,7 @@
 						<th>Grupo</th>
 						<th>Nombre</th>
 						<th>Dirección</th>
+						<th>Total Nómina</th>
 						<th>Borrado Lógico <i class="fa fa-question-circle fa-fw" data-swal="Click en la etiqueta <b>si</b> para restaurar al cliente"></i></th>
 						<th>Acciones</th>
 					</tr>
@@ -52,6 +53,7 @@
 						<td>{{$cliente->grupo}}</td>
 						<td>{{$cliente->nombre}}</td>
 						<td>{{$cliente->direccion}}</td>
+						<td>{{$cliente->nominas_count}}</td>
 						<td>
 							@if ($cliente->trashed())
 							<a data-toggle="modal" data-target="#restaurarClientModal" data-info="{{ $cliente->id }}"

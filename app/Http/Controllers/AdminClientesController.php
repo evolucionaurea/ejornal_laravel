@@ -30,6 +30,7 @@ class AdminClientesController extends Controller
       ->leftJoin('cliente_grupo', 'clientes.id', '=', 'cliente_grupo.id_cliente')
       ->leftJoin('grupos', 'cliente_grupo.id_grupo', '=', 'grupos.id')
       ->select('clientes.*', DB::raw('IFNULL(grupos.nombre, "[Sin grupo]") as grupo'))
+      ->withCount('nominas')
       ->get();
 
       return view('admin.clientes', compact('clientes'));

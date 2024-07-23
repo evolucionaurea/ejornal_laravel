@@ -132,7 +132,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		if ($request->amerita_salida == null || $request->derivacion_consulta == null) {
 			return back()->withInput($request->input())->with(
 				'error',
-				'Amerita salida y Derivacion consulta no pueden estar sin completar. Revisa los campos obligatorios (*)'
+				'Amerita salida y Derivación consulta no pueden estar sin completar. Revisa los campos obligatorios (*)'
 			);
 		}
 
@@ -148,15 +148,15 @@ class EmpleadoConsultaMedicaController extends Controller
 			}
 		}
 
-		if (!isset($request->tipo) || empty($request->tipo) || $request->tipo == '' || $request->tipo == null) {
-			return back()->withInput($request->input())->with('error', 'Debes ingresar un diagnostico');
+		if (!$request->tipo) {
+			return back()->withInput($request->input())->with('error', 'Debes ingresar un diagnóstico');
 		}
 
-		if (!isset($request->fecha) || empty($request->fecha) || $request->fecha == '' || $request->fecha == null) {
-			$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
-			$hoy = Carbon::today();
+		if ($request->fecha) {
+			$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha)->startOfDay();
+			$hoy = Carbon::today()->startOfDay();
 			$hace30Dias = Carbon::today()->subDays(30);
-	
+
 			if ($fecha->lt($hace30Dias) || $fecha->gt($hoy)) {
 				return back()->withInput($request->input())->with('error', 'La fecha debe ser igual a hoy o hasta 30 días hacia atrás.');
 			}
@@ -165,11 +165,11 @@ class EmpleadoConsultaMedicaController extends Controller
 		}
 
 
-		if (!isset($request->tratamiento) || empty($request->tratamiento) || $request->tratamiento == '' || $request->tratamiento == null) {
+		if (!$request->tratamiento) {
 			return back()->withInput($request->input())->with('error', 'Debes completar el campo tratamiento');
 		}
 
-		if (!isset($request->observaciones) || empty($request->observaciones) || $request->observaciones == '' || $request->observaciones == null) {
+		if (!$request->observaciones) {
 			return back()->withInput($request->input())->with('error', 'Debes completar el campo observaciones');
 		}
 
@@ -177,7 +177,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			if ($request->peso == 0 || $request->peso < 0) {
 				return back()->withInput($request->input())->with('error', 'En el campo peso vemos un valor inválido');
 			}else {
-				return back()->withInput($request->input())->with('error', 'Si completas el campo Peso debes complatar Altura');
+				return back()->withInput($request->input())->with('error', 'Si completas el campo Peso debes completar Altura');
 			}
 		}
 
@@ -208,7 +208,7 @@ class EmpleadoConsultaMedicaController extends Controller
 				$todos_los_stocks_disponibles = true;
 			}else {
 				$todos_los_stocks_disponibles = false;
-				return back()->withInput($request->input())->with('error', 'No puedes suministrar mas medicamentos que los disponibles en el stock');
+				return back()->withInput($request->input())->with('error', 'No puedes suministrar más medicamentos que los disponibles en el stock');
 			}
 		}
 
@@ -302,7 +302,17 @@ class EmpleadoConsultaMedicaController extends Controller
 			}
 		}
 
-		return redirect('empleados/consultas/medicas')->with('success', 'Consulta medica guardada con éxito');
+		if($request->amerita_salida=='1'){
+			$consulta = $request->toArray();
+			$consulta['consulta_tipo'] = 'Médica';
+			$consulta['fecha_final'] = $fecha->addDays(1)->format('d/m/Y');
+			return redirect('empleados/ausentismos/create')->with([
+				'consulta'=>$consulta,
+				'consulta_success'=>'La consulta médica fue guardada con éxito. Al indicar que amerita salida deberás crear el registro de ausentismo.'
+			]);
+		}
+
+		return redirect('empleados/consultas/medicas')->with('success','Consulta médica guardada con éxito');
 
 
 	}

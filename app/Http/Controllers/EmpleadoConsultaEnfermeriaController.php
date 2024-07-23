@@ -131,7 +131,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		if ($request->amerita_salida == null || $request->derivacion_consulta == null) {
 			return back()->withInput($request->input())->with(
 				'error',
-				'Amerita salida y Derivacion consulta no pueden estar sin completar. Revisa los campos obligatorios (*)'
+				'Amerita salida y Derivación consulta no pueden estar sin completar. Revisa los campos obligatorios (*).'
 			);
 		}
 
@@ -149,42 +149,42 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			}
 		}
 
-		if (!isset($request->tipo) || empty($request->tipo) || $request->tipo == '' || $request->tipo == null) {
-			return back()->withInput($request->input())->with('error', 'Debes ingresar un diagnostico');
+		if (!$request->tipo) {
+			return back()->withInput($request->input())->with('error', 'Debes ingresar un diagnóstico.');
 		}
 
 
 
-		if (!isset($request->fecha) || empty($request->fecha) || $request->fecha == '' || $request->fecha == null) {
-			$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
-			$hoy = Carbon::today();
+		if ($request->fecha) {
+			$fecha = Carbon::createFromFormat('d/m/Y', $request->fecha)->startOfDay();
+			$hoy = Carbon::today()->startOfDay();
 			$hace30Dias = Carbon::today()->subDays(30);
-	
+
 			if ($fecha->lt($hace30Dias) || $fecha->gt($hoy)) {
-				return back()->withInput($request->input())->with('error', 'La fecha debe ser igual a hoy o hasta 30 días hacia atrás.');
+				return back()->withInput($request->input())->with('error', 'La fecha debe ser la de hoy o estar comprendida dentro de los últimos 30 días.');
 			}
 		}else{
-			return back()->withInput($request->input())->with('error', 'Debes ingresar una fecha');
+			return back()->withInput($request->input())->with('error', 'Debes ingresar una fecha.');
 		}
-		
 
-		if (!isset($request->observaciones) || empty($request->observaciones) || $request->observaciones == '' || $request->observaciones == null) {
-			return back()->withInput($request->input())->with('error', 'Debes completar el campo observaciones');
+
+		if (!$request->observaciones) {
+			return back()->withInput($request->input())->with('error', 'Debes completar el campo observaciones.');
 		}
 
 		if (isset($request->peso) && !empty($request->peso) && !isset($request->altura)) {
 			if ($request->peso == 0 || $request->peso < 0) {
-				return back()->withInput($request->input())->with('error', 'En el campo peso vemos un valor inválido');
+				return back()->withInput($request->input())->with('error', 'En el campo peso vemos un valor inválido.');
 			}else {
-				return back()->withInput($request->input())->with('error', 'Si completas el campo Peso debes complatar Altura');
+				return back()->withInput($request->input())->with('error', 'Si completas el campo Peso debes completar el campo Altura.');
 			}
 		}
 
 		if (isset($request->altura) && !empty($request->altura) && !isset($request->peso)) {
 			if ($request->altura == 0 || $request->altura < 0) {
-				return back()->withInput($request->input())->with('error', 'En el campo altura vemos un valor inválido');
+				return back()->withInput($request->input())->with('error', 'En el campo altura vemos un valor inválido.');
 			}else {
-				return back()->withInput($request->input())->with('error', 'Si completas el campo Altura debes complatar Peso');
+				return back()->withInput($request->input())->with('error', 'Si completas el campo Altura debes complatar el campo Peso.');
 			}
 		}
 
@@ -207,7 +207,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				$todos_los_stocks_disponibles = true;
 			}else {
 				$todos_los_stocks_disponibles = false;
-				return back()->withInput($request->input())->with('error', 'No puedes suministrar mas medicamentos que los disponibles en el stock');
+				return back()->withInput($request->input())->with('error', 'No puedes suministrar más medicamentos que los disponibles en el stock.');
 			}
 		}
 
@@ -216,14 +216,12 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		//Guardar en base una Nueva Consulta
 		$consulta = new ConsultaEnfermeria();
 		$consulta->id_nomina = $request->nomina;
+		$consulta->fecha = $fecha;
 
 		if (isset($request->temperatura_auxiliar) && $request->temperatura_auxiliar != null) {
 			$consulta->temperatura_auxiliar = $request->temperatura_auxiliar;
 		}
 
-		if (isset($request->fecha)) {
-		$consulta->fecha = $fecha;
-		}
 
 		if (isset($request->peso) && !empty($request->peso) && isset($request->altura) && !empty($request->altura)) {
 			$consulta->peso = $request->peso;
@@ -293,7 +291,17 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			}
 		}
 
-		return redirect('empleados/consultas/enfermeria')->with('success', 'Consulta de enfermería guardada con éxito');
+		if($request->amerita_salida=='1'){
+			$consulta = $request->toArray();
+			$consulta['consulta_tipo'] = 'de Enfermería';
+			$consulta['fecha_final'] = $fecha->addDays(1)->format('d/m/Y');
+			return redirect('empleados/ausentismos/create')->with([
+				'consulta'=>$consulta,
+				'consulta_success'=>'La consulta de enfermería fue guardada con éxito. Al indicar que amerita salida deberás crear el registro de ausentismo.'
+			]);
+		}
+
+		return redirect('empleados/consultas/enfermeria')->with('success', 'Consulta de enfermería guardada con éxito.');
 
 
 	}

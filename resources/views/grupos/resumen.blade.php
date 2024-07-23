@@ -24,45 +24,48 @@
 					<h4 class="mb-1">Empresas del grupo: {{$grupo->clientes->count()}}</h4>
 					{{-- <h6 class="small">Se muestran valores en base a trabajadores activos solamente.</h6> --}}
 
-					<table data-table="ausentismos" class="table table-striped table-sm table-responsive">
-						<thead>
-							<tr>
-								<th scope="col"> <b>Nombre</b></th>
-								<th class="text-right">Total Nómina</th>
-								{{-- <th class="text-right">Ausentes hoy <i class="fa fa-question-circle fa-fw"
-										data-swal="Se contabilizan sólamente los trabajadores activos."></i></th> --}}
-								<th class="text-right">Ausen. Mes Actual <i class="fa fa-question-circle fa-fw"
-										data-swal="Porcentaje de ausentismos en relación a la nómina actual. NO incluye Accidentes o Incidentes"></i>
-								</th>
-								<th class="text-right">Ausen. Mes Anterior</th>
-								<th class="text-right">Ausen. Mismo Mes Año Anterior</th>
-								<th class="text-right">Ausen. del Año</th>
-							</tr>
-						</thead>
-						<tbody>
+					<div class="table-responsive">
 
-							@foreach ($clientes_nominas->clientes as $cliente)
+						<table data-table="ausentismos" class="table table-striped table-sm">
+							<thead>
+								<tr>
+									<th scope="col"> <b>Nombre</b></th>
+									<th class="text-right">Total Nómina <i class="fa fa-question-circle fa-fw" data-swal="Nómina de trabajadores activos."></i></th>
+									{{-- <th class="text-right">Ausentes hoy <i class="fa fa-question-circle fa-fw"
+											data-swal="Se contabilizan sólamente los trabajadores activos."></i></th> --}}
+									<th class="text-right">Ausen. Mes Actual <i class="fa fa-question-circle fa-fw" data-swal="Porcentaje de ausentismos en relación a la nómina actual. NO incluye Accidentes o Incidentes."></i>
+									</th>
+									<th class="text-right">Ausen. Mes Anterior</th>
+									<th class="text-right">Ausen. Mismo Mes Año Anterior</th>
+									<th class="text-right">Ausen. del Año</th>
+								</tr>
+							</thead>
+							<tbody>
 
-							<tr>
-								<td>{{$cliente->nombre}}</td>
-								<td class="text-right">{{$cliente->nominas_count}}</td>
-								{{-- <td class="text-right">{{$cliente->ausentismos_count}}</td> --}}
-								<td class="text-right">{{
-									number_format($cliente->ausentismos->ausentismos_mes_actual_indice,2,',','.') }}%
-								</td>
-								<td class="text-right">{{
-									number_format($cliente->ausentismos->ausentismos_mes_pasado_indice,2,',','.') }}%
-								</td>
-								<td class="text-right">{{
-									number_format($cliente->ausentismos->ausentismos_mes_anio_anterior_indice,2,',','.')
-									}}%</td>
-								<td class="text-right">{{
-									number_format($cliente->ausentismos->ausentismos_anio_actual_indice,2,',','.') }}%
-								</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
+								@foreach ($clientes_nominas->clientes as $cliente)
+
+								<tr>
+									<td>{{$cliente->nombre}}</td>
+									<td class="text-right">{{$cliente->nominas_count}}</td>
+									{{-- <td class="text-right">{{$cliente->ausentismos_count}}</td> --}}
+									<td class="text-right">{{
+										number_format($cliente->ausentismos->ausentismos_mes_actual_indice,2,',','.') }}%
+									</td>
+									<td class="text-right">{{
+										number_format($cliente->ausentismos->ausentismos_mes_pasado_indice,2,',','.') }}%
+									</td>
+									<td class="text-right">{{
+										number_format($cliente->ausentismos->ausentismos_mes_anio_anterior_indice,2,',','.')
+										}}%</td>
+									<td class="text-right">{{
+										number_format($cliente->ausentismos->ausentismos_anio_actual_indice,2,',','.') }}%
+									</td>
+								</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+
 				</div>
 
 

@@ -127,7 +127,7 @@ $(()=>{
 		});
 	});
 
-	
+
 	$("#guarda_consulta").click(function(e) {
 		e.preventDefault();
 		$('#consulta_confirmacion_final').modal('show');
@@ -140,5 +140,6 @@ $(()=>{
 	});
 
 	$('.select_2').select2();
+	$('.select_2').trigger('change')
 
 })

@@ -118,7 +118,7 @@
 					<thead>
 						<tr>
 							<th>Nombre</th>
-							<th>Email</th>
+							<th>CUIT</th>
 							<th>Tel.</th>
 							<th>DNI</th>
 							<th>Estado</th>
@@ -133,10 +133,10 @@
 							<td>{{$trabajador->telefono}}</td>
 							<td>{{$trabajador->dni}}</td>
 							<td>
-								@if ($trabajador->estado == 1)
-								Activo
+								@if ($trabajador->estado == '1')
+								<span class="badge badge-success">Activo</span>
 								@else
-								Inactivo
+								<span class="badge badge-danger">Inactivo</span>
 								@endif
 							</td>
 							<td>{{ (!empty($trabajador->created_at)) ? date('d/m/Y',strtotime($trabajador->created_at))

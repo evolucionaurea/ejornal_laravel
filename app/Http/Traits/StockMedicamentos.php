@@ -59,18 +59,27 @@ trait StockMedicamentos {
 
 	public function searchHistorial(Request $request){
 
+		DB::enableQueryLog();
+
 		$query = StockMedicamentoHistorial::select(
 			'medicamentos.nombre as medicamento',
 			'stock_medicamentos_historial.*',
+
 			'users.nombre as user',
+			'consultas_medicas.user as user_consulta_medica',
+			'consultas_enfermerias.user as user_consulta_enfermeria',
+
 			'clientes.nombre as cliente',
 			'nominas.nombre as trabajador',
 			DB::raw('IF(stock_medicamentos_historial.id_consulta_enfermeria IS NOT NULL, "Enfermería", "Médica") as tipo_consulta')
 		)
 		->join('stock_medicamentos', 'stock_medicamentos_historial.id_stock_medicamentos', 'stock_medicamentos.id')
 		->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
+
 		->join('users', 'stock_medicamentos.id_user', 'users.id')
+
 		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
+
 		->leftJoin('consultas_enfermerias', 'stock_medicamentos_historial.id_consulta_enfermeria', 'consultas_enfermerias.id')
 		->leftJoin('consultas_medicas', 'stock_medicamentos_historial.id_consulta_medica', 'consultas_medicas.id')
 		->leftJoin('nominas', function ($join) {
@@ -129,7 +138,8 @@ trait StockMedicamentos {
 			///'sort'=>$sort.','.$dir,
 			'fichada_user' => auth()->user()->fichada,
 			'fichar_user'=>auth()->user()->fichar,
-			'request' => $request->all()
+			'request' => $request->all(),
+			'queries'=>DB::getQueryLog()
 		];
 
 

@@ -18,7 +18,8 @@ class StockMedicamentoHistorial extends Model
 
 
   protected $casts = [
-  	'fecha_ingreso'=>'date:d/m/Y'
+  	'fecha_ingreso'=>'date:d/m/Y',
+    'created_at'=>'date:d/m/Y H:i:s'
   ];
 
 
