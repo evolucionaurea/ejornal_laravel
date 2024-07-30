@@ -24,6 +24,11 @@ $(()=>{
 					className:'align-middle border-left'
 				},
 				{
+					data:'stock',
+					name:'stock',
+					className:'align-middle border-left'
+				},
+				{
 					data:'ingreso',
 					name:'ingreso',
 					className:'align-middle border-left'
@@ -36,11 +41,6 @@ $(()=>{
 				{
 					data:'egreso',
 					name:'egreso',
-					className:'align-middle border-left'
-				},
-				{
-					data:'stock',
-					name:'stock',
 					className:'align-middle border-left'
 				},
 				{
@@ -104,7 +104,11 @@ $(()=>{
 
 
 	$('[data-table="movimientos-medicamentos"]').on('click','.editar_stock_medicamentos',btn=>{
-		let id = $(btn.currentTarget).attr('data-info')
+		const id = $(btn.currentTarget).attr('data-info')
+		const tr = $(btn.currentTarget).closest('tr')
+		const medicamento = tr.find('td:first-of-type').text()
+		$('#editar_stock_medicamentos_titulo').find('[data-content="medicamento"]').text(medicamento)
+
 		$('.form_editar_stock_medicamentos').attr('action', `medicamentos/${id}`)
 	})
 

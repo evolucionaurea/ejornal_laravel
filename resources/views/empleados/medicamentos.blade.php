@@ -16,8 +16,7 @@
 			<p>Aquí puede ver el listado de medicamentos de la empresa</p>
 			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicamentos.create')}}"><i
-						class="fas fa-plus-circle"></i> Nuevo movimiento</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicamentos.create')}}"><i class="fas fa-plus-circle"></i> Nuevo movimiento</a>
 			</div>
 			@else
 			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo ausentismo</i></div>
@@ -50,13 +49,11 @@
 				<thead>
 					<tr>
 						<th>Nombre</th>
-						<th>Ingreso</th>
-						<th>Suministrados</th>
-						<th>Egreso</th>
 						<th>Stock</th>
-
+						<th>Total Ingresos</th>
+						<th>Total Suministrados</th>
+						<th>Total Egresos</th>
 						<th>Acciones</th>
-
 					</tr>
 				</thead>
 				<!--Table head-->
@@ -79,7 +76,7 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="editar_stock_medicamentos_titulo">Egreso del medicamento</h5>
+				<h5 class="modal-title" id="editar_stock_medicamentos_titulo">Egreso del medicamento: <span data-content="medicamento"></span></h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -92,27 +89,23 @@
 							{{ csrf_field() }}
 							<input type="hidden" name="_method" value="PUT">
 
+							<div class="row">
+								<div class="col-lg-4 form-group">
+									<label>Egreso</label>
+									<input name="egreso" type="number" class="form-control" placeholder="Ingrese la cantidad" step="1" min="1" required>
+								</div>
+								<div class="col-lg-8 form-group">
+									<label>Motivo</label>
+									<textarea name="motivo" rows="4" class="form-control" required></textarea>
+								</div>
+							</div>
+							<hr>
 							<div class="alert alert-info">
 								<i class="fa fa-info-circle fa-fw"></i> Si hubo alguna pérdida de este medicamento, ruptura o se retiró del stock disponible por algún motivo debe cargarlo aquí.
 							</div>
 
 							<div class="alert alert-danger">
 								<i class="fa fa-exclamation-triangle fa-fw"></i> Si usted a suministrado un medicamento a un paciente no debe cargarlo aquí. Los medicamentos suministrados se descuentan del stock automáticamente.
-							</div>
-
-							<hr>
-
-
-							<div class="row">
-								<div class="col-lg-4 form-group">
-									<label>Egreso</label>
-									<input name="egreso" type="number" class="form-control" placeholder="Ingrese la cantidad"
-										step="1" required>
-								</div>
-								<div class="col-lg-8 form-group">
-									<label>Motivo</label>
-									<textarea name="motivo" rows="4" class="form-control" required></textarea>
-								</div>
 							</div>
 							<hr>
 

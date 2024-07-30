@@ -14,6 +14,16 @@
 		<div class="cabecera">
 			<h2>Movimiento de medicamentos</h2>
 			<p>Aquí puede ver el movimiento de cada cambio que fue sucediendo en los medicamentos</p>
+
+			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
+			<div class="cabecera_acciones">
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicamentos.create')}}"><i
+						class="fas fa-plus-circle"></i> Nuevo movimiento</a>
+			</div>
+			@else
+			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo ausentismo</i></div>
+			@endif
+
 		</div>
 
 		@include('../mensajes_validacion')
@@ -81,13 +91,11 @@
 						<th>Medicamento</th>
 						<th>Tipo Consulta</th>
 						<th>Cargado por</th>
-						<th>Empresa</th>
 						<th>Para</th>
-						<th>Ingreso</th>
 						<th>Suministrados</th>
 						<th>Egreso</th>
 						<th>Motivo</th>
-						<th>Registro creado</th>
+						<th>Fecha</th>
 					</tr>
 				</thead>
 				<!--Table head-->

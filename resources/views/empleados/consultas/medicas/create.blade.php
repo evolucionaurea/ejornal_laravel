@@ -78,8 +78,11 @@
 						</select>
 					</div>
 				</div>
-				<div class="form-group col-md-12">
-					<ul class="list-group">
+
+				<hr>
+
+				<div class="form-row">
+					<ul class="list-group col-md-3">
 						<label>
 							Medicación:
 							<a id="cargar_medicacion" style="color: #6f9eab; margin-right: 10px;" href="#">
@@ -92,6 +95,9 @@
 
 					</ul>
 				</div>
+
+				<hr>
+
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Temperatura axilar</label>
@@ -257,83 +263,7 @@
 
 
 
-<!-- Modal Cargar tipo de medicacion -->
-<div class="modal fade" id="cargar_medicacion_abrir" tabindex="-1" aria-labelledby="cargar_medicacion_titulo"
-	aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="cargar_medicacion_titulo">Suministrar medicación</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<input type="text" class="form-control" id="medicamentoSearch"
-						placeholder="Busca tu medicamento...">
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<form class="modal_medicacion_a_suministrar" action="" accept-charset="UTF-8" method="">
-							@foreach ($stock_medicamentos as $medicamento)
-							<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-								<h6>{{$medicamento->nombre}}</h6>
-								<div style="width: 100%;" class="input-group">
-									<div class="input-group-prepend">
-										<div class="input-group-text">En stock: {{$medicamento->stock}}</div>
-									</div>
-									<input name="{{$medicamento->id}}" type="text" class="form-control" placeholder=""
-										value="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
-								</div>
-							</div>
-							@endforeach
-							<button id="aceptar_suministrar_medicamentos" type="button"
-								class="btn-ejornal btn-ejornal-success">Aceptar</button>
-							<button type="button" class="btn-ejornal btn-ejornal-gris-claro"
-								data-dismiss="modal">Cerrar</button>
-						</form>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-
-
-
-
-<!-- Modal confirmación Final -->
-<div class="modal fade" id="consulta_confirmacion_final" tabindex="-1"
-	aria-labelledby="consulta_confirmacion_final_Titulo" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="consulta_confirmacion_final_Titulo">Advertencia</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-
-				<div class="row">
-					<div class="col-md-12">
-						<div class="alert alert-light" role="alert">
-							<p>Una vez creada la consulta no podrá editarse. Presione Aceptar para continuar o cancelar
-								para revisar la consulta.</p>
-							<hr>
-							<a id="consulta_medica_crear_ok" type="button"
-								class="btn-ejornal btn-ejornal-success">Aceptar</a>
-							<a type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">Cerrar</a>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-</div>
+@include('../../modulos/modales_crud_consultas')
 
 
 

@@ -11,7 +11,7 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			order:[[9,'desc']],
+			order:[[7,'desc']],
 
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 
@@ -44,11 +44,7 @@ $(()=>{
 						return v.user
 					}
 				},
-				{
-					data:'cliente',
-					name:'cliente',
-					className:'align-middle border-left'
-				},
+
 				{
 					data:'trabajador',
 					name:'trabajador',
@@ -59,14 +55,7 @@ $(()=>{
 						return v
 					}
 				},
-				{
-					data:'ingreso',
-					name:'ingreso',
-					className:'align-middle border-left',
-					render:v=>{
-						return v==null || v==0 ? '-' : v
-					}
-				},
+
 				{
 					data:'suministrados',
 					name:'suministrados',
@@ -93,9 +82,12 @@ $(()=>{
 					}
 				},
 				{
-					data:'fecha_ingreso',
-					name:'fecha_ingreso',
-					className:'align-middle border-left'
+					data:'created_at',
+					name:'created_at',
+					className:'align-middle border-left',
+					render:v=>{
+						return `${v} hs.`
+					}
 				}
 			]
 		}

@@ -1,13 +1,12 @@
-$(document).ready(() => {
+$(()=>{
 
+	$('[name="medicamento"]').change(async select=>{
+		const medicamentoid = $(select.currentTarget).val()
+		const response = await axios.get(`/empleados/medicamentos/stock_actual/${medicamentoid}`)
+		$('[data-content="stock-actual"]').text(`Stock actual: ${response.data ? response.data.stock : 'sin stock'}`)
+	})
 
-    $(".medicamentos_cant_pedida").keyup(function(event){
-      console.log('valor de cantidad' + this.value);
-  		$(".medicamentos_stock").val(this.value);
-      console.log('valor de stock' + $(".medicamentos_stock").val());
-  	});
-
-  	$('[name="fecha_ingreso"]').datepicker()
+	$('[name="fecha_ingreso"]').datepicker()
 
 
 });

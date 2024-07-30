@@ -39,16 +39,18 @@
 				<div class="form-group col-md-4">
 					<label>Nombre</label>
 					<select name="medicamento" class="form-control form-control-sm select_2" required>
-					@foreach ($medicamentos as $medicamento)
+						<option value="">--Seleccionar--</option>
+						@foreach ($medicamentos as $medicamento)
 						<option value="{{$medicamento->id}}" {{ old('medicamento')==$medicamento->id ? 'selected' : '' }}>{{$medicamento->nombre}}</option>
-					@endforeach
+						@endforeach
 				  </select>
+				  <div class="small text-muted font-italic" data-content="stock-actual"></div>
 				</div>
 				<div class="form-group col-md-4">
 					<label>
 					  Ingreso
 					</label>
-					<input required name="ingreso" type="number" class="form-control medicamentos_cant_pedida" placeholder="" value="{{ old('ingreso') }}" step="1">
+					<input required name="ingreso" type="number" class="form-control medicamentos_cant_pedida" placeholder="" value="{{ old('ingreso') }}" step="1" min="1">
 					<div class="small text-muted font-italic">Es la cantidad de medicamentos que ingresaron</div>
 				</div>
 				{{-- <div class="form-group col-md-4">

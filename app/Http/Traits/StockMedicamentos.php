@@ -65,7 +65,8 @@ trait StockMedicamentos {
 			'medicamentos.nombre as medicamento',
 			'stock_medicamentos_historial.*',
 
-			'users.nombre as user',
+			DB::raw('IF(stock_medicamentos_historial.user_id IS NULL,users.nombre,users_2.nombre) as user'),
+
 			'consultas_medicas.user as user_consulta_medica',
 			'consultas_enfermerias.user as user_consulta_enfermeria',
 
@@ -76,7 +77,8 @@ trait StockMedicamentos {
 		->join('stock_medicamentos', 'stock_medicamentos_historial.id_stock_medicamentos', 'stock_medicamentos.id')
 		->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
 
-		->join('users', 'stock_medicamentos.id_user', 'users.id')
+		->leftJoin('users', 'stock_medicamentos.id_user','users.id')
+		->leftJoin('users as users_2', 'stock_medicamentos_historial.user_id','users_2.id')
 
 		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
 

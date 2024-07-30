@@ -108,6 +108,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
 		->where('id_cliente', auth()->user()->id_cliente_actual)
 		->select('medicamentos.nombre', 'stock_medicamentos.stock', 'stock_medicamentos.id')
+		->orderBy('medicamentos.nombre','asc')
 		->get();
 
 		$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
@@ -196,19 +197,21 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				->where('id_cliente', auth()->user()->id_cliente_actual)
 				->first();
 
-				$stock_disponible = $stock_medicacion->stock - intval($value['suministrados']);
+				if($value['suministrados'] > $stock_medicacion->stock) return back()->withInput($request->input())->with('error', 'No puedes suministrar más medicamentos que los disponibles en el stock');
+
+				/*$stock_disponible = $stock_medicacion->stock - intval($value['suministrados']);
 
 				if ($stock_disponible > 0) {
 					$todos_los_stocks_disponibles++;
-				}
+				}*/
 
 			}
-			if (count($suministrados) == $todos_los_stocks_disponibles) {
+			/*if (count($suministrados) == $todos_los_stocks_disponibles) {
 				$todos_los_stocks_disponibles = true;
 			}else {
 				$todos_los_stocks_disponibles = false;
 				return back()->withInput($request->input())->with('error', 'No puedes suministrar más medicamentos que los disponibles en el stock.');
-			}
+			}*/
 		}
 
 
@@ -256,7 +259,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		$consulta->id_user = auth()->user()->id;
 		$consulta->save();
 
-		if (isset($todos_los_stocks_disponibles) && $todos_los_stocks_disponibles == true) {
+		if (isset($suministrados) && !empty($suministrados)) {
 			foreach ($suministrados as $value) {
 
 				//Guardar en base

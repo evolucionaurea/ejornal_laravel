@@ -177,6 +177,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/medicamentos/busqueda','EmpleadosStockMedicamentoController@busqueda');
 	Route::post('empleados/medicamentos_movimientos/busqueda','EmpleadosStockMedicamentoController@busquedaMovimientos');
 	Route::get('empleados/medicamentos_movimientos', 'EmpleadosStockMedicamentoController@movimientos')->name('/empleados/medicamentos_movimientos');
+	Route::get('empleados/medicamentos/stock_actual/{id}', 'EmpleadosStockMedicamentoController@stock_actual');
 
 
 	// DOCUMENTACIONES

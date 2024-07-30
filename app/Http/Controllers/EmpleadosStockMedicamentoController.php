@@ -165,12 +165,17 @@ class EmpleadosStockMedicamentoController extends Controller
 	public function update(Request $request, $id)
 	{
 
+
 	  //Actualizar en base
 	  $stock_medicamento = StockMedicamento::findOrFail($id);
+		///dd($stock_medicamento);
 
-	  if ($request->egreso > $stock_medicamento->ingreso) {
-		return back()->withInput()->with('error', 'No pueden egresar mas unidades que las disponibles al momento del ingreso');
+		////CAMBIAR POR STOCK EN VEZ DE INGRESO?
+	  if ($request->egreso > $stock_medicamento->stock) {
+			return back()->withInput()->with('error', 'No pueden egresar mas unidades que las disponibles en el stock.');
 	  }
+
+		//dd($stock_medicamento);
 
 	  $stock_medicamento->egreso = $stock_medicamento->egreso + $request->egreso;
 	  $stock_medicamento->stock = $stock_medicamento->stock - $request->egreso;
@@ -181,9 +186,10 @@ class EmpleadosStockMedicamentoController extends Controller
 	  $stock_medicamento_historial->egreso = $stock_medicamento->egreso;
 	  $stock_medicamento_historial->fecha_ingreso = $stock_medicamento->fecha_ingreso;
 	  $stock_medicamento_historial->motivo = $request->motivo;
+	  $stock_medicamento_historial->user_id = auth()->user()->id;
 	  $stock_medicamento_historial->save();
 
-	  return redirect('empleados/medicamentos')->with('success', 'Stock del medicamento actualizado correctamente');
+	  return redirect('empleados/medicamentos')->with('success', 'Stock del medicamento actualizado correctamente.');
 
 	}
 
@@ -199,6 +205,15 @@ class EmpleadosStockMedicamentoController extends Controller
 	  $stock_medicamento = StockMedicamento::find($id)->delete();
 	  return redirect('empleados/medicamentos')->with('success', 'Medicamento eliminado correctamente');
 
+	}
+
+	public function stock_actual($medicamento_id)
+	{
+		return StockMedicamento::select('*')
+			->where('id_cliente',auth()->user()->id_cliente_actual)
+			->whereHas('medicamento',function($query) use($medicamento_id){
+			$query->where('id',$medicamento_id);
+			})->first();
 	}
 
 
