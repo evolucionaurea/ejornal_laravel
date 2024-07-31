@@ -75,6 +75,7 @@ class AdminReporteController extends Controller
 		];
 
 	}
+	
 	public function exportar_fichadas($id_cliente=null,Request $request)
 	{
 

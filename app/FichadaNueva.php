@@ -18,8 +18,8 @@ class FichadaNueva extends Model
 
 
   protected $casts = [
-    'ingreso'=>'date:d/m/Y - H:i \h\s.',
-    'egreso'=>'date:d/m/Y - H:i \h\s.'
+    'ingreso' => 'datetime:d/m/Y - H:i:s',
+    'egreso' => 'datetime:d/m/Y - H:i:s'
   ];
 
 }

@@ -6,7 +6,6 @@ export default class Tablas {
 		$.extend(this,obj)
 
 		this.init()
-
 	}
 
 	set_filters(){
@@ -86,8 +85,6 @@ export default class Tablas {
 	}
 	render_table(data){
 
-		//console.log(data)
-
 
 		this.table.find('tbody').remove()
 		let tbody = dom('tbody')
@@ -131,7 +128,7 @@ export default class Tablas {
 			.then(async swal=>{
 				if(swal.value){
 					const response = await this.delete(id)
-					///console.log(response)
+					//console.log(response)
 					//let data = await this.get()
 					//this.render_table(data)
 					window.location.reload()
