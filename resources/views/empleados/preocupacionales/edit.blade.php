@@ -59,7 +59,7 @@
 							<a data-toggle="modal" data-target="#tipoPreocupacionalAdd" href="">
 								<i class="fas fa-plus-circle"></i>
 							</a>
-
+							<small style="color: red;">*</small>
 						</label>
 						<select name="tipo_estudio_id" class="form-control" required>
 							<option value="">--Seleccionar--</option>
@@ -71,13 +71,13 @@
 					</div>
 
 					<div class="form-group col-lg-3 col-md-4 col-12">
-						<label>Trabajador</label>
+						<label>Trabajador<small style="color: red;">*</small></label>
 						<input disabled type="text" class="form-control" value="{{$preocupacional->trabajador->nombre}}"
 							placeholder="">
 					</div>
 
 					<div class="form-group col-lg-3 col-md-4 col-12">
-						<label>Fecha</label>
+						<label>Fecha <small style="color: red;">*</small></label>
 						<input id="ausentismo_fecha_inicio" name="fecha" type="datetime" class="form-control"
 							value="{{ !empty($preocupacional->fecha) ? date('d/m/Y',strtotime($preocupacional->fecha)) : "" }}">
 					</div>
@@ -100,7 +100,7 @@
 				<div class="row">
 
 					<div class="form-group col-lg-3">
-						<label for="">¿Tiene Vencimiento?</label>
+						<label for="">¿Tiene Vencimiento? <small style="color: red;">*</small></label>
 						<select name="tiene_vencimiento" class="form-control" required>
 							<option value="0" {{ !$preocupacional->fecha_vencimiento ? 'selected' : '' }} >No</option>
 							<option value="1" {{ $preocupacional->fecha_vencimiento ? 'selected' : '' }} >Si</option>
@@ -181,7 +181,7 @@
 
 
 					<div class="form-group col-lg-6">
-						<label>Observaciones</label>
+						<label>Observaciones <small style="color: red;">*</small></label>
 						<textarea name="observaciones" class="form-control" rows="6"
 							required>{{ $preocupacional->observaciones }}</textarea>
 					</div>

@@ -54,6 +54,7 @@
 							<a data-toggle="modal" data-target="#tipoPreocupacionalAdd" href="">
 								<i class="fas fa-plus-circle"></i>
 							</a>
+							<small style="color: red;">*</small>
 						</label>
 						<select name="tipo_estudio_id" class="form-control" required>
 							@foreach($tipos as $tipo)
@@ -64,7 +65,7 @@
 					</div>
 
 					<div class="form-group col-lg-3">
-						<label>Trabajador</label>
+						<label>Trabajador <small style="color: red;">*</small></label>
 						<select data-toggle="select2" name="trabajador" class="form-control form-control-sm select_2"
 							required>
 							<option value="">--Seleccionar--</option>
@@ -76,7 +77,7 @@
 					</div>
 
 					<div class="form-group col-lg-3">
-						<label>Fecha</label>
+						<label>Fecha <small style="color: red;">*</small></label>
 						<input name="fecha" type="text" class="form-control" value="{{ old(" fecha") }}" required>
 					</div>
 
@@ -97,7 +98,7 @@
 				<div class="row">
 
 					<div class="form-group col-lg-3">
-						<label for="">¿Tiene Vencimiento?</label>
+						<label for="">¿Tiene Vencimiento? <small style="color: red;">*</small></label>
 						<select name="tiene_vencimiento" class="form-control" required>
 							<option value="0" {{ old('tiene_vencimiento')==='0' ? 'selected' : '' }}>No</option>
 							<option value="1" {{ old('tiene_vencimiento')==='1' ? 'selected' : '' }}>Si</option>
@@ -167,7 +168,7 @@
 
 
 					<div class="form-group col-lg-6">
-						<label>Observaciones</label>
+						<label>Observaciones <small style="color: red;">*</small></label>
 						<textarea name="observaciones" class="form-control" rows="6"
 							required>{{ old("observaciones") }}</textarea>
 					</div>
