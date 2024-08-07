@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Comunicacion;
-use App\Http\Traits\Clientes;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 //use App\ClienteUser;
 use App\Ausentismo;
 use App\AusentismoDocumentacion;
 use App\TipoComunicacion;
-use Carbon\Carbon;
 use App\Nomina;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use App\Cliente;
+use App\Http\Traits\Clientes;
 
 class EmpleadosComunicacionesController extends Controller
 {
@@ -48,6 +50,9 @@ class EmpleadosComunicacionesController extends Controller
 
 		if($request->from) $query->whereDate('comunicaciones.created_at','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('comunicaciones.created_at','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->estado && $request->estado!='todos'){
+			$query->where('nominas.estado','=',$request->estado=='activos'?'1':'0');
+		}
 
 
 		if($request->order){
@@ -225,6 +230,57 @@ class EmpleadosComunicacionesController extends Controller
 	{
 		$comunicacion_de_ausentismo = Comunicacion::find($id);
 		return response()->json($comunicacion_de_ausentismo);
+	}
+
+
+	public function exportar(Request $request){
+
+		if(!auth()->user()->id_cliente_actual) dd('debes seleccionar un cliente');
+		$cliente = Cliente::where('id',auth()->user()->id_cliente_actual)->first();
+
+		$request->start = 0;
+		$request->length = 5000;
+
+		$comunicaciones = $this->busqueda($request);
+		//dd($comunicaciones['data']->toArray());
+
+		$now = Carbon::now();
+		$file_name = 'comunicados-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';
+
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp,[
+			'Trabajador',
+			'Tipo de Comunicación',
+			'Usuario que Registró',
+			'Fecha de Carga',
+			'Estado',
+			'Descripción'
+		],';');
+
+		foreach($comunicaciones['data'] as $row){
+
+			$values =
+
+			fputcsv($fp,[
+				$row->nombre,
+				$row->tipo,
+				$row->user,
+				$row->created_at,
+				$row->estado ? 'activo' : 'inactivo',
+				$row->descripcion
+			],';');
+		}
+
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+		return;
+
+
 	}
 
 }

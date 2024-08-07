@@ -113,6 +113,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// COMUNICACIONES
+	Route::get('empleados/comunicaciones/exportar','EmpleadosComunicacionesController@exportar');
 	Route::resource('empleados/comunicaciones', 'EmpleadosComunicacionesController', [
 		'names' => [
 			'index' => '/empleados/comunicaciones'

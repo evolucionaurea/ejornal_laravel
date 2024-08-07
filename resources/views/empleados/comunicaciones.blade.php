@@ -25,6 +25,10 @@
 
 		<div class="tarjeta">
 
+			@php
+			$export=true;
+			@endphp
+
 			@include('../../modulos.busqueda_fecha')
 
 			<table class="table table-striped table-hover table-sm tabla_comunicaciones_listado">
