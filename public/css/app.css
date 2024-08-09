@@ -418,13 +418,8 @@ div.dataTables_wrapper .table-spacer-top {
   width: 100%;
 }
 
-div.dataTables_wrapper .table-spacer-top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  padding: .465rem 0;
-  width: 100%;
+div.dataTables_wrapper div.dataTables_info {
+  white-space: normal;
 }
 
 .pagination .page-item .page-link:focus {
@@ -467,6 +462,21 @@ table th {
 
 .border-left {
   border-left: 1px solid #bababa;
+}
+
+table.table {
+  width: 100%;
+}
+
+@media screen and (max-width: 991px) {
+  table.table th {
+    font-size: 9pt;
+  }
+
+  table.table td {
+    font-size: 9pt;
+    padding: .15 !important;
+  }
 }
 
 .error_404 {

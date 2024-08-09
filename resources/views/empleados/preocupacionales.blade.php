@@ -42,7 +42,7 @@
 						</div>
 						<div class="col-md-6">
 							<select name="tipo" class="form-control form-control-sm">
-								<option value="">--Seleccionar Tipo de Ausentismo--</option>
+								<option value="">--Seleccionar Tipo de Estudio--</option>
 								@foreach($tipos as $tipo)
 								<option value="{{ $tipo->id }}">{{ $tipo->name }}</option>
 								@endforeach

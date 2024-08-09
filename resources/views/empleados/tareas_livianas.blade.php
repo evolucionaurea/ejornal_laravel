@@ -28,41 +28,40 @@
 
 		<div class="tarjeta">
 
-
 			<div data-toggle="busqueda-fecha" class="row align-items-center">
 
 				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 
-				<div class="col-lg-2 form-group">
-					<select name="tipo" class="form-control form-control-sm select_2">
-						<option value="">--Todos los tipos--</option>
-						@foreach ($tipos as $tipo)
-						<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
-						@endforeach
-					</select>
+				<div class="col-lg-8">
+
+					<div class="row">
+						<div class="col-lg-4">
+							<select name="tipo" class="form-control form-control-sm select_2">
+								<option value="">--Todos los tipos--</option>
+								@foreach ($tipos as $tipo)
+								<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-lg-4">
+							<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+						</div>
+
+						<div class="col-lg-4">
+							<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+						</div>
+
+					</div>
 				</div>
 
-
-				<div class="col-lg-2 form-group">
-					<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm"
-						value="{{$fecha_inicio ?? ''}}">
-				</div>
-
-				<div class="col-lg-2 form-group">
-					<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm"
-						value="{{$fecha_final ?? ''}}">
-				</div>
-
-
-				<div class="col-lg-6 form-group">
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro">
+				<div class="col-lg-4 border-left">
+					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-2">
 						<i class="fas fa-search"></i> Buscar
 					</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!">
+					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!">
 						<i class="fas fa-list"></i> Mostrar todo
 					</button>
-					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}"
-						target="_blank" class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
+					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-2"><i class="fas fa-file-excel"></i> Exportar</button>
 				</div>
 
 			</div>

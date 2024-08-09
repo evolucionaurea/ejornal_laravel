@@ -16,6 +16,10 @@ $(()=>{
 
 			columns:[
 				{
+					data:'id',
+					name:'id'
+				},
+				{
 					data:row=>row,
 					name:'nominas.nombre',
 					className:'align-middle',
