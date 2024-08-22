@@ -18,14 +18,18 @@ $(()=>{
 			columns:[
 
 				{
-					data:'medicamento',
-					name:'medicamento',
-					className:'align-middle border-left'
+					data:null,
+					name:'medicamentos.nombre',
+					className:'align-middle border-left',
+					render:v=>{
+						return v.stock_medicamento.medicamento.nombre
+					}
 				},
 				{
 					data:null,
 					name:'tipo_consulta',
 					className:'align-middle border-left',
+					orderable:false,
 					render:v=>{
 						if(v.id_consulta_enfermeria==null && v.id_consulta_medica==null) return '<span class="text-muted font-italic">[ingreso / egreso]</span>'
 						if(v.id_consulta_enfermeria!=null) return 'Enfermería'
@@ -39,20 +43,23 @@ $(()=>{
 					orderable:false,
 					className:'align-middle border-left',
 					render:v=>{
-						if(v.id_consulta_enfermeria != null) return v.user_consulta_enfermeria
-						if(v.id_consulta_medica != null) return v.user_consulta_medica
-						return v.user
+						if(v.id_consulta_enfermeria != null) return v.consulta_enfermeria.user
+						if(v.id_consulta_medica != null) return v.consulta_medica.user
+						if(v.user!=null) return v.user
+						return v.stock_medicamento.user.nombre
 					}
 				},
 
 				{
-					data:'trabajador',
+					data:null,
 					name:'trabajador',
 					className:'align-middle border-left',
 					sortable:false,
 					render:v=>{
-						if(v==null) return '<span class="text-muted font-italic">[no aplica]</span>'
-						return v
+						if(v.id_consulta_enfermeria != null) return v.consulta_enfermeria.trabajador.nombre
+						if(v.id_consulta_medica != null) return v.consulta_medica.trabajador.nombre
+						return '<span class="text-muted font-italic">[no aplica]</span>'
+
 					}
 				},
 
@@ -73,12 +80,17 @@ $(()=>{
 					}
 				},
 				{
-					data:'motivo',
+					data:null,
 					name:'motivo',
 					className:'align-middle border-left',
 
 					render:v=>{
-						return v=='' ? '<span class="text-muted font-italic">[no indicado]</span>' : v
+						if(v.motivo==null){
+							if(v.id_consulta_enfermeria!=null) return `<span class="text-muted font-italic">Suministrado en Enfermería</span>`
+							if(v.id_consulta_medica!=null) return `<span class="text-muted font-italic">Suministrado en Consulta Médica</span>`
+							return v.stock_medicamento.motivo
+						}
+						return v.motivo
 					}
 				},
 				{

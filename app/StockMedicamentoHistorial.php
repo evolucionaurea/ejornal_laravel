@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\StockMedicamento;
+use App\User;
 
 class StockMedicamentoHistorial extends Model
 {
@@ -22,6 +23,8 @@ class StockMedicamentoHistorial extends Model
     'created_at'=>'date:d/m/Y H:i:s'
   ];
 
+  protected $appends = ['tipo_consulta'];
+
 
 
   public function consulta_medica(){
@@ -32,6 +35,19 @@ class StockMedicamentoHistorial extends Model
   }
   public function stock_medicamento(){
   	return $this->belongsTo(StockMedicamento::class,'id_stock_medicamentos');
+  }
+  public function user(){
+    return $this->belongsTo(User::class,'id_user');
+  }
+
+
+  public function getTipoConsultaAttribute()
+  {
+    if(!is_null($this->id_consulta_medica)) return 'Médica';
+    if(!is_null($this->id_consulta_enfermeria)) return 'Enfermería';
+
+    return '[ingreso / egreso]';
+
   }
 
 
