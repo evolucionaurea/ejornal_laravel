@@ -119,7 +119,7 @@
 
 					<div class="form-group col-lg-12">
 						<label>Comentario</label>
-						<textarea name="comentario" class="form-control" rows="3">@if(\Session::has('consulta'))Generado desde Consulta {{ \Session::get('consulta')['consulta_tipo'] }}@else{{ old("comentario") }}@endif</textarea>
+						<textarea name="comentario" class="form-control" rows="3">@if(\Session::has('consulta'))Generado desde Consulta {{ \Session::get('consulta')['consulta_tipo'] }}. Tratamiento: {{ \Session::get('consulta')['tratamiento'] }}. Obs.: {{ \Session::get('consulta')['observaciones'] }}@else{{ old("comentario") }}@endif</textarea>
 					</div>
 
 				</div>
@@ -297,8 +297,7 @@
 			</div>
 
 			<div class="text-center my-5">
-				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Cargar
-					ausencia y comunicación</button>
+				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Cargar ausencia y comunicación</button>
 			</div>
 
 

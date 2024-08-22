@@ -293,27 +293,31 @@
 			<h4 class="mb-1">Ausentismos en este mes</h4>
 			<h6>{{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
 			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
-			<table data-table="ausentismos-mes" class="table table-striped tabla table-sm small">
-				<thead>
-					<tr>
-						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad de ausentismos</th>
-						<th scope="col">Cantidad de días</th>
-						<th scope="col">Índice de Ausentismo</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{-- Se carga por JS --}}
-				</tbody>
-				<tfoot>
-					<tr class="alert-info">
-						<th>Total</th>
-						<th data-content="total-ausentismos"></th>
-						<th data-content="total-dias"></th>
-						<th data-content="total-percent"></th>
-					</tr>
-				</tfoot>
-			</table>
+
+			<div class="table-responsive">
+				<table data-table="ausentismos-mes" class="table table-striped tabla table-sm small">
+					<thead>
+						<tr>
+							<th scope="col">Tipo</th>
+							<th scope="col">Cantidad de ausentismos</th>
+							<th scope="col">Cantidad de días</th>
+							<th scope="col">Índice de Ausentismo</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{-- Se carga por JS --}}
+					</tbody>
+					<tfoot>
+						<tr class="alert-info">
+							<th>Total</th>
+							<th data-content="total-ausentismos"></th>
+							<th data-content="total-dias"></th>
+							<th data-content="total-percent"></th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+
 		</div>
 	</div>
 
@@ -323,27 +327,30 @@
 			<h4 class="mb-0">Ausentismos en el mes pasado</h4>
 			<h6>{{ $now->subMonth()->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
 			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
-			<table data-table="ausentismos-mes-anterior" class="table table-striped tabla table-sm small">
-				<thead>
-					<tr>
-						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad de ausentismos</th>
-						<th scope="col">Cantidad de días</th>
-						<th scope="col">Índice de ausentismo</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{-- Se carga por JS --}}
-				</tbody>
-				<tfoot>
-					<tr class="alert-info">
-						<th>Total</th>
-						<th data-content="total-ausentismos"></th>
-						<th data-content="total-dias"></th>
-						<th data-content="total-percent"></th>
-					</tr>
-				</tfoot>
-			</table>
+
+			<div class="table-responsive">
+				<table data-table="ausentismos-mes-anterior" class="table table-striped tabla table-sm small">
+					<thead>
+						<tr>
+							<th scope="col">Tipo</th>
+							<th scope="col">Cantidad de ausentismos</th>
+							<th scope="col">Cantidad de días</th>
+							<th scope="col">Índice de ausentismo</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{-- Se carga por JS --}}
+					</tbody>
+					<tfoot>
+						<tr class="alert-info">
+							<th>Total</th>
+							<th data-content="total-ausentismos"></th>
+							<th data-content="total-dias"></th>
+							<th data-content="total-percent"></th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 		</div>
 	</div>
 
@@ -353,27 +360,30 @@
 			<h4 class="mb-0">Ausentismos en el mismo mes del año anterior</h4>
 			<h6>{{ $now->formatLocalized('%B') }} {{ $now->subYear()->formatLocalized('%Y') }}</h6>
 			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
-			<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla table-sm small">
-				<thead>
-					<tr>
-						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad ausentismos</th>
-						<th scope="col">Cantidad días</th>
-						<th scope="col">Índice de ausentismo</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{-- Se carga por JS --}}
-				</tbody>
-				<tfoot>
-					<tr class="alert-info">
-						<th>Total</th>
-						<th data-content="total-ausentismos"></th>
-						<th data-content="total-dias"></th>
-						<th data-content="total-percent"></th>
-					</tr>
-				</tfoot>
-			</table>
+
+			<div class="table-responsive">
+				<table data-table="ausentismos-mes-anio-anterior" class="table table-striped tabla table-sm small">
+					<thead>
+						<tr>
+							<th scope="col">Tipo</th>
+							<th scope="col">Cantidad ausentismos</th>
+							<th scope="col">Cantidad días</th>
+							<th scope="col">Índice de ausentismo</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{-- Se carga por JS --}}
+					</tbody>
+					<tfoot>
+						<tr class="alert-info">
+							<th>Total</th>
+							<th data-content="total-ausentismos"></th>
+							<th data-content="total-dias"></th>
+							<th data-content="total-percent"></th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 		</div>
 	</div>
 
@@ -383,27 +393,30 @@
 			<h4 class="mb-0">Ausentismos del año actual</h4>
 			<h6>{{ $now->firstOfYear()->formatLocalized('%B') }} - {{ $now->formatLocalized('%B') }} {{ $now->formatLocalized('%Y') }}</h6>
 			<div class="small text-muted">(no incluye Accidentes e Incidentes)</div>
-			<table data-table="ausentismos-anual" class="table table-striped table-sm small">
-				<thead>
-					<tr>
-						<th scope="col">Tipo</th>
-						<th scope="col">Cantidad ausentismos</th>
-						<th scope="col">Cantidad días</th>
-						<th scope="col">Índice de ausentismo</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{-- Se carga por JS --}}
-				</tbody>
-				<tfoot>
-					<tr class="alert-info">
-						<th>Total</th>
-						<th data-content="total-ausentismos"></th>
-						<th data-content="total-dias"></th>
-						<th data-content="total-percent"></th>
-					</tr>
-				</tfoot>
-			</table>
+
+			<div class="table-responsive">
+				<table data-table="ausentismos-anual" class="table table-striped table-sm small">
+					<thead>
+						<tr>
+							<th scope="col">Tipo</th>
+							<th scope="col">Cantidad ausentismos</th>
+							<th scope="col">Cantidad días</th>
+							<th scope="col">Índice de ausentismo</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{-- Se carga por JS --}}
+					</tbody>
+					<tfoot>
+						<tr class="alert-info">
+							<th>Total</th>
+							<th data-content="total-ausentismos"></th>
+							<th data-content="total-dias"></th>
+							<th data-content="total-percent"></th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 		</div>
 	</div>
 

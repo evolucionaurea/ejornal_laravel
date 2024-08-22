@@ -264,6 +264,8 @@ class EmpleadoConsultaMedicaController extends Controller
 		}
 
 
+
+
 		$consulta->derivacion_consulta = $request->derivacion_consulta;
 		$consulta->amerita_salida = $request->amerita_salida;
 		$consulta->observaciones = $request->observaciones;
@@ -305,6 +307,8 @@ class EmpleadoConsultaMedicaController extends Controller
 
 			}
 		}
+
+
 
 		if($request->amerita_salida=='1'){
 			$consulta = $request->toArray();

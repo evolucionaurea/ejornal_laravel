@@ -27,23 +27,21 @@
 
 		<div class="tarjeta">
 
-			<div data-toggle="busqueda-filtros" class="d-flex align-items-center flex-wrap">
-
+			<div data-toggle="busqueda-filtros" class="row align-items-center">
 
 				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
-				<input name="search" class="form-control form-control-sm mr-2 mb-1" style="max-width:240px" placeholder="Filtrar..." value="{{ Request::get('search') }}">
-
-				<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-1" ><i class="fas fa-search"></i> Buscar</button>
-				<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-1" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
-
-				<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-1" ><i class="fas fa-file-excel"></i> Exportar</button>
-
-
+				<div class="col-lg-3">
+					<input name="search" class="form-control form-control-sm" placeholder="Filtrar..." value="{{ Request::get('search') }}">
+				</div>
+				<div class="col-lg-4 border-left">
+					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-2" ><i class="fas fa-search"></i> Buscar</button>
+					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-2" ><i class="fas fa-file-excel"></i> Exportar</button>
+				</div>
 			</div>
 			<hr>
 
-			<table data-table="movimientos-medicamentos"
-				class="table table-striped table-hover table-sm table-bordered dt-responsive" style="width:100%">
+			<table data-table="movimientos-medicamentos" class="table table-striped table-hover table-sm table-bordered dt-responsive" >
 
 				<!--Table head-->
 				<thead>

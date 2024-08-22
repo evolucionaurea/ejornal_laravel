@@ -119,15 +119,8 @@ div.dataTables_wrapper{
     padding:.465rem 0;
     width:100%;
   }
-}
-div.dataTables_wrapper{
-  .table-spacer-top{
-    display:flex;
-    flex-wrap: wrap;
-    justify-content:space-between;
-    align-items: center;
-    padding:.465rem 0;
-    width:100%;
+  div.dataTables_info{
+    white-space: normal;
   }
 }
 
@@ -173,4 +166,21 @@ table th{
 
 .border-left{
   border-left: 1px solid rgb(186, 186, 186);
+}
+
+
+table.table{
+  width:100%;
+}
+@media screen and (max-width:991px){
+  table.table{
+    th{
+      font-size:9pt;
+    }
+    td{
+      font-size:9pt;
+      padding:.15 !important;
+    }
+  }
+
 }

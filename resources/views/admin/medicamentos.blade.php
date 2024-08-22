@@ -36,7 +36,7 @@
 
 			<div data-toggle="busqueda-filtros" class="d-flex row">
 
-				<div class="col-lg-12 d-flex align-items-center">
+				<div class="col-lg-12 d-flex align-items-center flex-wrap">
 
 					<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
 					<input type="hidden" name="medicamento" value="{{ Request::get('medicamento') }}">

@@ -61,9 +61,11 @@ trait StockMedicamentos {
 
 		DB::enableQueryLog();
 
-		$query = StockMedicamentoHistorial::select(
+		/*$query = StockMedicamentoHistorial::select(
 			'medicamentos.nombre as medicamento',
 			'stock_medicamentos_historial.*',
+
+			'stock_medicamentos.motivo as motivo_stock',
 
 			DB::raw('IF(stock_medicamentos_historial.user_id IS NULL,users.nombre,users_2.nombre) as user'),
 
@@ -89,7 +91,23 @@ trait StockMedicamentos {
 				->on('consultas_enfermerias.id_nomina', '=', 'nominas.id')
 				->orOn('consultas_medicas.id_nomina', '=', 'nominas.id');
 		})
-		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual);
+		->where('stock_medicamentos.id_cliente', auth()->user()->id_cliente_actual);*/
+
+		$query = StockMedicamentoHistorial::select('stock_medicamentos_historial.*')
+			->join('stock_medicamentos', 'stock_medicamentos_historial.id_stock_medicamentos', 'stock_medicamentos.id')
+			->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
+			->with('consulta_medica.trabajador')
+			->with('consulta_enfermeria.trabajador')
+			->with([
+				'stock_medicamento.medicamento',
+				'stock_medicamento.user',
+				'stock_medicamento.cliente'
+			])
+			->with('user')
+			->whereHas('stock_medicamento', function($query){
+				$query->where('id_cliente',auth()->user()->id_cliente_actual);
+			});
+
 
 		$total = $query->count();
 
@@ -104,11 +122,26 @@ trait StockMedicamentos {
 		if($request->search){
 			$query->where(function($query) use($request){
 				$filtro = '%'.$request->search.'%';
-				$query
+				/*$query
 					->where('medicamentos.nombre','like',$filtro)
 					->orWhere('nominas.nombre','like',$filtro)
 					->orWhere('users.nombre','like',$filtro)
-					->orWhere('clientes.nombre','like',$filtro);
+					->orWhere('clientes.nombre','like',$filtro);*/
+				$query->whereHas('stock_medicamento',function($query) use($filtro){
+					$query
+						->whereHas('medicamento',function($query) use($filtro){
+							$query->where('nombre','like',$filtro);
+						})
+						->orWhereHas('user',function($query) use($filtro){
+							$query->where('nombre','like',$filtro);
+						})
+						->orWhereHas('cliente',function($query) use($filtro){
+							$query->where('nombre','like',$filtro);
+						});
+
+				});
+
+
 			});
 		}
 		if($request->tipo=='enfermeria'){
@@ -119,10 +152,10 @@ trait StockMedicamentos {
 		}
 
 		if ($request->from) {
-			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$query->whereDate('fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 		if ($request->to) {
-			$query->whereDate('stock_medicamentos_historial.fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$query->whereDate('fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
 
@@ -141,7 +174,9 @@ trait StockMedicamentos {
 			'fichada_user' => auth()->user()->fichada,
 			'fichar_user'=>auth()->user()->fichar,
 			'request' => $request->all(),
-			'queries'=>DB::getQueryLog()
+			'queries'=>DB::getQueryLog(),
+
+			'sort'=>$request->columns[$request->order[0]['column']]['name'].','.$request->order[0]['dir']
 		];
 
 

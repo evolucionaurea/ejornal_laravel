@@ -70,7 +70,7 @@ class EmpleadosAusentismosController extends Controller
 	public function create()
 	{
 
-		///dd(\Session::get('consulta')['consulta_tipo']);
+		//dd(\Session::get('consulta'));
 
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
 		->where('estado', '=', 1)
