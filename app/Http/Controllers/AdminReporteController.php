@@ -36,129 +36,170 @@ class AdminReporteController extends Controller
 	{
 		return view('admin.reportes.fichadas');
 	}
-	
+
 
 	public function fichadas_ajax(Request $request)
-{
-    $filtro = '%'.$request->search['value'].'%';
-    $query = FichadaNueva::selectRaw('
-            fichadas_nuevas.*,
-            users.nombre as user_nombre,
-            users.estado as user_estado,
-            IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-            clientes.nombre as cliente_nombre
-        ')
-        ->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-        ->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-        ->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');
+	{
+		/*$query = FichadaNueva::selectRaw('
+						fichadas_nuevas.*,
+						users.nombre as user_nombre,
+						users.estado as user_estado,
+						IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
+						clientes.nombre as cliente_nombre
+				')
+				->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
+				->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
+				->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');*/
 
-    $total_records = $query->count();
+		$query = FichadaNueva::select('*')
+							->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
+							->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
+							->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente')
+							->with('user.especialidad')
+							->with('cliente');
 
-    if ($request->estado && $request->estado !== 'todos') {
-        $estado = $request->estado === 'activos' ? 1 : 0;
-        $query->where('users.estado', $estado);
-    }
+		$total_records = $query->count();
 
-    $query->where(function($query) use ($request, $filtro) {
-        $query->where('users.nombre', 'like', $filtro)
-              ->orWhere('clientes.nombre', 'like', $filtro);
-    });
+		if ($request->estado && $request->estado !== 'todos') {
+			$estado = $request->estado === 'activos' ? 1 : 0;
+			//$query->where('users.estado', $estado);
+			$query->whereHas('user',function($query) use($estado){
+				$query->where('estado',$estado);
+			});
+		}
+		$query->where(function($query) use ($request) {
+			$filtro = '%'.$request->search['value'].'%';
+			$query
+				->whereHas('user',function($query) use($filtro){
+					$query->where('nombre','like',$filtro);
+				})
+				->orWhereHas('cliente',function($query) use($filtro){
+					$query->where('nombre','like',$filtro);
+				});
+		});
+		if($request->from) {
+			$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+		if($request->to) {
+			$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
 
-    if($request->from) {
-        $query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-    }
-    if($request->to) {
-        $query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-    }
+		//$query->orderBy('ingreso', 'desc');
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort, $dir);
+		}
 
-    $query->orderBy('ingreso', 'desc');
-
-    if($request->order){
-        $sort = $request->columns[$request->order[0]['column']]['name'];
-        $dir  = $request->order[0]['dir'];
-        $query->orderBy($sort, $dir);
-    }
-
-    return [
-        'draw' => $request->draw,
-        'recordsTotal' => $total_records,
-        'recordsFiltered' => $query->count(),
-        'data' => $query->skip($request->start)->take($request->length)->get(),
-        'request' => $request->all()
-    ];
-}
+		return [
+			'draw' => $request->draw,
+			'recordsTotal' => $total_records,
+			'recordsFiltered' => $query->count(),
+			'data' => $query->skip($request->start)->take($request->length)->get(),
+			'request' => $request->all()
+		];
+	}
+	public function exportar_fichadas($id_cliente=null, Request $request)
+	{
 
 
+		$request->search = ['value' => null];
+		$request->start = 0;
+		$request->order = [
+			[
+				'dir'=>'desc',
+				'column'=>0
+			]
+		];
+		$request->columns = [
+			['name'=>'ingreso']
+		];
+		$request->length = 15000;
 
 
+		$fichadas = $this->fichadas_ajax($request)['data'];
+		//dd($fichadas[1]->horas_minutos_trabajado);
 
-	
-public function exportar_fichadas($id_cliente=null, Request $request)
-{
-    $request->search = ['value' => null];
-    $request->start = 0;
-    $request->length = 5000;
+		/*$filtro = '%'.$request->search['value'].'%';
+		$query = FichadaNueva::selectRaw('
+						fichadas_nuevas.*,
+						users.nombre as user_nombre,
+						users.estado as user_estado,
+						IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
+						clientes.nombre as cliente_nombre
+				')
+				->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
+				->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
+				->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');
 
-    $filtro = '%'.$request->search['value'].'%';
-    $query = FichadaNueva::selectRaw('
-            fichadas_nuevas.*,
-            users.nombre as user_nombre,
-            users.estado as user_estado,
-            IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-            clientes.nombre as cliente_nombre
-        ')
-        ->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-        ->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-        ->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');
+		if ($request->estado && $request->estado !== 'todos') {
+				$estado = $request->estado === 'activos' ? 1 : 0;
+				$query->where('users.estado', $estado);
+		}
 
-    if ($request->estado && $request->estado !== 'todos') {
-        $estado = $request->estado === 'activos' ? 1 : 0;
-        $query->where('users.estado', $estado);
-    }
+		if($request->from) {
+				$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+		if($request->to) {
+				$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
 
-    if($request->from) {
-        $query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-    }
-    if($request->to) {
-        $query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-    }
+		$fichadas = $query->get();*/
 
-    $fichadas = $query->get();
+		$now = Carbon::now();
+		$file_name = 'fichadas-'.$now->format('YmdHis').'.csv';
 
-    $now = Carbon::now();
-    $file_name = 'fichadas-'.$now->format('YmdHis').'.csv';
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp, [
+				'Empleado',
+				'Estado',
+				'Especialidad',
+				'Empresa',
 
-    $fp = fopen('php://memory', 'w');
-    fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
-    fputcsv($fp, [
-        'Empleado',
-        'Estado',
-        'Especialidad',
-        'Empresa',
-        'Ingreso/Egreso',
-        'Tiempo trabajado',
-        'IP'
-    ], ';');
+				'Día Ingreso',
+				'Fecha Ingreso',
+				'Hora Ingreso',
 
-    foreach($fichadas as $fichada){
-        fputcsv($fp, [
-            $fichada->user_nombre,
-            $fichada->user_estado == 1 ? 'Activo' : 'Inactivo',
-            $fichada->user_especialidad,
-            $fichada->cliente_nombre,
-            $fichada->ingreso.' al '.($fichada->egreso ?? 'aún trabajando'),
-            $fichada->tiempo_dedicado,
-            $fichada->ip
-        ], ';');
-    }
+				'Fecha Egreso',
+				'Hora Egreso',
 
-    fseek($fp, 0);
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="'.$file_name.'";');
-    fpassthru($fp);
+				'Tiempo trabajado',
 
-    return;
-}
+				'Sistema Operativo / Dispositivo',
+				'IP'
+		], ';');
+
+		foreach($fichadas as $fichada){
+
+			fputcsv($fp, [
+				$fichada->user->nombre,
+				$fichada->user->estado == 1 ? 'Activo' : 'Inactivo',
+				$fichada->user->especialidad->nombre,
+				$fichada->cliente ? $fichada->cliente->nombre : '',
+
+				//$fichada->ingreso.' al '.($fichada->egreso ?? 'aún trabajando'),
+				$fichada->ingreso_carbon->format('l'),
+				$fichada->ingreso_carbon->format('d/m/Y'),
+				$fichada->ingreso_carbon->format('H:i'),
+
+				$fichada->egreso ? $fichada->egreso_carbon->format('d/m/Y') : '[aún trabajando]',
+				$fichada->egreso ? $fichada->egreso_carbon->format('H:i') : '[aún trabajando]',
+
+				$fichada->egreso ? $fichada->horas_minutos_trabajado : '[aún trabajando]',
+
+				$fichada->dispositivo,
+				$fichada->ip
+			], ';');
+		}
+
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+		return;
+	}
 
 
 

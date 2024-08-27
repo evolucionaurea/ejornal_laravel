@@ -9,6 +9,7 @@ use App\ClienteUser;
 use App\Cliente;
 use App\Grupo;
 use App\Rol;
+use App\Especialidad;
 
 class User extends Authenticatable
 {
@@ -56,6 +57,10 @@ class User extends Authenticatable
 	}
 	public function rol(){
 		return $this->belongsTo(Rol::class,'id_rol');
+	}
+	public function especialidad()
+	{
+		return $this->belongsTo(Especialidad::class,'id_especialidad');
 	}
 
 

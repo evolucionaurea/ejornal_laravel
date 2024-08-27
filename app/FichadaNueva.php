@@ -3,7 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 //use OwenIt\Auditing\Contracts\Auditable;
+use App\User;
+use App\Cliente;
 
 class FichadaNueva extends Model
 {
@@ -21,5 +24,26 @@ class FichadaNueva extends Model
     'ingreso' => 'datetime:d/m/Y - H:i:s',
     'egreso' => 'datetime:d/m/Y - H:i:s'
   ];
+
+
+  public function user(){
+  	return $this->belongsTo(User::class, 'id_user');
+  }
+  public function cliente(){
+  	return $this->belongsTo(Cliente::class, 'id_cliente');
+  }
+  public function getIngresoCarbonAttribute()
+  {
+  	return Carbon::parse($this->ingreso);
+  }
+  public function getEgresoCarbonAttribute()
+  {
+  	return Carbon::parse($this->egreso);
+  }
+  public function getHorasMinutosTrabajadoAttribute(){
+  	if(is_null($this->egreso)) return 'aún trabajando';
+
+  	return $this->ingreso_carbon->diff($this->egreso_carbon)->format('%h:%i');
+  }
 
 }
