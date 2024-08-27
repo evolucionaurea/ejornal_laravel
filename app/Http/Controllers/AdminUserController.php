@@ -393,9 +393,16 @@ class AdminUserController extends Controller
 
 		//Eliminar los clientes actuales y luego guardar en base relacion con cliente y usuario para saber donde trabaja
 		if ($request->rol == 2){
-			$cliente_usuario = ClienteUser::where('id_user', $id)->delete();
+			ClienteUser::where('id_user', $id)->delete();
 
 			$clientes_seleccionados = $request->clientes;
+
+			// Verificar si el id_cliente_actual del usuario está en la lista de clientes seleccionados
+			if (!in_array($user->id_cliente_actual, $clientes_seleccionados)) {
+				$user->id_cliente_actual = $clientes_seleccionados[0];
+				$user->save();
+			}
+
 			foreach ($clientes_seleccionados as $key => $value) {
 				$cliente_user = new ClienteUser();
 				$cliente_user->id_cliente = $value;

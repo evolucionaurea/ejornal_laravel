@@ -40,7 +40,6 @@ class EmpleadosNominasController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-
 		if(auth()->user()->id_cliente_actual) {
 			$idcliente = auth()->user()->id_cliente_actual;
 		}else{
