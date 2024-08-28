@@ -70,3 +70,24 @@ String.prototype.capitalize = function(){
   const lower = this.toLowerCase();
   return this.charAt(0).toUpperCase() + lower.slice(1);
 }
+window.get_week_day = day=>{
+	const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+	return days[day]
+}
+window.get_formatted_date = date=>{
+	const day = String(date.getDate()).padStart(2,'0')
+	const month = String(date.getMonth() + 1).padStart(2,'0')
+	const year = date.getFullYear()
+	return `${day}/${month}/${year}`
+}
+window.get_hours_minutes = date=>{
+	const hours = String(date.getHours()).padStart(2,'0')
+	const minutes = String(date.getMinutes()).padStart(2,'0')
+	return `${hours}:${minutes}`
+}
+window.get_full_formatted_date = date=>{
+	const date_formatted = window.get_formatted_date(date)
+	const time = window.get_hours_minutes(date)
+
+	return `${date_formatted} ${time}`
+}

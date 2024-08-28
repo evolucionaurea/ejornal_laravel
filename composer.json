@@ -13,7 +13,7 @@
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "~7.0",
         "intervention/image": "^2.7",
-        "jenssegers/agent": "2.6",
+        "jenssegers/agent": "^2.6",
         "jenssegers/date": "4.0",
         "laravel/framework": "6.2",
         "laravel/tinker": "2.0",

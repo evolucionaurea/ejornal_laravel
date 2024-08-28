@@ -118,7 +118,11 @@ class AdminReporteController extends Controller
 
 
 		$fichadas = $this->fichadas_ajax($request)['data'];
-		//dd($fichadas[1]->horas_minutos_trabajado);
+
+		//$agent = new Agent;
+		//dd($agent->deviceType());
+
+		///dd( mb_convert_case($fichadas[1]->ingreso_carbon->translatedFormat('l'),MB_CASE_TITLE,'UTF-8'));
 
 		/*$filtro = '%'.$request->search['value'].'%';
 		$query = FichadaNueva::selectRaw('
@@ -166,7 +170,9 @@ class AdminReporteController extends Controller
 
 				'Tiempo trabajado',
 
-				'Sistema Operativo / Dispositivo',
+				'Sistema Operativo',
+				'Dispositivo',
+				'Navegador',
 				'IP'
 		], ';');
 
@@ -179,7 +185,7 @@ class AdminReporteController extends Controller
 				$fichada->cliente ? $fichada->cliente->nombre : '',
 
 				//$fichada->ingreso.' al '.($fichada->egreso ?? 'aún trabajando'),
-				$fichada->ingreso_carbon->format('l'),
+				mb_convert_case($fichada->ingreso_carbon->translatedFormat('l'),MB_CASE_TITLE,'UTF-8'),
 				$fichada->ingreso_carbon->format('d/m/Y'),
 				$fichada->ingreso_carbon->format('H:i'),
 
@@ -188,7 +194,9 @@ class AdminReporteController extends Controller
 
 				$fichada->egreso ? $fichada->horas_minutos_trabajado : '[aún trabajando]',
 
+				$fichada->sistema_operativo,
 				$fichada->dispositivo,
+				$fichada->browser,
 				$fichada->ip
 			], ';');
 		}

@@ -25,7 +25,7 @@ $(() => {
 
 		controller: '/admin/reportes',
 		get_path: '/fichadas_ajax',
-		table: $('.tabla_reporte_fichadas'),
+		table: $('[data-table="fichadas"]'),
 		modulo_busqueda: $('[data-toggle="busqueda-fecha"]'),
 		server_side: true,
 
@@ -60,20 +60,78 @@ $(() => {
 						return v.nombre
 					}
 				},
+
 				{
-					data: 'ingreso',
-					name: 'ingreso'
+					data:'ingreso_formatted',
+					name:'ingreso',
+					orderable:false,
+					/*render:v=>{
+						const date = new Date(v.ingreso_carbon)
+
+						return `${window.get_week_day(date.getDay())}, ${v.ingreso} hs.`
+					}*/
+					/*render:v=>{
+						const date = new Date(v)
+						return window.get_week_day(date.getDay())
+					}*/
+				},
+				/*{
+					data: 'ingreso_carbon',
+					name: 'ingreso',
+					render:v=>{
+						const date = new Date(v)
+						return window.get_formatted_date(date)
+					}
 				},
 				{
-					data: 'egreso',
+					data: 'ingreso_carbon',
+					name: 'ingreso',
+					orderable:false,
+					render:v=>{
+						const date = new Date(v)
+						return window.get_hours_minutes(date)
+					}
+				},*/
+
+				{
+					data:null,
+					name:'egreso',
+					render:v=>{
+						if(v.egreso==null) return '<i class="text-muted">[aún trabajando]</i>'
+						return v.egreso_formatted
+						/*const date = new Date(v.egreso_carbon)
+						return window.get_formatted_date(date)*/
+					}
+				},
+				/*{
+					data: null,
 					name: 'egreso',
-					render: v => v ?? '<i class="text-muted">[aún trabajando]</i>'
-				},
+					orderable:false,
+					render:v=>{
+						if(v.egreso==null) return '<i class="text-muted">[aún trabajando]</i>'
+						const date = new Date(v.egreso_carbon)
+						return window.get_hours_minutes(date)
+					}
+				},*/
+
+
 				{
-					data: 'tiempo_dedicado',
+					data: null,
 					name: 'tiempo_dedicado',
 					orderable: false,
-					render: v => v == null ? '<i class="text-muted">[aún trabajando]</i>' : v
+					render: v => v.egreso == null ? '<i class="text-muted">[aún trabajando]</i>' : `${v.horas_minutos_trabajado} hs.`
+				},
+
+				{
+					data:null,
+					name:'dispositivo',
+					render:v=>{
+						let output = `<div>${v.sistema_operativo}</div>`
+						if(v.browser) output += `<div class="small">${v.browser}</div>`
+						if(v.dispositivo) output += `<div class="text-muted small">${v.dispositivo}</div>`
+
+						return output
+					}
 				},
 				{
 					data: 'ip',

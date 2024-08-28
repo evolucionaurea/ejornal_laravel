@@ -21,20 +21,24 @@
 			$export = true;
 			@endphp
 			@include('../../modulos.busqueda_fecha')
-			<table class="table table-striped table-hover table-sm tabla_reporte_fichadas">
+			<table data-table="fichadas" class="table table-striped table-hover table-sm">
 				<thead>
 					<tr>
 						<th>Empleado</th>
 						<th>Estado</th>
 						<th>Especialidad</th>
 						<th>Empresa</th>
+
 						<th>Ingreso</th>
 						<th>Egreso</th>
+
 						<th>Tiempo trabajado</th>
+
+						<th>Sistema/Browser</th>
 						<th>IP</th>
 					</tr>
 				</thead>
-				<tbody class="resultados_reporte_fichadas">
+				<tbody>
 					{{-- Se llena por JS --}}
 				</tbody>
 			</table>

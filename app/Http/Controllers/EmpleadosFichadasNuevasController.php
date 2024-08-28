@@ -36,7 +36,7 @@ class EmpleadosFichadasNuevasController extends Controller
     {
 
       $agent = new Agent();
-      $device = $agent->platform();
+      //$device = $agent->platform();
 
       if (auth()->user()->fichada == 0) {
         $ingreso = Carbon::now();
@@ -52,7 +52,11 @@ class EmpleadosFichadasNuevasController extends Controller
         $fichada->id_user = $request->id_user;
         $fichada->id_cliente = auth()->user()->id_cliente_actual;
         $fichada->ip = \Request::ip();
-        $fichada->dispositivo = $device;
+
+        $fichada->sistema_operativo = $agent->platform();
+        $fichada->browser = $agent->browser();
+        $fichada->dispositivo = $agent->deviceType();
+
         $fichada->save();
 
       }else {
@@ -71,12 +75,16 @@ class EmpleadosFichadasNuevasController extends Controller
         $f_ingreso = new DateTime($fichada->ingreso);
         $f_egreso = new DateTime();
         $time = $f_ingreso->diff($f_egreso);
-        $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
 
         $fichada->id_user = $request->id_user;
         $fichada->id_cliente = auth()->user()->id_cliente_actual;
         $fichada->ip = \Request::ip();
-        $fichada->dispositivo = $device;
+
+        $fichada->sistema_operativo = $agent->platform();
+        $fichada->browser = $agent->browser();
+        $fichada->dispositivo = $agent->deviceType();
+
+        $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
         $fichada->tiempo_dedicado = $tiempo_dedicado;
         $fichada->save();
       }

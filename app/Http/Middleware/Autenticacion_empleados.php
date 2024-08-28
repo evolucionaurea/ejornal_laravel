@@ -48,7 +48,7 @@ class Autenticacion_empleados
 
         // El ID 2 es Empleado
         if ($user->id_rol == 2 && $clientes_activos > 0) {
-          
+
             // Validar que el user tenga como id_cliente_actual un cliente que esté asociado a él
             if (!in_array($user->id_cliente_actual, $clientes_activos_ids)) {
                 // Desficho al user que tiene una fichada iniciada y guardo la informacion
@@ -57,13 +57,13 @@ class Autenticacion_empleados
                     $usuario = User::find(auth()->user()->id);
                     $usuario->fichada = 0;
                     $usuario->save();
-                    
+
                     $egreso = Carbon::now();
 
                     $agent = new Agent();
-                    $device = $agent->platform();
+                    //$device = $agent->platform();
                     $fichada = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
-                    
+
                     // Verificar si se encontró una fichada
                     if ($fichada) {
                         $fichada->egreso = $egreso;
@@ -72,14 +72,18 @@ class Autenticacion_empleados
                         $time = $f_ingreso->diff($f_egreso);
                         $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
                         $fichada->ip = \Request::ip();
-                        $fichada->dispositivo = $device;
+
+                        $fichada->sistema_operativo = $agent->platform();
+                        $fichada->browser = $agent->browser();
+                        $fichada->dispositivo = $agent->deviceType();
+
                         $fichada->tiempo_dedicado = $tiempo_dedicado;
                         $fichada->save();
                     }
                 }
 
                 return redirect('/')
-                    ->with('error', 'Un administrador te ha quitado el cliente con el que estabas trabajando. 
+                    ->with('error', 'Un administrador te ha quitado el cliente con el que estabas trabajando.
                     Vuelve a iniciar sesión.');
             }
 
