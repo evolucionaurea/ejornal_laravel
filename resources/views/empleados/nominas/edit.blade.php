@@ -80,6 +80,18 @@
 							@endif
 						</select>
 					</div>
+
+					<div class="form-group col-md-3">
+						<label>Cliente*</label>
+						<select name="id_cliente" class="form-control form-control-sm" required>
+							<option value="">--Seleccionar--</option>
+							@if($clientes) @foreach($clientes as $cliente):
+							<option value="{{ $cliente->id }}" {{ $cliente->id==$trabajador->id_cliente ? 'selected' : '' }} >{{ $cliente->nombre }}</option>
+							@endforeach @endif
+						</select>
+					</div>
+
+
 					<div class="form-group col-md-3">
 						<label>Sector*</label>
 						<input name="sector" type="text" class="form-control form-control-sm"

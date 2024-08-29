@@ -332,6 +332,12 @@ class EmpleadosNominasController extends Controller
 		}
 
 
+		/// TODO: guardar en el historial el cambio de cliente
+		if($trabajador->id_cliente != $request->id_cliente){
+			$trabajador->id_cliente = $request->id_cliente;
+		}
+
+
 		$trabajador->nombre = $request->nombre;
 		$trabajador->email = $request->email;
 
