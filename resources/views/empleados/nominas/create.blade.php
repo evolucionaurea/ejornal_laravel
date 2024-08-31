@@ -99,7 +99,7 @@
 					</div>
 
 					<div class="form-group col-md-3">
-						<label>Subir/Reemplazar foto</label>
+						<label>Subir foto</label>
 						<div class="input-group">
 							<div class="custom-file">
 								<input name="foto" id="input_file" type="file" class="custom-file-input"

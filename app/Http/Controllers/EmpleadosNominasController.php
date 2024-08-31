@@ -23,6 +23,7 @@ use App\CovidTesteo;
 use App\Preocupacional;
 use App\NominaImportacion;
 use App\NominaHistorial;
+use App\NominaClienteHistorial;
 use Intervention\Image\Facades\Image;
 
 
@@ -146,6 +147,12 @@ class EmpleadosNominasController extends Controller
 
 		$trabajador->save();
 
+		if ($request->hasFile('foto')) {
+			if(!$trabajador = $this->procesar_foto($request,$trabajador)){
+				return back()->with('error',$this->error_message);
+			}
+			$trabajador->save();
+		}
 
 		/// Agrego registro en el historial de nóminas
 		$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
@@ -169,16 +176,12 @@ class EmpleadosNominasController extends Controller
 			$nomina_historial->save();
 		}
 
-
-
-
-		if ($request->hasFile('foto')) {
-			if(!$trabajador = $this->procesar_foto($request,$trabajador)){
-				return back()->with('error',$this->error_message);
-			}
-			$trabajador->save();
-		}
-
+		// Agrego registro en el historial de nóminas/clientes
+		NominaClienteHistorial::create([
+			'nomina_id'=>$trabajador->id,
+			'cliente_id'=>auth()->user()->id_cliente_actual,
+			'user_id'=>auth()->user()->id
+		]);
 
 		return redirect('empleados/nominas')->with('success', 'Trabajador asignado con éxito a la nómina');
 	}
@@ -332,9 +335,15 @@ class EmpleadosNominasController extends Controller
 		}
 
 
-		/// TODO: guardar en el historial el cambio de cliente
+		/// guardo en el historial el cambio de cliente
 		if($trabajador->id_cliente != $request->id_cliente){
 			$trabajador->id_cliente = $request->id_cliente;
+
+			NominaClienteHistorial::create([
+				'nomina_id'=>$trabajador->id,
+				'cliente_id'=>$request->id_cliente,
+				'user_id'=>auth()->user()->id
+			]);
 		}
 
 
