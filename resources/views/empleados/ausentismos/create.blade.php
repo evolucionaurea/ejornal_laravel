@@ -119,7 +119,7 @@
 
 					<div class="form-group col-lg-12">
 						<label>Comentario</label>
-						<textarea name="comentario" class="form-control" rows="3">@if(\Session::has('consulta'))Generado desde Consulta {{ \Session::get('consulta')['consulta_tipo'] }}. Tratamiento: {{ \Session::get('consulta')['tratamiento'] }}. Obs.: {{ \Session::get('consulta')['observaciones'] }}@else{{ old("comentario") }}@endif</textarea>
+						<textarea name="comentario" class="form-control" rows="3">@if(\Session::has('consulta'))Generado desde Consulta {{ \Session::get('consulta')['consulta_tipo'] }}. @if(isset(\Session::get('consulta')['tratamiento'])) Tratamiento: {{ \Session::get('consulta')['tratamiento'] }}.@endif Obs.: {{ \Session::get('consulta')['observaciones'] }}@else{{ old("comentario") }}@endif</textarea>
 					</div>
 
 				</div>

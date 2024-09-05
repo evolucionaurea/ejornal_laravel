@@ -334,6 +334,8 @@ class EmpleadosNominasController extends Controller
 			$trabajador->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_nacimiento);
 		}
 
+		///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
+
 
 		/// guardo en el historial el cambio de cliente
 		if($trabajador->id_cliente != $request->id_cliente){

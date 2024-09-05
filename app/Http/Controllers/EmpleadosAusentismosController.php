@@ -189,7 +189,10 @@ class EmpleadosAusentismosController extends Controller
 
 		//Guardar en base Ausentismo
 		$ausentismo = new Ausentismo();
+
 		$ausentismo->id_trabajador = $request->trabajador;
+		$ausentismo->id_cliente = auth()->user()->id_cliente_actual;
+
 		$ausentismo->id_tipo = $request->tipo;
 		$ausentismo->fecha_inicio = $fecha_inicio;
 		$ausentismo->fecha_final = $fecha_final;
