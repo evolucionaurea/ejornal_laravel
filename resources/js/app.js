@@ -49,6 +49,7 @@ if(route=='documentaciones_livianas.show') require('./documentacion_tarea_livian
 
 if(route=='/empleados/nominas' || route=='empleados.listado') require('./empleados/nominas')
 if(route=='/empleados/nominas/historial') require('./empleados/nominas_historial')
+if(route=='/empleados/nominas/movimientos') require('./empleados/nominas_movimientos')
 if(route=='nominas.edit') require('./empleados/nominas_edit')
 if(route=='nominas.create') require('./empleados/nominas_create')
 if(route=='nominas.show') require('./empleados/nominas_show')

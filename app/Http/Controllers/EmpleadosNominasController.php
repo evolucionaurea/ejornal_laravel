@@ -861,4 +861,23 @@ class EmpleadosNominasController extends Controller
 	}
 
 
+	public function movimientos(){
+		$clientes = $this->getClientesUser();
+		return view('empleados.nominas.movimientos',compact('clientes'));
+	}
+	public function movimientos_search(Request $request){
+
+		$total = 0;
+		$records_filtered = 0;
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$records_filtered,
+			'data'=>[],
+			'request'=>$request->all()
+		];
+	}
+
+
 }

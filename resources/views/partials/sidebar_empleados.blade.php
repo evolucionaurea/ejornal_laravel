@@ -44,69 +44,74 @@
 	{{-- Este dato es para tomarlo por JS y saber si está trabajando actualmente (osea si fichó). En sidebar.js se usa
 	el dato --}}
 
-	@if (!isset($clientes) || empty($clientes) || count($clientes) < 1) <ul
-		class="list-group list-group-flush sidebar_menu">
-		<li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
-			<i class="fas fa-tachometer-fast"></i>
-			<a href="{{url('/empleados/resumen')}}"
-				class="list-group-item list-group-item-action sidebar_item">Resumen</a>
-		</li>
+	@if(!$clientes)
+		<ul class="list-group list-group-flush sidebar_menu">
+			<li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
+				<a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-tachometer-fast"></i>
+					<span>Resumen</span>
+				</a>
+			</li>
 		</ul>
 		@else
 
 		<ul class="list-group list-group-flush sidebar_menu">
 			<li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
-				<i class="fas fa-tachometer-fast"></i>
-				<a href="{{url('/empleados/resumen')}}"
-					class="list-group-item list-group-item-action sidebar_item">Resumen</a>
+				<a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-tachometer-fast"></i>
+					<span>Resumen</span>
+				</a>
 			</li>
 			<li class="{{ setActive('/empleados/nominas') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-user"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Nóminas</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-user"></i>
+						<span>Nóminas</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 
 					<ul>
-						<ol data-route="/empleados/nominas" class="{{ setActiveSub('/empleados/nominas') }}"
-							onclick="javascript:location.href='{{url('/empleados/nominas')}}'">
+						<ol data-route="/empleados/nominas" class="{{ setActiveSub('/empleados/nominas') }}">
 							<a href="{{url('/empleados/nominas')}}">Listado</a>
 						</ol>
 						@if(auth()->user()->fichada == 1 || !auth()->user()->fichar)
-						<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}"
-							onclick="javascript:location.href='{{route('nominas.create')}}'">
+						<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}" >
 							<a href="{{route('nominas.create')}}">Crear Trabajador</a>
 						</ol>
 						@endif
+
+						<ol data-route="/empleados/movimientos" class="{{ setActiveSub('/empleados/nominas/movimientos') }}" >
+							<a href="{{url('/empleados/nominas/movimientos')}}">Movimientos</a>
+						</ol>
+
 					</ul>
 				</div>
 			</li>
 			<li class="{{ setActive('/empleados/ausentismos') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-user-times"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Ausentismos</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-user-times"></i>
+						<span>Ausentismos</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/ausentismos" class="{{ setActiveSub('/empleados/ausentismos') }}"
-							onclick="javascript:location.href='{{url('/empleados/ausentismos')}}'">
+						<ol data-route="/empleados/ausentismos" class="{{ setActiveSub('/empleados/ausentismos') }}" >
 							<a href="{{url('/empleados/ausentismos')}}">Listado</a>
 						</ol>
 						@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
-						<ol data-route="ausentismos.create" class="{{ setActiveSub('ausentismos.create') }}"
-							onclick="javascript:location.href='{{url('/empleados/ausentismos/create')}}'">
+						<ol data-route="ausentismos.create" class="{{ setActiveSub('ausentismos.create') }}" >
 							<a href="{{url('/empleados/ausentismos/create')}}">Agregar Ausentismo</a>
 						</ol>
 						@endif
 						<ol data-route="/empleados/comunicaciones"
-							class="{{ setActiveSub('/empleados/comunicaciones') }}"
-							onclick="javascript:location.href='{{url('/empleados/comunicaciones')}}'">
+							class="{{ setActiveSub('/empleados/comunicaciones') }}" >
 							<a href="{{url('/empleados/comunicaciones')}}">Comunicaciones</a>
 						</ol>
-						<ol data-route="/empleados/certificados" class="{{ setActiveSub('/empleados/certificados') }}"
-							onclick="javascript:location.href='{{url('/empleados/certificados')}}'">
+						<ol data-route="/empleados/certificados" class="{{ setActiveSub('/empleados/certificados') }}" >
 							<a href="{{url('/empleados/certificados')}}">Certificados</a>
 						</ol>
 					</ul>
@@ -114,31 +119,26 @@
 			</li>
 			<li class="{{ setActive('/empleados/tareas_livianas') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-laptop-medical"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Tareas adecuadas</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-laptop-medical"></i>
+						<span>Tareas Adecuadas</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/tareas_livianas"
-							class="{{ setActiveSub('/empleados/tareas_livianas') }}"
-							onclick="javascript:location.href='{{url('/empleados/tareas_livianas')}}'">
+						<ol data-route="/empleados/tareas_livianas" >
 							<a href="{{url('/empleados/tareas_livianas')}}">Listado</a>
 						</ol>
 						@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
-						<ol data-route="tareas_livianas.create" class="{{ setActiveSub('tareas_livianas.create') }}"
-							onclick="javascript:location.href='{{url('/empleados/tareas_livianas/create')}}'">
+						<ol data-route="tareas_livianas.create" class="{{ setActiveSub('tareas_livianas.create') }}" >
 							<a href="{{url('/empleados/tareas_livianas/create')}}">Agregar Tarea Adecuada</a>
 						</ol>
 						@endif
-						<ol data-route="/empleados/comunicaciones_livianas"
-							class="{{ setActiveSub('/empleados/comunicaciones_livianas') }}"
-							onclick="javascript:location.href='{{url('/empleados/comunicaciones_livianas')}}'">
+						<ol data-route="/empleados/comunicaciones_livianas" class="{{ setActiveSub('/empleados/comunicaciones_livianas') }}" >
 							<a href="{{url('/empleados/comunicaciones_livianas')}}">Comunicaciones</a>
 						</ol>
-						<ol data-route="/empleados/certificados_livianos"
-							class="{{ setActiveSub('/empleados/certificados_livianos') }}"
-							onclick="javascript:location.href='{{url('/empleados/certificados_livianos')}}'">
+						<ol data-route="/empleados/certificados_livianos" class="{{ setActiveSub('/empleados/certificados_livianos') }}" >
 							<a href="{{url('/empleados/certificados_livianos')}}">Certificados</a>
 						</ol>
 					</ul>
@@ -146,64 +146,41 @@
 			</li>
 			<li class="{{ setActive('/empleados/consultas') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-user-md"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Consultas</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-user-md"></i>
+						<span>Consultas</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="empleados.consultas.todas"
-							class="{{ setActiveSub('empleados.consultas.todas') }}"
-							onclick="javascript:location.href='{{url('/empleados/consultas/todas')}}'">
+						<ol data-route="empleados.consultas.todas" class="{{ setActiveSub('empleados.consultas.todas') }}" >
 							<a href="{{url('/empleados/consultas/todas')}}">Ver todas</a>
 						</ol>
-						<ol data-route="empleados.consultas.medicas"
-							class="{{ setActiveSub('empleados.consultas.medicas') }}"
-							onclick="javascript:location.href='{{url('/empleados/consultas/medicas')}}'">
+						<ol data-route="empleados.consultas.medicas" class="{{ setActiveSub('empleados.consultas.medicas') }}" >
 							<a href="{{url('/empleados/consultas/medicas')}}">Médicas</a>
 						</ol>
-						<ol data-route="empleados.consultas.enfermeria"
-							class="{{ setActiveSub('empleados.consultas.enfermeria') }}"
-							onclick="javascript:location.href='{{url('/empleados/consultas/enfermeria')}}'">
+						<ol data-route="empleados.consultas.enfermeria" class="{{ setActiveSub('empleados.consultas.enfermeria') }}" >
 							<a href="{{url('/empleados/consultas/enfermeria')}}">Enfermería</a>
 						</ol>
 					</ul>
 				</div>
 			</li>
-			{{-- <li class="{{ setActive('/empleados/covid') }} dropdownMenu">
-				<div class="dropdownButton">
-					<i class="fas fa-clinic-medical"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Covid 19</a>
-					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
-				</div>
-				<div class="dropdownContent">
-					<ul>
-						<ol data-route="empleados.covid.testeos" class="{{ setActiveSub('empleados.covid.testeos') }}"
-							onclick="javascript:location.href='{{url('/empleados/covid/testeos')}}'">
-							<a href="{{url('/empleados/covid/testeos')}}">Testeos</a>
-						</ol>
-						<ol data-route="empleados.covid.vacunas" class="{{ setActiveSub('empleados.covid.vacunas') }}"
-							onclick="javascript:location.href='{{url('/empleados/covid/vacunas')}}'">
-							<a href="{{url('/empleados/covid/vacunas')}}">Vacunas</a>
-						</ol>
-					</ul>
-				</div>
-			</li> --}}
+
 			<li class="{{ setActive('/empleados/medicamentos') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-syringe"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Medicamentos</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-syringe"></i>
+						<span>Medicamentos</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/medicamentos" class="{{ setActiveSub('/empleados/medicamentos') }}"
-							onclick="javascript:location.href='{{url('/empleados/medicamentos')}}'">
+						<ol data-route="/empleados/medicamentos" class="{{ setActiveSub('/empleados/medicamentos') }}" >
 							<a href="{{url('/empleados/medicamentos')}}">Listado</a>
 						</ol>
-						<ol data-route="/empleados/medicamentos_movimientos"
-							class="{{ setActiveSub('/empleados/medicamentos_movimientos') }}"
-							onclick="javascript:location.href='{{url('/empleados/medicamentos_movimientos')}}'">
+						<ol data-route="/empleados/medicamentos_movimientos" class="{{ setActiveSub('/empleados/medicamentos_movimientos') }}" >
 							<a href="{{url('/empleados/medicamentos_movimientos')}}">Movimientos</a>
 						</ol>
 					</ul>
@@ -211,24 +188,22 @@
 			</li>
 			<li class="{{ setActive('/empleados/preocupacionales') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-book-medical"></i>
 					{{-- Est Med Comp es: Estudios medicos complementarios. La seccion real se llama preocupacionales
 					pero luego
 					decidieron cambiarle el nombre. Solo cambio los "label digamos". Rutas y demas queda igual --}}
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Estudio Médico
-						Complementario</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-book-medical"></i>
+						<span>Estudio Médico Complementario</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/preocupacionales"
-							class="{{ setActiveSub('/empleados/preocupacionales') }}"
-							onclick="javascript:location.href='{{url('/empleados/preocupacionales')}}'">
+						<ol data-route="/empleados/preocupacionales" class="{{ setActiveSub('/empleados/preocupacionales') }}" >
 							<a href="{{url('/empleados/preocupacionales')}}">Listado</a>
 						</ol>
 
-						<ol data-route="preocupacionales.create" class="{{ setActiveSub('preocupacionales.create') }}"
-							onclick="javascript:location.href='{{url('/empleados/preocupacionales/create')}}'">
+						<ol data-route="preocupacionales.create" class="{{ setActiveSub('preocupacionales.create') }}" >
 							<a href="{{url('/empleados/preocupacionales/create')}}">Nuevo estudio médico compl.</a>
 						</ol>
 
@@ -237,18 +212,18 @@
 			</li>
 			<li class="{{ setActive('/empleados/cuenta') }} dropdownMenu">
 				<div class="dropdownButton">
-					<i class="fas fa-file-invoice"></i>
-					<a href="#!" class="list-group-item list-group-item-action sidebar_item">Mi eJornal</a>
+					<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+						<i class="fas fa-file-invoice"></i>
+						<span>Mi eJornal</span>
+					</a>
 					<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 				</div>
 				<div class="dropdownContent">
 					<ul>
-						<ol data-route="/empleados/cuenta" class="{{ setActiveSub('/empleados/cuenta') }}"
-							onclick="javascript:location.href='{{url('/empleados/cuenta')}}'">
+						<ol data-route="/empleados/cuenta" class="{{ setActiveSub('/empleados/cuenta') }}" >
 							<a href="{{url('/empleados/cuenta')}}">Mi cuenta</a>
 						</ol>
-						<ol data-route="/empleados/liquidacion" class="{{ setActiveSub('/empleados/liquidacion') }}"
-							onclick="javascript:location.href='{{url('/empleados/liquidacion')}}'">
+						<ol data-route="/empleados/liquidacion" class="{{ setActiveSub('/empleados/liquidacion') }}" >
 							<a href="{{url('/empleados/liquidacion')}}">Liquidacion</a>
 						</ol>
 					</ul>

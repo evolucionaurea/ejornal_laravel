@@ -12,10 +12,13 @@
 		@include('partials.nav_sup')
 		<div class="cabecera">
 			<h2>Historial de la nómina</h2>
-			<p>Aquí puede ver el historial de la nómina de su empresa.</p>
+			<p>Aquí puede ver el historial de la nómina de la empresa.</p>
 
 			<div class="form-group">
-				<a href="{{url('empleados/nominas')}}" class="btn btn-dark btn-sm"><i class="fa fa-angle-double-left fa-fw"></i> Volver al listado</a>
+				<a href="{{url('empleados/nominas')}}" class="btn btn-dark btn-sm">
+					<i class="fa fa-angle-double-left fa-fw"></i>
+					<span>Volver al listado</span>
+				</a>
 			</div>
 
 			<hr>

@@ -714,6 +714,7 @@ table.table {
 }
 
 .dropdownButton a {
+  display: flex;
   padding-left: .225rem;
   line-height: 1.15;
 }
@@ -736,10 +737,11 @@ table.table {
   cursor: pointer;
   font-size: 10pt;
   height: auto;
-  padding: .625rem 1.5rem;
 }
 
 .dropdownContent ul ol a {
+  padding: .625rem 1.5rem;
+  width: 100%;
   color: #c9c9c9;
   display: block;
   line-height: 1.15;

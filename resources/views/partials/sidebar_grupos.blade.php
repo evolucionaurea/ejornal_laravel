@@ -28,37 +28,48 @@
 
 
     <li class="{{ setActive('/grupos/resumen') }} menu_sin_sub_menu">
-      <i class="fas fa-tachometer-fast"></i>
-      <a href="{{url('/grupos/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen Global</a>
-    </li>
-
-    <li class="{{ setActive('/grupos/resumen_cliente') }} menu_sin_sub_menu">
-      <i class="fas fa-tachometer-fast"></i>
-      <a href="{{url('/grupos/resumen_cliente')}}" class="list-group-item list-group-item-action sidebar_item">
-        <div>Resumen Cliente</div>
-        @if (!is_null($cliente_actual))
-        <div class="small font-italic">{{$cliente_actual->nombre }}</div>
-        @endif
+      <a href="{{url('/grupos/resumen')}}" class="list-group-item list-group-item-action sidebar_item">
+        <i class="fas fa-tachometer-fast"></i>
+        <span>Resumen Global</span>
       </a>
     </li>
 
+    <li class="{{ setActive('/grupos/resumen_cliente') }} menu_sin_sub_menu dropdownButton">
+      <a href="{{url('/grupos/resumen_cliente')}}" class="list-group-item list-group-item-action sidebar_item">
+        <i class="fas fa-tachometer-fast"></i>
+        <div>
+          <div>Resumen Cliente</div>
+          @if (!is_null($cliente_actual))
+          <div class="small font-italic">{{$cliente_actual->nombre }}</div>
+          @endif
+        </div>
+      </a>
+    </li>
 
      <li class="{{ setActive('/grupos/cuenta') }} menu_sin_sub_menu">
-      <i class="fas fa-file-invoice"></i>
-      <a href="{{url('/grupos/cuenta')}}" class="list-group-item list-group-item-action sidebar_item">Mi cuenta</a>
+      <a href="{{url('/grupos/cuenta')}}" class="list-group-item list-group-item-action sidebar_item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Mi cuenta</span>
+      </a>
     </li>
 
     <li class="{{ setActive('/grupos/nominas') }} menu_sin_sub_menu">
-      <i class="fas fa-users"></i>
-      <a href="{{url('/grupos/nominas')}}" class="list-group-item list-group-item-action sidebar_item">Nomina</a>
+      <a href="{{url('/grupos/nominas')}}" class="list-group-item list-group-item-action sidebar_item">
+        <i class="fas fa-users"></i>
+        <span>Nómina</span>
+      </a>
     </li>
     <li class="{{ setActive('/grupos/ausentismos') }} menu_sin_sub_menu">
-      <i class="fas fa-user-times"></i>
-      <a href="{{url('/grupos/ausentismos')}}" class="list-group-item list-group-item-action sidebar_item">Ausentismos</a>
+      <a href="{{url('/grupos/ausentismos')}}" class="list-group-item list-group-item-action sidebar_item">
+        <i class="fas fa-user-times"></i>
+        <span>Ausentismos</span>
+      </a>
     </li>
 		<li class="{{ setActive('/grupos/api') }} menu_sin_sub_menu">
-      <i class="far fa-network-wired"></i>
-      <a href="{{url('/grupos/api')}}" class="list-group-item list-group-item-action sidebar_item">Api</a>
+      <a href="{{url('/grupos/api')}}" class="list-group-item list-group-item-action sidebar_item">
+        <i class="far fa-network-wired"></i>
+        <span>Api</span>
+      </a>
     </li>
 
   </div>

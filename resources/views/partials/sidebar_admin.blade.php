@@ -12,32 +12,35 @@
 
 	<div class="list-group list-group-flush sidebar_menu">
 		<li class="{{ setActive('/admin/resumen') }} menu_sin_sub_menu">
-			<i class="fas fa-tachometer-fast"></i>
-			<a href="{{url('/admin/resumen')}}" class="list-group-item list-group-item-action sidebar_item">Resumen</a>
+			<a href="{{url('/admin/resumen')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-tachometer-fast"></i>
+				<span>Resumen</span>
+			</a>
 		</li>
 		<li class="{{ setActive('/admin/cuenta') }} menu_sin_sub_menu">
-			<i class="fas fa-file-invoice"></i>
-			<a href="{{url('/admin/cuenta')}}" class="list-group-item list-group-item-action sidebar_item">Mi cuenta</a>
+			<a href="{{url('/admin/cuenta')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-file-invoice"></i>
+				<span>Mi cuenta</span>
+			</a>
 		</li>
 
 		<li class="{{ setActive('/admin/users') }} dropdownMenu">
 			<div class="dropdownButton">
-				<i class="fas fa-user"></i>
-				<a href="#!" class="list-group-item list-group-item-action sidebar_item">Usuarios</a>
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-user"></i>
+					<span>Usuarios</span>
+				</a>
 				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/users" class="{{ setActiveSub('/admin/users') }}"
-						onclick="javascript:location.href='{{url('/admin/users')}}'">
+					<ol data-route="/admin/users" class="{{ setActiveSub('/admin/users') }}" >
 						<a href="{{url('/admin/users')}}">Listado</a>
 					</ol>
-					<ol data-route="users.create" class="{{ setActiveSub('users.create') }}"
-						onclick="javascript:location.href='{{url('admin/users/create')}}'">
+					<ol data-route="users.create" class="{{ setActiveSub('users.create') }}" >
 						<a href="{{url('admin/users/create')}}">Crear usuario</a>
 					</ol>
-					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}"
-						onclick="javascript:location.href='{{url('admin/users_fichadas_nuevas')}}'">
+					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}" >
 						<a href="{{url('admin/users_fichadas_nuevas')}}">Fichadas</a>
 					</ol> --}}
 				</ul>
@@ -46,18 +49,18 @@
 
 		<li class="{{ setActive('/admin/clientes') }} dropdownMenu">
 			<div class="dropdownButton">
-				<i class="fas fa-briefcase"></i>
-				<a href="#!" class="list-group-item list-group-item-action sidebar_item">Clientes</a>
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-briefcase"></i>
+					<span>Clientes</span>
+				</a>
 				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/clientes" class="{{ setActiveSub('/admin/clientes') }}"
-						onclick="javascript:location.href='{{url('/admin/clientes')}}'">
+					<ol data-route="/admin/clientes" class="{{ setActiveSub('/admin/clientes') }}" >
 						<a href="{{url('/admin/clientes')}}">Listado</a>
 					</ol>
-					<ol data-route="admin.clientes.create" class="{{ setActiveSub('clientes.create') }}"
-						onclick="javascript:location.href='{{url('/admin/clientes/create')}}'">
+					<ol data-route="admin.clientes.create" class="{{ setActiveSub('clientes.create') }}" >
 						<a href="{{url('/admin/clientes/create')}}">Crear cliente</a>
 					</ol>
 				</ul>
@@ -65,18 +68,18 @@
 		</li>
 		<li class="{{ setActive('/admin/grupos') }} dropdownMenu">
 			<div class="dropdownButton">
-				<i class="fas fa-building"></i>
-				<a href="#!" class="list-group-item list-group-item-action sidebar_item">Grupos</a>
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-building"></i>
+					<span>Grupos</span>
+				</a>
 				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/grupos" class="{{ setActiveSub('/admin/grupos') }}"
-						onclick="javascript:location.href='{{url('/admin/grupos')}}'">
+					<ol data-route="/admin/grupos" class="{{ setActiveSub('/admin/grupos') }}" >
 						<a href="{{url('/admin/grupos')}}">Listado</a>
 					</ol>
-					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}"
-						onclick="javascript:location.href='{{url('/admin/grupos/create')}}'">
+					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}" >
 						<a href="{{url('/admin/grupos/create')}}">Crear grupo</a>
 					</ol>
 				</ul>
@@ -84,19 +87,19 @@
 		</li>
 		<li class="{{ setActive('/admin/medicamentos') }} dropdownMenu">
 			<div class="dropdownButton">
-				<i class="fas fa-clinic-medical"></i>
-				<a href="#!" class="list-group-item list-group-item-action sidebar_item">Medicamentos</a>
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-clinic-medical"></i>
+					<span>Medicamentos</span>
+				</a>
 				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}"
-						onclick="javascript:location.href='{{url('/admin/medicamentos')}}'">
+					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}" >
 						<a href="{{url('/admin/medicamentos')}}">Listado</a>
 					</ol>
 					<ol data-route="/admin/movimiento_medicamentos"
-						class="{{ setActiveSub('/admin/movimiento_medicamentos') }}"
-						onclick="javascript:location.href='{{url('/admin/movimiento_medicamentos')}}'">
+						class="{{ setActiveSub('/admin/movimiento_medicamentos') }}" >
 						<a href="{{url('/admin/movimiento_medicamentos')}}">Movimientos</a>
 					</ol>
 				</ul>
@@ -104,31 +107,28 @@
 		</li>
 		<li class="{{ setActive('/admin/reportes') }} dropdownMenu">
 			<div class="dropdownButton">
-				<i class="far fa-chart-bar"></i>
-				<a href="#!" class="list-group-item list-group-item-action sidebar_item">Reportes</a>
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+					<i class="far fa-chart-bar"></i>
+					<span>Reportes</span>
+				</a>
 				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
 			</div>
 			<div class="dropdownContent">
 				<ul>
 					<ol data-route="/admin/reportes_fichadas_nuevas"
-						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}"
-						onclick="javascript:location.href='{{url('/admin/reportes_fichadas_nuevas')}}'">
+						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}" >
 						<a href="{{url('/admin/reportes_fichadas_nuevas')}}">Fichadas</a>
 					</ol>
-					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}"
-						onclick="javascript:location.href='{{url('/admin/reportes_ausentismos')}}'">
+					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}" >
 						<a href="{{url('/admin/reportes_ausentismos')}}">Ausentismos</a>
 					</ol>
-					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('reportes_certificaciones') }}"
-						onclick="javascript:location.href='{{url('/admin/reportes_certificaciones')}}'">
+					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('reportes_certificaciones') }}" >
 						<a href="{{url('/admin/reportes_certificaciones')}}">Certificaciones</a>
 					</ol>
-					<ol data-route="reportes_consultas" class="{{ setActiveSub('reportes_consultas') }}"
-						onclick="javascript:location.href='{{url('/admin/reportes_consultas')}}'">
+					<ol data-route="reportes_consultas" class="{{ setActiveSub('reportes_consultas') }}" >
 						<a href="{{url('/admin/reportes_consultas')}}">Consultas</a>
 					</ol>
-					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}"
-						onclick="javascript:location.href='{{url('/admin/reportes_comunicaciones')}}'">
+					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}" >
 						<a href="{{url('/admin/reportes_comunicaciones')}}">Comunicaciones</a>
 					</ol>
 				</ul>
@@ -136,9 +136,10 @@
 		</li>
 		@if (auth()->user()->email == 'sebas_admin@ejornal.com.ar')
 		<li class="{{ setActive('/admin/migrar') }} menu_sin_sub_menu">
-			<i class="fas fa-sync"></i>
-			<a href="{{url('/admin/migrar')}}" class="list-group-item list-group-item-action sidebar_item">Migraciones
-				de datos</a>
+			<a href="{{url('/admin/migrar')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-sync"></i>
+				<span>Migraciones de datos</span>
+			</a>
 		</li>
 		@endif
 	</div>
