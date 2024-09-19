@@ -32,8 +32,11 @@
 							<input name="search" class="form-control form-control-sm" placeholder="Filtrar por nombre..." value="" >
 						</div>
 						<div class="mb-1 col-md-6">
-							<select name="cliente" class="form-control form-control-sm">
+							<select name="cliente_id" class="form-control form-control-sm">
 								<option value="">--Seleccionar Cliente--</option>
+								@if($clientes) @foreach($clientes as $cliente)
+								<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+								@endforeach @endif
 							</select>
 						</div>
 					</div>

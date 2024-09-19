@@ -593,7 +593,8 @@ class EmpleadosNominasController extends Controller
 
 		/// GUARDAR DATOS
 
-		// Traigo todos los empleados de la nómina actual
+		// Traigo todos los empleados de la nómina actual del cliente actual
+		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
 		$nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
 
 		$empleados_borrables = [];
@@ -704,6 +705,16 @@ class EmpleadosNominasController extends Controller
 				$nomina->save();
 
 			}
+
+			if(!$empleado_id){
+				/// guardo en el historial de la nómina con el cliente cuando se crea
+				NominaClienteHistorial::create([
+					'nomina_id'=>$nomina->id,
+					'cliente_id'=>auth()->user()->id_cliente_actual,
+					'user_id'=>auth()->user()->id
+				]);
+			}
+
 		}
 
 
@@ -867,14 +878,49 @@ class EmpleadosNominasController extends Controller
 	}
 	public function movimientos_search(Request $request){
 
-		$total = 0;
-		$records_filtered = 0;
+
+		$nominas_clientes = Nomina::select('*')
+			->withCount('movimientos_cliente')
+			->having('movimientos_cliente_count','>',1)
+			->pluck('id');
+		$cliente_ids = $this->getClientesIds();
+
+		//DB::raw('COUNT(*) as cantidad')
+		$query = NominaClienteHistorial::select('*')
+			->with(['trabajador','cliente','usuario'])
+			->whereIn('nomina_id',$nominas_clientes)
+			->whereIn('cliente_id',$cliente_ids);
+
+		$total = $query->count();
+
+		if($request->cliente_id){
+			$query->where('cliente_id',$request->cliente_id);
+		}
+
+		if(isset($request->search)){
+			/*$query->where(function($query) use($request) {
+				$filtro = '%'.$request->search.'%';
+				$query->where('nominas.nombre','like',$filtro)
+					->orWhere('nominas.email','like',$filtro)
+					->orWhere('nominas.dni','like',$filtro)
+					->orWhere('nominas.telefono','like',$filtro);
+			});*/
+		}
+
+		if($request->order){
+			//$sort = $request->columns[$request->order[0]['column']]['name'];
+			//$dir  = $request->order[0]['dir'];
+			//$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
 
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total,
-			'recordsFiltered'=>$records_filtered,
-			'data'=>[],
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'request'=>$request->all()
 		];
 	}

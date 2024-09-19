@@ -21,14 +21,14 @@ class NominaClienteHistorial extends Model
 
 	public function trabajador()
 	{
-		$this->belongsTo(Nomina::class);
+		return $this->belongsTo(Nomina::class,'nomina_id');
 	}
 	public function cliente()
 	{
-		$this->belongsTo(Cliente::class);
+		return $this->belongsTo(Cliente::class,'cliente_id');
 	}
 	public function usuario()
 	{
-		$this->belongsTo(User::class);
+		return $this->belongsTo(User::class,'user_id');
 	}
 }

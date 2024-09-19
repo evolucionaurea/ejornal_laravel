@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Ausentismo;
 use App\Cliente;
+use App\NominaClienteHistorial;
 use Carbon\Carbon;
 
 class Nomina extends Model
@@ -32,6 +33,11 @@ class Nomina extends Model
   {
   	return $this->hasMany(Ausentismo::class,'id_trabajador');
   }
+  public function movimientos_cliente(){
+    return $this->hasMany(NominaClienteHistorial::class,'nomina_id');
+  }
+
+
   public function scopeWithAusentismoEstado($query)
   {
     $today = Carbon::now();

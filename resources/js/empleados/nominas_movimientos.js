@@ -19,18 +19,30 @@ $(()=>{
 				{
 					data:'trabajador',
 					name:'trabajador',
+					render:v=>{
+						if(v==null) return ''
+						return v.nombre
+					}
 				},
 				{
 					data:'cliente',
-					name:'cliente'
+					name:'cliente',
+					render:v=>{
+						if(v==null) return ''
+						return v.nombre
+					}
 				},
 				{
 					data:'usuario',
-					name:'usuario'
+					name:'usuario',
+					render:v=>{
+						if(v==null) return ''
+						return v.nombre
+					}
 				},
 				{
-					data:'added',
-					name:'added'
+					data:'created_at',
+					name:'created_at'
 				}
 
 			]

@@ -23,6 +23,16 @@ trait Clientes {
 
 	}
 
+	public function getClientesIds()
+	{
+		return ClienteUser::select('*')
+			->where('id_user', '=', auth()->user()->id)
+			->whereHas('cliente',function($query){
+				$query->whereNull('deleted_at');
+			})
+			->pluck('id_cliente');
+	}
+
 	public function resumen($id_cliente){
 
 
