@@ -79,7 +79,7 @@ trait Ausentismos {
 					0
 				) ausente"
 			))
-			->where('nominas.id_cliente',$id_cliente)
+			->where('ausentismos.id_cliente',$id_cliente)
 			->withCount('documentaciones')
 			->withCount('comunicaciones')
 			->where('nominas.deleted_at',null);
@@ -425,6 +425,8 @@ trait Ausentismos {
 				->where('cliente_id',$id_cliente)
 				->first()
 				->cantidad;
+
+
 			//DB::enableQueryLog();
 			$ausentismos = Ausentismo::selectRaw("
 				SUM(
@@ -461,8 +463,8 @@ trait Ausentismos {
 					$query->select('id')
 						->from('nominas')
 						->where('deleted_at',null)
-						->where('estado',1)
-						->where('id_cliente',$id_cliente);
+						->where('estado',1);
+						//->where('id_cliente',$id_cliente);
 				})
 				->whereHas('tipo',function($query){
 					$query
@@ -474,6 +476,7 @@ trait Ausentismos {
 								->orWhere('agrupamiento',null);
 						});
 				})
+				->where('ausentismos.id_cliente',$id_cliente)
 				->first();
 
 
@@ -549,8 +552,8 @@ trait Ausentismos {
 				$query->select('id')
 					->from('nominas')
 					->where('estado',1)
-					->where('deleted_at',null)
-					->where('id_cliente',$id_cliente);
+					->where('deleted_at',null);
+					//->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
 				$query
@@ -562,6 +565,7 @@ trait Ausentismos {
 							->orWhere('agrupamiento',null);
 					});
 			})
+			->where('ausentismos.id_cliente',$id_cliente)
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
 			->get();
@@ -618,8 +622,8 @@ trait Ausentismos {
 				$query->select('id')
 					->from('nominas')
 					->where('estado',1)
-					->where('deleted_at',null)
-					->where('id_cliente',$id_cliente);
+					->where('deleted_at',null);
+					//->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
 				$query
@@ -631,6 +635,7 @@ trait Ausentismos {
 							->orWhere('agrupamiento',null);
 					});
 			})
+			->where('ausentismos.id_cliente',$id_cliente)
 			->groupBy('id_tipo')
 			->get();
 
@@ -685,8 +690,8 @@ trait Ausentismos {
 				$query->select('id')
 					->from('nominas')
 					->where('estado',1)
-					->where('deleted_at',null)
-					->where('id_cliente',$id_cliente);
+					->where('deleted_at',null);
+					//->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
 				$query
@@ -698,6 +703,7 @@ trait Ausentismos {
 							->orWhere('agrupamiento',null);
 					});
 			})
+			->where('ausentismos.id_cliente',$id_cliente)
 			->groupBy('id_tipo')
 			->get();
 
@@ -747,8 +753,8 @@ trait Ausentismos {
 				$query->select('id')
 					->from('nominas')
 					->where('estado',1)
-					->where('deleted_at',null)
-					->where('id_cliente',$id_cliente);
+					->where('deleted_at',null);
+					//->where('id_cliente',$id_cliente);
 			})
 			->whereHas('tipo',function($query){
 				$query
@@ -760,6 +766,7 @@ trait Ausentismos {
 							->orWhere('agrupamiento',null);
 					});
 			})
+			->where('ausentismos.id_cliente',$id_cliente)
 			->groupBy('id_tipo')
 			->orderBy('dias','desc')
 			->get();

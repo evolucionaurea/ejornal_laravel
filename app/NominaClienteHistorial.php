@@ -15,7 +15,7 @@ class NominaClienteHistorial extends Model
 	protected $fillable = ['nomina_id','cliente_id','user_id'];
 
 	protected $casts = [
-		'created_at'=>'datetime:d/m/Y - H:i:s'
+		'created_at'=>'datetime:d/m/Y - H:i:s \h\s.'
 	];
 
 

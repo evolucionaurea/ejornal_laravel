@@ -7,6 +7,7 @@
 			<th>Tipo</th>
 			<th>Ususario que registró</th>
 			<th>Comunicación</th>
+			<th>Cliente</th>
 			{{-- <th>Archivo</th> --}}
 			<th>Certificados</th>
 		</tr>
@@ -32,6 +33,10 @@
 				@else
 				<span class="text-muted font-italic">[No se cargó]</span>
 				@endif
+			</td>
+
+			<td class="align-middle">
+				{{ $ausentismo->cliente->nombre }}
 			</td>
 			{{-- <td class="align-middle">
 				@if ($ausentismo->archivo)

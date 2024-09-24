@@ -37,8 +37,11 @@ class Ausentismo extends Model
 		return $this->belongsTo(Nomina::class,'id_trabajador');
 	}
 
-	public function cliente(){
+	/*public function cliente(){
 		return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');
+	}*/
+	public function cliente(){
+		return $this->belongsTo(Cliente::class,'id_cliente');
 	}
 
 	public function documentaciones(){

@@ -199,6 +199,16 @@ class EmpleadosNominasController extends Controller
 		$trabajador = Nomina::findOrFail($id);
 
 
+		$testeos = CovidTesteo::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+		$vacunas = CovidVacuna::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+
+
 		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
 			->with('diagnostico')
 			->orderBy('fecha','desc')
@@ -214,19 +224,9 @@ class EmpleadosNominasController extends Controller
 			->with('tipo')
 			->with('comunicacion.tipo')
 			->with('documentaciones')
+			->with('cliente')
 			->orderBy('fecha_inicio', 'desc')
 			->get();
-
-
-		$testeos = CovidTesteo::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-		$vacunas = CovidVacuna::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
 			->with('trabajador')
@@ -236,9 +236,57 @@ class EmpleadosNominasController extends Controller
 			->orderBy('fecha', 'desc')
 			->get();
 
+		///historial fix
 
-			$resumen_historial = DB::table('consultas_medicas')
-			->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Médica" as evento'), 'consultas_medicas.observaciones as observaciones')
+		$resumen_historial = [];
+		foreach($ausentismos as $ausentismo){
+			$resumen_historial[$ausentismo->fecha_inicio->format('Ymd')] = (object) [
+				'fecha'=>$ausentismo->fecha_inicio,
+				'tipo'=>$ausentismo->tipo->nombre,
+				'evento'=>'Ausentismo',
+				'observaciones'=>$ausentismo->comentario,
+				'usuario'=>$ausentismo->user
+			];
+		}
+		foreach($consultas_enfermeria as $enfermeria){
+			$resumen_historial[$enfermeria->fecha->format('Ymd')] = (object) [
+				'fecha'=>$enfermeria->fecha,
+				'tipo'=>$enfermeria->diagnostico->nombre,
+				'evento'=>'Consulta Enfermería',
+				'observaciones'=>$enfermeria->observaciones,
+				'usuario'=>$enfermeria->user
+			];
+		}
+		foreach($consultas_medicas as $medica){
+			$resumen_historial[$medica->fecha->format('Ymd')] = (object) [
+				'fecha'=>$medica->fecha,
+				'tipo'=>$medica->diagnostico->nombre,
+				'evento'=>'Consulta Enfermería',
+				'observaciones'=>$medica->observaciones,
+				'usuario'=>$medica->user
+			];
+		}
+		foreach($preocupacionales as $preocupacional){
+			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
+				'fecha'=>$preocupacional->fecha,
+				'tipo'=>$preocupacional->tipo->nombre,
+				'evento'=>'Exámen Médico Complementario',
+				'observaciones'=>$preocupacional->observaciones,
+				'usuario'=>''
+			];
+		}
+		krsort($resumen_historial);
+		//dd($historial);
+
+
+		/*$resumen_historial = DB::table('consultas_medicas')
+			->select(
+				'fecha',
+				'diagnostico_consulta.nombre as tipo',
+				'user as usuario',
+				DB::raw('"Consulta Médica" as evento'),
+				'consultas_medicas.observaciones as observaciones'
+			)
 			->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
 			->where('fecha', '<>', '0000-00-00')
 			->where('user', '<>', '')
@@ -258,13 +306,19 @@ class EmpleadosNominasController extends Controller
 				->where('id_trabajador', $id)
 			)
 			->unionAll(DB::table('preocupacionales')
-				->select('fecha', DB::raw('"Archivo adjunto" as tipo'), 'nominas.nombre as usuario', DB::raw('"Exámen Médico Complementario" as evento'), 'preocupacionales.observaciones as observaciones')
+				->select(
+					'fecha',
+					DB::raw('"Archivo adjunto" as tipo'),
+					'nominas.nombre as usuario',
+					DB::raw('"Exámen Médico Complementario" as evento'),
+					'preocupacionales.observaciones as observaciones'
+				)
 				->join('nominas', 'preocupacionales.id_nomina', '=', 'nominas.id')
 				->where('fecha', '<>', '0000-00-00')
 				->where('id_nomina', $id)
 			)
 			->orderBy('fecha', 'desc')
-			->get();
+			->get();*/
 
 
 
@@ -889,7 +943,9 @@ class EmpleadosNominasController extends Controller
 		$query = NominaClienteHistorial::select('*')
 			->with(['trabajador','cliente','usuario'])
 			->whereIn('nomina_id',$nominas_clientes)
-			->whereIn('cliente_id',$cliente_ids);
+			->whereIn('cliente_id',$cliente_ids)
+
+			->orderBy('created_at','desc');
 
 		$total = $query->count();
 
@@ -898,13 +954,19 @@ class EmpleadosNominasController extends Controller
 		}
 
 		if(isset($request->search)){
-			/*$query->where(function($query) use($request) {
-				$filtro = '%'.$request->search.'%';
-				$query->where('nominas.nombre','like',$filtro)
-					->orWhere('nominas.email','like',$filtro)
-					->orWhere('nominas.dni','like',$filtro)
-					->orWhere('nominas.telefono','like',$filtro);
-			});*/
+			$search = '%'.$request->search.'%';
+			$query->where(function($query) use($search){
+				$query
+					->whereHas('trabajador',function($query) use($search){
+						$query->where('nombre','like',$search);
+					})
+					->orWhereHas('cliente',function($query) use($search){
+						$query->where('nombre','like',$search);
+					})
+					->orWhereHas('usuario',function($query) use($search){
+						$query->where('nombre','like',$search);
+					});
+			});
 		}
 
 		if($request->order){
