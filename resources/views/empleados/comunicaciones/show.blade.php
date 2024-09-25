@@ -18,10 +18,12 @@
 			<p>Aquí puedes ver y cargar nuevas comunicaciones de ausentismo</p>
 
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}">
+				<a class="btn-ejornal btn-ejornal-gris-claro"
+					href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}">
 					<i class="fas fa-arrow-circle-left fa-fw"></i> <span>Volver</span>
 				</a>
-				<a data-toggle="modal" data-target="#cargar_comunicaciones_ausentismo" class="btn-ejornal btn-ejornal-success" href="#">
+				<a data-toggle="modal" data-target="#cargar_comunicaciones_ausentismo"
+					class="btn-ejornal btn-ejornal-success" href="#">
 					<i class="fas fa-plus-circle fa-fw"></i> <span>Crear Comunicación</span>
 				</a>
 			</div>
@@ -47,14 +49,16 @@
 
 				<div class="col-lg-4 col-md-3 col-sm-12 text-center">
 					@if ($ausencia->trabajador->foto)
-					<div class="foto-perfil" style="background-image: url({{ $ausencia->trabajador->photo_url }})"></div>
+					<div class="foto-perfil" style="background-image: url({{ $ausencia->trabajador->photo_url }})">
+					</div>
 					@else
 					<i class="fas fa-user fa-10x"></i>
 					@endif
 					<br>
 					<br>
 					<h5>
-						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info" title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
+						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info"
+							title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
 					</h5>
 				</div>
 
@@ -130,6 +134,7 @@
 						<tr class="bg-light">
 							<th>Tipo</th>
 							<th>Descripción</th>
+							<th>Archivo</th>
 							<th>Última Actualización</th>
 							<th>Usuario que la creó</th>
 						</tr>
@@ -139,6 +144,27 @@
 						<tr>
 							<td class="align-middle">{{ $comunicacion->tipo->nombre }}</td>
 							<td class="align-middle">{{ $comunicacion->descripcion }}</td>
+							<td class="align-middle">
+								@if ($comunicacion->archivos->isNotEmpty())
+								<div class="btn-group" role="group">
+									<button type="button" class="btn btn-info btn-sm dropdown-toggle text-white"
+										data-toggle="dropdown" aria-expanded="false">
+										Archivos
+									</button>
+									<div class="dropdown-menu">
+										@foreach ($comunicacion->archivos as $archivo)
+										<a class="dropdown-item"
+											href="{{ route('comunicaciones.verArchivo', ['id' => $archivo->id_comunicacion, 'hash' => $archivo->hash_archivo]) }}"
+											target="_blank">
+											{{ $archivo->archivo }}
+										</a>
+										@endforeach
+									</div>
+								</div>
+								@else
+								No se adjuntó
+								@endif
+							</td>
 							<td class="align-middle">{{ $comunicacion->updated_at->format('d/m/Y') }}</td>
 							<td class="align-middle">{{ $comunicacion->user }}</td>
 						</tr>
@@ -158,7 +184,8 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="cargar_comunicaciones_ausentismo" tabindex="-1" aria-labelledby="cargar_comunicaciones_ausentismo_titulo" aria-hidden="true">
+<div class="modal fade" id="cargar_comunicaciones_ausentismo" tabindex="-1"
+	aria-labelledby="cargar_comunicaciones_ausentismo_titulo" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -187,8 +214,13 @@
 								<label>Descripción</label>
 								<textarea required name="descripcion" class="form-control" rows="3"></textarea>
 							</div>
+							<div class="form-group col-md-12">
+								<label>Archivos</label>
+								<input type="file" multiple name="archivos[]" id="">
+							</div>
 						</div>
-						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear comunicación</button>
+						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear
+							comunicación</button>
 					</form>
 				</div>
 

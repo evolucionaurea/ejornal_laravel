@@ -16,6 +16,7 @@ use App\Http\Traits\Nominas;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use App\Ausentismo;
+use App\Comunicacion;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\CovidVacuna;
@@ -219,14 +220,27 @@ class EmpleadosNominasController extends Controller
 			->orderBy('fecha','desc')
 			->get();
 
-		$ausentismos = Ausentismo::where('id_trabajador',$id)
-			->with('trabajador')
-			->with('tipo')
-			->with('comunicacion.tipo')
-			->with('documentaciones')
-			->with('cliente')
-			->orderBy('fecha_inicio', 'desc')
-			->get();
+		// $ausentismos = Ausentismo::where('id_trabajador',$id)
+		// 	->with('trabajador')
+		// 	->with('tipo')
+		// 	->with('comunicacion.tipo')
+		// 	->with('documentaciones')
+		// 	->with('cliente')
+		// 	->orderBy('fecha_inicio', 'desc')
+		// 	->get();
+
+		$ausentismos = Ausentismo::where('id_trabajador', $id)
+		->with([
+			'trabajador',
+			'tipo',
+			'comunicacion.tipo',
+			'documentaciones',
+			'cliente',
+			'comunicacion.archivos' // Cargar archivos relacionados a las comunicaciones
+		])
+		->orderBy('fecha_inicio', 'desc')
+		->get();
+
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
 			->with('trabajador')

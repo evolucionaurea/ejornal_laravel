@@ -16,7 +16,8 @@
 			<p>Aquí puede ver el listado de comunicaciones de la empresa</p>
 			{{-- @if (auth()->user()->fichada == 1)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('comunicaciones.create')}}"><i class="fas fa-plus-circle"></i> Nueva comunicación</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('comunicaciones.create')}}"><i
+						class="fas fa-plus-circle"></i> Nueva comunicación</a>
 			</div>
 			@endif --}}
 		</div>
@@ -40,6 +41,7 @@
 						<th>Tipo</th>
 						<th>Usuario que registró</th>
 						<th>Cargado</th>
+						<th>Archivos</th>
 						<th>Estado</th>
 						<th>Descripción</th>
 					</tr>

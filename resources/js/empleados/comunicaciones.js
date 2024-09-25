@@ -36,6 +36,36 @@ $(()=>{
 					name:'created_at'
 				},
 				{
+					data: 'archivos', // Columna para archivos
+					className: 'align-middle small',
+					orderable: false,
+					render: archivos => {
+						const baseUrl = '/comunicaciones/archivo'; // Cambia esto por tu URL base real
+						if (archivos.length > 0) {
+							// Generamos el HTML para el dropdown
+							const dropdownItems = archivos.map(archivo => 
+								`<a class="dropdown-item" 
+								   href="${baseUrl}/${archivo.id_comunicacion}/${archivo.hash_archivo}" 
+								   target="_blank">
+								   ${archivo.archivo}
+								</a>`
+							).join('');
+				
+							return `
+								<div class="btn-group" role="group">
+									<button type="button" class="btn btn-info dropdown-toggle btn-sm text-white" data-toggle="dropdown" aria-expanded="false">
+										Archivos
+									</button>
+									<div class="dropdown-menu">
+										${dropdownItems}
+									</div>
+								</div>
+							`;
+						}
+						return 'No se subieron';
+					}
+				},
+				{
 					data:'estado',
 					className:'align-middle',
 					name:'estado',
@@ -48,7 +78,8 @@ $(()=>{
 					className:'align-middle small',
 					name:'descripcion',
 					orderable:false
-				}
+				},
+				
 			]
 		}
 

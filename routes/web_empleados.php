@@ -132,6 +132,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/comunicaciones/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesController@tipo_destroy')->name('comunicaciones.tipo_delete');
 	Route::get('empleados/comunicaciones/getComunicacion/{id}', 'EmpleadosComunicacionesController@getComunicacion')->name('comunicaciones.getComunicacion');
 
+	Route::get('comunicaciones/archivo/{id}/{hash}', 'EmpleadosComunicacionesController@verArchivo')->name('comunicaciones.verArchivo');
+
 
 	// COMUNICACIONES LIVIANAS
 	Route::resource('empleados/comunicaciones_livianas', 'EmpleadosComunicacionesLivianas', [

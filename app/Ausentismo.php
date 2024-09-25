@@ -49,10 +49,10 @@ class Ausentismo extends Model
 	}
 
 	public function comunicacion(){
-		return $this->hasOne(Comunicacion::class,'id_ausentismo');
-	}
-	public function comunicaciones(){
 		return $this->hasMany(Comunicacion::class,'id_ausentismo');
 	}
+	// public function comunicaciones(){
+	// 	return $this->hasMany(Comunicacion::class,'id_ausentismo');
+	// }
 
 }

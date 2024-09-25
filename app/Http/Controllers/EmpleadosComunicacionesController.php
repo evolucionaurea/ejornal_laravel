@@ -14,6 +14,7 @@ use App\AusentismoDocumentacion;
 use App\TipoComunicacion;
 use App\Nomina;
 use App\Cliente;
+use App\ComunicacionArchivo;
 use App\Http\Traits\Clientes;
 
 class EmpleadosComunicacionesController extends Controller
@@ -25,69 +26,76 @@ class EmpleadosComunicacionesController extends Controller
 		$clientes = $this->getClientesUser();
 		return view('empleados.comunicaciones', compact('clientes'));
 	}
+	
+
+
 	public function busqueda(Request $request)
-	{
+{
+    // Se modifica la consulta para evitar duplicados y agrupar los archivos
+    $query = Comunicacion::select(
+            'comunicaciones.id',
+            'comunicaciones.descripcion',
+            'comunicaciones.created_at',
+            DB::raw('IF(comunicaciones.user IS NOT NULL, comunicaciones.user, ausentismos.user) as user'),
+            DB::raw('tipo_comunicacion.nombre as tipo'),
+            'nominas.nombre',
+            'nominas.email',
+            'nominas.estado'
+        )
+        ->join('ausentismos', 'comunicaciones.id_ausentismo', '=', 'ausentismos.id')
+        ->join('nominas', 'ausentismos.id_trabajador', '=', 'nominas.id')
+        ->join('tipo_comunicacion', 'comunicaciones.id_tipo', '=', 'tipo_comunicacion.id')
+        ->leftJoin('comunicaciones_archivos', 'comunicaciones.id', '=', 'comunicaciones_archivos.id_comunicacion') // Unimos los archivos
+        ->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
-		$query = Comunicacion::select(
-			'nominas.id',
-			'nominas.nombre',
-			'nominas.email',
-			DB::raw('tipo_comunicacion.nombre tipo'),
-			'comunicaciones.created_at',
-			'comunicaciones.descripcion',
+    // Filtros
+    if ($request->from) {
+        $query->whereDate('comunicaciones.created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+    }
+    if ($request->to) {
+        $query->whereDate('comunicaciones.created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+    }
+    if ($request->estado && $request->estado != 'todos') {
+        $query->where('nominas.estado', '=', $request->estado == 'activos' ? '1' : '0');
+    }
+    if ($request->order) {
+        $sort = $request->columns[$request->order[0]['column']]['name'];
+        $dir  = $request->order[0]['dir'];
+        $query->orderBy($sort, $dir);
+    }
+    if ($request->search) {
+        $filtro = '%' . $request->search['value'] . '%';
+        $query->where(function ($query) use ($filtro) {
+            $query
+                ->where('nominas.nombre', 'LIKE', $filtro)
+                ->orWhere('tipo_comunicacion.nombre', 'LIKE', $filtro)
+                ->orWhere('ausentismos.user', 'LIKE', $filtro)
+                ->orWhere('comunicaciones.user', 'LIKE', $filtro)
+                ->orWhere('comunicaciones.descripcion', 'LIKE', $filtro);
+        });
+    }
 
-			DB::raw('IF(comunicaciones.user IS NOT NULL,comunicaciones.user,ausentismos.user) as user'),
+    // Obtener datos
+    $comunicaciones = $query->groupBy('comunicaciones.id') // Agrupar por id de comunicación
+        ->get();
 
-			'nominas.estado'
-		)
-		->join('ausentismos', 'comunicaciones.id_ausentismo', 'ausentismos.id')
-		->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-		->join('tipo_comunicacion', 'comunicaciones.id_tipo', 'tipo_comunicacion.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+    // Cargar los archivos asociados a cada comunicación
+    foreach ($comunicaciones as $comunicacion) {
+        $comunicacion->archivos = ComunicacionArchivo::where('id_comunicacion', $comunicacion->id)->get();
+    }
 
-
-		$total = $query->count();
-
-		if($request->from) $query->whereDate('comunicaciones.created_at','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('comunicaciones.created_at','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		if($request->estado && $request->estado!='todos'){
-			$query->where('nominas.estado','=',$request->estado=='activos'?'1':'0');
-		}
-
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-		if($request->search){
-			$filtro = '%'.$request->search['value'].'%';
-
-			$query->where(function($query) use($filtro){
-				$query
-					->where('nominas.nombre','LIKE',$filtro)
-					->orWhere('tipo_comunicacion.nombre','LIKE',$filtro)
-					->orWhere('ausentismos.user','LIKE',$filtro)
-					->orWhere('comunicaciones.user','LIKE',$filtro)
-					->orWhere('comunicaciones.descripcion','LIKE',$filtro);
-			});
-
-		}
+    return [
+        'draw' => $request->draw,
+        'recordsTotal' => $comunicaciones->count(),
+        'recordsFiltered' => $comunicaciones->count(),
+        'data' => $comunicaciones,
+        'request' => $request->all(),
+        'fichada_user' => auth()->user()->fichada,
+        'fichar_user' => auth()->user()->fichar
+    ];
+}
 
 
-		$total_filtered = $query->count();
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'request'=>$request->all(),
-			'fichada_user'=>auth()->user()->fichada,
-			'fichar_user'=>auth()->user()->fichar
-		];
-
-	}
 
 	/**
 	 * Show the form for creating a new resource.
@@ -107,12 +115,22 @@ class EmpleadosComunicacionesController extends Controller
 	 */
 	public function store(Request $request)
 	{
-
 		$validatedData = $request->validate([
-		'descripcion' => 'required'
+			'descripcion' => 'required',
+			'id_tipo' => 'required',
+			'id_ausentismo' => 'required',
 		]);
 
-		//Guardar en base Comunicaciones
+		if ($request->hasFile('archivos')) {
+			foreach ($request->file('archivos') as $archivo) {
+				$errorMessage = $this->validarArchivo($archivo);
+				if ($errorMessage) {
+					return back()->withErrors(['archivo' => $errorMessage])->withInput();
+				}
+			}
+		}
+
+		// Guardar en base Comunicaciones
 		$comunicacion = new Comunicacion();
 		$comunicacion->id_ausentismo = $request->id_ausentismo;
 		$comunicacion->id_tipo = $request->id_tipo;
@@ -120,9 +138,24 @@ class EmpleadosComunicacionesController extends Controller
 		$comunicacion->user = auth()->user()->nombre;
 		$comunicacion->save();
 
-		return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+		if ($request->hasFile('archivos')) {
+			foreach ($request->file('archivos') as $archivo) {
+				// Guardar el archivo con el nombre hasheado en el disco (carpeta comunicaciones/{id})
+				$hashedFilename = $archivo->hashName();
+				$archivo->storeAs('comunicaciones/'.$comunicacion->id, $hashedFilename, 'local');
+	
+				// Crear un nuevo registro en la tabla comunicaciones_archivos
+				$comunicacionArchivo = new ComunicacionArchivo();
+				$comunicacionArchivo->id_comunicacion = $comunicacion->id;
+				$comunicacionArchivo->archivo = $archivo->getClientOriginalName(); // Nombre original para referencia
+				$comunicacionArchivo->hash_archivo = $hashedFilename; // Nombre del archivo hasheado
+				$comunicacionArchivo->save();
+			}
+		}
 
+		return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
 	}
+
 
 	/**
 	 * Display the specified resource.
@@ -141,7 +174,7 @@ class EmpleadosComunicacionesController extends Controller
 			)
 			->join('ausentismos','comunicaciones.id_ausentismo','ausentismos.id')
 			->where('id_ausentismo', $id)
-			->with('tipo')
+			->with(['tipo', 'archivos'])
 			->orderBy('comunicaciones.created_at', 'desc')
 			->get();
 
@@ -282,5 +315,37 @@ class EmpleadosComunicacionesController extends Controller
 
 
 	}
+
+
+
+	private function validarArchivo($archivo, $maxSize = 2048, $formatosPermitidos = ['jpeg', 'png', 'jpg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'])
+	{
+		// Verificar el tamaño del archivo (el tamaño está en KB, 2048KB = 2MB)
+		if ($archivo->getSize() / 1024 > $maxSize) {
+			return "El archivo {$archivo->getClientOriginalName()} excede el tamaño máximo permitido de {$maxSize}KB.";
+		}
+	
+		// Verificar el formato del archivo
+		if (!in_array($archivo->getClientOriginalExtension(), $formatosPermitidos)) {
+			return "El archivo {$archivo->getClientOriginalName()} no tiene un formato permitido. Formatos permitidos: " . implode(', ', $formatosPermitidos);
+		}
+	
+		// Si pasa todas las validaciones, retorna null (lo que significa que está ok)
+		return null;
+	}
+	
+
+
+	public function verArchivo($id, $hash)
+	{
+		$rutaArchivo = storage_path('app/comunicaciones/'.$id . '/' . $hash);
+
+		if (file_exists($rutaArchivo)) {
+			return response()->download($rutaArchivo);
+		} else {
+			return redirect()->back()->withErrors(['El archivo no existe.']);
+		}
+	}
+
 
 }
