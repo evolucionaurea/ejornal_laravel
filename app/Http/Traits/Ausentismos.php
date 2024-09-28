@@ -41,7 +41,7 @@ trait Ausentismos {
 				'nominas.nombre as trabajador_nombre',
 				'nominas.dni as trabajador_dni',
 				'nominas.sector as trabajador_sector',
-				'nominas.id_cliente',
+				//'nominas.id_cliente',
 				'nominas.estado as trabajador_estado',
 
 				'ausentismo_tipo.nombre as ausentismo_tipo',

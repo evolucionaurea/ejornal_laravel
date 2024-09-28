@@ -233,10 +233,10 @@ class EmpleadosNominasController extends Controller
 		->with([
 			'trabajador',
 			'tipo',
-			'comunicacion.tipo',
+			'comunicaciones.tipo',
 			'documentaciones',
 			'cliente',
-			'comunicacion.archivos' // Cargar archivos relacionados a las comunicaciones
+			'comunicaciones.archivos' // Cargar archivos relacionados a las comunicaciones
 		])
 		->orderBy('fecha_inicio', 'desc')
 		->get();
@@ -244,9 +244,10 @@ class EmpleadosNominasController extends Controller
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
 			->with('trabajador')
-			->whereHas('trabajador',function($query){
+			/*->whereHas('trabajador',function($query){
 				$query->where('id_cliente', auth()->user()->id_cliente_actual);
-			})
+			})*/
+			->where('id_cliente', auth()->user()->id_cliente_actual)
 			->orderBy('fecha', 'desc')
 			->get();
 
@@ -402,7 +403,7 @@ class EmpleadosNominasController extends Controller
 			$trabajador->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_nacimiento);
 		}
 
-		///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
+		///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE!!!
 
 
 		/// guardo en el historial el cambio de cliente

@@ -21,8 +21,8 @@
 			<td class="align-middle">{{ $ausentismo->tipo->nombre }}</td>
 			<td class="align-middle">{{ $ausentismo->user }}</td>
 			<td class="align-middle">
-				@if ($ausentismo->comunicacion->isNotEmpty())
-				@foreach ($ausentismo->comunicacion as $comunicacion)
+				@if ($ausentismo->comunicaciones->isNotEmpty())
+				@foreach ($ausentismo->comunicaciones as $comunicacion)
 				<div>
 					<span class="font-weight-bold">1ra. Comunicación ({{ $comunicacion->tipo->nombre }}):</span>
 					{{ $comunicacion->descripcion }}

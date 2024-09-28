@@ -39,7 +39,7 @@ class EmpleadosCovidVacunasController extends Controller
 		)
 		->join('nominas', 'covid_vacunas.id_nomina', 'nominas.id')
 		->join('covid_vacunas_tipo', 'covid_vacunas.id_tipo', 'covid_vacunas_tipo.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('covid_vacunas.id_cliente', auth()->user()->id_cliente_actual);
 
 		if($request->from) $query->whereDate('covid_vacunas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('covid_vacunas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -111,6 +111,7 @@ class EmpleadosCovidVacunasController extends Controller
 		$vacuna = new CovidVacuna();
 		$vacuna->id_nomina = $request->nomina;
 		$vacuna->id_tipo = $request->tipo;
+		$vacuna->id_cliente = auth()->user()->id_cliente_actual;
 		$vacuna->fecha = $fecha;
 		$vacuna->institucion = $request->institucion;
 		$vacuna->save();

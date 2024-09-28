@@ -48,7 +48,7 @@ class Ausentismo extends Model
 		return $this->hasMany(AusentismoDocumentacion::class,'id_ausentismo');
 	}
 
-	public function comunicacion(){
+	public function comunicaciones(){
 		return $this->hasMany(Comunicacion::class,'id_ausentismo');
 	}
 	// public function comunicaciones(){

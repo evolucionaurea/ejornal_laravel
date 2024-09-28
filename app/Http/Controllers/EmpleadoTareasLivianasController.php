@@ -48,7 +48,7 @@ class EmpleadoTareasLivianasController extends Controller
 		)
 		->join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 		->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual);
 
 		$query->where(function($query) use ($request) {
 			$filtro = '%'.$request->search['value'].'%';
@@ -156,6 +156,9 @@ class EmpleadoTareasLivianasController extends Controller
 		$tarea_liviana->id_trabajador = $request->trabajador;
 		$tarea_liviana->id_tipo = $request->tipo;
 		$tarea_liviana->fecha_inicio = $fecha_inicio;
+
+		$tarea_liviana->id_cliente = auth()->user()->id_cliente_actual;
+
 		if (isset($request->fecha_final) && !empty($request->fecha_final)) {
 			$tarea_liviana->fecha_final = $fecha_final;
 		}else {
@@ -217,7 +220,7 @@ class EmpleadoTareasLivianasController extends Controller
 		->join('comunicaciones_livianas', 'tareas_livianas.id', 'comunicaciones_livianas.id_tarea_liviana')
 		->join('tipos_comunicaciones_livianas', 'comunicaciones_livianas.id_tipo', 'tipos_comunicaciones_livianas.id')
 		->where('tareas_livianas.id_trabajador', $id)
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual)
 		->select(
 			'nominas.nombre',
 			'nominas.email',
@@ -261,9 +264,10 @@ class EmpleadoTareasLivianasController extends Controller
 			->with(['trabajador'=>function($query){
 				$query->select('id','nombre','email','estado','dni','telefono');
 			}])
-			->whereHas('trabajador',function($query){
+			/*->whereHas('trabajador',function($query){
 				$query->where('id_cliente',auth()->user()->id_cliente_actual);
-			})
+			})*/
+			->where('tareas_livianas.id_cliente',auth()->user()->id_cliente_actual)
 			->where('tareas_livianas.id', $id)
 			->first();
 
@@ -396,8 +400,10 @@ class EmpleadoTareasLivianasController extends Controller
 
 		$tarea_liviana = TareaLiviana::find($id);
 		$ruta = storage_path("app/tareas_livianas/trabajador/{$tarea_liviana->id}/{$tarea_liviana->hash_archivo}");
-		return response()->download($ruta);
-		return back();
+		return download_file($ruta);
+
+		//return response()->download($ruta);
+		//return back();
 
 	}
 

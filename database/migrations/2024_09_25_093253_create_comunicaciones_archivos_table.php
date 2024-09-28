@@ -20,7 +20,7 @@ class CreateComunicacionesArchivosTable extends Migration
             $table->string('hash_archivo')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_comunicacion')->references('id')->on('comunicaciones');
+            $table->foreign('id_comunicacion')->references('id')->on('comunicaciones')->onDelete('cascade');
         });
     }
 

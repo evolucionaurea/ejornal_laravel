@@ -16,7 +16,9 @@ function echo_json($obj,$exit=true){
 function download_file($ruta){
 	$mime = mime_content_type($ruta);
 	$open_in_browser = false;
-	///dd($mime);
+
+	if(!file_exists($ruta)) return redirect()->back()->withErrors(['El archivo no existe.']);
+
 	if(
 		preg_match('/image/',$mime) ||
 		preg_match('/pdf/', $mime)

@@ -54,7 +54,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		)
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('consultas_enfermerias.id_cliente', auth()->user()->id_cliente_actual);
 
 		$total = $query->count();
 
@@ -220,6 +220,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		$consulta = new ConsultaEnfermeria();
 		$consulta->id_nomina = $request->nomina;
 		$consulta->fecha = $fecha;
+		$consulta->id_cliente = auth()->user()->id_cliente_actual;
 
 		if (isset($request->temperatura_auxiliar) && $request->temperatura_auxiliar != null) {
 			$consulta->temperatura_auxiliar = $request->temperatura_auxiliar;
@@ -377,16 +378,16 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 
 	public function tipo(Request $request)
 	{
-			$validatedData = $request->validate([
-				'nombre' => 'required|string'
-			]);
+		$validatedData = $request->validate([
+			'nombre' => 'required|string'
+		]);
 
-			//Guardar en base
-			$diagnostico = new DiagnosticoConsulta();
-			$diagnostico->nombre = $request->nombre;
-			$diagnostico->save();
+		//Guardar en base
+		$diagnostico = new DiagnosticoConsulta();
+		$diagnostico->nombre = $request->nombre;
+		$diagnostico->save();
 
-			return back()->with('success', 'Tipo de diagnóstico creado con éxito');
+		return back()->with('success', 'Tipo de diagnóstico creado con éxito');
 	}
 
 

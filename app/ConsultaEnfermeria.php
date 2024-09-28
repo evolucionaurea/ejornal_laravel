@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 // use OwenIt\Auditing\Contracts\Auditable;
 use App\DiagnosticoConsulta;
 use App\Nomina;
+use App\Cliente;
 
 class ConsultaEnfermeria extends Model
 // class ConsultaEnfermeria extends Model implements Auditable
@@ -33,6 +34,10 @@ class ConsultaEnfermeria extends Model
   }
   public function trabajador(){
     return $this->belongsTo(Nomina::class,'id_nomina');
+  }
+
+  public function cliente(){
+    return $this->belongsTo(Cliente::class,'id_cliente');
   }
 
 }

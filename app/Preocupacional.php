@@ -7,6 +7,7 @@ use App\Nomina;
 use App\PreocupacionalArchivo;
 use App\PreocupacionalTipoEstudio;
 use Carbon\Carbon;
+use Carbon\Cliente;
 
 
 class Preocupacional extends Model
@@ -63,6 +64,10 @@ class Preocupacional extends Model
 	public function tipo()
 	{
 		return $this->belongsTo(PreocupacionalTipoEstudio::class,'tipo_estudio_id');
+	}
+
+	public function cliente(){
+		return $this->belongsTo(Cliente::class,'id_cliente');
 	}
 
 

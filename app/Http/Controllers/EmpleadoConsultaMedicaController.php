@@ -56,7 +56,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		)
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('consultas_medicas.id_cliente', auth()->user()->id_cliente_actual);
 
 		$total = $query->count();
 
@@ -220,6 +220,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		//Guardar en base una Nueva Consulta
 		$consulta = new ConsultaMedica();
 		$consulta->id_nomina = $request->nomina;
+		$consulta->id_cliente = auth()->user()->id_cliente_actual;
 
 		if (isset($request->temperatura_auxiliar) && $request->temperatura_auxiliar != null) {
 			$consulta->temperatura_auxiliar = $request->temperatura_auxiliar;

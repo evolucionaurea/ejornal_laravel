@@ -125,10 +125,11 @@ trait Clientes {
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
-				->where('id_cliente',$id_cliente)
+				//->where('id_cliente',$id_cliente)
 				->where('estado',1)
 				->where('deleted_at',null);
 		})
+		->where('id_cliente',$id_cliente)
 		->orderBy('dias','desc');
 
 		//dd($q_ausentismos_mes_actual->toSql());
@@ -190,10 +191,11 @@ trait Clientes {
 					});
 			});
 		})
+		->where('id_cliente',$id_cliente)
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
-				->where('id_cliente',$id_cliente)
+				//->where('id_cliente',$id_cliente)
 				->where('estado',1)
 				->where('deleted_at',null); ////consultar
 		});
@@ -253,10 +255,11 @@ trait Clientes {
 					});
 			});
 		})
+		->where('id_cliente',$id_cliente)
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
-				->where('id_cliente',$id_cliente)
+				//->where('id_cliente',$id_cliente)
 				->where('estado',1)
 				->where('deleted_at',null);
 		});
@@ -323,10 +326,11 @@ trait Clientes {
 					});
 			});
 		})
+		->where('id_cliente',$id_cliente)
 		->whereIn('id_trabajador',function($query) use ($id_cliente){
 			$query->select('id')
 				->from('nominas')
-				->where('id_cliente',$id_cliente)
+				//->where('id_cliente',$id_cliente)
 				->where('estado',1)
 				->where('deleted_at',null);
 		})
@@ -475,10 +479,11 @@ trait Clientes {
 
 			id_trabajador
 		")
+			->where('id_cliente',$id_cliente)
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',$id_cliente)
+					//->where('id_cliente',$id_cliente)
 					->where('estado',1)
 					->where('deleted_at',null);
 			})
@@ -510,10 +515,11 @@ trait Clientes {
 
 		$ausentismos_top_10_solicitudes = Ausentismo::
 			selectRaw('count(*) as total, id_trabajador')
+			->where('id_cliente',$id_cliente)
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
 					->from('nominas')
-					->where('id_cliente',$id_cliente)
+					//->where('id_cliente',$id_cliente)
 					->where('estado',1)
 					->where('deleted_at',null);
 			})

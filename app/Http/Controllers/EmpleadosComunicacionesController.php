@@ -26,7 +26,7 @@ class EmpleadosComunicacionesController extends Controller
 		$clientes = $this->getClientesUser();
 		return view('empleados.comunicaciones', compact('clientes'));
 	}
-	
+
 
 
 	public function busqueda(Request $request)
@@ -143,7 +143,7 @@ class EmpleadosComunicacionesController extends Controller
 				// Guardar el archivo con el nombre hasheado en el disco (carpeta comunicaciones/{id})
 				$hashedFilename = $archivo->hashName();
 				$archivo->storeAs('comunicaciones/'.$comunicacion->id, $hashedFilename, 'local');
-	
+
 				// Crear un nuevo registro en la tabla comunicaciones_archivos
 				$comunicacionArchivo = new ComunicacionArchivo();
 				$comunicacionArchivo->id_comunicacion = $comunicacion->id;
@@ -324,21 +324,23 @@ class EmpleadosComunicacionesController extends Controller
 		if ($archivo->getSize() / 1024 > $maxSize) {
 			return "El archivo {$archivo->getClientOriginalName()} excede el tamaño máximo permitido de {$maxSize}KB.";
 		}
-	
+
 		// Verificar el formato del archivo
 		if (!in_array($archivo->getClientOriginalExtension(), $formatosPermitidos)) {
 			return "El archivo {$archivo->getClientOriginalName()} no tiene un formato permitido. Formatos permitidos: " . implode(', ', $formatosPermitidos);
 		}
-	
+
 		// Si pasa todas las validaciones, retorna null (lo que significa que está ok)
 		return null;
 	}
-	
+
 
 
 	public function verArchivo($id, $hash)
 	{
 		$rutaArchivo = storage_path('app/comunicaciones/'.$id . '/' . $hash);
+
+		return download_file($rutaArchivo);
 
 		if (file_exists($rutaArchivo)) {
 			return response()->download($rutaArchivo);

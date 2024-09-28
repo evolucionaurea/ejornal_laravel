@@ -58,7 +58,7 @@ class EmpleadoConsultasTodasController extends Controller
 		)
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('consultas_medicas.id_cliente', auth()->user()->id_cliente_actual);
 
 		// Enfermerías
 		$enfermerias = ConsultaEnfermeria::select(
@@ -73,7 +73,7 @@ class EmpleadoConsultasTodasController extends Controller
 		)
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('consultas_enfermerias.id_cliente', auth()->user()->id_cliente_actual);
 
 
 		if ($request->search) {

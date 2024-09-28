@@ -45,9 +45,10 @@ class EmpleadosPreocupacionalesController extends Controller
 			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
 			->join('preocupacionales_tipos_estudio', 'preocupacionales_tipos_estudio.id', 'preocupacionales.tipo_estudio_id')
 			->with('archivos')
-			->whereHas('trabajador',function($query){
-			$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
-		});
+			->where('preocupacionales.id_cliente',auth()->user()->id_cliente_actual);
+			/*->whereHas('trabajador',function($query){
+				$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
+			});*/
 
 		$total = $query->count();
 
@@ -171,6 +172,7 @@ class EmpleadosPreocupacionalesController extends Controller
 
 		//Guardar en base Preocupacional
 		$preocupacional->id_nomina = $request->trabajador;
+		$preocupacional->id_cliente = auth()->user()->id_cliente_actual;
 		$preocupacional->fecha = $fecha;
 		$preocupacional->observaciones = $request->observaciones;
 		$preocupacional->tipo_estudio_id  = $request->tipo_estudio_id;

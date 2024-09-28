@@ -33,7 +33,7 @@ class EmpleadosCovidTesteoController extends Controller
 			)
 			->join('nominas', 'covid_testeos.id_nomina', 'nominas.id')
 			->join('covid_testeos_tipo', 'covid_testeos.id_tipo', 'covid_testeos_tipo.id')
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+			->where('covid_testeos.id_cliente', auth()->user()->id_cliente_actual);
 
 		if($request->from) $query->whereDate('covid_testeos.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('covid_testeos.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -87,6 +87,7 @@ class EmpleadosCovidTesteoController extends Controller
 		$testeo = new CovidTesteo();
 		$testeo->id_nomina = $request->nomina;
 		$testeo->id_tipo = $request->tipo;
+		$testeo->id_cliente = auth()->user()->id_cliente_actual;
 		$testeo->fecha = $fecha;
 		$testeo->resultado = $request->resultado;
 		$testeo->laboratorio = $request->laboratorio;

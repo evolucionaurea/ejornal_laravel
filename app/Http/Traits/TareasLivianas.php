@@ -29,7 +29,7 @@ trait TareasLivianas {
 				'nominas.id_cliente',
 				'tareas_livianas_tipos.nombre as tareas_livianas_tipos'
 			)
-			->where('nominas.id_cliente',$id_cliente);
+			->where('tareas_livianas.id_cliente',$id_cliente);
 
 		$query->where(function($query) use($request) {
 			$filtro = '%'.$request->search['value'].'%';
