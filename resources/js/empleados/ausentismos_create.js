@@ -98,7 +98,7 @@ class Ausentismo {
 		})
 
 
-		$('[data-table="certificado_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo-certificado"]',btn=>{
+		this.table_archivos_cert.on('click','tbody tr button[data-toggle="quitar-archivo-certificado"]',btn=>{
 			const tbody = $(btn.currentTarget).closest('tbody')
 			const tr = $(btn.currentTarget).closest('tr')
 			const indx = tr.index()
@@ -118,6 +118,12 @@ class Ausentismo {
 			wrapper.find('label').text(event.target.files[0].name)
 		})
 
+
+		this.table_archivos_comunicacion.on('click','tbody tr button[data-toggle="quitar-archivo-comunicacion"]',btn=>{
+			const tbody = $(btn.currentTarget).closest('tbody')
+			const tr = $(btn.currentTarget).closest('tr')
+			tr.remove()
+		})
 		this.table_archivos_comunicacion.on('change','input[type="file"]',event=>{
 			event.preventDefault()
 			const wrapper = $(event.currentTarget).closest('.custom-file')
