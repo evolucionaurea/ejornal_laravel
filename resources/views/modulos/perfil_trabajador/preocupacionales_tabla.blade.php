@@ -4,6 +4,7 @@
 			<th>Fecha</th>
 			<th>Observaciones</th>
 			<th>Archivo</th>
+			<th>Cliente</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -19,6 +20,9 @@
 				@else
 				<span class="text-muted font-italic">No se adjuntó documentación</span>
 				@endif
+			</td>
+			<td>
+				{{ $preocupacional->cliente->nombre }}
 			</td>
 		</tr>
 		@endforeach

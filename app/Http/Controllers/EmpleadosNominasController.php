@@ -21,6 +21,7 @@ use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\CovidVacuna;
 use App\CovidTesteo;
+use App\TareaLiviana;
 use App\Preocupacional;
 use App\NominaImportacion;
 use App\NominaHistorial;
@@ -195,10 +196,13 @@ class EmpleadosNominasController extends Controller
 	 */
 	public function show($id)
 	{
-		$clientes = $this->getClientesUser();
+
+		return view('empleados.nominas.show',$this->perfilTrabajador($id));
+
+
+		/*$clientes = $this->getClientesUser();
 
 		$trabajador = Nomina::findOrFail($id);
-
 
 		$testeos = CovidTesteo::where('id_nomina',$id)
 			->with('tipo')
@@ -208,7 +212,6 @@ class EmpleadosNominasController extends Controller
 			->with('tipo')
 			->orderBy('fecha', 'desc')
 			->get();
-
 
 		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
 			->with('diagnostico')
@@ -220,38 +223,24 @@ class EmpleadosNominasController extends Controller
 			->orderBy('fecha','desc')
 			->get();
 
-		// $ausentismos = Ausentismo::where('id_trabajador',$id)
-		// 	->with('trabajador')
-		// 	->with('tipo')
-		// 	->with('comunicacion.tipo')
-		// 	->with('documentaciones')
-		// 	->with('cliente')
-		// 	->orderBy('fecha_inicio', 'desc')
-		// 	->get();
-
 		$ausentismos = Ausentismo::where('id_trabajador', $id)
-		->with([
-			'trabajador',
-			'tipo',
-			'comunicaciones.tipo',
-			'documentaciones',
-			'cliente',
-			'comunicaciones.archivos' // Cargar archivos relacionados a las comunicaciones
-		])
-		->orderBy('fecha_inicio', 'desc')
-		->get();
+			->with([
+				'trabajador',
+				'tipo',
+				'comunicaciones.tipo',
+				'documentaciones',
+				'cliente',
+				'comunicaciones.archivos'
+			])
+			->orderBy('fecha_inicio', 'desc')
+			->get();
 
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
 			->with('trabajador')
-			/*->whereHas('trabajador',function($query){
-				$query->where('id_cliente', auth()->user()->id_cliente_actual);
-			})*/
 			->where('id_cliente', auth()->user()->id_cliente_actual)
 			->orderBy('fecha', 'desc')
 			->get();
-
-		///historial fix
 
 		$resumen_historial = [];
 		foreach($ausentismos as $ausentismo){
@@ -291,53 +280,6 @@ class EmpleadosNominasController extends Controller
 			];
 		}
 		krsort($resumen_historial);
-		//dd($historial);
-
-
-		/*$resumen_historial = DB::table('consultas_medicas')
-			->select(
-				'fecha',
-				'diagnostico_consulta.nombre as tipo',
-				'user as usuario',
-				DB::raw('"Consulta Médica" as evento'),
-				'consultas_medicas.observaciones as observaciones'
-			)
-			->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
-			->where('fecha', '<>', '0000-00-00')
-			->where('user', '<>', '')
-			->where('id_nomina', $id)
-			->unionAll(DB::table('consultas_enfermerias')
-				->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Enfermería" as evento'), 'consultas_enfermerias.observaciones as observaciones')
-				->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
-				->where('fecha', '<>', '0000-00-00')
-				->where('user', '<>', '')
-				->where('id_nomina', $id)
-			)
-			->unionAll(DB::table('ausentismos')
-				->select('fecha_inicio as fecha', 'ausentismo_tipo.nombre as tipo', 'user as usuario', DB::raw('"Ausentismo" as evento'), 'ausentismos.comentario as observaciones')
-				->join('ausentismo_tipo', 'ausentismos.id_tipo', '=', 'ausentismo_tipo.id')
-				->where('fecha_inicio', '<>', '0000-00-00')
-				->where('user', '<>', '')
-				->where('id_trabajador', $id)
-			)
-			->unionAll(DB::table('preocupacionales')
-				->select(
-					'fecha',
-					DB::raw('"Archivo adjunto" as tipo'),
-					'nominas.nombre as usuario',
-					DB::raw('"Exámen Médico Complementario" as evento'),
-					'preocupacionales.observaciones as observaciones'
-				)
-				->join('nominas', 'preocupacionales.id_nomina', '=', 'nominas.id')
-				->where('fecha', '<>', '0000-00-00')
-				->where('id_nomina', $id)
-			)
-			->orderBy('fecha', 'desc')
-			->get();*/
-
-
-
-		// dd($resumen_historial);
 
 		return view('empleados.nominas.show', compact(
 			'trabajador',
@@ -349,7 +291,7 @@ class EmpleadosNominasController extends Controller
 			'testeos',
 			'preocupacionales',
 			'resumen_historial'
-		));
+		));*/
 	}
 
 	/**
@@ -403,11 +345,35 @@ class EmpleadosNominasController extends Controller
 			$trabajador->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_nacimiento);
 		}
 
-		///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE!!!
 
 
 		/// guardo en el historial el cambio de cliente
 		if($trabajador->id_cliente != $request->id_cliente){
+
+			///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
+			$ausentismo = Ausentismo::where('id_trabajador',$trabajador->id)
+				->where(function($query){
+					$query
+						->where('fecha_final','>',Carbon::now())
+						->orWhereNull('fecha_final');
+				})
+				->get();
+			if($ausentismo->count()){
+				return back()->with('error','Este trabajador posee un ausentismo vigente y no puede ser cambiado de cliente/sucursal.');
+			}
+
+			///VALIDAR QUE NO TENGA UNA TAREA ADECUADA VIGENTE
+			$tarea_liviana = TareaLiviana::where('id_trabajador',$trabajador->id)
+				->where(function($query){
+					$query
+						->where('fecha_final','>',Carbon::now())
+						->orWhereNull('fecha_final');
+				})
+				->get();
+			if($tarea_liviana->count()){
+				return back()->with('error','Este trabajador posee una tarea adecuada vigente y no puede ser cambiado de cliente/sucursal.');
+			}
+
 			$trabajador->id_cliente = $request->id_cliente;
 
 			NominaClienteHistorial::create([

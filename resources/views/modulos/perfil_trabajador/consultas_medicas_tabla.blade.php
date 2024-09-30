@@ -14,6 +14,7 @@
 			<th style="width:220px">Anamnesis</th>
 			<th style="width:220px">Tratamiento</th>
 			<th style="width:220px">Observaciones</th>
+			<th>Cliente</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -32,6 +33,7 @@
 			<td>{{ $consulta_medica->anamnesis }}</td>
 			<td>{{ $consulta_medica->tratamiento }}</td>
 			<td>{{ $consulta_medica->observaciones }}</td>
+			<td>{{ $consulta_medica->cliente->nombre }}</td>
 		</tr>
 		@endforeach
 	</tbody>

@@ -4,8 +4,9 @@ class Ausentismo {
 
 		get_template('/templates/tr-certificado-ausentismo')
 			.then(template=>{
-				this.table_archivos_cert = $('[data-table="certificaciones_archivos"]')
-				this.tr_certificado_ausentismo = template
+				this.table_archivos_cert = $('[data-table="certificado_archivos"]')
+				this.table_archivos_comunicacion = $('[data-table="comunicacion_archivos"]')
+				this.tr_archivo = template
 				this.init()
 			})
 	}
@@ -84,13 +85,20 @@ class Ausentismo {
 		})
 
 		$('[data-toggle="agregar-archivo-cert"]').click(btn=>{
-			//console.log(this.table_archivos_cert);
-			const tr = $(this.tr_certificado_ausentismo)
+			const tr = $(this.tr_archivo)
+			tr.find('input').attr({name:'archivos_certificado[]'})
+			tr.find('button').attr({'data-toggle':'quitar-archivo-certificado'})
 			this.table_archivos_cert.find('tbody').append(tr)
+		})
+		$('[data-toggle="agregar-archivo-comunicacion"]').click(btn=>{
+			const tr = $(this.tr_archivo)
+			tr.find('input').attr({name:'archivos_comunicacion[]'})
+			tr.find('button').attr({'data-toggle':'quitar-archivo-comunicacion'})
+			this.table_archivos_comunicacion.find('tbody').append(tr)
 		})
 
 
-		$('[data-table="certificaciones_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo"]',btn=>{
+		$('[data-table="certificado_archivos"]').on('click','tbody tr button[data-toggle="quitar-archivo-certificado"]',btn=>{
 			const tbody = $(btn.currentTarget).closest('tbody')
 			const tr = $(btn.currentTarget).closest('tr')
 			const indx = tr.index()
@@ -108,7 +116,12 @@ class Ausentismo {
 			event.preventDefault()
 			const wrapper = $(event.currentTarget).closest('.custom-file')
 			wrapper.find('label').text(event.target.files[0].name)
-			console.log(event.target.files[0].name)
+		})
+
+		this.table_archivos_comunicacion.on('change','input[type="file"]',event=>{
+			event.preventDefault()
+			const wrapper = $(event.currentTarget).closest('.custom-file')
+			wrapper.find('label').text(event.target.files[0].name)
 		})
 
 		$('[name="cert_fecha_documento"]').datepicker()

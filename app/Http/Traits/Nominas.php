@@ -1,10 +1,16 @@
 <?php
 
 namespace App\Http\Traits;
-use App\Nomina;
-use App\Cliente;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use App\Nomina;
+use App\Cliente;
+use App\CovidTesteo;
+use App\CovidVacuna;
+use App\ConsultaMedica;
+use App\ConsultaEnfermeria;
+use App\Ausentismo;
+use App\Preocupacional;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -183,6 +189,115 @@ trait Nominas
 
 
 		return;
+	}
+
+	public function perfilTrabajador($id)
+	{
+		$clientes = $this->getClientesUser();
+
+		$trabajador = Nomina::findOrFail($id);
+
+
+		$testeos = CovidTesteo::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+		$vacunas = CovidVacuna::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+
+
+		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
+			->with(['diagnostico','cliente'])
+			->orderBy('fecha','desc')
+			->get();
+
+		$consultas_enfermeria = ConsultaEnfermeria::where('id_nomina',$id)
+			->with(['diagnostico','cliente'])
+			->orderBy('fecha','desc')
+			->get();
+
+		$ausentismos = Ausentismo::where('id_trabajador', $id)
+			->with([
+				'trabajador',
+				'tipo',
+				'comunicaciones.tipo',
+				'documentaciones',
+				'cliente',
+				'comunicaciones.archivos' // Cargar archivos relacionados a las comunicaciones
+			])
+			->orderBy('fecha_inicio', 'desc')
+			->get();
+
+
+		$preocupacionales = Preocupacional::where('id_nomina',$id)
+			->with(['trabajador','cliente'])
+			/*->whereHas('trabajador',function($query){
+				$query->where('id_cliente', auth()->user()->id_cliente_actual);
+			})*/
+			->where('id_cliente', auth()->user()->id_cliente_actual)
+			->orderBy('fecha', 'desc')
+			->get();
+
+		///historial fix
+
+		$resumen_historial = [];
+		foreach($ausentismos as $ausentismo){
+			$resumen_historial[$ausentismo->fecha_inicio->format('Ymd')] = (object) [
+				'fecha'=>$ausentismo->fecha_inicio,
+				'tipo'=>$ausentismo->tipo->nombre,
+				'evento'=>'Ausentismo',
+				'observaciones'=>$ausentismo->comentario,
+				'usuario'=>$ausentismo->user,
+				'cliente'=>$ausentismo->cliente
+			];
+		}
+		foreach($consultas_enfermeria as $enfermeria){
+			$resumen_historial[$enfermeria->fecha->format('Ymd')] = (object) [
+				'fecha'=>$enfermeria->fecha,
+				'tipo'=>$enfermeria->diagnostico->nombre,
+				'evento'=>'Consulta Enfermería',
+				'observaciones'=>$enfermeria->observaciones,
+				'usuario'=>$enfermeria->user,
+				'cliente'=>$enfermeria->cliente
+			];
+		}
+		foreach($consultas_medicas as $medica){
+			$resumen_historial[$medica->fecha->format('Ymd')] = (object) [
+				'fecha'=>$medica->fecha,
+				'tipo'=>$medica->diagnostico->nombre,
+				'evento'=>'Consulta Enfermería',
+				'observaciones'=>$medica->observaciones,
+				'usuario'=>$medica->user,
+				'cliente'=>$medica->cliente
+			];
+		}
+		foreach($preocupacionales as $preocupacional){
+			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
+				'fecha'=>$preocupacional->fecha,
+				'tipo'=>$preocupacional->tipo->nombre,
+				'evento'=>'Exámen Médico Complementario',
+				'observaciones'=>$preocupacional->observaciones,
+				'usuario'=>'',
+				'cliente'=>$preocupacional->cliente
+			];
+		}
+		krsort($resumen_historial);
+
+
+		return compact(
+			'trabajador',
+			'consultas_medicas',
+			'consultas_enfermeria',
+			'ausentismos',
+			'clientes',
+			'vacunas',
+			'testeos',
+			'preocupacionales',
+			'resumen_historial'
+		);
+
 	}
 
 }

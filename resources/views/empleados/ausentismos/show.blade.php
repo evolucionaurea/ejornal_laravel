@@ -35,13 +35,8 @@
 		@endforeach
 		@endif
 
-		<div class="tarjeta">
+		@include('modulos.perfil_trabajador')
 
-			@include('modulos.perfil_trabajador')
-
-		</div>
-
-		{{-- Contenido de la pagina --}}
 	</div>
 </div>
 

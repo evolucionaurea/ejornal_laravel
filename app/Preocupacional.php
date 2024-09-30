@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Nomina;
 use App\PreocupacionalArchivo;
 use App\PreocupacionalTipoEstudio;
+use App\Cliente;
 use Carbon\Carbon;
-use Carbon\Cliente;
 
 
 class Preocupacional extends Model

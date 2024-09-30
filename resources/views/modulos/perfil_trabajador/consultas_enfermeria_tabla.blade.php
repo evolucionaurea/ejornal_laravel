@@ -13,6 +13,7 @@
 			<th>Frec. Cardíaca</th>
 			<th>Derivación</th>
 			<th>Observaciones</th>
+			<th>Cliente</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -30,6 +31,7 @@
 			<td>{{ $consulta_enfermeria->frec_cardiaca ?? '-' }}</td>
 			<td>{{ $consulta_enfermeria->derivacion_consulta }}</td>
 			<td>{{ $consulta_enfermeria->observaciones }}</td>
+			<td>{{ $consulta_enfermeria->cliente->nombre }}</td>
 		</tr>
 		@endforeach
 	</tbody>

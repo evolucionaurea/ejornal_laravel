@@ -8,10 +8,12 @@ use App\Ausentismo;
 //use App\ClienteUser;
 use App\Http\Traits\Clientes;
 use App\Http\Traits\Ausentismos;
+use App\Http\Traits\Nominas;
 use App\Nomina;
 use App\AusentismoTipo;
 use App\TipoComunicacion;
 use App\Comunicacion;
+use App\ComunicacionArchivo;
 use App\AusentismoDocumentacion;
 use App\AusentismoDocumentacionArchivos;
 use App\ConsultaMedica;
@@ -31,7 +33,7 @@ use Illuminate\Support\Facades\Artisan;*/
 class EmpleadosAusentismosController extends Controller
 {
 
-	use Clientes,Ausentismos;
+	use Clientes,Ausentismos,Nominas;
 
 	public function index()
 	{
@@ -98,6 +100,8 @@ class EmpleadosAusentismosController extends Controller
 			dd($file->hashName());
 		}*/
 
+		///dd($request);
+
 		$validatedData = $request->validate([
 			'trabajador' => 'required',
 			'tipo' => 'required',
@@ -115,7 +119,7 @@ class EmpleadosAusentismosController extends Controller
 				'cert_fecha_documento' => 'required',
 				//'cert_archivos' => 'required'
 			]);
-			if(!$request->archivos){
+			if(!$request->archivos_certificado){
 				return back()->withInput()->with('error', 'Debes incluir al menos 1 archivo para el certificado.');
 			}
 		}
@@ -205,18 +209,18 @@ class EmpleadosAusentismosController extends Controller
 		}
 
 		// Si hay un archivo adjunto
-		if($request->hasFile('archivo')) {
+		/*if($request->hasFile('archivo')) {
 			$archivo = $request->file('archivo');
 			$nombre = $archivo->getClientOriginalName();
 			$ausentismo->archivo = $nombre;
 			$ausentismo->hash_archivo = $archivo->hashName();
-		}
+		}*/
 		$ausentismo->user = auth()->user()->nombre;
 		$ausentismo->save();
 		// Si hay un archivo adjunto
-		if($request->hasFile('archivo')) {
+		/*if($request->hasFile('archivo')) {
 			Storage::disk('local')->put('ausentismos/trabajador/'.$ausentismo->id, $archivo);
-		}
+		}*/
 
 
 		//Guardar en base Comunicacion
@@ -225,6 +229,20 @@ class EmpleadosAusentismosController extends Controller
 		$comunicacion->id_tipo = $request->tipo_comunicacion;
 		$comunicacion->descripcion = $request->descripcion;
 		$comunicacion->save();
+
+		if($request->archivos_comunicacion){
+			foreach($request->archivos_comunicacion as $file){
+
+				$comunicacion_archivo = new ComunicacionArchivo;
+				$comunicacion_archivo->id_comunicacion = $comunicacion->id;
+				$comunicacion_archivo->archivo = $file->getClientOriginalName();
+				$comunicacion_archivo->hash_archivo = $file->hashName();
+
+				$comunicacion_archivo->save();
+
+				Storage::disk('local')->put('comunicaciones/'.$comunicacion->id, $file);
+			}
+		}
 
 		//Guardar en base Documentación si tiene
 		if($request->incluir_certificado=='on'){
@@ -242,7 +260,7 @@ class EmpleadosAusentismosController extends Controller
 			$documentacion->user = auth()->user()->nombre;
 			$documentacion->save();
 
-			foreach($request->archivos as $file){
+			foreach($request->archivos_certificado as $file){
 
 				$doc_archivo = new AusentismoDocumentacionArchivos;
 				$doc_archivo->ausentismo_documentacion_id = $documentacion->id;
@@ -257,8 +275,6 @@ class EmpleadosAusentismosController extends Controller
 				//$documentacion->hash_archivo = $archivo_cert->hashName();
 
 			}
-
-
 
 		}
 
@@ -275,10 +291,20 @@ class EmpleadosAusentismosController extends Controller
 	public function show($id)
 	{
 
-		$clientes = $this->getClientesUser();
+		return view('empleados.ausentismos.show',$this->perfilTrabajador($id));
+
+		/*$clientes = $this->getClientesUser();
 
 		$trabajador = Nomina::findOrFail($id);
 
+		$testeos = CovidTesteo::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
+		$vacunas = CovidVacuna::where('id_nomina',$id)
+			->with('tipo')
+			->orderBy('fecha', 'desc')
+			->get();
 
 		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
 			->with('diagnostico')
@@ -290,31 +316,21 @@ class EmpleadosAusentismosController extends Controller
 			->orderBy('fecha','desc')
 			->get();
 
-		$ausentismos = Ausentismo::where('id_trabajador',$id)
-			->with('trabajador')
-			->with('tipo')
-			->with('comunicacion.tipo')
-			->withCount('comunicaciones')
-			->with('documentaciones')
+		$ausentismos = Ausentismo::where('id_trabajador', $id)
+			->with([
+				'trabajador',
+				'tipo',
+				'comunicaciones.tipo',
+				'documentaciones',
+				'cliente',
+				'comunicaciones.archivos'
+			])
 			->orderBy('fecha_inicio', 'desc')
-			->get();
-		//dd($ausentismos);
-
-
-		$testeos = CovidTesteo::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-		$vacunas = CovidVacuna::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
 			->get();
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
 			->with('trabajador')
-			->whereHas('trabajador',function($query){
-				$query->where('id_cliente', auth()->user()->id_cliente_actual);
-			})
+			->where('id_cliente', auth()->user()->id_cliente_actual)
 			->orderBy('fecha', 'desc')
 			->get();
 
@@ -359,7 +375,7 @@ class EmpleadosAusentismosController extends Controller
 			'testeos',
 			'preocupacionales',
 			'resumen_historial'
-		));
+		));*/
 	}
 
 

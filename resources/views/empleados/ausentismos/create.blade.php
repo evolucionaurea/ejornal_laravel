@@ -127,50 +127,84 @@
 
 			</div>
 
+
+
 			{{-- COMUNICACION --}}
 			<div class="tarjeta">
 
 				<h4>Comunicación</h4>
 				<div class="form-row">
-					<div class="form-group col-lg-3">
-						<label>
-							Tipo *
-							<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
-								data-target="#crear_tipo_comunicacion" href="#">
-								<i class="fas fa-plus-circle"></i>
-							</a>
-							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion" href="#">
-								<i class="fas fa-eye"></i>
-							</a>
-						</label>
-						<select required name="tipo_comunicacion" class="form-control form-control-sm select_2">
-							<option value="">--Seleccionar--</option>
-							@foreach ($tipo_comunicacion as $tipo_com)
-							<option
-								value="{{$tipo_com->id}}"
-								@if(\Session::has('consulta'))
-									{{ strtolower($tipo_com->nombre) == 'presencial' ? 'selected' : ''}}
-								@else
-								{{ old('tipo_comunicacion')==$tipo_com->id ? 'selected' : '' }}
-								@endif
-							>
-								{{$tipo_com->nombre}}
-							</option>
-							@endforeach
-						</select>
+					<div class="col-lg-4">
+
+						<div class="form-group">
+
+							<label>
+								Tipo *
+								<a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
+									data-target="#crear_tipo_comunicacion" href="#">
+									<i class="fas fa-plus-circle"></i>
+								</a>
+								<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion" href="#">
+									<i class="fas fa-eye"></i>
+								</a>
+							</label>
+							<select required name="tipo_comunicacion" class="form-control form-control-sm select_2">
+								<option value="">--Seleccionar--</option>
+								@foreach ($tipo_comunicacion as $tipo_com)
+								<option
+									value="{{$tipo_com->id}}"
+									@if(\Session::has('consulta'))
+										{{ strtolower($tipo_com->nombre) == 'presencial' ? 'selected' : ''}}
+									@else
+									{{ old('tipo_comunicacion')==$tipo_com->id ? 'selected' : '' }}
+									@endif
+								>
+									{{$tipo_com->nombre}}
+								</option>
+								@endforeach
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>Descripción *</label>
+							<textarea required name="descripcion" class="form-control" rows="5">@if(\Session::has('consulta'))Amerita salida por Consulta {{ \Session::get('consulta')['consulta_tipo'] }}@else{{ old("descripcion") }}@endif</textarea>
+						</div>
 					</div>
-					<div class="form-group col-lg-9">
-						<label>Descripción *</label>
-						<textarea required name="descripcion" class="form-control"
-							rows="3">@if(\Session::has('consulta'))Amerita salida por Consulta {{ \Session::get('consulta')['consulta_tipo'] }}@else{{ old("descripcion") }}@endif</textarea>
+					<div class="form-group col-lg-7 border-left">
+						<div class="table-responsive">
+							<table data-table="comunicacion_archivos" class="table table-sm small w-100 table-bordered border">
+								<thead>
+									<tr class="bg-light">
+										<th colspan="2">
+											<label for="" class="mb-0">Adjuntar archivos</label>
+											<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+								<tfoot>
+									<tr class="bg-light">
+										<th colspan="2">
+											<button data-toggle="agregar-archivo-comunicacion" class="btn btn-tiny btn-dark text-light" type="button">
+												<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
+											</button>
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+
 					</div>
 				</div>
 
-				{{-- <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Cargar ausencia y
-					comunicación</button> --}}
+				<hr>
+
+
 
 
 			</div>
+
+
 
 			{{-- DOCUMENTACION --}}
 			<div class="tarjeta">
@@ -184,13 +218,11 @@
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<div class="input-group-text">
-								<input name="incluir_certificado" type="checkbox" {{ old("incluir_certificado")=='on'
-									? 'checked' : '' }}>
+								<input name="incluir_certificado" type="checkbox" {{ old("incluir_certificado")=='on' ? 'checked' : '' }}>
 							</div>
 						</div>
 						<div class="input-group-append">
-							<small data-toggle="incluir-certificado" class="form-control clickable">Incluir
-								Certificado</small>
+							<small data-toggle="incluir-certificado" class="form-control clickable">Incluir Certificado</small>
 						</div>
 
 					</div>
@@ -198,75 +230,69 @@
 				</div>
 
 
-				<div id="certificado_content" class="tarjeta-body" style="{{ old("incluir_certificado")=='on' ? ''
-					: 'display:none' }}">
+				<div id="certificado_content" class="tarjeta-body" style="{{ old("incluir_certificado")=='on' ? '' : 'display:none' }}">
 					<hr class="hr-line-dashed">
 
-					<div class="form-row">
-						<div class="form-group col-lg-3">
-							<label>Institución <span style="color: red;">*</span></label>
-							<input name="cert_institucion" type="text" class="form-control" placeholder=""
-								value="{{ old('cert_institucion') }}">
-						</div>
-						<div class="form-group col-lg-3">
-							<label>Médico <span style="color: red;">*</span></label>
-							<input name="cert_medico" type="text" class="form-control" placeholder=""
-								value="{{ old('cert_medico') }}">
-						</div>
-						<div class="form-group col-lg-3">
-							<label>Matrícula provincial</label>
-							<input name="cert_matricula_provincial" type="text" class="form-control" placeholder=""
-								value="{{ old('cert_matricula_provincial') }}">
-						</div>
-						<div class="form-group col-lg-3">
-							<label class="d-flex align-items-center">
-								Matrícula nacional
-								<i data-toggle="certificado-validar-icon" data-value="ok"
-									style="color: green; margin-left: 5px;" class="fas fa-check-circle d-none"></i>
-								<i data-toggle="certificado-validar-icon" data-value="fail"
-									style="color: red; margin-left: 5px;" class="fas fa-times-circle d-none"></i>
-							</label>
-							<div class="d-flex">
-								<input style="max-width: 200px; margin-right: 5px;" name="cert_matricula_nacional"
-									type="text" class="form-control" placeholder=""
-									value="{{ old('cert_matricula_nacional') }}">
-								<button data-toggle="validar-matricula" class="btn-ejornal btn-ejornal-gris-claro"
-									type="button">
-									<i class="fas fa-user-check"></i> Validar
-								</button>
-							</div>
-						</div>
-						<div class="form-group col-lg-2">
-							<label>Fecha documento <span style="color: red;">*</span></label>
-							<input name="cert_fecha_documento" type="text" readonly class="form-control" placeholder=""
-								value="{{ old('cert_fecha_documento') }}">
-						</div>
-
-						<div class="form-group col-lg-5">
-							<label>Diagnóstico <span style="color: red;">*</span></label>
-							<textarea name="cert_diagnostico" class="form-control"
-								rows="3">{{ old('cert_diagnostico') }}</textarea>
-						</div>
-						<div class="form-group col-lg-5">
-							<label>Observaciones</label>
-							<textarea name="cert_observaciones" class="form-control"
-								rows="3">{{ old('cert_observaciones') }}</textarea>
-						</div>
-					</div>
-
-					<hr>
 
 					<div class="row">
-						<div class="form-group col-lg-6">
+						<div class="col-lg-6">
+
+							<div class="form-row">
+								<div class="form-group col-lg-6">
+									<label>Institución <span style="color: red;">*</span></label>
+									<input name="cert_institucion" type="text" class="form-control" placeholder="" value="{{ old('cert_institucion') }}">
+								</div>
+								<div class="form-group col-lg-6">
+									<label>Médico <span style="color: red;">*</span></label>
+									<input name="cert_medico" type="text" class="form-control" placeholder="" value="{{ old('cert_medico') }}">
+								</div>
+								<div class="form-group col-lg-6">
+									<label>Matrícula provincial</label>
+									<input name="cert_matricula_provincial" type="text" class="form-control" placeholder="" value="{{ old('cert_matricula_provincial') }}">
+								</div>
+								<div class="form-group col-lg-6">
+									<label class="d-flex align-items-center">
+										Matrícula nacional
+										<i data-toggle="certificado-validar-icon" data-value="ok"
+											style="color: green; margin-left: 5px;" class="fas fa-check-circle d-none"></i>
+										<i data-toggle="certificado-validar-icon" data-value="fail"
+											style="color: red; margin-left: 5px;" class="fas fa-times-circle d-none"></i>
+									</label>
+									<div class="d-flex">
+										<div class="input-group">
+											<input style="max-width: 200px; margin-right: 5px;" name="cert_matricula_nacional" type="text" class="form-control" placeholder="" value="{{ old('cert_matricula_nacional') }}">
+											<div class="input-group-append">
+												<button data-toggle="validar-matricula" class="btn btn-dark text-light" type="button" style="margin:0;">
+													<i class="fas fa-user-check fa-fw"></i> Validar
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group col-lg-12">
+									<label>Observaciones</label>
+									<textarea name="cert_observaciones" class="form-control" rows="3">{{ old('cert_observaciones') }}</textarea>
+								</div>
+								<div class="form-group col-lg-4">
+									<label>Fecha documento <span style="color: red;">*</span></label>
+									<input name="cert_fecha_documento" type="text" readonly class="form-control" placeholder="" value="{{ old('cert_fecha_documento') }}">
+								</div>
+
+								<div class="form-group col-lg-8">
+									<label>Diagnóstico <span style="color: red;">*</span></label>
+									<textarea name="cert_diagnostico" class="form-control" rows="3">{{ old('cert_diagnostico') }}</textarea>
+								</div>
+							</div>
+
+						</div>
+						<div class="col-lg-6 border-left">
 
 							<div class="table-responsive">
-								<table data-table="certificaciones_archivos"
-									class="table table-sm small w-100 table-bordered border">
+								<table data-table="certificado_archivos" class="table table-sm small w-100 table-bordered border">
 									<thead>
 										<tr class="bg-light">
 											<th colspan="2">
-												<label for="" class="mb-0">Adjuntar archivos <span
-														style="color: red;">*</span></label>
+												<label for="" class="mb-0">Adjuntar archivos <span style="color: red;">*</span></label>
 												<span class="small text-muted font-italic">Puedes adjuntar más de 1
 													archivo</span>
 											</th>
@@ -278,8 +304,7 @@
 									<tfoot>
 										<tr class="bg-light">
 											<th colspan="2">
-												<button data-toggle="agregar-archivo-cert"
-													class="btn btn-tiny btn-dark text-light" type="button">
+												<button data-toggle="agregar-archivo-cert" class="btn btn-tiny btn-dark text-light" type="button">
 													<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
 												</button>
 											</th>
@@ -289,8 +314,9 @@
 							</div>
 
 						</div>
-
 					</div>
+
+
 				</div>
 
 

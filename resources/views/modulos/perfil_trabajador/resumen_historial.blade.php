@@ -5,6 +5,7 @@
             <th>Evento</th>
             <th>Tipo</th>
             <th>Observaciones</th>
+            <th>Cliente</th>
             <th>Usuario</th>
         </tr>
     </thead>
@@ -17,6 +18,9 @@
             <td class="align-middle">
                 {{ strlen($resumen->observaciones) > 100
                 ? substr($resumen->observaciones, 0, 100) . '...' : $resumen->observaciones }}
+            </td>
+            <td class="align-middle">
+                {{ $resumen->cliente->nombre }}
             </td>
             <td class="align-middle">{{ $resumen->usuario }}</td>
         </tr>
