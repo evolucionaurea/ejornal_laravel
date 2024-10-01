@@ -388,20 +388,16 @@ class EmpleadosAusentismosController extends Controller
 	public function edit($id)
 	{
 
+
 		$ausentismo = Ausentismo::select('ausentismos.*')
-			//->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
-			///->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id')
-			->with('comunicacion')
-			->with('tipo')
-			->with(['trabajador'=>function($query){
+			->with(['comunicaciones.tipo','comunicaciones.archivos','tipo','trabajador'=>function($query){
 				$query->select('id','nombre','email','estado','dni','telefono');
 			}])
-			->whereHas('trabajador',function($query){
-				$query->where('id_cliente',auth()->user()->id_cliente_actual);
-			})
-			///->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+			->where('id_cliente',auth()->user()->id_cliente_actual)
 			->where('ausentismos.id', $id)
 			->first();
+
+		//dd($ausentismo->comunicaciones);
 
 		$clientes = $this->getClientesUser();
 		$ausentismo_tipos = AusentismoTipo::orderBy('nombre', 'asc')->get();
@@ -450,14 +446,37 @@ class EmpleadosAusentismosController extends Controller
 
 		//Actualizar en base
 		$ausentismo = Ausentismo::findOrFail($id);
+
+		//dd($request->archivos_comunicacion);
 		$ausentismo->fecha_inicio = $fecha_inicio;
 		$ausentismo->id_tipo = $request->tipo;
 		$ausentismo->comentario = ($request->comentario) ? $request->comentario : null;
 
 		//Guardar en base Comunicacion
-		$ausentismo->comunicacion->id_tipo = $request->tipo_comunicacion;
-		$ausentismo->comunicacion->descripcion = $request->descripcion;
-		$ausentismo->comunicacion->save();
+		if($ausentismo->comunicaciones){
+
+			$ausentismo->comunicaciones[0]->id_tipo = $request->tipo_comunicacion;
+			$ausentismo->comunicaciones[0]->descripcion = $request->descripcion;
+			$ausentismo->comunicaciones[0]->save();
+
+			/*if($ausentismo->comunicaciones[0]->archivos){
+				foreach($ausentismo->comunicaciones[0]->archivos as $file){}
+			}*/
+			if($request->archivos_comunicacion){
+				foreach($request->archivos_comunicacion as $file){
+
+					$comunicacion_archivo = new ComunicacionArchivo;
+					$comunicacion_archivo->id_comunicacion = $ausentismo->comunicaciones[0]->id;
+					$comunicacion_archivo->archivo = $file->getClientOriginalName();
+					$comunicacion_archivo->hash_archivo = $file->hashName();
+
+					$comunicacion_archivo->save();
+
+					Storage::disk('local')->put('comunicaciones/'.$ausentismo->comunicaciones[0]->id, $file);
+
+				}
+			}
+		}
 		//$comunicacion = new Comunicacion;
 		//$comunicacion->id_ausentismo = $ausentismo->id;
 		//$comunicacion->id_tipo = $request->tipo_comunicacion;

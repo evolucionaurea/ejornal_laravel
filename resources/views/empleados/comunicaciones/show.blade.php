@@ -140,7 +140,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						@if($comunicaciones_ausentismo) @foreach($comunicaciones_ausentismo as $comunicacion)
+						@if($ausencia->comunicaciones)
+						@foreach($ausencia->comunicaciones as $comunicacion)
 						<tr>
 							<td class="align-middle">{{ $comunicacion->tipo->nombre }}</td>
 							<td class="align-middle">{{ $comunicacion->descripcion }}</td>
@@ -166,7 +167,7 @@
 								@endif
 							</td>
 							<td class="align-middle">{{ $comunicacion->updated_at->format('d/m/Y') }}</td>
-							<td class="align-middle">{{ $comunicacion->user }}</td>
+							<td class="align-middle">{{ $comunicacion->user ?? $ausencia->user }}</td>
 						</tr>
 						@endforeach @endif
 					</tbody>

@@ -46,8 +46,7 @@
 
 
 
-		<form action="{{action('EmpleadosAusentismosController@store')}}" accept-charset="UTF-8" method="post"
-			enctype="multipart/form-data">
+		<form action="{{action('EmpleadosAusentismosController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
 
 			@csrf
 

@@ -38,9 +38,7 @@
 		@endif
 
 		<div class="tarjeta">
-			<form
-				action="{{ action('EmpleadosAusentismosController@update', $ausentismo->id) }}?{{ $_SERVER['QUERY_STRING'] }}"
-				accept-charset="UTF-8" method="post">
+			<form action="{{ action('EmpleadosAusentismosController@update', $ausentismo->id) }}?{{ $_SERVER['QUERY_STRING'] }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
 				{{ csrf_field() }}
 				<input name="_method" type="hidden" value="PUT">
 				<div class="row">
@@ -88,33 +86,64 @@
 				<hr>
 				<h4>Comunicación</h4>
 				<div class="form-row">
-					<div class="form-group col-md-3">
-						<label>
-							Tipo
-							{{-- <a style="color: #6f9eab; margin-right: 10px;" data-toggle="modal"
-								data-target="#crear_tipo_comunicacion" href="#">
-								<i class="fas fa-plus-circle"></i>
-							</a>
-							<a style="color: #6f9eab;" data-toggle="modal" data-target="#ver_tipo_comunicacion"
-								href="#">
-								<i class="fas fa-eye"></i>
-							</a> --}}
-						</label>
-						<select required name="tipo_comunicacion" class="form-control">
-							<option value="">--Seleccionar--</option>
-							@foreach ($tipo_comunicaciones as $tipo_com)
-							<option value="{{$tipo_com->id}}" {{ $ausentismo->comunicacion->id_tipo==$tipo_com->id ?
-								'selected' :
-								'' }} >{{$tipo_com->nombre}}</option>
-							@endforeach
-						</select>
+					<div class="col-lg-4">
+						<div class="form-group">
+							<label>Tipo</label>
+							<select required name="tipo_comunicacion" class="form-control">
+								<option value="">--Seleccionar--</option>
+								@foreach ($tipo_comunicaciones as $tipo_com)
+								<option value="{{$tipo_com->id}}" {{ $ausentismo->comunicaciones[0]->id_tipo==$tipo_com->id ? 'selected' : '' }} >{{$tipo_com->nombre}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Descripción</label>
+							<textarea required name="descripcion" class="form-control" rows="3">{{ $ausentismo->comunicaciones[0]->descripcion }}</textarea>
+						</div>
 					</div>
-					<div class="form-group col-md-9">
-						<label>Descripción</label>
-						<textarea required name="descripcion" class="form-control"
-							rows="3">{{ $ausentismo->comunicacion->descripcion }}</textarea>
+
+
+					<div class="col-lg-8 border-left">
+
+						<div class="table-responsive">
+							<table data-table="comunicacion_archivos" class="table table-sm small w-100 table-bordered border">
+								<thead>
+									<tr class="bg-light">
+										<th colspan="2">
+											<label for="" class="mb-0">Adjuntar archivos</label>
+											<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									@if($ausentismo->comunicaciones[0]->archivos)
+										@foreach($ausentismo->comunicaciones[0]->archivos as $file)
+										<tr>
+											<td>
+												<a href="{{ route('comunicaciones.verArchivo', ['id' => $file->id_comunicacion, 'hash' => $file->hash_archivo]) }}" target="_blank" class="text-info">{{ $file->archivo }}</a>
+											</td>
+											<td></td>
+										</tr>
+										@endforeach
+									@endif
+								</tbody>
+								<tfoot>
+									<tr class="bg-light">
+										<th colspan="2">
+											<button data-toggle="agregar-archivo-comunicacion" class="btn btn-tiny btn-dark text-light" type="button">
+												<i class="fal fa-plus fa-fw"></i> <span>Agregar archivo</span>
+											</button>
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+
+
 					</div>
 				</div>
+
+				<hr>
 
 				<div class="form-group">
 					<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>

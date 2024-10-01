@@ -166,9 +166,15 @@ class EmpleadosComunicacionesController extends Controller
 	public function show($id)
 	{
 
-		$ausencia = Ausentismo::where('id',$id)->with('trabajador')->with('tipo')->first();
+		$ausencia = Ausentismo::where('id',$id)
+			->with(['trabajador','tipo','comunicaciones'=>function($query){
+				$query
+					->with(['archivos','tipo'])
+					->orderBy('created_at','desc');
+			}])
+			->first();
 
-		$comunicaciones_ausentismo = Comunicacion::select(
+		/*$comunicaciones_ausentismo = Comunicacion::select(
 				'comunicaciones.*',
 				DB::raw('IF(comunicaciones.user IS NOT NULL,comunicaciones.user,ausentismos.user) as user')
 			)
@@ -176,8 +182,7 @@ class EmpleadosComunicacionesController extends Controller
 			->where('id_ausentismo', $id)
 			->with(['tipo', 'archivos'])
 			->orderBy('comunicaciones.created_at', 'desc')
-			->get();
-
+			->get();*/
 		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
 		//dd($tipo_comunicaciones);
 
@@ -186,7 +191,7 @@ class EmpleadosComunicacionesController extends Controller
 		return view('empleados.comunicaciones.show', compact(
 			'ausencia',
 			'clientes',
-			'comunicaciones_ausentismo',
+			///'comunicaciones_ausentismo',
 			'tipo_comunicaciones'
 		));
 
