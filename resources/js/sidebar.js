@@ -134,4 +134,15 @@ $(document).ready(() => {
 		}
 	})
 
+
+
+	// Iniciar Select2 en el select de clientes
+	$('#cliente_seleccionado_sidebar').select2({
+		placeholder: "Seleccione un cliente",
+		allowClear: true,
+		// width: '50px !important',
+	});
+
+	
+
 });

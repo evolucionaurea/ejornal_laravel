@@ -179,6 +179,31 @@
   }
 }
 
+
+
+
+/* Reducir la altura del contenedor de Select2 */
+.select2-container .select2-selection--single {
+  height: 30px; /* Cambia la altura a tu gusto */
+  line-height: 30px; /* Ajusta el alineamiento vertical */
+}
+
+/* Ajustar el input de búsqueda de Select2 */
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding-left: 8px; /* Ajusta el padding interno si es necesario */
+  line-height: 30px; /* Alineación del texto */
+}
+
+/* Ajustar la caja de búsqueda dentro del dropdown */
+.select2-container .select2-dropdown .select2-search__field {
+  height: 30px; /* Ajusta la altura del campo de búsqueda */
+}
+
+
+.select2-container .select2-dropdown {
+  font-size: 0.9rem; /* Cambia el tamaño de fuente del dropdown */
+}
+
 @media (min-width: 768px) {
   #sidebar-wrapper {
     margin-left: 0;

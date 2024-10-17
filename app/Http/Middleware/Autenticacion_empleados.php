@@ -26,72 +26,86 @@ class Autenticacion_empleados
     {
         $user_loggeado = auth()->user();
 
+        // Obtener información del usuario logueado
         $user = User::where('users.email', $user_loggeado->email)
             ->select('users.id_rol', 'users.id_cliente_actual', 'fichada')
             ->first();
 
+        // Verificar los clientes activos del usuario
         $clientes_activos = 0;
-
-        $clientes = ClienteUser::where('id_user', auth()->user()->id)
+        $clientes = ClienteUser::where('id_user', $user_loggeado->id)
             ->select('id_cliente')
             ->get();
 
-        $clientes_activos_ids = [];  // Array para almacenar los IDs de clientes activos
+        $clientes_activos_ids = [];
 
         foreach ($clientes as $cliente) {
             $buscar_cliente = Cliente::where('id', $cliente->id_cliente)->first();
             if ($buscar_cliente != null) {
                 $clientes_activos++;
-                $clientes_activos_ids[] = $cliente->id_cliente;  // Agregar el ID del cliente activo al array
+                $clientes_activos_ids[] = $cliente->id_cliente;  // Guardar los IDs de clientes activos
             }
         }
 
-        // El ID 2 es Empleado
+        // Solo aplica a los usuarios con rol de empleado (id_rol = 2)
         if ($user->id_rol == 2 && $clientes_activos > 0) {
 
-            // Validar que el user tenga como id_cliente_actual un cliente que esté asociado a él
+            // Validar que el usuario está trabajando para un cliente activo
             if (!in_array($user->id_cliente_actual, $clientes_activos_ids)) {
-                // Desficho al user que tiene una fichada iniciada y guardo la informacion
+
+                // Verificar si el usuario tiene una fichada activa
                 if ($user_loggeado->fichada == 1) {
-
-                    $usuario = User::find(auth()->user()->id);
-                    $usuario->fichada = 0;
-                    $usuario->save();
-
-                    $egreso = Carbon::now();
-
-                    $agent = new Agent();
-                    //$device = $agent->platform();
-                    $fichada = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
-
-                    // Verificar si se encontró una fichada
-                    if ($fichada) {
-                        $fichada->egreso = $egreso;
-                        $f_ingreso = new DateTime($fichada->ingreso);
-                        $f_egreso = new DateTime();
-                        $time = $f_ingreso->diff($f_egreso);
-                        $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
-                        $fichada->ip = \Request::ip();
-
-                        $fichada->sistema_operativo = $agent->platform();
-                        $fichada->browser = $agent->browser();
-                        $fichada->dispositivo = $agent->deviceType();
-
-                        $fichada->tiempo_dedicado = $tiempo_dedicado;
-                        $fichada->save();
-                    }
+                    // Desfichar al usuario si tiene una fichada activa
+                    $this->desficharUsuario($user_loggeado);
                 }
 
+                // Redirigir después de desfichar
                 return redirect('/')
-                    ->with('error', 'Un administrador te ha quitado el cliente con el que estabas trabajando.
-                    Vuelve a iniciar sesión.');
+                    ->with('error', 'El cliente actual ya no está asignado a tu cuenta. 
+                    Has sido deslogueado y debes iniciar sesión nuevamente.');
             }
 
+            // Si el cliente actual es válido, continuar con la solicitud
             return $next($request);
 
         } else {
+            // Redirigir si no es empleado o no tiene clientes activos
             return redirect('web_oficial')
                 ->with('error', 'Email o contraseña incorrectas');
+        }
+    }
+
+    /**
+     * Desficha al usuario, guardando la información de la fichada.
+     */
+    private function desficharUsuario($user_loggeado)
+    {
+        $usuario = User::find($user_loggeado->id);
+        $usuario->fichada = 0;  // Marcar que el usuario ya no está fichado
+        $usuario->save();
+
+        $egreso = Carbon::now();
+
+        // Obtener la última fichada del usuario
+        $fichada = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
+
+        if ($fichada) {
+            $f_ingreso = new DateTime($fichada->ingreso);
+            $f_egreso = new DateTime();
+            $time = $f_ingreso->diff($f_egreso);
+
+            // Formatear el tiempo dedicado
+            $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
+
+            // Registrar información adicional de la ficha (IP, sistema operativo, etc.)
+            $agent = new Agent();
+            $fichada->egreso = $egreso;
+            $fichada->tiempo_dedicado = $tiempo_dedicado;
+            $fichada->ip = \Request::ip();
+            $fichada->sistema_operativo = $agent->platform();
+            $fichada->browser = $agent->browser();
+            $fichada->dispositivo = $agent->deviceType();
+            $fichada->save();
         }
     }
 }
