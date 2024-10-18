@@ -167,6 +167,10 @@
 						class="{{ setActiveSub('empleados.consultas.enfermeria') }}">
 						<a href="{{url('/empleados/consultas/enfermeria')}}">Enfermería</a>
 					</ol>
+					<ol data-route="empleados.consultas.nutricionales"
+						class="{{ setActiveSub('empleados.consultas.nutricionales') }}">
+						<a href="{{url('/empleados/consultas/nutricionales')}}">Nutricional</a>
+					</ol>
 				</ul>
 			</div>
 		</li>

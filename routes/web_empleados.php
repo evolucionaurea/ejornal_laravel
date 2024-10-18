@@ -263,5 +263,12 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/consultas/enfermeria/tipo_delete/{id_tipo}', 'EmpleadoConsultaEnfermeriaController@tipo_destroy')->name('consultas.enfermeria.tipo_delete');
 
 
+	// CONSULTAS Nutricionales
+	Route::resource('empleados/consultas/nutricionales', 'EmpleadoConsultaNutricionalesController', [
+		'names' => [
+			'index' => 'empleados.consultas.nutricionales'
+		]
+	]);
+
 
 });
