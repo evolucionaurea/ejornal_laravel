@@ -21,11 +21,14 @@ $(()=>{
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
+						console.log('objeto v', v);
+								
 						return `
-							<div>${v.nombre}<div>
-							<div class="small">DNI: ${v.dni}</div>
-							<div class="small">Tel: ${v.telefono}</div>
-						`
+							<div>${(v && v.nombre) ? v.nombre : 'No ingresado'}</div>
+							<div class="small">DNI: ${(v && v.dni) ? v.dni : 'No ingresado'}</div>
+							<div class="small">Tel: ${(v && v.telefono) ? v.telefono : 'No ingresado'}</div>
+						`;
+
 					}
 				},
 				{
