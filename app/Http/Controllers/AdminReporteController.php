@@ -733,6 +733,109 @@ class AdminReporteController extends Controller
 		$clientes = Cliente::all();
 		return view('admin.reportes.actividad_usuarios',compact('clientes'));
 	}
+	public function search_actividad_usuarios(Request $request)
+	{
+
+		/*
+		Consulta Medica
+		Consulta enfermeria
+		Ausentismo
+		Comunicacion
+		Documentacion
+		Estudio complementario
+		*/
+
+		$medicas = ConsultaMedica::select(
+			'id_cliente',
+			'id_nomina',
+			'user',
+			'consultas_medicas.created_at',
+			DB::raw('"Consulta Médica" as actividad')
+		)
+		->join('clientes','clientes.id','consultas_medicas.id_cliente')
+		->with('cliente')
+		->with('trabajador');
+
+		$enfermerias = ConsultaEnfermeria::select(
+			'id_cliente',
+			'id_nomina',
+			'user',
+			'consultas_enfermerias.created_at',
+			DB::raw('"Consulta Enfermería" as actividad')
+		)
+		->join('clientes','clientes.id','consultas_enfermerias.id_cliente')
+		->with('cliente')
+		->with('trabajador');
+
+
+		$ausentismos = Ausentismo::select(
+			'id_cliente',
+			'id_trabajador',
+			'user',
+			'ausentismos.created_at',
+			DB::raw('"Ausentismo" as actividad')
+		)
+		->join('clientes','clientes.id','ausentismos.id_cliente')
+		->with('cliente')
+		->with('trabajador');
+
+
+
+		$query = $medicas->union($enfermerias)->union($ausentismos);
+		$total_records = $query->count();
+
+
+
+
+		/*if ($request->search) {
+			$filtro = '%' . $request->search['value'] . '%';
+
+			$medicas->where(function ($query) use ($filtro) {
+				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
+					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
+					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
+					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
+			});
+
+			$enfermerias->where(function ($query) use ($filtro) {
+				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
+					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
+			});
+		}
+
+		if ($request->from) {
+			$medicas->whereDate('consultas_medicas.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$enfermerias->whereDate('consultas_enfermerias.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+
+		if ($request->to) {
+			$medicas->whereDate('consultas_medicas.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$enfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}*/
+		$total_filtered = $query->count();
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}else{
+			$query->orderBy('fecha','desc');
+		}
+
+
+
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total_records,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get()->toArray(),
+			'request'=>$request->all()
+		];
+
+	}
 
 
 

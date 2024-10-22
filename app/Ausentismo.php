@@ -30,6 +30,8 @@ class Ausentismo extends Model
 		'fecha_regreso_trabajar'=>'date:d/m/Y'
 	];
 
+	protected $appends = ['created_at_formatted'];
+
 	public function tipo(){
 		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
 	}
@@ -54,5 +56,10 @@ class Ausentismo extends Model
 	// public function comunicaciones(){
 	// 	return $this->hasMany(Comunicacion::class,'id_ausentismo');
 	// }
+
+	public function getCreatedAtFormattedAttribute()
+	{
+		return $this->created_at->format('d/m/Y H:i:s \h\s.');
+	}
 
 }
