@@ -11,6 +11,22 @@ class Nutricional extends Model
     protected $table = 'nutricionales';
 
     // Campos habilitados para ingresar
-    protected $fillable = ['nombre'];
+    protected $fillable = [
+        'id_patologia',
+        'objetivos',
+        'medicacion',
+        'descanso',
+        'act_fisica',
+        'peso',
+        'talla',
+        'circunferencia_cintura',
+        'porcent_masa_grasa',
+        'porcent_masa_muscular',
+        'gustos_alimentarios',
+        'tolerancia_digestiva',
+        'comidas_diarias',
+        'evolucion',
+        'medicaciones'
+    ];
 
 }

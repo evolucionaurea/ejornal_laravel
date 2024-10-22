@@ -72,6 +72,7 @@ if(route=='/empleados/certificados_livianos') require('./empleados/certificados_
 if(route=='empleados.consultas.todas') require('./empleados/consultas.todas')
 if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
 if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')
+	if(route=='empleados.consultas.nutricionales') require('./empleados/nutricional')
 
 if(route=='empleados.covid.testeos') require('./empleados/covid.testeos')
 if(route=='empleados.covid.vacunas') require('./empleados/covid.vacunas')

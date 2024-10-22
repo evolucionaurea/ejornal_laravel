@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Nutricional;
+use App\Patologia;
 use Illuminate\Http\Request;
 
 class EmpleadosNutricionalesController extends Controller
@@ -25,7 +26,8 @@ class EmpleadosNutricionalesController extends Controller
      */
     public function create()
     {
-        //
+        $patologias = Patologia::all();
+        return view('empleados.create', compact('patologias'));
     }
 
     /**
@@ -36,7 +38,9 @@ class EmpleadosNutricionalesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $validatedData = $request->validate([
+		// 	'nombre' => 'required'
+		// ]);
     }
 
     /**

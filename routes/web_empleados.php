@@ -264,9 +264,15 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// CONSULTAS Nutricionales
-	Route::resource('empleados/consultas/nutricionales', 'EmpleadoConsultaNutricionalesController', [
+	Route::resource('empleados/consultas/nutricionales', 'EmpleadosNutricionalesController', [
 		'names' => [
 			'index' => 'empleados.consultas.nutricionales'
+		]
+	]);
+
+	Route::resource('empleados/consultas/patologias', 'EmpleadosPatologiasController', [
+		'names' => [
+			'index' => 'empleados.consultas.patologias'
 		]
 	]);
 
