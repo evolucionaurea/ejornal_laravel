@@ -30,7 +30,7 @@ class TareaLiviana extends Model
   	return $this->belongsTo(TareaLivianaTipo::class,'id_tipo');
   }
   public function trabajador(){
-    return $this->belongsTo(Nomina::class,'id_trabajador');
+    return $this->belongsTo(Nomina::class,'id_trabajador')->withTrashed();
   }
   /*public function cliente(){
     return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');

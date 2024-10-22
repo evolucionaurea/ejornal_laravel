@@ -34,7 +34,7 @@ class ConsultaMedica extends Model
     return $this->belongsTo(DiagnosticoConsulta::class,'id_diagnostico_consulta');
   }
   public function trabajador(){
-    return $this->belongsTo(Nomina::class,'id_nomina');
+    return $this->belongsTo(Nomina::class,'id_nomina')->withTrashed();
   }
 
   public function cliente(){

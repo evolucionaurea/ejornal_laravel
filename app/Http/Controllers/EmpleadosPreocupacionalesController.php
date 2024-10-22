@@ -216,8 +216,10 @@ class EmpleadosPreocupacionalesController extends Controller
 	public function edit($id)
 	{
 
-		$preocupacional = Preocupacional::with('trabajador')->with('archivos')->where('id',$id)->first();
+		$preocupacional = Preocupacional::with(['trabajador','archivos'])->where('id',$id)->first();
 		$clientes = $this->getClientesUser();
+
+		//dd($preocupacional);
 
 		$tipos = PreocupacionalTipoEstudio::all();
 		//dd($preocupacional->toArray());

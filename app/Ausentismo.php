@@ -36,7 +36,7 @@ class Ausentismo extends Model
 		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
 	}
 	public function trabajador(){
-		return $this->belongsTo(Nomina::class,'id_trabajador');
+		return $this->belongsTo(Nomina::class,'id_trabajador')->withTrashed();
 	}
 
 	/*public function cliente(){

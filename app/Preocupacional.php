@@ -27,7 +27,7 @@ class Preocupacional extends Model
 
 
 	public function trabajador(){
-		return $this->belongsTo(Nomina::class,'id_nomina');
+		return $this->belongsTo(Nomina::class,'id_nomina')->withTrashed();
 	}
 
 	public function getEstadoVencimientoAttribute()
