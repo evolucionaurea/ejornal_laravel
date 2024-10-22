@@ -53,6 +53,7 @@ class EmpleadoConsultasTodasController extends Controller
 			'consultas_medicas.id_diagnostico_consulta',
 			'consultas_medicas.fecha',
 			'consultas_medicas.derivacion_consulta',
+			'consultas_medicas.user',
 			'diagnostico_consulta.nombre as diagnóstico',
 			DB::raw('"Médica" as tipo') // Agregamos un campo tipo para identificar consultas médicas
 		)
@@ -68,6 +69,7 @@ class EmpleadoConsultasTodasController extends Controller
 			'consultas_enfermerias.id_diagnostico_consulta',
 			'consultas_enfermerias.fecha',
 			'consultas_enfermerias.derivacion_consulta',
+			'consultas_enfermerias.user',
 			'diagnostico_consulta.nombre as diagnóstico',
 			DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
 		)
@@ -285,7 +287,7 @@ class EmpleadoConsultasTodasController extends Controller
 				$consulta->derivacion_consulta,
 				($consulta->amerita_salida ? 'Si' : 'No'),
 				$consulta->tratamiento,
-				$consulta->observaciones,
+				str_replace(["\r", "\n"],' ',$consulta->observaciones),
 				$consulta->peso,
 				$consulta->altura,
 				$consulta->imc,

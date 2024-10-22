@@ -728,4 +728,12 @@ class AdminReporteController extends Controller
 
 
 
+	public function actividad_usuarios()
+	{
+		$clientes = Cliente::all();
+		return view('admin.reportes.actividad_usuarios',compact('clientes'));
+	}
+
+
+
 }

@@ -453,12 +453,13 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			'Observaciones',
 		],';');
 
+
 		foreach($consultas as $consulta){
 
 			fputcsv($fp,[
 				$consulta->nombre,
 				$consulta->email,
-				$consulta->fecha,
+				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,
 				$consulta->derivacion_consulta,
 				($consulta->amerita_salida ? 'Si' : 'No'),
@@ -471,7 +472,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				$consulta->frec_cardiaca,
 				$consulta->anamnesis,
 				$consulta->tratamiento,
-				$consulta->observaciones
+				str_replace(["\r", "\n"],' ',$consulta->observaciones)
 			],';');
 		}
 		fseek($fp, 0);

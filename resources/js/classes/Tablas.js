@@ -43,7 +43,7 @@ export default class Tablas {
 			data:d=>{
 				d._token = csfr
 				$.extend(d,this.set_filters())
-				console.log(d)
+				//console.log(d)
 				loading()
 			}
 		}

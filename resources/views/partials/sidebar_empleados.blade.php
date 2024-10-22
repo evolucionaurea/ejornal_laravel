@@ -8,7 +8,7 @@
 		<span>{{auth()->user()->nombre}}</span>
 		@if (!isset($clientes) || empty($clientes) || count($clientes) < 1) <p>Sin empresas asignadas</p>
 			@else
-			<div style="max-width: 200px" class="form-group">
+			<div class="client-selector">
 				@php
 				$url_actual = request()->url();
 				@endphp

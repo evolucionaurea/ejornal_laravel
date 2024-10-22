@@ -14,7 +14,7 @@
 		<div class="cabecera">
 			<h2>Listado de consultas médicas</h2>
 			<p>Aquí puede ver el listado de consultas médicas de la empresa</p>
-			@if((auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1)
+			@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicas.create')}}">
 					<i class="fas fa-plus-circle"></i> Nueva consulta médica
@@ -34,7 +34,7 @@
 			@include('../../modulos.busqueda_fecha')
 
 
-			<table class="table table-striped table-hover table-sm tabla_consultas_medicas">
+			<table data-table="consultas-medicas" class="table table-striped table-hover table-sm">
 
 				<!--Table head-->
 				<thead>
@@ -43,6 +43,7 @@
 						<th>Trabajador</th>
 						<th>Fecha</th>
 						<th>Derivación</th>
+						<th>Cargado por</th>
 
 						<th>Acciones</th>
 

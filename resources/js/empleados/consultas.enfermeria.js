@@ -5,7 +5,7 @@ $(()=>{
 	new Tablas({
 		controller:'/empleados/consultas/enfermeria',
 		get_path:'/busqueda',
-		table:$('.tabla_consultas_enfermeria'),
+		table:$('[data-table="consultas-enfermeria"]'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 
 		server_side:true,
@@ -30,6 +30,11 @@ $(()=>{
 				{
 					name:'derivacion_consulta',
 					data:'derivacion_consulta'
+				},
+
+				{
+					name:'user',
+					data:'user'
 				},
 
 				{

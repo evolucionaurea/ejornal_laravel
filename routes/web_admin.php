@@ -116,8 +116,13 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	// Comunicaciones
 	Route::get('admin/reportes_comunicaciones', 'AdminReporteController@reportes_comunicaciones')->name('reportes_comunicaciones');
-
 	Route::post('admin/reportes/comunicaciones', 'AdminReporteController@comunicaciones')->name('reportes.comunicaciones');
+
+
+	// Actividad Usuarios
+	Route::get('admin/reportes/actividad_usuarios', 'AdminReporteController@actividad_usuarios')->name('/admin/reportes/actividad_usuarios');
+
+
 
 	Route::post('admin/reportes/filtrar_comunicaciones', 'AdminReporteController@filtrarComunicaciones')->name('reportes.filtrar_comunicaciones');
 

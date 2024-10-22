@@ -23,6 +23,14 @@ $(document).ready(() => {
 		let id_user = $('.id_usuario').val();
 		cliente_select = this.value;
 
+		if(cliente_select==''){
+			Swal.fire({
+				icon:'warning',
+				title:'Debes seleccionar un cliente!'
+			})
+			return false
+		}
+
 		if (debe_fichar !== 0) {
 
 			// Validar si está trabajando o no empezó
@@ -79,13 +87,6 @@ $(document).ready(() => {
 				// Maneja los errores de autenticación aquí
 			});
 		}
-
-
-
-
-
-
-
 	});
 
 	// Evento cuando se cambia el cliente desde el rol de grupo
@@ -139,10 +140,8 @@ $(document).ready(() => {
 	// Iniciar Select2 en el select de clientes
 	$('#cliente_seleccionado_sidebar').select2({
 		placeholder: "Seleccione un cliente",
-		allowClear: true,
-		// width: '50px !important',
 	});
 
-	
+
 
 });
