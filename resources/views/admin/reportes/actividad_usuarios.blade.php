@@ -29,10 +29,16 @@
 					<div class="row">
 
 						<div class="col-lg-6">
-							<input placeholder="Buscar trabajador" name="keywords" type="text" class="form-control form-control-sm" value="">
+							<select name="user" class="form-control">
+								<option value="">--Seleccionar Usuario--</option>
+								@foreach($users as $user)
+								<option value="{{ $user->nombre }}">{{ $user->nombre }}</option>
+								@endforeach
+							</select>
 						</div>
+
 						<div class="col-lg-6">
-							<select name="cliente" class="form-control form-control-sm">
+							<select name="cliente" class="form-control">
 								<option value="">--Seleccionar Cliente--</option>
 								@foreach($clientes as $cliente)
 								<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
@@ -41,11 +47,11 @@
 						</div>
 
 						<div class="col-lg-6">
-							<input placeholder="Desde" name="fecha_inicio" type="text" class="form-control form-control-sm" value="">
+							<input placeholder="Desde" name="from_date" type="text" class="form-control" value="">
 						</div>
 
 						<div class="col-lg-6">
-							<input placeholder="Hasta" name="fecha_final" type="text" class="form-control form-control-sm" value="">
+							<input placeholder="Hasta" name="to_date" type="text" class="form-control" value="">
 						</div>
 
 					</div>

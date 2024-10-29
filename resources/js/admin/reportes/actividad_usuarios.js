@@ -17,14 +17,18 @@ $(()=>{
 
 				{
 					data:'user',
-					name:'user'
+					name:'user',
+					render:v=>{
+						if(v==null) return `<span class="text-muted font-italic">[dato faltante]</span>`
+						return v
+					}
 				},
 				{
-					data:'cliente',
-					name:'clientes.nombre',
+					data:'cliente_nombre',
+					name:'cliente_nombre',
 					render:v=>{
 						if(v==null) return ''
-						return v.nombre
+						return v
 					}
 				},
 				{
@@ -36,11 +40,11 @@ $(()=>{
 					name:'actividad'
 				},
 				{
-					data:'trabajador',
-					name:'trabajador.nombre',
+					data:'trabajador_nombre',
+					name:'trabajador_nombre',
 					render:v=>{
 						if(v==null) return ''
-						return v.nombre
+						return v
 					}
 				}
 
@@ -49,7 +53,8 @@ $(()=>{
 	})
 
 
-	$('[data-toggle="busqueda-fecha"]').find('[name="from"],[name="to"]').datepicker()
+	$('[data-toggle="busqueda-fecha"]').find('[name="from_date"],[name="to_date"]').datepicker()
+	$('[data-toggle="busqueda-fecha"]').find('[name="user"],[name="cliente"]').select2()
 
 
 

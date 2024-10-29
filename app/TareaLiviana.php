@@ -46,4 +46,10 @@ class TareaLiviana extends Model
     return $this->hasOne(ComunicacionLiviana::class,'id_tarea_liviana');
   }
 
+
+  public function getCreatedAtFormattedAttribute()
+  {
+    return $this->created_at->format('d/m/Y H:i:s \h\s.');
+  }
+
 }

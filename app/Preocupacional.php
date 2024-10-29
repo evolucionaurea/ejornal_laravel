@@ -70,5 +70,10 @@ class Preocupacional extends Model
 		return $this->belongsTo(Cliente::class,'id_cliente');
 	}
 
+	public function getCreatedAtFormattedAttribute()
+	{
+		return $this->created_at->format('d/m/Y H:i:s \h\s.');
+	}
+
 
 }
