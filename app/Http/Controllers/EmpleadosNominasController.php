@@ -157,7 +157,9 @@ class EmpleadosNominasController extends Controller
 		}
 
 		/// Agrego registro en el historial de nóminas
-		$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
+		$this->nomina_historial($trabajador,'suma');
+
+		/*$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
 			->orderBy('year_month','desc')
 			->first();
 		$nomina_historial = new NominaHistorial;
@@ -176,7 +178,7 @@ class EmpleadosNominasController extends Controller
 			//si no existe el registro del mes se crea
 			$nomina_historial->cantidad = 1;
 			$nomina_historial->save();
-		}
+		}*/
 
 		// Agrego registro en el historial de nóminas/clientes
 		NominaClienteHistorial::create([
@@ -198,100 +200,6 @@ class EmpleadosNominasController extends Controller
 	{
 
 		return view('empleados.nominas.show',$this->perfilTrabajador($id));
-
-
-		/*$clientes = $this->getClientesUser();
-
-		$trabajador = Nomina::findOrFail($id);
-
-		$testeos = CovidTesteo::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-		$vacunas = CovidVacuna::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-
-		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
-			->with('diagnostico')
-			->orderBy('fecha','desc')
-			->get();
-
-		$consultas_enfermeria = ConsultaEnfermeria::where('id_nomina',$id)
-			->with('diagnostico')
-			->orderBy('fecha','desc')
-			->get();
-
-		$ausentismos = Ausentismo::where('id_trabajador', $id)
-			->with([
-				'trabajador',
-				'tipo',
-				'comunicaciones.tipo',
-				'documentaciones',
-				'cliente',
-				'comunicaciones.archivos'
-			])
-			->orderBy('fecha_inicio', 'desc')
-			->get();
-
-
-		$preocupacionales = Preocupacional::where('id_nomina',$id)
-			->with('trabajador')
-			->where('id_cliente', auth()->user()->id_cliente_actual)
-			->orderBy('fecha', 'desc')
-			->get();
-
-		$resumen_historial = [];
-		foreach($ausentismos as $ausentismo){
-			$resumen_historial[$ausentismo->fecha_inicio->format('Ymd')] = (object) [
-				'fecha'=>$ausentismo->fecha_inicio,
-				'tipo'=>$ausentismo->tipo->nombre,
-				'evento'=>'Ausentismo',
-				'observaciones'=>$ausentismo->comentario,
-				'usuario'=>$ausentismo->user
-			];
-		}
-		foreach($consultas_enfermeria as $enfermeria){
-			$resumen_historial[$enfermeria->fecha->format('Ymd')] = (object) [
-				'fecha'=>$enfermeria->fecha,
-				'tipo'=>$enfermeria->diagnostico->nombre,
-				'evento'=>'Consulta Enfermería',
-				'observaciones'=>$enfermeria->observaciones,
-				'usuario'=>$enfermeria->user
-			];
-		}
-		foreach($consultas_medicas as $medica){
-			$resumen_historial[$medica->fecha->format('Ymd')] = (object) [
-				'fecha'=>$medica->fecha,
-				'tipo'=>$medica->diagnostico->nombre,
-				'evento'=>'Consulta Enfermería',
-				'observaciones'=>$medica->observaciones,
-				'usuario'=>$medica->user
-			];
-		}
-		foreach($preocupacionales as $preocupacional){
-			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
-				'fecha'=>$preocupacional->fecha,
-				'tipo'=>$preocupacional->tipo->nombre,
-				'evento'=>'Exámen Médico Complementario',
-				'observaciones'=>$preocupacional->observaciones,
-				'usuario'=>''
-			];
-		}
-		krsort($resumen_historial);
-
-		return view('empleados.nominas.show', compact(
-			'trabajador',
-			'consultas_medicas',
-			'consultas_enfermeria',
-			'ausentismos',
-			'clientes',
-			'vacunas',
-			'testeos',
-			'preocupacionales',
-			'resumen_historial'
-		));*/
 	}
 
 	/**
@@ -348,13 +256,14 @@ class EmpleadosNominasController extends Controller
 
 
 		/// guardo en el historial el cambio de cliente
+		/// todo: soft delete del empleado en la empresa anterior y crear nuevo empleado en la empresa nueva
 		if($trabajador->id_cliente != $request->id_cliente){
 
 			///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
 			$ausentismo = Ausentismo::where('id_trabajador',$trabajador->id)
 				->where(function($query){
 					$query
-						->where('fecha_final','>',Carbon::now())
+						->where('fecha_final','>=',Carbon::now())
 						->orWhereNull('fecha_final');
 				})
 				->get();
@@ -366,21 +275,35 @@ class EmpleadosNominasController extends Controller
 			$tarea_liviana = TareaLiviana::where('id_trabajador',$trabajador->id)
 				->where(function($query){
 					$query
-						->where('fecha_final','>',Carbon::now())
+						->where('fecha_final','>=',Carbon::now())
 						->orWhereNull('fecha_final');
 				})
 				->get();
+
+			///dd($tarea_liviana);
+
 			if($tarea_liviana->count()){
 				return back()->with('error','Este trabajador posee una tarea adecuada vigente y no puede ser cambiado de cliente/sucursal.');
 			}
 
-			$trabajador->id_cliente = $request->id_cliente;
+			//$trabajador->id_cliente = $request->id_cliente;
+			//$trabajador->created_at = Carbon::now();
 
 			NominaClienteHistorial::create([
 				'nomina_id'=>$trabajador->id,
 				'cliente_id'=>$request->id_cliente,
 				'user_id'=>auth()->user()->id
 			]);
+			$this->nomina_historial($trabajador,'resta');
+			$trabajador->delete();
+
+			$trabajador = new Nomina;
+			$trabajador->id_cliente = $request->id_cliente;
+
+			$this->nomina_historial($trabajador,'suma');
+
+
+
 		}
 
 
@@ -498,25 +421,44 @@ class EmpleadosNominasController extends Controller
 		$trabajador = Nomina::find($id);
 
 		/// Agrego registro en el historial de nóminas
-		$nomina_historial_creado = NominaHistorial::where('cliente_id',$trabajador->id_cliente)
-			->orderBy('year_month','desc')
-			->first();
-		$nomina_historial = new NominaHistorial;
-		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
-		$nomina_historial->cliente_id = $trabajador->id_cliente;
-
-		if($nomina_historial_creado){
-			//si existe el registro del mes se actualiza
-			if($nomina_historial_creado->year_month==CarbonImmutable::now()->format('Ym')){
-				$nomina_historial = $nomina_historial_creado;
-			}
-			$nomina_historial->cantidad = $nomina_historial_creado->cantidad ? $nomina_historial_creado->cantidad-1 : 0;
-			$nomina_historial->save();
-		}
+		$this->nomina_historial($trabajador,'resta');
 
 
 		$trabajador->delete();
 		return redirect('empleados/nominas')->with('success', 'Trabajador de la nómina eliminado correctamente');
+	}
+
+	public function nomina_historial($trabajador,$operation='suma')
+	{
+
+		$nomina_historial = NominaHistorial::where('cliente_id',$trabajador->id_cliente)
+			->where('year_month',CarbonImmutable::now()->format('Ym'))
+			->orderBy('year_month','desc')
+			->first();
+
+		if($nomina_historial){
+
+			if($operation=='resta'){
+				$nomina_historial->cantidad = $nomina_historial->cantidad ? $nomina_historial->cantidad-1 : 0;
+			}
+			if($operation=='suma'){
+				$nomina_historial->cantidad = $nomina_historial->cantidad+1;
+			}
+			$nomina_historial->save();
+
+		}else{
+
+			$nomina_historial = new NominaHistorial;
+			$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
+			$nomina_historial->cliente_id = $trabajador->id_cliente;
+			$nomina_historial->cantidad = $operation=='suma' ? 1 : 0;
+
+			$nomina_historial->save();
+		}
+
+		return true;
+
+
 	}
 
 

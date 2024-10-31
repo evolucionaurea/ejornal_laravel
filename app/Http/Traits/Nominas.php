@@ -267,7 +267,7 @@ trait Nominas
 			$resumen_historial[$medica->fecha->format('Ymd')] = (object) [
 				'fecha'=>$medica->fecha,
 				'tipo'=>$medica->diagnostico->nombre,
-				'evento'=>'Consulta Enfermería',
+				'evento'=>'Consulta Médicas',
 				'observaciones'=>$medica->observaciones,
 				'usuario'=>$medica->user,
 				'cliente'=>$medica->cliente
