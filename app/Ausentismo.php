@@ -30,7 +30,7 @@ class Ausentismo extends Model
 		'fecha_regreso_trabajar'=>'date:d/m/Y'
 	];
 
-	protected $appends = ['created_at_formatted'];
+	protected $appends = ['created_at_formatted','trabajador_perfil_url'];
 
 	public function tipo(){
 		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
@@ -60,6 +60,11 @@ class Ausentismo extends Model
 	public function getCreatedAtFormattedAttribute()
 	{
 		return $this->created_at->format('d/m/Y H:i:s \h\s.');
+	}
+
+	public function getTrabajadorPerfilUrlAttribute()
+	{
+		return url('/empleados/nominas/'.$this->id_trabajador);
 	}
 
 }

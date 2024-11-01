@@ -33,8 +33,10 @@ $(()=>{
 					className:'align-middle',
 					render:v=>{
 						return `
-							<div><b>${v.trabajador_nombre}</b></div>
-							<div class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</div>
+							<div>
+								<a href="${v.trabajador_perfil_url}" target="_blank" class="text-info">${v.trabajador_nombre}</a>
+							</div>
+							<span class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</span>
 						`
 					}
 				},

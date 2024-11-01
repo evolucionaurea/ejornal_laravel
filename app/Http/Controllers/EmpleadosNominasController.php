@@ -295,9 +295,8 @@ class EmpleadosNominasController extends Controller
 				'user_id'=>auth()->user()->id
 			]);
 			$this->nomina_historial($trabajador,'resta');
-			$trabajador->delete();
-
-			$trabajador = new Nomina;
+			//$trabajador->delete();
+			//$trabajador = new Nomina;
 			$trabajador->id_cliente = $request->id_cliente;
 
 			$this->nomina_historial($trabajador,'suma');

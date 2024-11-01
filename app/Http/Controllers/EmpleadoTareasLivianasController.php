@@ -48,7 +48,8 @@ class EmpleadoTareasLivianasController extends Controller
 		)
 		->join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 		->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
-		->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual);
+		->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual)
+		->with('trabajador');
 
 		$query->where(function($query) use ($request) {
 			$filtro = '%'.$request->search['value'].'%';

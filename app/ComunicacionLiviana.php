@@ -14,6 +14,8 @@ class ComunicacionLiviana extends Model
   // Campos habilitados para ingresar
   protected $fillable = ['id_ausentismo', 'id_tipo', 'user', 'descripcion'];
 
+  protected $appends = ['created_at_formatted'];
+
 
   public function tipo(){
   	return $this->belongsTo(TipoComunicacionLiviana::class,'id_tipo');

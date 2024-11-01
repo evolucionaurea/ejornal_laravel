@@ -32,8 +32,7 @@ $(()=>{
 					name:'nombre',
 					className:'align-middle border-left',
 					render:v=>{
-						let url = location.href;
-						return `<a class="text-info" href="${url}/${v.id}">${v.nombre}</a>`
+						return `<a class="text-info" href="${v.perfil_url}">${v.nombre}</a>`
 					}
 				},
 				{
@@ -47,7 +46,7 @@ $(()=>{
 					className:'align-middle border-left',
 					render:v=>{
 						console.log(v.telefono);
-						
+
 						return v.telefono==null ? '<span class="text-muted font-italic">[no cargado]</span>' : `<a class="text-info" href="tel:${v.telefono}">${v.telefono}</a>`
 					}
 				},

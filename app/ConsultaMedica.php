@@ -43,6 +43,7 @@ class ConsultaMedica extends Model
 
   public function getCreatedAtFormattedAttribute()
   {
+    if(is_null($this->created_at)) return '';
     return $this->created_at->format('d/m/Y H:i:s \h\s.');
   }
 
