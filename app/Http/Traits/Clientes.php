@@ -50,7 +50,9 @@ trait Clientes {
 			->where('cliente_id',$id_cliente)
 			->first();
 		///RESOLVER SI NO ESTÁ GENERADO EL REGISTRO CON EL CRON
-		//dd($q_nomina->cantidad);
+
+		//dd($q_nomina);
+
 		if(!$q_nomina){
 			\Artisan::call('db:seed', [
 				'--class' => 'NominaHistorialSeeder',
@@ -147,7 +149,7 @@ trait Clientes {
 		$dias_mes_actual = $mes_actual->first()->dias;
 		$ausentismos_mes_actual_indice = $nomina_actual ? ($dias_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
 		//$ausentismos_mes_actual = number_format($ausentismos_mes_actual,2,',','.');
-		//dump($q_ausentismos_mes_actual->first()->dias);
+		///dump($q_ausentismos_mes_actual->first()->dias);
 		//dd(DB::getQueryLog());
 
 

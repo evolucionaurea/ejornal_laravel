@@ -24,7 +24,7 @@ $(()=>{
 							`
 						}
 						return `
-							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-info">${v.nombre}</a>
+							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-dark">${v.nombre}</a>
 						`
 					}
 				},

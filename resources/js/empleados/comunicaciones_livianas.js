@@ -19,7 +19,7 @@ $(()=>{
 			let status = `<span class="tag_ejornal tag_ejornal_${comunicacion.estado==1?'success':'danger'}">${comunicacion.estado==1?'Activo':'Inactivo'}</span>`
 
 			if(comunicacion.tarea_liviana.trabajador.deleted_at==null){
-				trabajador = `<div><a href="${comunicacion.tarea_liviana.trabajador.perfil_url}" target="_blank" class="text-info">${comunicacion.tarea_liviana.trabajador.nombre}</a></div>`
+				trabajador = `<div><a href="${comunicacion.tarea_liviana.trabajador.perfil_url}" target="_blank" class="text-dark">${comunicacion.tarea_liviana.trabajador.nombre}</a></div>`
 			}else{
 				trabajador += `<span class="badge badge-danger">eliminado</span>`
 				status = ''

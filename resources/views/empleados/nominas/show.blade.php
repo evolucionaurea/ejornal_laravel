@@ -7,11 +7,10 @@
 <div class="d-flex" id="wrapper">
 	@include('partials.sidebar_empleados')
 	<div id="page-content-wrapper">
+
 		@include('partials.nav_sup')
 
-
 		{{-- Contenido de la pagina --}}
-
 		<div class="cabecera">
 			<h2>Historial de un trabajador</h2>
 			<p>Aquí podrá ver las consultas y ausentismos del trabajador</p>
@@ -19,6 +18,10 @@
 				<a class="btn-ejornal btn-ejornal-gris-claro"
 					href="{{ url('empleados/nominas') }}?{{$_SERVER['QUERY_STRING']}}">
 					<i class="fas fa-arrow-circle-left"></i> <span>Volver</span>
+				</a>
+
+				<a href="{{ url('empleados/nominas/'.$trabajador->id.'/edit') }}" class="btn-ejornal btn-ejornal-gris-claro">
+					<i class="fa fa-pencil fa-fw"></i> <span>Editar Trabajador</span>
 				</a>
 			</div>
 		</div>

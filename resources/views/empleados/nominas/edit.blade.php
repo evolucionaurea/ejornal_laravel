@@ -127,31 +127,35 @@
 						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder=""
 							value="{{$trabajador->cod_postal}}">
 					</div>
-					<div class="form-group col-md-6">
-						<label>Foto</label>
-						<br>
-						@if (isset($trabajador->foto) && !empty($trabajador->foto))
-						<img style="width: 300px;"
-							src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
-						@else
-						<span>
-							<i class="fas fa-user fa-1x"></i>
-							Sin foto cargada
-						</span>
-						@endif
-					</div>
+					<div class="form-group col-md-6 border p-4 rounded">
 
-					<div class="form-group col-md-6">
-						<label>Subir/Reemplazar foto</label>
-						<div class="input-group">
-							<div class="custom-file">
-								<input name="foto" id="input_file" type="file" class="custom-file-input"
-									accept="image/*">
-								<label for="input_file" class="custom-file-label">Subir Imagen</label>
+						<div class="row">
+							<div class="col-md-4">
+								<label>Foto</label>
+								<br>
+								@if (isset($trabajador->foto) && !empty($trabajador->foto))
+								<img style="width: 100%"
+									src="{{asset('storage/nominas/fotos/'.$trabajador->id.'/'.$trabajador->hash_foto)}}">
+								@else
+								<span>
+									<i class="fas fa-user fa-1x"></i>
+									Sin foto cargada
+								</span>
+								@endif
+
+							</div>
+							<div class="col-md-8">
+								<label>Subir/Reemplazar foto</label>
+								<div class="input-group">
+									<div class="custom-file">
+										<input name="foto" id="input_file" type="file" class="custom-file-input"
+											accept="image/*">
+										<label for="input_file" class="custom-file-label">Subir Imagen</label>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-
 
 
 

@@ -159,26 +159,6 @@ class EmpleadosNominasController extends Controller
 		/// Agrego registro en el historial de nóminas
 		$this->nomina_historial($trabajador,'suma');
 
-		/*$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
-			->orderBy('year_month','desc')
-			->first();
-		$nomina_historial = new NominaHistorial;
-		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
-		$nomina_historial->cliente_id = auth()->user()->id_cliente_actual;
-
-		if($nomina_historial_creado){
-			//si existe el registro del mes se actualiza
-			if($nomina_historial_creado->year_month==CarbonImmutable::now()->format('Ym')){
-				$nomina_historial = $nomina_historial_creado;
-			}
-			$nomina_historial->cantidad = $nomina_historial_creado->cantidad+1;
-			$nomina_historial->save();
-
-		}else{
-			//si no existe el registro del mes se crea
-			$nomina_historial->cantidad = 1;
-			$nomina_historial->save();
-		}*/
 
 		// Agrego registro en el historial de nóminas/clientes
 		NominaClienteHistorial::create([
@@ -263,7 +243,7 @@ class EmpleadosNominasController extends Controller
 			$ausentismo = Ausentismo::where('id_trabajador',$trabajador->id)
 				->where(function($query){
 					$query
-						->where('fecha_final','>=',Carbon::now())
+						->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
 						->orWhereNull('fecha_final');
 				})
 				->get();
@@ -275,7 +255,7 @@ class EmpleadosNominasController extends Controller
 			$tarea_liviana = TareaLiviana::where('id_trabajador',$trabajador->id)
 				->where(function($query){
 					$query
-						->where('fecha_final','>=',Carbon::now())
+						->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
 						->orWhereNull('fecha_final');
 				})
 				->get();
@@ -294,7 +274,7 @@ class EmpleadosNominasController extends Controller
 				'cliente_id'=>$request->id_cliente,
 				'user_id'=>auth()->user()->id
 			]);
-			$this->nomina_historial($trabajador,'resta');
+			$this->nomina_historial($trabajador,'resta'); /// chequear!!
 			//$trabajador->delete();
 			//$trabajador = new Nomina;
 			$trabajador->id_cliente = $request->id_cliente;
@@ -430,15 +410,37 @@ class EmpleadosNominasController extends Controller
 	public function nomina_historial($trabajador,$operation='suma')
 	{
 
+		$year_month = CarbonImmutable::now()->format('Ym');
+
 		$nomina_historial = NominaHistorial::where('cliente_id',$trabajador->id_cliente)
-			->where('year_month',CarbonImmutable::now()->format('Ym'))
+			->where('year_month',$year_month)
 			->orderBy('year_month','desc')
 			->first();
+
+		// Si tuvo un ausentismo o tarea adecuada en el mes/año actual no hay que restarlo del historial!
+		$ausentismo = Ausentismo::where('id_cliente',$trabajador->id_cliente)
+			->whereRaw("{$year_month} BETWEEN EXTRACT(YEAR_MONTH FROM fecha_inicio) AND EXTRACT(YEAR_MONTH FROM fecha_final)")
+			->where('id_trabajador',$trabajador->id)
+			->get();
+
+		$tarea_liviana = TareaLiviana::where('id_cliente',$trabajador->id_cliente)
+			->whereRaw("{$year_month} BETWEEN EXTRACT(YEAR_MONTH FROM fecha_inicio) AND EXTRACT(YEAR_MONTH FROM fecha_final)")
+			->where('id_trabajador',$trabajador->id)
+			->get();
+		//dd($tarea_liviana);
+
+
 
 		if($nomina_historial){
 
 			if($operation=='resta'){
-				$nomina_historial->cantidad = $nomina_historial->cantidad ? $nomina_historial->cantidad-1 : 0;
+
+				if($ausentismo->count() || $tarea_liviana->count()){
+					$resta = $nomina_historial->cantidad; /// dejo la misma cantidad que tenía
+				}else{
+					$resta = $nomina_historial->cantidad ? $nomina_historial->cantidad-1 : 0;
+				}
+				$nomina_historial->cantidad = $resta;
 			}
 			if($operation=='suma'){
 				$nomina_historial->cantidad = $nomina_historial->cantidad+1;
@@ -450,7 +452,14 @@ class EmpleadosNominasController extends Controller
 			$nomina_historial = new NominaHistorial;
 			$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
 			$nomina_historial->cliente_id = $trabajador->id_cliente;
-			$nomina_historial->cantidad = $operation=='suma' ? 1 : 0;
+
+			if($ausentismo->count() || $tarea_liviana->count()){
+				$resta = 1;
+			}else{
+				$resta = 0;
+			}
+
+			$nomina_historial->cantidad = $operation=='suma' ? 1 : $resta;
 
 			$nomina_historial->save();
 		}

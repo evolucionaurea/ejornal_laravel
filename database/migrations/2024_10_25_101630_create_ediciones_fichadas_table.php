@@ -27,7 +27,7 @@ class CreateEdicionesFichadasTable extends Migration
 
             //Relaciones
             $table->foreign('id_user')->references('id')->on('users');
-            $table->foreign('id_fichada')->references('id')->on('nuevas_fichadas');
+            $table->foreign('id_fichada')->references('id')->on('fichadas_nuevas');
         });
     }
 

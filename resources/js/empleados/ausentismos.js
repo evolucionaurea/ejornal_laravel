@@ -34,7 +34,7 @@ $(()=>{
 					render:v=>{
 						return `
 							<div>
-								<a href="${v.trabajador_perfil_url}" target="_blank" class="text-info">${v.trabajador_nombre}</a>
+								<a href="${v.trabajador_perfil_url}" target="_blank" class="text-dark">${v.trabajador_nombre}</a>
 							</div>
 							<span class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</span>
 						`

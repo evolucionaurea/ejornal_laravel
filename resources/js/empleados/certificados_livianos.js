@@ -12,7 +12,7 @@ $(()=>{
 
 			let trabajador = `<div>${certificado.nombre}</div>`
 			if(certificado.tarea_liviana.trabajador.deleted_at==null){
-				trabajador = `<div><a href="${certificado.tarea_liviana.trabajador.perfil_url}" target="_blank" class="text-info">${certificado.tarea_liviana.trabajador.nombre}</a></div>`
+				trabajador = `<div><a href="${certificado.tarea_liviana.trabajador.perfil_url}" target="_blank" class="text-dark">${certificado.tarea_liviana.trabajador.nombre}</a></div>`
 			}else{
 				trabajador += `<span class="badge badge-danger">eliminado</span>`
 			}
