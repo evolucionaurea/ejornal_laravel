@@ -127,4 +127,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	Route::post('admin/reportes/filtrar_comunicaciones', 'AdminReporteController@filtrarComunicaciones')->name('reportes.filtrar_comunicaciones');
 
+
+	Route::get('admin/reportes/ediciones_fichadas', 'AdminEdicionFichadaController@index')->name('/admin/reportes/ediciones_fichadas');
+
 });

@@ -40,65 +40,78 @@ class AdminReporteController extends Controller
 
 	public function fichadas_ajax(Request $request)
 	{
-		/*$query = FichadaNueva::selectRaw('
-						fichadas_nuevas.*,
-						users.nombre as user_nombre,
-						users.estado as user_estado,
-						IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-						clientes.nombre as cliente_nombre
-				')
-				->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-				->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-				->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');*/
-
-		$query = FichadaNueva::select('*')
-							->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-							->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-							->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente')
-							->with('user.especialidad')
-							->with('cliente');
+	
+		$query = FichadaNueva::selectRaw('
+		fichadas_nuevas.*,
+		users.nombre as user_nombre,
+		users.estado as user_estado,
+		IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
+		clientes.nombre as cliente_nombre,
+		(fichadas_nuevas.id = (
+            SELECT MAX(fn.id)
+            FROM fichadas_nuevas fn
+            WHERE fn.id_user = fichadas_nuevas.id_user
+        )) as ultimo_registro_user
+		')
+		->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
+		->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
+		->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente')
+		->with(['user.especialidad', 'cliente']);
 
 		$total_records = $query->count();
 
+		// Filtro por estado de usuario
 		if ($request->estado && $request->estado !== 'todos') {
-			$estado = $request->estado === 'activos' ? 1 : 0;
-			//$query->where('users.estado', $estado);
-			$query->whereHas('user',function($query) use($estado){
-				$query->where('estado',$estado);
-			});
-		}
-		$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
-			$query
-				->whereHas('user',function($query) use($filtro){
-					$query->where('nombre','like',$filtro);
-				})
-				->orWhereHas('cliente',function($query) use($filtro){
-					$query->where('nombre','like',$filtro);
-				});
+		$estado = $request->estado === 'activos' ? 1 : 0;
+		$query->whereHas('user', function($query) use($estado) {
+		$query->where('estado', $estado);
 		});
-		if($request->from) {
-			$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if($request->to) {
-			$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
-		//$query->orderBy('ingreso', 'desc');
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort, $dir);
+		// Filtro de búsqueda general por nombre de usuario o cliente
+		if ($request->search['value']) {
+		$filtro = '%' . $request->search['value'] . '%';
+		$query->where(function($query) use ($filtro) {
+		$query->whereHas('user', function($query) use($filtro) {
+				$query->where('nombre', 'like', $filtro);
+			})
+			->orWhereHas('cliente', function($query) use($filtro) {
+				$query->where('nombre', 'like', $filtro);
+			});
+		});
 		}
 
+		// Filtro de rango de fechas
+		if ($request->from) {
+		$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+		if ($request->to) {
+		$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
+
+		// Ordenación según el parámetro de orden
+		if ($request->order) {
+		$sort = $request->columns[$request->order[0]['column']]['name'];
+		$dir = $request->order[0]['dir'];
+		$query->orderBy($sort, $dir);
+		} else {
+		$query->orderBy('ingreso', 'desc'); // Ordenación por defecto
+		}
+
+		// Respuesta con datos filtrados y paginados
 		return [
-			'draw' => $request->draw,
-			'recordsTotal' => $total_records,
-			'recordsFiltered' => $query->count(),
-			'data' => $query->skip($request->start)->take($request->length)->get(),
-			'request' => $request->all()
+		'draw' => $request->draw,
+		'recordsTotal' => $total_records,
+		'recordsFiltered' => $query->count(),
+		'data' => $query->skip($request->start)->take($request->length)->get(),
+		'request' => $request->all()
 		];
+
+		
 	}
+
+
+
 	public function exportar_fichadas($id_cliente=null, Request $request)
 	{
 

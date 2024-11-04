@@ -24,3 +24,5 @@ Route::post('/set_nominas', 'EndpointsController@setNominas');
 Route::delete('/delete_nominas', 'EndpointsController@deleteNominas');
 
 Route::post('/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@clienteActual')->name('actualizar_cliente_actual');
+
+Route::post('/cambiar_fichada', 'EndpointsController@cambiarFichada');

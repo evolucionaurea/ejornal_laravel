@@ -93,6 +93,20 @@
 							@endforeach
 						</select>
 					</div>
+					<div class="form-group col-md-4 select_permiso_edicion_fichadas">
+						<label>Permiso Edicion Fichadas</label>
+						<select name="permiso_edicion_fichada" class="form-control form-control-sm">
+							<option @if ($user->permiso_edicion_fichadas == 0 || $user->permiso_edicion_fichadas ==
+								null)
+								{{ 'selected' }}
+								@endif
+								value="0">No</option>
+							<option @if ($user->permiso_edicion_fichadas == 1)
+								{{ 'selected' }}
+								@endif
+								value="1">Si</option>
+						</select>
+					</div>
 					@if ($user->id_cliente_relacionar != null)
 					<div class="form-group col-lg-3 col-md-4 col-sm-12 cliente_original">
 						<label>Representa al cliente</label>

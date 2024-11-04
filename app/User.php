@@ -20,7 +20,8 @@ class User extends Authenticatable
 
 	// Campos habilitados para ingresar
 	protected $fillable = [
-	   'id_rol', 'nombre', 'apellido', 'estado', 'personal_interno', 'email', 'permiso_desplegables', 'onedrive', 'cuil'
+	   'id_rol', 'nombre', 'apellido', 'estado', 'personal_interno', 'email', 'permiso_desplegables', 'onedrive', 'cuil',
+	   'permiso_edicion_fichada'
 	];
 
 	/**

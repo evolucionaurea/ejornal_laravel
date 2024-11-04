@@ -8,6 +8,11 @@ use App\Ausentismo;
 use App\Cliente;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use App\EdicionFichada;
+use App\FichadaNueva;
+use Jenssegers\Agent\Agent;
+use DateTime;
 
 class EndpointsController extends Controller
 {
@@ -179,6 +184,92 @@ class EndpointsController extends Controller
 
     }
 
+
+    public function cambiarFichada(Request $request)
+    {
+        // Validar la entrada
+        $request->validate([
+            'id' => 'required|integer|exists:fichadas_nuevas,id',
+            'newDate' => 'required|string', // Cambiado a 'string' para manipulación
+            'valor' => 'required|string',
+            'isEditIngreso' => 'required|boolean',
+            'id_loggeado' => 'required|integer|exists:users,id' // Asegúrate de validar también el id del usuario
+        ]);
+
+        // Obtener datos del usuario autenticado
+        $userId = $request->id_loggeado;
+        $fichadaId = $request->id;
+        $oldValue = $request->valor;
+
+        // Convertir la nueva fecha desde el formato DD/MM/YYYY
+        $dateParts = explode('/', $request->newDate);
+        if (count($dateParts) === 3) {
+            // Crear la fecha en formato 'YYYY-MM-DD'
+            $formattedDate = "{$dateParts[2]}-{$dateParts[1]}-{$dateParts[0]}"; // '2024-10-25'
+            $newDate = new DateTime($formattedDate); // Crear el objeto DateTime
+        } else {
+            return response()->json(['success' => false, 'message' => 'Formato de fecha inválido.'], 400);
+        }
+
+        // Buscar la fichada existente
+        $fichada = FichadaNueva::find($fichadaId);
+        if (!$fichada) {
+            return response()->json(['success' => false, 'message' => 'Fichada no encontrada.'], 404);
+        }
+
+        // Obtener el id_user de la fichada
+        $fichadaUserId = $fichada->id_user;
+
+        // Verificar si es la última fichada del usuario
+        $ultimoRegistro = FichadaNueva::where('id_user', $fichadaUserId)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (!$ultimoRegistro || $ultimoRegistro->id !== $fichadaId) {
+            return response()->json(['success' => false, 'message' => 'No es posible editar el registro porque no es la última fichada del usuario.'], 400);
+        }
+
+        // Validar según el tipo de edición
+        if ($request->isEditIngreso) {
+            // Validar que el egreso no tenga una fecha inferior a la nueva fecha de ingreso
+            if ($ultimoRegistro->egreso && new DateTime($ultimoRegistro->egreso) < $newDate) {
+                return response()->json(['success' => false, 'message' => 'El egreso registrado es anterior a la nueva fecha de ingreso.'], 400);
+            }
+            $ultimoRegistro->ingreso = $newDate;
+            $ultimoRegistro->save();
+            $edicionFichada = new EdicionFichada();
+            $edicionFichada->old_ingreso = new DateTime($oldValue);
+            $edicionFichada->new_ingreso = $newDate;
+            $edicionFichada->old_egreso = null; // Asegúrate de establecer egreso como null
+            $edicionFichada->new_egreso = null; // Asegúrate de establecer egreso como null
+        } else {
+            // Validar que el ingreso no tenga una fecha mayor a la nueva fecha de egreso
+            if ($ultimoRegistro->ingreso && new DateTime($ultimoRegistro->ingreso) > $newDate) {
+                return response()->json(['success' => false, 'message' => 'El ingreso registrado es posterior a la nueva fecha de egreso.'], 400);
+            }
+            $ultimoRegistro->ingreso = $newDate;
+            $ultimoRegistro->save();
+            $edicionFichada = new EdicionFichada();
+            $edicionFichada->old_egreso = new DateTime($oldValue);
+            $edicionFichada->new_egreso = $newDate;
+            $edicionFichada->old_ingreso = null; // Asegúrate de establecer ingreso como null
+            $edicionFichada->new_ingreso = null; // Asegúrate de establecer ingreso como null
+        }
+
+        // Asignar id_user y id_fichada
+        $edicionFichada->id_user = $userId;
+        $edicionFichada->id_fichada = $fichadaId;
+
+        // Obtener la IP y el dispositivo
+        $agent = new Agent();
+        $edicionFichada->ip = $request->ip();
+        $edicionFichada->dispositivo = $agent->device() . ' (' . $agent->platform() . ' ' . $agent->version($agent->platform()) . ')';
+
+        // Guardar el registro
+        $edicionFichada->save();
+
+        return response()->json(['success' => true]);
+    }
 
 
 
