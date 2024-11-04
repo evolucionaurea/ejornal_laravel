@@ -14,8 +14,19 @@ $(()=>{
 		datatable_options:{
 			columns:[
 				{
-					data:'nombre',
-					name:'nominas.nombre'
+					data:null,
+					name:'nominas.nombre',
+					render:v=>{
+						if(v.trabajador.deleted_at != null){
+							return `
+								<div>${v.trabajador.nombre}</div>
+								<span class="badge badge-danger">eliminado</span>
+							`
+						}
+						return `
+							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-info">${v.nombre}</a>
+						`
+					}
 				},
 				{
 					data:row=>row,

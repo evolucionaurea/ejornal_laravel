@@ -418,10 +418,18 @@ div.dataTables_wrapper .table-spacer-top {
   align-items: center;
   padding: .465rem 0;
   width: 100%;
+  border-bottom: 1px dotted gainsboro;
+}
+
+div.dataTables_wrapper .table-spacer-bottom {
+  border-top: 1px dotted gainsboro;
 }
 
 div.dataTables_wrapper div.dataTables_info {
   white-space: normal;
+  font-size: 10pt;
+  color: #969696;
+  font-style: italic;
 }
 
 .pagination .page-item .page-link:focus {

@@ -54,7 +54,7 @@ class EmpleadoConsultasTodasController extends Controller
 			'consultas_medicas.fecha',
 			'consultas_medicas.derivacion_consulta',
 			'consultas_medicas.user',
-			'diagnostico_consulta.nombre as diagnóstico',
+			'diagnostico_consulta.nombre as diagnostico',
 			DB::raw('"Médica" as tipo') // Agregamos un campo tipo para identificar consultas médicas
 		)
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
@@ -70,7 +70,7 @@ class EmpleadoConsultasTodasController extends Controller
 			'consultas_enfermerias.fecha',
 			'consultas_enfermerias.derivacion_consulta',
 			'consultas_enfermerias.user',
-			'diagnostico_consulta.nombre as diagnóstico',
+			'diagnostico_consulta.nombre as diagnostico',
 			DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
 		)
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')

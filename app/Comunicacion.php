@@ -33,7 +33,12 @@ class Comunicacion extends Model
 
   public function archivos()
   {
-      return $this->hasMany(ComunicacionArchivo::class, 'id_comunicacion');
+    return $this->hasMany(ComunicacionArchivo::class, 'id_comunicacion');
+  }
+
+  public function getCreatedAtFormattedAttribute()
+  {
+    return $this->created_at->format('d/m/Y H:i:s \h\s.');
   }
 
 

@@ -20,6 +20,10 @@ use App\ConsultaEnfermeria;
 use App\Comunicacion;
 use App\Cliente;
 use App\TipoComunicacion;
+use App\Preocupacional;
+use App\TareaLiviana;
+use App\ComunicacionLiviana;
+use App\TareaLivianaDocumentacion;
 use App\Http\Traits\Ausentismos;
 
 class AdminReporteController extends Controller
@@ -740,12 +744,14 @@ class AdminReporteController extends Controller
 	}
 
 
-
+	// vista
 	public function actividad_usuarios()
 	{
 		$clientes = Cliente::all();
-		return view('admin.reportes.actividad_usuarios',compact('clientes'));
+		$users = User::all();
+		return view('admin.reportes.actividad_usuarios',compact('clientes','users'));
 	}
+	// ajax/datatable
 	public function search_actividad_usuarios(Request $request)
 	{
 
@@ -755,79 +761,206 @@ class AdminReporteController extends Controller
 		Ausentismo
 		Comunicacion
 		Documentacion
-		Estudio complementario
+
+		Estudio complementario !
+
+		Tareas livianas
+		Tareas livianas > comunicación
+		Tareas livianas > documentación
 		*/
 
 		$medicas = ConsultaMedica::select(
-			'id_cliente',
-			'id_nomina',
-			'user',
-			'consultas_medicas.created_at',
-			DB::raw('"Consulta Médica" as actividad')
-		)
-		->join('clientes','clientes.id','consultas_medicas.id_cliente')
-		->with('cliente')
-		->with('trabajador');
+				'consultas_medicas.id_cliente',
+				'consultas_medicas.id_nomina',
+				'consultas_medicas.user',
+				'consultas_medicas.created_at',
+				DB::raw('"Consulta Médica" as actividad'),
+				DB::raw('clientes.nombre as cliente_nombre'),
+				DB::raw('nominas.nombre as trabajador_nombre')
+			)
+			->join('clientes','clientes.id','consultas_medicas.id_cliente')
+			->join('nominas','nominas.id','consultas_medicas.id_nomina');
+
 
 		$enfermerias = ConsultaEnfermeria::select(
-			'id_cliente',
-			'id_nomina',
-			'user',
+			'consultas_enfermerias.id_cliente',
+			'consultas_enfermerias.id_nomina',
+			'consultas_enfermerias.user',
 			'consultas_enfermerias.created_at',
-			DB::raw('"Consulta Enfermería" as actividad')
+			DB::raw('"Consulta Enfermería" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
 		)
-		->join('clientes','clientes.id','consultas_enfermerias.id_cliente')
-		->with('cliente')
-		->with('trabajador');
+			->join('clientes','clientes.id','consultas_enfermerias.id_cliente')
+			->join('nominas','nominas.id','consultas_enfermerias.id_nomina');
 
 
 		$ausentismos = Ausentismo::select(
-			'id_cliente',
-			'id_trabajador',
-			'user',
+			'ausentismos.id_cliente',
+			'ausentismos.id_trabajador as id_nomina',
+			'ausentismos.user',
 			'ausentismos.created_at',
-			DB::raw('"Ausentismo" as actividad')
+			DB::raw('"Ausentismo" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
 		)
-		->join('clientes','clientes.id','ausentismos.id_cliente')
-		->with('cliente')
-		->with('trabajador');
+			->join('clientes','clientes.id','ausentismos.id_cliente')
+			->join('nominas','nominas.id','ausentismos.id_trabajador');
+
+		$comunicaciones = Comunicacion::select(
+			'ausentismos.id_cliente',
+			'ausentismos.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(comunicaciones.user,ausentismos.user) as user' ),
+			'comunicaciones.created_at',
+			DB::raw('"Comunicación Ausentismo" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
+		)
+			->join('ausentismos','ausentismos.id','comunicaciones.id_ausentismo')
+			->join('clientes','clientes.id','ausentismos.id_cliente')
+			->join('nominas','nominas.id','ausentismos.id_trabajador');
 
 
 
-		$query = $medicas->union($enfermerias)->union($ausentismos);
+		$documentaciones = AusentismoDocumentacion::select(
+			'ausentismos.id_cliente',
+			'ausentismos.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(ausentismo_documentacion.user,ausentismos.user) as user' ),
+			'ausentismo_documentacion.created_at',
+			DB::raw('"Documentación Ausentismo" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
+		)
+			->join('ausentismos','ausentismos.id','ausentismo_documentacion.id_ausentismo')
+			->join('clientes','clientes.id','ausentismos.id_cliente')
+			->join('nominas','nominas.id','ausentismos.id_trabajador');
+
+
+
+		$preocupacionales = Preocupacional::select(
+			'preocupacionales.id_cliente',
+			'preocupacionales.id_nomina',
+			'preocupacionales.user',
+			'preocupacionales.created_at',
+			DB::raw('"Estudio Complementario" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
+		)
+			->join('clientes','clientes.id','preocupacionales.id_cliente')
+			->join('nominas','nominas.id','preocupacionales.id_nomina');
+
+
+
+
+		$tareas_livianas = TareaLiviana::select(
+			'tareas_livianas.id_cliente',
+			'tareas_livianas.id_trabajador as id_nomina',
+			'tareas_livianas.user',
+			'tareas_livianas.created_at',
+			DB::raw('"Tarea Adecuada" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
+		)
+			->join('clientes','clientes.id','tareas_livianas.id_cliente')
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador');
+
+		$comunicaciones_tareas_livianas = ComunicacionLiviana::select(
+			'tareas_livianas.id_cliente',
+			'tareas_livianas.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(comunicaciones_livianas.user,tareas_livianas.user) as user' ),
+			'comunicaciones_livianas.created_at',
+			DB::raw('"Comunicación Tarea Adecuada" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
+		)
+			->join('tareas_livianas','tareas_livianas.id','comunicaciones_livianas.id_tarea_liviana')
+			->join('clientes','clientes.id','tareas_livianas.id_cliente')
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador');
+
+		$documentaciones_tareas_livianas = TareaLivianaDocumentacion::select(
+			'tareas_livianas.id_cliente',
+			'tareas_livianas.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(tarea_liviana_documentacion.user,tareas_livianas.user) as user' ),
+			'tarea_liviana_documentacion.created_at',
+			DB::raw('"Documentación Tarea Adecuada" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre')
+		)
+			->join('tareas_livianas','tareas_livianas.id','tarea_liviana_documentacion.id_tarea_liviana')
+			->join('clientes','clientes.id','tareas_livianas.id_cliente')
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador');
+
+
+		DB::enableQueryLog();
+
+
+		$query = DB::query()
+			->fromSub(function($query) use(
+				$medicas,
+				$enfermerias,
+				$ausentismos,
+				$documentaciones,
+				$comunicaciones,
+				$preocupacionales,
+				$tareas_livianas,
+				$comunicaciones_tareas_livianas,
+				$documentaciones_tareas_livianas
+			){
+
+				$query->select('*')
+					->from($medicas)
+					->union($enfermerias)
+					->union($ausentismos)
+					->union($documentaciones)
+					->union($comunicaciones)
+					->union($preocupacionales)
+					->union($tareas_livianas)
+					->union($comunicaciones_tareas_livianas)
+					->union($documentaciones_tareas_livianas);
+
+			},'uniones');
+
+
+		/*$query = $medicas
+			->union($enfermerias)
+			->union($ausentismos)
+			->union($comunicaciones)
+			->union($documentaciones)
+			->union($preocupacionales)
+			->union($tareas_livianas)
+			->union($comunicaciones_tareas_livianas)
+			->union($documentaciones_tareas_livianas);*/
+
+
+
 		$total_records = $query->count();
 
 
-
-
-		/*if ($request->search) {
+		if ($request->search) {
 			$filtro = '%' . $request->search['value'] . '%';
 
-			$medicas->where(function ($query) use ($filtro) {
-				$query->where('nominas.nombre', 'like', $filtro)
-					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
-					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
-					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
-					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
-			});
-
-			$enfermerias->where(function ($query) use ($filtro) {
-				$query->where('nominas.nombre', 'like', $filtro)
-					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
-					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
+			$query->where(function($query) use ($filtro){
+				$query
+					->where('actividad','like',$filtro)
+					->orWhere('trabajador_nombre','like',$filtro);
 			});
 		}
 
-		if ($request->from) {
-			$medicas->whereDate('consultas_medicas.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-			$enfermerias->whereDate('consultas_enfermerias.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->from_date) {
+			$query->whereDate('created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d'));
+		}
+		if($request->to_date) {
+			$query->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d'));
+		}
+		if($request->cliente){
+			$query->where('id_cliente',$request->cliente);
+		}
+		if($request->user){
+			$query->where('user',$request->user);
 		}
 
-		if ($request->to) {
-			$medicas->whereDate('consultas_medicas.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-			$enfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}*/
 		$total_filtered = $query->count();
+
 
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
@@ -839,13 +972,19 @@ class AdminReporteController extends Controller
 
 
 
+		$data = $query->skip($request->start)->take($request->length)->get()->toArray();
+		foreach($data as $k=>$row){
+			$data[$k]->created_at_formatted = Carbon::createFromFormat('Y-m-d H:i:s',$row->created_at)->format('d/m/Y H:i:s  \h\s.');
+		}
+
 
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$total_records,
 			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get()->toArray(),
-			'request'=>$request->all()
+			'data'=>$data,
+			'request'=>$request->all(),
+			'query'=>DB::getQueryLog()
 		];
 
 	}

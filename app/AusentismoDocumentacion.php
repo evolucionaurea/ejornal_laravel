@@ -32,4 +32,9 @@ class AusentismoDocumentacion extends Model
     return $this->hasMany(AusentismoDocumentacionArchivos::class);
   }
 
+  public function getCreatedAtFormattedAttribute()
+  {
+    return $this->created_at->format('d/m/Y H:i:s \h\s.');
+  }
+
 }
