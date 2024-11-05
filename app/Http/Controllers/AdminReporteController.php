@@ -44,18 +44,20 @@ class AdminReporteController extends Controller
 
 	public function fichadas_ajax(Request $request)
 	{
-	
+
 		$query = FichadaNueva::selectRaw('
-		fichadas_nuevas.*,
-		users.nombre as user_nombre,
-		users.estado as user_estado,
-		IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-		clientes.nombre as cliente_nombre,
-		(fichadas_nuevas.id = (
-            SELECT MAX(fn.id)
-            FROM fichadas_nuevas fn
-            WHERE fn.id_user = fichadas_nuevas.id_user
-        )) as ultimo_registro_user
+			fichadas_nuevas.*,
+			users.nombre as user_nombre,
+			users.estado as user_estado,
+			IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
+			clientes.nombre as cliente_nombre,
+			(
+				fichadas_nuevas.id = (
+					SELECT MAX(fn.id)
+					FROM fichadas_nuevas fn
+					WHERE fn.id_user = fichadas_nuevas.id_user
+				)
+			) as ultimo_registro_user
 		')
 		->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
 		->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
@@ -66,55 +68,56 @@ class AdminReporteController extends Controller
 
 		// Filtro por estado de usuario
 		if ($request->estado && $request->estado !== 'todos') {
-		$estado = $request->estado === 'activos' ? 1 : 0;
-		$query->whereHas('user', function($query) use($estado) {
-		$query->where('estado', $estado);
-		});
+			$estado = $request->estado === 'activos' ? 1 : 0;
+			$query->whereHas('user', function($query) use($estado) {
+				$query->where('estado', $estado);
+			});
 		}
 
 		// Filtro de búsqueda general por nombre de usuario o cliente
 		if ($request->search['value']) {
-		$filtro = '%' . $request->search['value'] . '%';
-		$query->where(function($query) use ($filtro) {
-		$query->whereHas('user', function($query) use($filtro) {
-				$query->where('nombre', 'like', $filtro);
-			})
-			->orWhereHas('cliente', function($query) use($filtro) {
-				$query->where('nombre', 'like', $filtro);
+			$filtro = '%' . $request->search['value'] . '%';
+			$query->where(function($query) use ($filtro) {
+			$query->whereHas('user', function($query) use($filtro) {
+					$query->where('nombre', 'like', $filtro);
+				})
+				->orWhereHas('cliente', function($query) use($filtro) {
+					$query->where('nombre', 'like', $filtro);
+				});
 			});
-		});
 		}
 
 		// Filtro de rango de fechas
 		if ($request->from) {
-		$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 		if ($request->to) {
-		$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
 		// Ordenación según el parámetro de orden
 		if ($request->order) {
-		$sort = $request->columns[$request->order[0]['column']]['name'];
-		$dir = $request->order[0]['dir'];
-		$query->orderBy($sort, $dir);
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir = $request->order[0]['dir'];
+			$query->orderBy($sort, $dir);
 		} else {
-		$query->orderBy('ingreso', 'desc'); // Ordenación por defecto
+			$query->orderBy('ingreso', 'desc'); // Ordenación por defecto
 		}
 
 		// Respuesta con datos filtrados y paginados
+		/*$data = $query->skip($request->start)->take($request->length)->first();
+		dd($data->toArray());*/
 		return [
-		'draw' => $request->draw,
-		'recordsTotal' => $total_records,
-		'recordsFiltered' => $query->count(),
-		'data' => $query->skip($request->start)->take($request->length)->get(),
-		'request' => $request->all()
+			'draw' => $request->draw,
+			'recordsTotal' => $total_records,
+			'recordsFiltered' => $query->count(),
+			'data' => $query->skip($request->start)->take($request->length)->get(),
+			'request' => $request->all(),
+			'user'=>auth()->user()
 		];
 
-		
+
 	}
-
-
 
 	public function exportar_fichadas($id_cliente=null, Request $request)
 	{
@@ -225,6 +228,7 @@ class AdminReporteController extends Controller
 
 		return;
 	}
+
 
 
 

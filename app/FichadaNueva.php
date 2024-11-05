@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 //use OwenIt\Auditing\Contracts\Auditable;
 use App\User;
 use App\Cliente;
@@ -37,7 +38,7 @@ class FichadaNueva extends Model
 
   public function getIngresoCarbonAttribute()
   {
-  	return Carbon::parse($this->ingreso);
+  	return CarbonImmutable::parse($this->ingreso)->subHours(3); //CHEQUEAR EN SERVIDOR
   }
   public function getIngresoFormattedAttribute()
   {
@@ -47,7 +48,7 @@ class FichadaNueva extends Model
 
   public function getEgresoCarbonAttribute()
   {
-  	return Carbon::parse($this->egreso);
+  	return CarbonImmutable::parse($this->egreso)->subHours(3);//->timezone('America/Argentina/Buenos_Aires');
   }
   public function getEgresoFormattedAttribute()
   {

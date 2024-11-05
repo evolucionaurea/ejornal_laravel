@@ -22,8 +22,6 @@
 				No tienes permiso para editar las fichadas
 			</div>
 			@endif
-			<input id="permiso_edicion_fichada" type="hidden" name="permiso_edicion_fichada"
-				value="{{ auth()->user()->permiso_edicion_fichada }}">
 			<input id="id_loggeado" type="hidden" name="id_loggeado" value="{{ auth()->user()->id }}">
 		</div>
 

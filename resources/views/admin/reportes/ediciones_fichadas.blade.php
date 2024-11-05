@@ -45,28 +45,28 @@
                         <td>{{$edicion->id_fichada}}</td>
                         <td>
                             @if ($edicion->old_ingreso != null)
-                            {{ date('d-m-Y H:i', strtotime($edicion->old_ingreso)) }}
+                            {{ $edicion->old_ingreso_formatted }}
                             @else
                             {{ 'N/A' }}
                             @endif
                         </td>
                         <td>
                             @if ($edicion->old_egreso != null)
-                            {{ date('d-m-Y H:i', strtotime($edicion->old_egreso)) }}
+                            {{ $edicion->old_egreso_formatted }}
                             @else
                             {{ 'N/A' }}
                             @endif
                         </td>
                         <td>
                             @if ($edicion->new_ingreso != null)
-                            {{ date('d-m-Y H:i', strtotime($edicion->new_ingreso)) }}
+                            {{ $edicion->new_ingreso_formatted }}
                             @else
                             {{ 'N/A' }}
                             @endif
                         </td>
                         <td>
                             @if ($edicion->new_egreso != null)
-                            {{ date('d-m-Y H:i', strtotime($edicion->new_egreso)) }}
+                            {{ $edicion->new_egreso_formatted }}
                             @else
                             {{ 'N/A' }}
                             @endif

@@ -9,7 +9,8 @@ class AdminEdicionFichadaController extends Controller
 {
     public function index()
     {
-        $ediciones = EdicionFichada::with('user')->get();
-        return view('admin.reportes.ediciones_fichadas', compact('ediciones'));
+      $ediciones = EdicionFichada::with('user')->get();
+      //dd($ediciones[0]->toArray());
+      return view('admin.reportes.ediciones_fichadas', compact('ediciones'));
     }
 }
