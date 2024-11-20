@@ -38,8 +38,6 @@ class EmpleadosFichadasNuevasController extends Controller
 	{
 
 	  $agent = new Agent();
-	  //$device = $agent->platform();
-
 	  if (auth()->user()->fichada == 0) {
 		$ingreso = Carbon::now();
 
@@ -57,7 +55,16 @@ class EmpleadosFichadasNuevasController extends Controller
 
 		$fichada->sistema_operativo = $agent->platform();
 		$fichada->browser = $agent->browser();
-		$fichada->dispositivo = $agent->deviceType();
+		// Determinar el tipo de dispositivo
+        if ($agent->isMobile()) {
+            $fichada->dispositivo = 'Móvil';
+        } elseif ($agent->isTablet()) {
+            $fichada->dispositivo = 'Tablet';
+        } elseif ($agent->isDesktop()) {
+            $fichada->dispositivo = 'Escritorio';
+        } else {
+            $fichada->dispositivo = 'Desconocido';
+        }
 
 		$fichada->save();
 
@@ -84,7 +91,16 @@ class EmpleadosFichadasNuevasController extends Controller
 
 		$fichada->sistema_operativo = $agent->platform();
 		$fichada->browser = $agent->browser();
-		$fichada->dispositivo = $agent->deviceType();
+		// Determinar el tipo de dispositivo
+        if ($agent->isMobile()) {
+            $fichada->dispositivo = 'Móvil';
+        } elseif ($agent->isTablet()) {
+            $fichada->dispositivo = 'Tablet';
+        } elseif ($agent->isDesktop()) {
+            $fichada->dispositivo = 'Escritorio';
+        } else {
+            $fichada->dispositivo = 'Desconocido';
+        }
 
 		$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
 		$fichada->tiempo_dedicado = $tiempo_dedicado;

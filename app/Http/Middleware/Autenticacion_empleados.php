@@ -69,9 +69,21 @@ class Autenticacion_empleados
 
 		// Verificar si el usuario tiene una fichada activa
 		if ($user_loggeado->fichada == 1) {
-			// Desfichar al usuario si tiene una fichada activa
-			$this->desficharUsuario($user_loggeado);
+			// Obtener la última fichada del usuario
+			$verificar_fichada_nueva = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
+
+			if ($verificar_fichada_nueva && $verificar_fichada_nueva->egreso === null) {
+				// Verificar si han pasado más de 12 horas desde el ingreso
+				$ingreso = Carbon::parse($verificar_fichada_nueva->ingreso);
+				$ahora = Carbon::now();
+
+				if ($ingreso->diffInHours($ahora) > 12) {
+					// Desfichar al usuario si han pasado más de 12 horas
+					$this->desficharUsuario($user_loggeado);
+				}
+			}
 		}
+
 
 		// Si el cliente actual es válido, continuar con la solicitud
 		return $next($request);
@@ -106,7 +118,16 @@ class Autenticacion_empleados
 			$fichada->ip = \Request::ip();
 			$fichada->sistema_operativo = $agent->platform();
 			$fichada->browser = $agent->browser();
-			$fichada->dispositivo = $agent->deviceType();
+			// Determinar el tipo de dispositivo
+			if ($agent->isMobile()) {
+				$fichada->dispositivo = 'Móvil';
+			} elseif ($agent->isTablet()) {
+				$fichada->dispositivo = 'Tablet';
+			} elseif ($agent->isDesktop()) {
+				$fichada->dispositivo = 'Escritorio';
+			} else {
+				$fichada->dispositivo = 'Desconocido';
+			}
 			$fichada->save();
 		}
 	}
