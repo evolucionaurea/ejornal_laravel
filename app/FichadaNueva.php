@@ -28,6 +28,37 @@ class FichadaNueva extends Model
     'egreso' => 'datetime:d/m/Y - H:i:s'
   ];
 
+  public function getDispositivoAttribute()
+  {
+
+    switch ($this->attributes['dispositivo']) {
+
+      case 'desktop':
+        $device = 'Escritorio';
+        break;
+      case 'phone':
+        $device = 'Móvil';
+        break;
+      case 'tablet':
+        $device = 'Tablet';
+        break;
+      case 'robot':
+        $device = 'Robot';
+        break;
+
+      case 'other':
+        $device = 'Otro';
+        break;
+
+      default:
+        $device = 'Desconocido';
+        break;
+    }
+
+    return $device;
+
+  }
+
 
   public function user(){
   	return $this->belongsTo(User::class, 'id_user');
@@ -62,5 +93,7 @@ class FichadaNueva extends Model
 
   	return $this->ingreso_carbon->diff($this->egreso_carbon)->format('%H:%I');
   }
+
+
 
 }

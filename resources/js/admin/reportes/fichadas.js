@@ -113,8 +113,8 @@ $(() => {
 					name:'dispositivo',
 					render:v=>{
 						let output = `<div>${v.sistema_operativo}</div>`
-						if(v.browser) output += `<div class="small">${v.browser}</div>`
-						if(v.dispositivo) output += `<div class="text-muted small">${v.dispositivo}</div>`
+						if(v.browser) output += `<div class="small">Nav: ${v.browser}</div>`
+						if(v.dispositivo) output += `<div class="text-muted small">Disp: ${v.dispositivo}</div>`
 
 						return output
 					}

@@ -39,73 +39,77 @@ class EmpleadosFichadasNuevasController extends Controller
 
 	  $agent = new Agent();
 	  if (auth()->user()->fichada == 0) {
-		$ingreso = Carbon::now();
+			$ingreso = Carbon::now();
 
-		//Actualizar usuario para que figure que esta trabajando
-		$user = User::findOrFail(auth()->user()->id);
-		$user->fichada = 1;
-		$user->save();
+			//Actualizar usuario para que figure que esta trabajando
+			$user = User::findOrFail(auth()->user()->id);
+			$user->fichada = 1;
+			$user->save();
 
-		//Guardar en base
-		$fichada = new FichadaNueva();
-		$fichada->ingreso = $ingreso;
-		$fichada->id_user = $request->id_user;
-		$fichada->id_cliente = auth()->user()->id_cliente_actual;
-		$fichada->ip = \Request::ip();
+			//Guardar en base
+			$fichada = new FichadaNueva();
+			$fichada->ingreso = $ingreso;
+			$fichada->id_user = $request->id_user;
+			$fichada->id_cliente = auth()->user()->id_cliente_actual;
+			$fichada->ip = \Request::ip();
 
-		$fichada->sistema_operativo = $agent->platform();
-		$fichada->browser = $agent->browser();
-		// Determinar el tipo de dispositivo
-        if ($agent->isMobile()) {
-            $fichada->dispositivo = 'Móvil';
-        } elseif ($agent->isTablet()) {
-            $fichada->dispositivo = 'Tablet';
-        } elseif ($agent->isDesktop()) {
-            $fichada->dispositivo = 'Escritorio';
-        } else {
-            $fichada->dispositivo = 'Desconocido';
-        }
+			$fichada->sistema_operativo = $agent->platform();
+			$fichada->browser = $agent->browser();
 
-		$fichada->save();
+			// Determinar el tipo de dispositivo
+			$fichada->dispositivo = $agent->deviceType();
+	       /* if ($agent->isMobile()) {
+	            $fichada->dispositivo = 'Móvil';
+	        } elseif ($agent->isTablet()) {
+	            $fichada->dispositivo = 'Tablet';
+	        } elseif ($agent->isDesktop()) {
+	            $fichada->dispositivo = 'Escritorio';
+	        } else {
+	            $fichada->dispositivo = 'Desconocido';
+	        }*/
+
+			$fichada->save();
 
 	  }else {
-		$egreso = Carbon::now();
+			$egreso = Carbon::now();
 
-		//Actualizar usuario para que figure que no está trabajando
-		$user = User::findOrFail(auth()->user()->id);
-		$user->fichada = 0;
-		$user->save();
+			//Actualizar usuario para que figure que no está trabajando
+			$user = User::findOrFail(auth()->user()->id);
+			$user->fichada = 0;
+			$user->save();
 
 
-		//Actualizar en base
-		$fichada = FichadaNueva::where('id_user', auth()->user()->id)->latest()->first();
-		$fichada->egreso = $egreso;
+			//Actualizar en base
+			$fichada = FichadaNueva::where('id_user', auth()->user()->id)->latest()->first();
+			$fichada->egreso = $egreso;
 
-		$f_ingreso = new DateTime($fichada->ingreso);
-		$f_egreso = new DateTime();
-		$time = $f_ingreso->diff($f_egreso);
+			$f_ingreso = new DateTime($fichada->ingreso);
+			$f_egreso = new DateTime();
+			$time = $f_ingreso->diff($f_egreso);
 
-		$fichada->id_user = $request->id_user;
-		$fichada->id_cliente = auth()->user()->id_cliente_actual;
-		$fichada->ip = \Request::ip();
+			$fichada->id_user = $request->id_user;
+			$fichada->id_cliente = auth()->user()->id_cliente_actual;
+			$fichada->ip = \Request::ip();
 
-		$fichada->sistema_operativo = $agent->platform();
-		$fichada->browser = $agent->browser();
-		// Determinar el tipo de dispositivo
-        if ($agent->isMobile()) {
-            $fichada->dispositivo = 'Móvil';
-        } elseif ($agent->isTablet()) {
-            $fichada->dispositivo = 'Tablet';
-        } elseif ($agent->isDesktop()) {
-            $fichada->dispositivo = 'Escritorio';
-        } else {
-            $fichada->dispositivo = 'Desconocido';
-        }
+			$fichada->sistema_operativo = $agent->platform();
+			$fichada->browser = $agent->browser();
 
-		$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
-		$fichada->tiempo_dedicado = $tiempo_dedicado;
-		$fichada->save();
-	  }
+			// Determinar el tipo de dispositivo
+			$fichada->dispositivo = $agent->deviceType();
+	        /*if ($agent->isMobile()) {
+	            $fichada->dispositivo = 'Móvil';
+	        } elseif ($agent->isTablet()) {
+	            $fichada->dispositivo = 'Tablet';
+	        } elseif ($agent->isDesktop()) {
+	            $fichada->dispositivo = 'Escritorio';
+	        } else {
+	            $fichada->dispositivo = 'Desconocido';
+	        }*/
+
+			$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
+			$fichada->tiempo_dedicado = $tiempo_dedicado;
+			$fichada->save();
+		}
 
 		return back();
 
