@@ -1,6 +1,6 @@
 @extends('partials.layout')
 
-@section('title', 'Clientes')
+@section('title', 'Historial Nóminas')
 
 @section('content')
 

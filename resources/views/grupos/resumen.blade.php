@@ -49,7 +49,7 @@
 
 							<tr>
 								<td>{{$cliente->nombre}}</td>
-								<td class="text-right">{{$cliente->nominas_count}}</td>
+								<td class="text-right">{{$cliente->cantidad_nomina}}</td>
 								{{-- <td class="text-right">{{$cliente->ausentismos_count}}</td> --}}
 								<td class="text-right">{{
 									number_format($cliente->ausentismos->ausentismos_mes_actual_indice,2,',','.')

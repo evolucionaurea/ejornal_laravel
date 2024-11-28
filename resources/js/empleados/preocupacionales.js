@@ -29,6 +29,7 @@ $(()=>{
 							<div>${v.nombre}</div>
 							<div class="small">DNI: ${v.dni}</div>
 							<div class="small">Tel: ${v.telefono}</div>
+							${v.id_cliente != v.trabajador_cliente ? '<span class="badge badge-dark">transferido</span>' : ''}
 						`;
 
 					}
@@ -93,6 +94,8 @@ $(()=>{
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
+						if(v.id_cliente != v.trabajador_cliente) return ''
 
 						return `
 						<div class="acciones_tabla justify-content-end">

@@ -39,6 +39,7 @@ class EmpleadoTareasLivianasController extends Controller
 		$query = TareaLiviana::select(
 			'tareas_livianas.*',
 			'nominas.nombre',
+			'nominas.id_cliente as trabajador_cliente',
 			'nominas.email',
 			'nominas.telefono',
 			'nominas.dni',
@@ -227,6 +228,7 @@ class EmpleadoTareasLivianasController extends Controller
 			'nominas.email',
 			'nominas.estado',
 			'nominas.telefono',
+			'nominas.id_cliente as trabajador_cliente',
 			DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'),
 			'tareas_livianas.fecha_inicio',
 			'tareas_livianas.fecha_final',

@@ -16,11 +16,16 @@
 			<h2>Certificados de una tarea adecuada</h2>
 			<p>Aquí puedes ver y cargar nuevos certificados de esta tarea adecuada</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/tareas_livianas') }}"><i
-						class="fas fa-arrow-circle-left"></i>Volver</a>
-				<a data-toggle="modal" data-target="#cargar_documentos_tarea_liviana"
-					class="btn-ejornal btn-ejornal-success" href="#"><i class="fas fa-plus-circle"></i>Crear
-					certificado</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/tareas_livianas') }}">
+					<i class="fas fa-arrow-circle-left"></i> Volver
+				</a>
+
+				@if(auth()->user()->id_cliente_actual == $tarea_liviana->id_cliente)
+				<a data-toggle="modal" data-target="#cargar_documentos_tarea_liviana" class="btn-ejornal btn-ejornal-success" href="#">
+					<i class="fas fa-plus-circle"></i> Crear certificado
+				</a>
+				@endif
+
 			</div>
 		</div>
 
@@ -45,6 +50,10 @@
 							<br>
 							<br>
 							<h5>{{$tarea_liviana->nombre}}</h5>
+
+							@if(auth()->user()->id_cliente_actual != $tarea_liviana->id_cliente)
+							<span class="badge badge-dark">transferido</span>
+							@endif
 						</div>
 						<div class="col-lg-4 col-md-5 col-sm-12">
 							<ul class="list-group list-group-flush">
@@ -171,8 +180,11 @@
 												@endif
 											</ul>
 											<br>
+
 											<h6 style="font-weight: 600;" class="text_black">Acciones:</h6>
 											<div class="d-flex mr-4">
+
+												@if(auth()->user()->id_cliente_actual == $tarea_liviana->id_cliente)
 												<small class="text-muted">
 													<h6 class="">Editar: </h6>
 													<a class="editar_documentos_tarea_liviana btn btn-primary btn-sm"
@@ -180,6 +192,8 @@
 														<i class="fas fa-pen"></i>
 													</a>
 												</small>
+												@endif
+
 												<small class="text-muted">
 													<h6 class="ml-4 mb-3">Archivo subido: </h6>
 													<a class="btn-ejornal btn-ejornal-gris-claro ml-4"

@@ -127,16 +127,18 @@ class EmpleadosTareasLivianasDocumentacion extends Controller
 	 */
 	public function show($id)
 	{
-		// dd($id);
 		$tarea_liviana = TareaLiviana::join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 			->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
 			->where('tareas_livianas.id', $id)
-			->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
-			->select('nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
-			DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio',
-			'tareas_livianas.fecha_final', 'tareas_livianas.fecha_regreso_trabajar', 'tareas_livianas.archivo',
-			'tareas_livianas.id')
+			->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual)
+			->select(
+				'nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
+				DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio',
+				'tareas_livianas.fecha_final', 'tareas_livianas.fecha_regreso_trabajar', 'tareas_livianas.archivo',
+				'tareas_livianas.id'
+			)
 			->first();
+
 		$documentacion_tarea_liviana = TareaLivianaDocumentacion::where('id_tarea_liviana', $id)->get();
 
 		$clientes = ClienteUser::join('clientes', 'cliente_user.id_cliente', 'clientes.id')

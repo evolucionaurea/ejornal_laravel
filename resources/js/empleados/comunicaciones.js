@@ -36,21 +36,21 @@ $(()=>{
 					name:'created_at'
 				},
 				{
-					data: 'archivos', // Columna para archivos
+					data: 'archivos',
 					className: 'align-middle small',
 					orderable: false,
 					render: archivos => {
-						const baseUrl = '/comunicaciones/archivo'; // Cambia esto por tu URL base real
+						const baseUrl = '/comunicaciones/archivo';
 						if (archivos.length > 0) {
-							// Generamos el HTML para el dropdown
-							const dropdownItems = archivos.map(archivo => 
-								`<a class="dropdown-item" 
-								   href="${baseUrl}/${archivo.id_comunicacion}/${archivo.hash_archivo}" 
+
+							const dropdownItems = archivos.map(archivo =>
+								`<a class="dropdown-item"
+								   href="${baseUrl}/${archivo.id_comunicacion}/${archivo.hash_archivo}"
 								   target="_blank">
 								   ${archivo.archivo}
 								</a>`
 							).join('');
-				
+
 							return `
 								<div class="btn-group" role="group">
 									<button type="button" class="btn btn-info dropdown-toggle btn-sm text-white" data-toggle="dropdown" aria-expanded="false">
@@ -66,11 +66,12 @@ $(()=>{
 					}
 				},
 				{
-					data:'estado',
+					data:null,
 					className:'align-middle',
 					name:'estado',
 					render:v=>{
-						return `<span class="badge badge-${v==1?'success':'danger'}">${v==1?'Activo':'Inactivo'}</span>`
+						if(v.id_cliente != v.trabajador_cliente) return `<span class="badge badge-dark">transferido</span>`
+						return `<span class="badge badge-${v.estado==1?'success':'danger'}">${v.estado==1?'Activo':'Inactivo'}</span>`
 					}
 				},
 				{
@@ -79,7 +80,7 @@ $(()=>{
 					name:'descripcion',
 					orderable:false
 				},
-				
+
 			]
 		}
 

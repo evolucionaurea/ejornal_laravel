@@ -93,6 +93,7 @@ if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create'
 if(route=='/clientes/resumen') require('./clientes/resumen')
 if(route=='/clientes/nominas') require('./clientes/nominas')
 if(route=='/clientes/nominas/historial') require('./clientes/nominas_historial')
+if(route=='/clientes/nominas/movimientos') require('./clientes/nominas_movimientos')
 if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
 
 
@@ -102,6 +103,7 @@ if(route=='/grupos/resumen_cliente') require('./grupos/resumen_cliente')
 if(route=='/grupos/nominas') require('./grupos/nominas')
 if(route=='/grupos/ausentismos') require('./grupos/ausentismos')
 if(route=='/grupos/nominas_historial') require('./grupos/nominas_historial')
+if(route=='/grupos/nominas_movimientos') require('./grupos/nominas_movimientos')
 
 
 console.log(route)

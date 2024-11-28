@@ -23,9 +23,11 @@ $(()=>{
 					className:'align-middle',
 					render:v=>{
 						return `
-							<div>${v.nombre}<div>
+							<div class="font-weight-bold">${v.nombre}<div>
 							<div class="small">DNI: ${v.dni}</div>
 							<div class="small">Tel: ${v.telefono}</div>
+
+							${v.trabajador_cliente != v.id_cliente ? `<span class="badge badge-dark">transferido</span>` : ''}
 						`
 					}
 				},

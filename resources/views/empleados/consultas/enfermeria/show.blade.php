@@ -46,6 +46,11 @@
 							<br>
 							<br>
 							<h5>{{$consulta_enfermeria->nombre}}</h5>
+
+							@if($consulta_enfermeria->id_cliente != $consulta_enfermeria->trabajador_cliente)
+							<span class="badge badge-dark">terminado</span>
+							@endif
+
 						</div>
 						<ul class="col-lg-10 col-md-8 list-group list-group-flush">
 							<li class="list-group-item">

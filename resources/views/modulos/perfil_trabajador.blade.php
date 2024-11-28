@@ -13,6 +13,11 @@
 			<br>
 			<br>
 			<h5>{{$trabajador->nombre}}</h5>
+
+			@if( auth()->user()->id_cliente_actual != $trabajador->id_cliente)
+			<span class="badge badge-dark">transferido</span>
+			@endif
+
 		</div>
 
 		<div class="col-lg-4 col-md-5 col-sm-12">

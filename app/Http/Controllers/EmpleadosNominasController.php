@@ -278,6 +278,7 @@ class EmpleadosNominasController extends Controller
 			//$trabajador->delete();
 			//$trabajador = new Nomina;
 			$trabajador->id_cliente = $request->id_cliente;
+			$trabajador->created_at = Carbon::now(); //// se pisa la fecha original de creación!
 
 			$this->nomina_historial($trabajador,'suma');
 

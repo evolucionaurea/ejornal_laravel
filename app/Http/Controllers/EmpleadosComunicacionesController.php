@@ -30,7 +30,7 @@ class EmpleadosComunicacionesController extends Controller
 
 
 	public function busqueda(Request $request)
-{
+	{
     // Se modifica la consulta para evitar duplicados y agrupar los archivos
     $query = Comunicacion::select(
             'comunicaciones.id',
@@ -40,13 +40,14 @@ class EmpleadosComunicacionesController extends Controller
             DB::raw('tipo_comunicacion.nombre as tipo'),
             'nominas.nombre',
             'nominas.email',
-            'nominas.estado'
+            'nominas.estado',
+            'nominas.id_cliente as trabajador_cliente'
         )
         ->join('ausentismos', 'comunicaciones.id_ausentismo', '=', 'ausentismos.id')
         ->join('nominas', 'ausentismos.id_trabajador', '=', 'nominas.id')
         ->join('tipo_comunicacion', 'comunicaciones.id_tipo', '=', 'tipo_comunicacion.id')
         ->leftJoin('comunicaciones_archivos', 'comunicaciones.id', '=', 'comunicaciones_archivos.id_comunicacion') // Unimos los archivos
-        ->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+        ->where('ausentismos.id_cliente', auth()->user()->id_cliente_actual);
 
     // Filtros
     if ($request->from) {
@@ -93,7 +94,7 @@ class EmpleadosComunicacionesController extends Controller
         'fichada_user' => auth()->user()->fichada,
         'fichar_user' => auth()->user()->fichar
     ];
-}
+	}
 
 
 

@@ -322,8 +322,17 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		$consulta_enfermeria = ConsultaEnfermeria::join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_enfermerias.id', $id)
-		->where('nominas.id_cliente',auth()->user()->id_cliente_actual) //IMPORTANTE: comprobar que está consultando a trabajadores de la nómina del cliente actual
-		->select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado', 'nominas.email', DB::raw('diagnostico_consulta.nombre diagnostico'))
+		->where('consultas_enfermerias.id_cliente',auth()->user()->id_cliente_actual) //IMPORTANTE: comprobar que está consultando a trabajadores de la nómina del cliente actual
+		->select(
+				'consultas_enfermerias.*',
+				'nominas.nombre',
+				'nominas.telefono',
+				'nominas.dni',
+				'nominas.estado',
+				'nominas.id_cliente as trabajador_cliente',
+				'nominas.email',
+				DB::raw('diagnostico_consulta.nombre diagnostico')
+			)
 		->first();
 
 		$clientes = $this->getClientesUser();

@@ -23,10 +23,15 @@ $(()=>{
 					data:row=>row,
 					name:'nominas.nombre',
 					render:v=>{
-						return `
-							<div><b>${v.trabajador_nombre}</b></div>
-							<div class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</div>
-						`
+						let output = `<div><b>${v.trabajador_nombre}</b></div>`
+
+						if(v.id_cliente != v.trabajador_cliente){
+							output += `<span class="badge badge-dark">transferido</span>`
+						}else{
+							output += `<span class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</span>`
+						}
+
+						return output
 					}
 				},
 				{

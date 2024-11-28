@@ -20,9 +20,12 @@
 					<i class="fas fa-arrow-circle-left"></i> <span>Volver</span>
 				</a>
 
+				@if( auth()->user()->id_cliente_actual == $trabajador->id_cliente)
 				<a href="{{ url('empleados/nominas/'.$trabajador->id.'/edit') }}" class="btn-ejornal btn-ejornal-gris-claro">
 					<i class="fa fa-pencil fa-fw"></i> <span>Editar Trabajador</span>
 				</a>
+				@endif
+
 			</div>
 		</div>
 

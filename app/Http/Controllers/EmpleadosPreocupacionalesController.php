@@ -41,7 +41,10 @@ class EmpleadosPreocupacionalesController extends Controller
 		$now = CarbonImmutable::now();
 
 		$query = Preocupacional::with(['trabajador','tipo'])
-			->select('preocupacionales.*')
+			->select(
+				'preocupacionales.*',
+				'nominas.id_cliente as trabajador_cliente'
+			)
 			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
 			->join('preocupacionales_tipos_estudio', 'preocupacionales_tipos_estudio.id', 'preocupacionales.tipo_estudio_id')
 			->with('archivos')

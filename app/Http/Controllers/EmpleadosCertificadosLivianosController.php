@@ -27,13 +27,14 @@ class EmpleadosCertificadosLivianosController extends Controller
 			'nominas.nombre',
 			DB::raw('tareas_livianas_tipos.nombre tipo'),
 			'tareas_livianas.fecha_inicio', 'tareas_livianas.fecha_final', 'tareas_livianas.fecha_regreso_trabajar',
-			'tarea_liviana_documentacion.medico', 'tarea_liviana_documentacion.matricula_nacional', 'tarea_liviana_documentacion.institucion'
+			'tarea_liviana_documentacion.medico', 'tarea_liviana_documentacion.matricula_nacional', 'tarea_liviana_documentacion.institucion',
+			'nominas.id_cliente as trabajador_cliente'
 		)
 		->join('tareas_livianas', 'tarea_liviana_documentacion.id_tarea_liviana', 'tareas_livianas.id')
 	  ->join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')
 	  ->join('tareas_livianas_tipos', 'tareas_livianas.id_tipo', 'tareas_livianas_tipos.id')
 	  ->with('tareaLiviana.trabajador')
-	  ->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
+	  ->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual);
 
 
 	  if($request->from) $query->whereDate('tareas_livianas.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));

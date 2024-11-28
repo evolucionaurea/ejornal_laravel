@@ -19,7 +19,10 @@ $(()=>{
 
 			return $(`
 				<tr>
-					<td>${trabajador}</td>
+					<td>
+						<div>${trabajador}</div>
+						${(certificado.id_cliente != certificado.trabajador_cliente) ? `<span class="badge badge-dark">transferido</span>` : ''}
+					</td>
 					<td>${certificado.medico}</td>
 					<td>${certificado.institucion}</td>
 					<td>${certificado.fecha_inicio}</td>

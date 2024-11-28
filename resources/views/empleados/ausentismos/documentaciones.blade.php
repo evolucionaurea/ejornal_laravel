@@ -24,9 +24,13 @@
 				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}">
 					<i class="fas fa-arrow-circle-left fa-fw"></i> <span>Volver</span>
 				</a>
+
+				@if( $ausencia->id_cliente == $ausencia->trabajador->id_cliente)
 				<button data-toggle="crear-certificado" data-ausenciaid="{{ $ausencia->id }}" class="btn-ejornal btn-ejornal-success" >
 					<i class="fas fa-plus-circle fa-fw"></i> <span>Crear Certificado</span>
 				</button>
+				@endif
+
 			</div>
 		</div>
 
@@ -58,6 +62,11 @@
 					<h5>
 						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info" title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
 					</h5>
+
+					@if( $ausencia->id_cliente != $ausencia->trabajador->id_cliente)
+					<span class="badge badge-dark">transferido</span>
+					@endif
+
 				</div>
 
 				<div class="col-lg-8 col-md-9 col-sm-12">
@@ -168,9 +177,13 @@
 								@endif
 							</td>
 							<td class="align-middle">
+
+								@if( auth()->user()->id_cliente_actual == $ausencia->trabajador->id_cliente)
 								<button data-toggle="editar-certificado" class="btn-ejornal btn-ejornal-dark" >
 									<i class="fas fa-pen fa-fw"></i> <span>Editar</span>
 								</button>
+								@endif
+
 							</td>
 						</tr>
 						@endforeach @endif
