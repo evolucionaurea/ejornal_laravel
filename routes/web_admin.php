@@ -121,6 +121,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	// Actividad Usuarios
 	Route::get('admin/reportes/actividad_usuarios', 'AdminReporteController@actividad_usuarios')->name('/admin/reportes/actividad_usuarios');
+	Route::get('admin/reportes/actividad_usuarios/exportar', 'AdminReporteController@exportar_actividad_usuarios')->name('/admin/reportes/actividad_usuarios/exportar');
 	Route::post('admin/reportes/search_actividad_usuarios', 'AdminReporteController@search_actividad_usuarios')->name('/admin/reportes/search_actividad_usuarios');
 
 

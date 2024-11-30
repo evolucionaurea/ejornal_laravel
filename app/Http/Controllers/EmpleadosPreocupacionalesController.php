@@ -180,6 +180,7 @@ class EmpleadosPreocupacionalesController extends Controller
 		$preocupacional->observaciones = $request->observaciones;
 		$preocupacional->tipo_estudio_id  = $request->tipo_estudio_id;
 		$preocupacional->resultado  = $request->resultado;
+		$preocupacional->user = auth()->user()->nombre;
 
 		///$archivo = $request->file('archivo');
 		///$nombre = $archivo->getClientOriginalName();

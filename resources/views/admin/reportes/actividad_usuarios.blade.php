@@ -54,15 +54,25 @@
 							<input placeholder="Hasta" name="to_date" type="text" class="form-control" value="">
 						</div>
 
+						<div class="col-lg-6">
+							<select name="estado" class="form-control">
+								<option value="">--Todos los Estados--</option>
+								<option value="1">Activos</option>
+								<option value="0">Inactivos</option>
+							</select>
+						</div>
+
 					</div>
 				</div>
 
-				<div class="col-lg-4">
+				<div class="col-lg-6">
 					<div class="border-left p-4">
 						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
 						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-list"></i> Mostrar todo</button>
 
 						<button data-toggle="export" data-href="{{ url(Route::currentRouteName().'/exportar') }}" type="button" class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
+
+						<div class="small text-muted mt-3 font-italic">La exportación de registros está limitada a 25.000 resultados por cuestiones de performance.</div>
 					</div>
 				</div>
 

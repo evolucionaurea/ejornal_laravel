@@ -69,7 +69,7 @@ class FichadaNueva extends Model
 
   public function getIngresoCarbonAttribute()
   {
-  	return CarbonImmutable::parse($this->ingreso)->subHours(3); //CHEQUEAR EN SERVIDOR
+  	return CarbonImmutable::parse($this->ingreso); //CHEQUEAR EN SERVIDOR
   }
   public function getIngresoFormattedAttribute()
   {
@@ -79,7 +79,7 @@ class FichadaNueva extends Model
 
   public function getEgresoCarbonAttribute()
   {
-  	return CarbonImmutable::parse($this->egreso)->subHours(3);//->timezone('America/Argentina/Buenos_Aires');
+  	return CarbonImmutable::parse($this->egreso);//->timezone('America/Argentina/Buenos_Aires');
   }
   public function getEgresoFormattedAttribute()
   {

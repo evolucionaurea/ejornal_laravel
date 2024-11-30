@@ -135,40 +135,12 @@ class AdminReporteController extends Controller
 			['name'=>'ingreso']
 		];
 		$request->length = 15000;
+		//$request->length = 2;
 
 
 		$fichadas = $this->fichadas_ajax($request)['data'];
+		//dd($fichadas->toArray()[1]['egreso_carbon']->format('H:i'));
 
-		//$agent = new Agent;
-		//dd($agent->deviceType());
-
-		///dd( mb_convert_case($fichadas[1]->ingreso_carbon->translatedFormat('l'),MB_CASE_TITLE,'UTF-8'));
-
-		/*$filtro = '%'.$request->search['value'].'%';
-		$query = FichadaNueva::selectRaw('
-						fichadas_nuevas.*,
-						users.nombre as user_nombre,
-						users.estado as user_estado,
-						IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-						clientes.nombre as cliente_nombre
-				')
-				->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-				->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-				->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');
-
-		if ($request->estado && $request->estado !== 'todos') {
-				$estado = $request->estado === 'activos' ? 1 : 0;
-				$query->where('users.estado', $estado);
-		}
-
-		if($request->from) {
-				$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if($request->to) {
-				$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}
-
-		$fichadas = $query->get();*/
 
 		$now = Carbon::now();
 		$file_name = 'fichadas-'.$now->format('YmdHis').'.csv';
@@ -751,8 +723,8 @@ class AdminReporteController extends Controller
 	// vista
 	public function actividad_usuarios()
 	{
-		$clientes = Cliente::all();
-		$users = User::all();
+		$clientes = Cliente::orderBy('nombre','asc')->get();
+		$users = User::where('id_rol',2)->orderBy('nombre','asc')->get();
 		return view('admin.reportes.actividad_usuarios',compact('clientes','users'));
 	}
 	// ajax/datatable
@@ -780,10 +752,12 @@ class AdminReporteController extends Controller
 				'consultas_medicas.created_at',
 				DB::raw('"Consulta Médica" as actividad'),
 				DB::raw('clientes.nombre as cliente_nombre'),
-				DB::raw('nominas.nombre as trabajador_nombre')
+				DB::raw('nominas.nombre as trabajador_nombre'),
+				'users.estado'
 			)
 			->join('clientes','clientes.id','consultas_medicas.id_cliente')
-			->join('nominas','nominas.id','consultas_medicas.id_nomina');
+			->join('nominas','nominas.id','consultas_medicas.id_nomina')
+			->leftJoin('users','users.nombre','consultas_medicas.user');
 
 
 		$enfermerias = ConsultaEnfermeria::select(
@@ -793,10 +767,12 @@ class AdminReporteController extends Controller
 			'consultas_enfermerias.created_at',
 			DB::raw('"Consulta Enfermería" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('clientes','clientes.id','consultas_enfermerias.id_cliente')
-			->join('nominas','nominas.id','consultas_enfermerias.id_nomina');
+			->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
+			->leftJoin('users','users.nombre','consultas_enfermerias.user');
 
 
 		$ausentismos = Ausentismo::select(
@@ -806,10 +782,12 @@ class AdminReporteController extends Controller
 			'ausentismos.created_at',
 			DB::raw('"Ausentismo" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('clientes','clientes.id','ausentismos.id_cliente')
-			->join('nominas','nominas.id','ausentismos.id_trabajador');
+			->join('nominas','nominas.id','ausentismos.id_trabajador')
+			->leftJoin('users','users.nombre','ausentismos.user');
 
 		$comunicaciones = Comunicacion::select(
 			'ausentismos.id_cliente',
@@ -818,11 +796,13 @@ class AdminReporteController extends Controller
 			'comunicaciones.created_at',
 			DB::raw('"Comunicación Ausentismo" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('ausentismos','ausentismos.id','comunicaciones.id_ausentismo')
 			->join('clientes','clientes.id','ausentismos.id_cliente')
-			->join('nominas','nominas.id','ausentismos.id_trabajador');
+			->join('nominas','nominas.id','ausentismos.id_trabajador')
+			->leftJoin('users','users.nombre','ausentismos.user');
 
 
 
@@ -833,11 +813,13 @@ class AdminReporteController extends Controller
 			'ausentismo_documentacion.created_at',
 			DB::raw('"Documentación Ausentismo" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('ausentismos','ausentismos.id','ausentismo_documentacion.id_ausentismo')
 			->join('clientes','clientes.id','ausentismos.id_cliente')
-			->join('nominas','nominas.id','ausentismos.id_trabajador');
+			->join('nominas','nominas.id','ausentismos.id_trabajador')
+			->leftJoin('users','users.nombre','ausentismos.user');
 
 
 
@@ -848,10 +830,12 @@ class AdminReporteController extends Controller
 			'preocupacionales.created_at',
 			DB::raw('"Estudio Complementario" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('clientes','clientes.id','preocupacionales.id_cliente')
-			->join('nominas','nominas.id','preocupacionales.id_nomina');
+			->join('nominas','nominas.id','preocupacionales.id_nomina')
+			->leftJoin('users','users.nombre','preocupacionales.user');
 
 
 
@@ -863,10 +847,13 @@ class AdminReporteController extends Controller
 			'tareas_livianas.created_at',
 			DB::raw('"Tarea Adecuada" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('clientes','clientes.id','tareas_livianas.id_cliente')
-			->join('nominas','nominas.id','tareas_livianas.id_trabajador');
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador')
+			->leftJoin('users','users.nombre','tareas_livianas.user');
+
 
 		$comunicaciones_tareas_livianas = ComunicacionLiviana::select(
 			'tareas_livianas.id_cliente',
@@ -875,11 +862,14 @@ class AdminReporteController extends Controller
 			'comunicaciones_livianas.created_at',
 			DB::raw('"Comunicación Tarea Adecuada" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('tareas_livianas','tareas_livianas.id','comunicaciones_livianas.id_tarea_liviana')
 			->join('clientes','clientes.id','tareas_livianas.id_cliente')
-			->join('nominas','nominas.id','tareas_livianas.id_trabajador');
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador')
+			->leftJoin('users','users.nombre','comunicaciones_livianas.user');
+
 
 		$documentaciones_tareas_livianas = TareaLivianaDocumentacion::select(
 			'tareas_livianas.id_cliente',
@@ -888,11 +878,13 @@ class AdminReporteController extends Controller
 			'tarea_liviana_documentacion.created_at',
 			DB::raw('"Documentación Tarea Adecuada" as actividad'),
 			DB::raw('clientes.nombre as cliente_nombre'),
-			DB::raw('nominas.nombre as trabajador_nombre')
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
 		)
 			->join('tareas_livianas','tareas_livianas.id','tarea_liviana_documentacion.id_tarea_liviana')
 			->join('clientes','clientes.id','tareas_livianas.id_cliente')
-			->join('nominas','nominas.id','tareas_livianas.id_trabajador');
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador')
+			->leftJoin('users','users.nombre','tarea_liviana_documentacion.user');
 
 
 		DB::enableQueryLog();
@@ -962,6 +954,9 @@ class AdminReporteController extends Controller
 		if($request->user){
 			$query->where('user',$request->user);
 		}
+		if($request->estado!==null){
+			$query->where('estado',$request->estado);
+		}
 
 		$total_filtered = $query->count();
 
@@ -990,6 +985,61 @@ class AdminReporteController extends Controller
 			'request'=>$request->all(),
 			'query'=>DB::getQueryLog()
 		];
+
+	}
+	public function exportar_actividad_usuarios(Request $request){
+
+		$request->search = ['value' => null];
+		$request->start = 0;
+		$request->order = [
+			[
+				'dir'=>'desc',
+				'column'=>2
+			]
+		];
+		$request->columns = [
+			['name'=>'user'],
+			['name'=>'cliente_nombre'],
+			['name'=>'created_at']
+		];
+		$request->length = 25000;
+
+
+		$actividades = $this->search_actividad_usuarios($request)['data'];
+
+
+
+		$now = Carbon::now();
+		$file_name = 'actividades-'.$now->format('YmdHis').'.csv';
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp, [
+				'Usuario',
+				'Cliente',
+				'Fecha',
+				'Actividad',
+				'Trabajador'
+		], ';');
+
+		foreach($actividades as $actividad){
+
+			fputcsv($fp, [
+				$actividad->user,
+				$actividad->cliente_nombre,
+				$actividad->created_at_formatted,
+				$actividad->actividad,
+				$actividad->trabajador_nombre
+			], ';');
+		}
+
+		//dd($fp);
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+		return;
 
 	}
 

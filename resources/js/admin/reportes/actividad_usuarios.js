@@ -16,11 +16,14 @@ $(()=>{
 			columns:[
 
 				{
-					data:'user',
+					data:null,
 					name:'user',
 					render:v=>{
-						if(v==null) return `<span class="text-muted font-italic">[dato faltante]</span>`
-						return v
+						if(v.user==null) return `<span class="text-muted font-italic">[dato faltante]</span>`
+						return `
+							<div>${v.user}</div>
+							<span class="badge badge-${v.estado==1?'success':'danger'}">${v.estado==1?'activo':'inactivo'}</span>
+						`
 					}
 				},
 				{
