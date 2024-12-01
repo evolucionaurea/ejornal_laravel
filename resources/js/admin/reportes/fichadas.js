@@ -3,27 +3,6 @@ import Swal from 'sweetalert2';
 
 
 $(() => {
-	/*const updateSelectState = () => {
-		const estado = $('[name="estado"]').val();
-		if (estado) {
-			$('[name="estado"]').val(estado);
-		} else {
-			$('[name="estado"]').val('todos');
-		}
-	};
-
-	updateSelectState();
-
-	$('[data-toggle="search"]').click(() => {
-		updateSelectState();
-	});
-
-	$('[data-toggle="clear"]').click(() => {
-		$('[name="estado"]').val('todos');
-		updateSelectState();
-	});*/
-
-
 
 
 	const table = new Tablas({
@@ -147,24 +126,39 @@ $(() => {
 		// Obtener el valor directamente del data-ingreso o data-egreso
 		///const valor = isEditIngreso ? $(this).data('ingreso') : $(this).data('egreso');
 
+		const response = await get_template('/templates/form-cambiar-fichada')
+		const form = $(response)
+		form.find('[data-content="current_date"]').text(fecha)
+		//form.find('[name="old_date"]').val(oldDate)
+		form.find('[name="id"]').val(id)
+		form.find('[name="action"]').val(action)
+
+		for(var i=0; i<=23; i++){
+			const option = dom('option')
+			const hour = i<10 ? `0${i}` : i
+			option.val(hour).text(hour)
+			form.find('[name="new_hour"]').append(option)
+		}
+		for(var m=0; m<=59; m++){
+			const option = dom('option')
+			const minutes = m<10 ? `0${m}` : m
+			option.val(minutes).text(minutes)
+			form.find('[name="new_minutes"]').append(option)
+		}
+
 		const swal = await Swal.fire({
 			title: 'Editar Fecha',
-			html: `
-				<p>Fecha actual: <strong>${fecha}</strong></p>
-				<div>
-					<input type="text" id="newDate" class="border border-secondary">
-					<input type="hidden" id="oldDate" class="border border-secondary">
-				</div>
-			`,
+			html:form,
 			showCancelButton: true,
-			confirmButtonText: 'Guardar',
+			showConfirmButton: false,
+			width:720,
 			cancelButtonText: 'Cancelar',
 			didOpen: () => {
 				// Inicializa el Datepicker en el input dentro de SweetAlert
-				$('#newDate').datepicker({
+				$('[name="new_date"]').datepicker({
 					dateFormat: 'dd/mm/yy'
 				});
-				$('#oldDate').val(oldDate)
+				$('[name="new_date"]').blur()
 
 				// Aplicar estilos a los botones
 				const confirmButton = Swal.getConfirmButton();
@@ -186,20 +180,22 @@ $(() => {
 				cancelButton.style.borderRadius = '4px'; // Bordes redondeados
 				cancelButton.style.border = 'none'; // Sin borde
 			},
-			preConfirm: () => {
+			/*preConfirm: () => {
 				const newDate = $('#newDate').val();
 				const oldDate = $('#oldDate').val();
 				if (!newDate) {
 					Swal.showValidationMessage('Por favor selecciona una fecha');
 					return false;
 				}
+				const post = window.get_form($('[data-form="cambiar-fichada"]'))
+				return console.log(post)
 				return { id, newDate, fecha, action, oldDate };
-			}
+			}*/
 		})
 
 		if(!swal.isConfirmed) return false
 
-		try{
+		/*try{
 			swal.value.id_loggeado = $('#id_loggeado').val()
 			const response = await axios.post('/api/cambiar_fichada',swal.value)
 
@@ -208,40 +204,25 @@ $(() => {
 			table.datatable_instance.ajax.reload()
 
 		}catch(error){
-			//console.log(error.response.data)
 			Swal.fire('Error', error.response.data.message, 'error')
+		}*/
+
+
+	})
+
+	$('body').on('submit','[data-form="cambiar-fichada"]',async form=>{
+		form.preventDefault()
+		const post = get_form(form.currentTarget)
+
+		try{
+			const response = await axios.post('/admin/reportes/cambiar_fichada',post)
+			//console.log(response.data)
+			toastr.success(response.data.message)
+			table.datatable_instance.ajax.reload()
+			Swal.close()
+		}catch(error){
+			toastr.error(error.response.data.message)
 		}
-
-
-		/*.then((result) => {
-			if (result.isConfirmed) {
-				const { id, newDate, valor, isEditIngreso } = result.value;
-				const id_loggeado = $('#id_loggeado').val();
-
-				// Hacer el fetch a la ruta de la API
-				fetch('/api/cambiar_fichada', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Asegúrate de tener el token CSRF disponible
-					},
-					body: JSON.stringify({ id, newDate, valor, isEditIngreso, id_loggeado })
-				})
-				.then(response => response.json())
-				.then(data => {
-					if (data.success) {
-						Swal.fire('Éxito', 'La fichada se actualizó correctamente', 'success');
-					} else {
-						Swal.fire('Error', data.message, 'error');
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					// Muestra un mensaje más descriptivo
-					Swal.fire('Error', 'Hubo un problema al conectar con el servidor: ' + error.message, 'error');
-				});
-			}
-		})*/
 
 	})
 

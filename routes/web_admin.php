@@ -86,6 +86,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	// Fichadas
 	Route::get('admin/reportes_fichadas_nuevas/exportar','AdminReporteController@exportar_fichadas');
 	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('/admin/reportes_fichadas_nuevas');
+
 	Route::get('admin/reportes/fichadas_nuevas', 'AdminReporteController@fichadas_nuevas')->name('reportes.fichadas_nuevas');
 	Route::post('admin/reportes/filtrar_fichadas_nuevas', 'AdminReporteController@filtrarFichadasNuevas')->name('reportes.filtrar_fichadas_nuevas');
 
@@ -95,6 +96,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::post('admin/reportes/filtrar_ausentismos', 'AdminReporteController@filtrarAusentismos')->name('reportes.filtrar_ausentismos');
 	Route::post('admin/reportes/fichadas_ajax', 'AdminReporteController@fichadas_ajax');
 	Route::post('admin/reportes/ausentismos_ajax', 'AdminReporteController@ausentismos_ajax');
+	Route::post('admin/reportes/cambiar_fichada', 'AdminReporteController@cambiar_fichada');
 
 
 	// Certificaciones

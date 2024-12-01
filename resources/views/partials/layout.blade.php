@@ -52,6 +52,8 @@
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
 	<link rel="stylesheet" href="{{asset('css/lib/select2.min.css')}}">
 
+	<link rel="stylesheet" href="{{asset('css/lib/toastr.min.css')}}">
+
 
 
 	{{-- <script defer type="text/javascript" src="{{asset('js/lib/chart.min.js')}}"></script> --}}
@@ -66,6 +68,7 @@
 	<script type="text/javascript" src="{{asset('js/lib/pdfmake.min.js')}}"></script>
 	<script type="text/javascript" src="{{asset('js/lib/vfs_fonts.js')}}"></script>
 	<script defer type="text/javascript" src="{{asset('js/lib/datatables.min.js')}}"></script>
+	<script defer type="text/javascript" src="{{asset('js/lib/toastr.min.js')}}"></script>
 
 
 </head>
