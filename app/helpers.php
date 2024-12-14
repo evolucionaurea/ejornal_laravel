@@ -28,3 +28,27 @@ function download_file($ruta){
 	$file = file_get_contents($ruta);
 	return response($file, 200)->header('Content-Type', $mime);
 }
+function device_spanish($device){
+	switch ($device) {
+		case 'desktop':
+			$dispositivo = 'Escritorio';
+			break;
+		case 'phone':
+			$dispositivo = 'Móvil';
+			break;
+		case 'tablet':
+			$dispositivo = 'Tablet';
+			break;
+		case 'robot':
+			$dispositivo = 'Robot';
+			break;
+		case 'other':
+			$dispositivo = 'Escritorio';
+			break;
+
+		default:
+			$dispositivo = 'Desconocido';
+			break;
+	}
+	return $dispositivo;
+}

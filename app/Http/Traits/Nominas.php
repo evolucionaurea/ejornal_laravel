@@ -232,7 +232,7 @@ trait Nominas
 
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
-			->with(['trabajador','cliente'])
+			->with(['trabajador','cliente','tipo'])
 			/*->whereHas('trabajador',function($query){
 				$query->where('id_cliente', auth()->user()->id_cliente_actual);
 			})*/
@@ -276,7 +276,7 @@ trait Nominas
 		foreach($preocupacionales as $preocupacional){
 			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
 				'fecha'=>$preocupacional->fecha,
-				'tipo'=>$preocupacional->tipo->nombre,
+				'tipo'=>$preocupacional->tipo->name,
 				'evento'=>'Exámen Médico Complementario',
 				'observaciones'=>$preocupacional->observaciones,
 				'usuario'=>'',

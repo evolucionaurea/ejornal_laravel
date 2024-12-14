@@ -31,69 +31,75 @@ class EmpleadosComunicacionesController extends Controller
 
 	public function busqueda(Request $request)
 	{
-    // Se modifica la consulta para evitar duplicados y agrupar los archivos
-    $query = Comunicacion::select(
-            'comunicaciones.id',
-            'comunicaciones.descripcion',
-            'comunicaciones.created_at',
-            DB::raw('IF(comunicaciones.user IS NOT NULL, comunicaciones.user, ausentismos.user) as user'),
-            DB::raw('tipo_comunicacion.nombre as tipo'),
-            'nominas.nombre',
-            'nominas.email',
-            'nominas.estado',
-            'nominas.id_cliente as trabajador_cliente'
-        )
-        ->join('ausentismos', 'comunicaciones.id_ausentismo', '=', 'ausentismos.id')
-        ->join('nominas', 'ausentismos.id_trabajador', '=', 'nominas.id')
-        ->join('tipo_comunicacion', 'comunicaciones.id_tipo', '=', 'tipo_comunicacion.id')
-        ->leftJoin('comunicaciones_archivos', 'comunicaciones.id', '=', 'comunicaciones_archivos.id_comunicacion') // Unimos los archivos
-        ->where('ausentismos.id_cliente', auth()->user()->id_cliente_actual);
+		// Se modifica la consulta para evitar duplicados y agrupar los archivos
+		$query = Comunicacion::select(
+			'comunicaciones.id',
+			'comunicaciones.descripcion',
+			'comunicaciones.created_at',
+			DB::raw('IF(comunicaciones.user IS NOT NULL, comunicaciones.user, ausentismos.user) as user'),
+			DB::raw('tipo_comunicacion.nombre as tipo'),
+			'nominas.nombre',
+			'nominas.email',
+			'nominas.estado',
+			'nominas.id_cliente as trabajador_cliente',
+			'ausentismos.id_cliente'
+		)
+		->join('ausentismos', 'comunicaciones.id_ausentismo', '=', 'ausentismos.id')
+		->join('nominas', 'ausentismos.id_trabajador', '=', 'nominas.id')
+		->join('tipo_comunicacion', 'comunicaciones.id_tipo', '=', 'tipo_comunicacion.id')
+		->leftJoin('comunicaciones_archivos', 'comunicaciones.id', '=', 'comunicaciones_archivos.id_comunicacion') // Unimos los archivos
+		->where('ausentismos.id_cliente', auth()->user()->id_cliente_actual)
+		->with('archivos');
+		///->groupBy('comunicaciones.id');
 
-    // Filtros
-    if ($request->from) {
-        $query->whereDate('comunicaciones.created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-    }
-    if ($request->to) {
-        $query->whereDate('comunicaciones.created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-    }
-    if ($request->estado && $request->estado != 'todos') {
-        $query->where('nominas.estado', '=', $request->estado == 'activos' ? '1' : '0');
-    }
-    if ($request->order) {
-        $sort = $request->columns[$request->order[0]['column']]['name'];
-        $dir  = $request->order[0]['dir'];
-        $query->orderBy($sort, $dir);
-    }
-    if ($request->search) {
-        $filtro = '%' . $request->search['value'] . '%';
-        $query->where(function ($query) use ($filtro) {
-            $query
-                ->where('nominas.nombre', 'LIKE', $filtro)
-                ->orWhere('tipo_comunicacion.nombre', 'LIKE', $filtro)
-                ->orWhere('ausentismos.user', 'LIKE', $filtro)
-                ->orWhere('comunicaciones.user', 'LIKE', $filtro)
-                ->orWhere('comunicaciones.descripcion', 'LIKE', $filtro);
-        });
-    }
+		$total = $query->count();
 
-    // Obtener datos
-    $comunicaciones = $query->groupBy('comunicaciones.id') // Agrupar por id de comunicación
-        ->get();
 
-    // Cargar los archivos asociados a cada comunicación
-    foreach ($comunicaciones as $comunicacion) {
-        $comunicacion->archivos = ComunicacionArchivo::where('id_comunicacion', $comunicacion->id)->get();
-    }
 
-    return [
-        'draw' => $request->draw,
-        'recordsTotal' => $comunicaciones->count(),
-        'recordsFiltered' => $comunicaciones->count(),
-        'data' => $comunicaciones,
-        'request' => $request->all(),
-        'fichada_user' => auth()->user()->fichada,
-        'fichar_user' => auth()->user()->fichar
-    ];
+
+		// Filtros
+		if ($request->from) {
+			$query->whereDate('comunicaciones.created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		}
+		if ($request->to) {
+			$query->whereDate('comunicaciones.created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
+		if ($request->estado && $request->estado != 'todos') {
+			$query->where('nominas.estado', '=', $request->estado == 'activos' ? '1' : '0');
+		}
+
+		if ($request->search) {
+			$filtro = '%' . $request->search['value'] . '%';
+			$query->where(function ($query) use ($filtro) {
+				$query
+					->where('nominas.nombre', 'LIKE', $filtro)
+					->orWhere('tipo_comunicacion.nombre', 'LIKE', $filtro)
+					->orWhere('ausentismos.user', 'LIKE', $filtro)
+					->orWhere('comunicaciones.user', 'LIKE', $filtro)
+					->orWhere('comunicaciones.descripcion', 'LIKE', $filtro);
+			});
+		}
+
+
+
+		if ($request->order) {
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort, $dir);
+		}
+
+
+		$total_filtered = $query->count();
+
+		return [
+			'draw' => $request->draw,
+			'recordsTotal' => $total,
+			'recordsFiltered' => $total_filtered,
+			'data' => $query->skip($request->start)->take($request->length)->get(),
+			'request' => $request->all(),
+			'fichada_user' => auth()->user()->fichada,
+			'fichar_user' => auth()->user()->fichar
+		];
 	}
 
 

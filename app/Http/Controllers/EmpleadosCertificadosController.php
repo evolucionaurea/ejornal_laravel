@@ -27,7 +27,8 @@ class EmpleadosCertificadosController extends Controller
 	{
 		$query = AusentismoDocumentacion::select(
 			'ausentismo_documentacion.*',
-			'nominas.id_cliente as trabajador_cliente'
+			'nominas.id_cliente as trabajador_cliente',
+			'ausentismos.id_cliente'
 		)
 			->with(['ausentismo'=>function($query){
 				$query

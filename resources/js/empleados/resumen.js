@@ -18,14 +18,14 @@ $(()=>{
 			order:[[ 3, "desc" ]],
 			columns:[
 				{
-					data:'trabajador',
+					data:null,
 					name:'nominas.nombre',
 					className:'align-middle',
 					render:v=>{
 						return `
-							<div class="font-weight-bold">${v.nombre}<div>
-							<div class="small">DNI: ${v.dni}</div>
-							<div class="small">Tel: ${v.telefono}</div>
+							<div class="font-weight-bold">${v.trabajador.nombre}<div>
+							<div class="small">DNI: ${v.trabajador.dni}</div>
+							<div class="small">Tel: ${v.trabajador.telefono}</div>
 
 							${v.trabajador_cliente != v.id_cliente ? `<span class="badge badge-dark">transferido</span>` : ''}
 						`

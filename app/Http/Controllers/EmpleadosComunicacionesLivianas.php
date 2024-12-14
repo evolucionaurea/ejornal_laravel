@@ -34,7 +34,8 @@ class EmpleadosComunicacionesLivianas extends Controller
 			DB::raw('tipos_comunicaciones_livianas.nombre tipo'),
 			'comunicaciones_livianas.created_at',
 			'nominas.estado',
-			'nominas.id_cliente as trabajador_cliente'
+			'nominas.id_cliente as trabajador_cliente',
+			'tareas_livianas.id_cliente'
 		)
 		->join('tareas_livianas', 'comunicaciones_livianas.id_tarea_liviana', 'tareas_livianas.id')
 		->join('nominas', 'tareas_livianas.id_trabajador', 'nominas.id')

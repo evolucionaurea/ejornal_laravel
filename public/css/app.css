@@ -666,7 +666,7 @@ table.table {
   margin-bottom: 10px;
 }
 
-> .sidebar_datos_user span {
+.sidebar_datos_user > span {
   color: white;
   margin-bottom: 10px;
 }

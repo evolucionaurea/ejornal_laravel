@@ -419,10 +419,15 @@ class EmpleadoConsultaMedicaController extends Controller
 			return back()->with('error', 'No se encontraron consultas');
 		}
 
-		$query = ConsultaMedica::select('consultas_medicas.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
-		->join('nominas','nominas.id','consultas_medicas.id_nomina')
-		->join('diagnostico_consulta','diagnostico_consulta.id','consultas_medicas.id_diagnostico_consulta')
-		->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_medicas.fecha', 'desc');
+		$query = ConsultaMedica::select(
+			'consultas_medicas.*',
+			'nominas.nombre',
+			'nominas.email',
+			'diagnostico_consulta.nombre as diagnostico'
+		)
+			->join('nominas','nominas.id','consultas_medicas.id_nomina')
+			->join('diagnostico_consulta','diagnostico_consulta.id','consultas_medicas.id_diagnostico_consulta')
+			->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_medicas.fecha', 'desc');
 
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -442,7 +447,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
 		fputcsv($fp,[
 			'Trabajador',
-			'Email',
+			'CUIL',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -476,7 +481,7 @@ class EmpleadoConsultaMedicaController extends Controller
 				$consulta->tension_arterial,
 				$consulta->frec_cardiaca,
 				$consulta->anamnesis,
-				$consulta->tratamiento,
+				str_replace(["\r", "\n"],' ',$consulta->tratamiento),
 				str_replace(["\r", "\n"],' ',$consulta->observaciones)
 			],';');
 		}

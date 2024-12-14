@@ -118,16 +118,8 @@ class Autenticacion_empleados
 			$fichada->ip = \Request::ip();
 			$fichada->sistema_operativo = $agent->platform();
 			$fichada->browser = $agent->browser();
-			// Determinar el tipo de dispositivo
-			if ($agent->isMobile()) {
-				$fichada->dispositivo = 'Móvil';
-			} elseif ($agent->isTablet()) {
-				$fichada->dispositivo = 'Tablet';
-			} elseif ($agent->isDesktop()) {
-				$fichada->dispositivo = 'Escritorio';
-			} else {
-				$fichada->dispositivo = 'Desconocido';
-			}
+			$fichada->dispositivo = device_spanish($agent->deviceType());
+
 			$fichada->save();
 		}
 	}

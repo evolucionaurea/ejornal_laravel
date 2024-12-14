@@ -17,7 +17,7 @@ $(()=>{
 			order:[[ 1, "desc" ]],
 			columns:[
 				{
-					data:'trabajador',
+					data:null,
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
@@ -26,9 +26,9 @@ $(()=>{
 						if(v==null) return '<span class="text-muted">[No Ingresado]</span>'
 
 						return `
-							<div>${v.nombre}</div>
-							<div class="small">DNI: ${v.dni}</div>
-							<div class="small">Tel: ${v.telefono}</div>
+							<div>${v.trabajador.nombre}</div>
+							<div class="small">DNI: ${v.trabajador.dni}</div>
+							<div class="small">Tel: ${v.trabajador.telefono}</div>
 							${v.id_cliente != v.trabajador_cliente ? '<span class="badge badge-dark">transferido</span>' : ''}
 						`;
 

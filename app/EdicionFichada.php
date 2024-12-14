@@ -20,6 +20,9 @@ class EdicionFichada extends Model
   public function user(){
   	return $this->belongsTo(User::class, 'id_user');
   }
+  public function fichada(){
+    return $this->belongsTo(FichadaNueva::class, 'id_fichada');
+  }
 
   public function getOldIngresoFormattedAttribute()
   {
@@ -40,6 +43,9 @@ class EdicionFichada extends Model
   }
   public function dateFormatted($date){
   	return mb_convert_case($date->translatedFormat('l'),MB_CASE_TITLE,'UTF-8') . ', '. $date->format('d/m/Y') . ' - ' . $date->format('H:i:s') . ' hs.';
+  }
+  public function getCreatedAtFormattedAttribute(){
+    return $this->created_at->format('d/m/Y H:i:s \h\s.');
   }
 
 }

@@ -256,32 +256,32 @@ class AdminReporteController extends Controller
 		//dd($formattedDate);
 		// Validar según el tipo de edición
 		if ($request->action=='ingreso') {
-				// Validar que el egreso no tenga una fecha inferior a la nueva fecha de ingreso
-				if ($ultimoRegistro->egreso && new DateTime($ultimoRegistro->egreso) < $newDate) {
-						return response()->json(['success' => false, 'message' => 'El egreso registrado es anterior a la nueva fecha de ingreso.'], 400);
-				}
+			// Validar que el egreso no tenga una fecha inferior a la nueva fecha de ingreso
+			if ($ultimoRegistro->egreso && new DateTime($ultimoRegistro->egreso) < $newDate) {
+					return response()->json(['success' => false, 'message' => 'El egreso registrado es anterior a la nueva fecha de ingreso.'], 400);
+			}
 
-				$ultimoRegistro->ingreso = $newDate;
-				$ultimoRegistro->save();
-				$edicionFichada = new EdicionFichada();
-				$edicionFichada->old_ingreso = $fichada->ingreso;
-				$edicionFichada->new_ingreso = $newDate;
-				$edicionFichada->old_egreso = null; // Asegúrate de establecer egreso como null
-				$edicionFichada->new_egreso = null; // Asegúrate de establecer egreso como null
+			$ultimoRegistro->ingreso = $newDate;
+			$ultimoRegistro->save();
+			$edicionFichada = new EdicionFichada();
+			$edicionFichada->old_ingreso = $fichada->ingreso;
+			$edicionFichada->new_ingreso = $newDate;
+			$edicionFichada->old_egreso = null; // Asegúrate de establecer egreso como null
+			$edicionFichada->new_egreso = null; // Asegúrate de establecer egreso como null
 		}
 		if ($request->action=='egreso') {
-				// Validar que el ingreso no tenga una fecha mayor a la nueva fecha de egreso
-				if ($ultimoRegistro->ingreso && new DateTime($ultimoRegistro->ingreso) > $newDate) {
-						return response()->json(['success' => false, 'message' => 'El ingreso registrado es posterior a la nueva fecha de egreso.'], 400);
-				}
-				//$oldDateObj = new DateTime($oldValue);
-				$ultimoRegistro->egreso = $newDate; //mantengo la hora original
-				$ultimoRegistro->save();
-				$edicionFichada = new EdicionFichada();
-				$edicionFichada->old_egreso = $fichada->egreso;
-				$edicionFichada->new_egreso = $newDate;
-				$edicionFichada->old_ingreso = null; // Asegúrate de establecer ingreso como null
-				$edicionFichada->new_ingreso = null; // Asegúrate de establecer ingreso como null
+			// Validar que el ingreso no tenga una fecha mayor a la nueva fecha de egreso
+			if ($ultimoRegistro->ingreso && new DateTime($ultimoRegistro->ingreso) > $newDate) {
+					return response()->json(['success' => false, 'message' => 'El ingreso registrado es posterior a la nueva fecha de egreso.'], 400);
+			}
+			//$oldDateObj = new DateTime($oldValue);
+			$ultimoRegistro->egreso = $newDate; //mantengo la hora original
+			$ultimoRegistro->save();
+			$edicionFichada = new EdicionFichada();
+			$edicionFichada->old_egreso = $fichada->egreso;
+			$edicionFichada->new_egreso = $newDate;
+			$edicionFichada->old_ingreso = null; // Asegúrate de establecer ingreso como null
+			$edicionFichada->new_ingreso = null; // Asegúrate de establecer ingreso como null
 		}
 
 		// Asignar id_user y id_fichada
@@ -291,7 +291,7 @@ class AdminReporteController extends Controller
 		// Obtener la IP y el dispositivo
 		$agent = new Agent();
 		$edicionFichada->ip = $request->ip();
-		$edicionFichada->dispositivo = $agent->device() . ' (' . $agent->platform() . ' ' . $agent->version($agent->platform()) . ')';
+		$edicionFichada->dispositivo = $agent->browser() . ' (' . $agent->platform() . ' ' . $agent->version($agent->platform()) . ' | '. device_spanish($agent->deviceType()) .')';
 
 		// Guardar el registro
 		$edicionFichada->save();

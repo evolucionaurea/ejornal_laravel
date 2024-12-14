@@ -199,28 +199,28 @@ class EmpleadoConsultasTodasController extends Controller
 			->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
 
 		$queryEnfermerias = ConsultaEnfermeria::select(
-				'nominas.nombre',
-				'nominas.email',
-				'consultas_enfermerias.id',
-				'consultas_enfermerias.id_nomina',
-				'consultas_enfermerias.id_diagnostico_consulta',
-				'consultas_enfermerias.fecha',
-				'consultas_enfermerias.derivacion_consulta',
+			'nominas.nombre',
+			'nominas.email',
+			'consultas_enfermerias.id',
+			'consultas_enfermerias.id_nomina',
+			'consultas_enfermerias.id_diagnostico_consulta',
+			'consultas_enfermerias.fecha',
+			'consultas_enfermerias.derivacion_consulta',
 
-				'consultas_enfermerias.amerita_salida',
-				'consultas_enfermerias.peso',
-				'consultas_enfermerias.altura',
-				'consultas_enfermerias.imc',
-				'consultas_enfermerias.glucemia',
-				'consultas_enfermerias.saturacion_oxigeno',
-				'consultas_enfermerias.tension_arterial',
-				'consultas_enfermerias.frec_cardiaca',
-				'consultas_enfermerias.observaciones',
-				DB::raw('"" as tratamiento'),
+			'consultas_enfermerias.amerita_salida',
+			'consultas_enfermerias.peso',
+			'consultas_enfermerias.altura',
+			'consultas_enfermerias.imc',
+			'consultas_enfermerias.glucemia',
+			'consultas_enfermerias.saturacion_oxigeno',
+			'consultas_enfermerias.tension_arterial',
+			'consultas_enfermerias.frec_cardiaca',
+			'consultas_enfermerias.observaciones',
+			DB::raw('"" as tratamiento'),
 
-				'diagnostico_consulta.nombre as diagnóstico',
-				DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
-			)
+			'diagnostico_consulta.nombre as diagnóstico',
+			DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
+		)
 			->join('nominas', 'nominas.id', 'consultas_enfermerias.id_nomina')
 			->join('diagnostico_consulta', 'diagnostico_consulta.id', 'consultas_enfermerias.id_diagnostico_consulta')
 			->where('nominas.id_cliente', auth()->user()->id_cliente_actual);
@@ -258,7 +258,7 @@ class EmpleadoConsultasTodasController extends Controller
 		fputcsv($fp, [
 			'Tipo',
 			'Trabajador',
-			'Email',
+			'CUIL',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -286,7 +286,7 @@ class EmpleadoConsultasTodasController extends Controller
 				$consulta->diagnostico->nombre,
 				$consulta->derivacion_consulta,
 				($consulta->amerita_salida ? 'Si' : 'No'),
-				$consulta->tratamiento,
+				str_replace(["\r", "\n"],' ',$consulta->tratamiento),
 				str_replace(["\r", "\n"],' ',$consulta->observaciones),
 				$consulta->peso,
 				$consulta->altura,

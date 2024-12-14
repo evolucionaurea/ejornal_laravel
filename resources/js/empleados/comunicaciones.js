@@ -33,7 +33,7 @@ $(()=>{
 				{
 					data:'created_at',
 					className:'align-middle',
-					name:'created_at'
+					name:'comunicaciones.created_at'
 				},
 				{
 					data: 'archivos',
