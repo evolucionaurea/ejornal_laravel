@@ -447,7 +447,7 @@
 						<tr>
 							<td>{{ $top->trabajador->nombre }}</td>
 							<td>
-							@if( $top->trabajador->id_cliente!= $id_cliente)
+							@if( $top->id_cliente!= $id_cliente)
 								<span class="badge badge-dark">transferido</span>
 							@elseif ($top->trabajador->regreso_trabajo)
 								<span class="badge badge-danger">ausente</span>
@@ -479,7 +479,7 @@
 						<tr>
 							<td>
 								<div>{{ $falta->trabajador->nombre }}</div>
-								@if( $falta->trabajador->id_cliente!=$id_cliente)
+								@if( $falta->id_cliente!=$id_cliente)
 								<span class="badge badge-dark">transferido</span>
 								@endif
 							</td>

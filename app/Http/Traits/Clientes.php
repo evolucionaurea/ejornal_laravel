@@ -479,7 +479,7 @@ trait Clientes {
 				)) + 1
 			) total_dias,
 
-			id_trabajador
+			id_trabajador, id_cliente
 		")
 			->where('id_cliente',$id_cliente)
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
@@ -516,7 +516,7 @@ trait Clientes {
 		//dd($ausentismos_top_10->toArray());
 
 		$ausentismos_top_10_solicitudes = Ausentismo::
-			selectRaw('count(*) as total, id_trabajador')
+			selectRaw('count(*) as total, id_trabajador, id_cliente')
 			->where('id_cliente',$id_cliente)
 			->whereIn('id_trabajador',function($query) use ($id_cliente){
 				$query->select('id')
