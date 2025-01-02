@@ -220,7 +220,7 @@ class EmpleadosNominasController extends Controller
 		//Actualizar en base
 		$trabajador = Nomina::findOrFail($id);
 
-		///Chequear que el dno no exista!
+		///Chequear que el dni no exista!
 		$existing_nomina = Nomina::where('dni',$request->dni)
 			->where('id_cliente',auth()->user()->id_cliente_actual)
 			->where('id','!=',$id)
@@ -239,31 +239,11 @@ class EmpleadosNominasController extends Controller
 		/// todo: soft delete del empleado en la empresa anterior y crear nuevo empleado en la empresa nueva
 		if($trabajador->id_cliente != $request->id_cliente){
 
-			///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
-			$ausentismo = Ausentismo::where('id_trabajador',$trabajador->id)
-				->where(function($query){
-					$query
-						->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
-						->orWhereNull('fecha_final');
-				})
-				->get();
-			if($ausentismo->count()){
-				return back()->with('error','Este trabajador posee un ausentismo vigente y no puede ser cambiado de cliente/sucursal.');
-			}
 
-			///VALIDAR QUE NO TENGA UNA TAREA ADECUADA VIGENTE
-			$tarea_liviana = TareaLiviana::where('id_trabajador',$trabajador->id)
-				->where(function($query){
-					$query
-						->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
-						->orWhereNull('fecha_final');
-				})
-				->get();
 
 			///dd($tarea_liviana);
-
-			if($tarea_liviana->count()){
-				return back()->with('error','Este trabajador posee una tarea adecuada vigente y no puede ser cambiado de cliente/sucursal.');
+			if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($trabajador)){
+				return back()->with('error',$has_ausentismo_tarea_liviana);
 			}
 
 			//$trabajador->id_cliente = $request->id_cliente;
@@ -281,8 +261,6 @@ class EmpleadosNominasController extends Controller
 			$trabajador->created_at = Carbon::now(); //// se pisa la fecha original de creación!
 
 			$this->nomina_historial($trabajador,'suma');
-
-
 
 		}
 
@@ -474,20 +452,16 @@ class EmpleadosNominasController extends Controller
 	public function cargar_excel(Request $request)
 	{
 
+
+		if(!auth()->user()->id_cliente_actual) return back()->with();
+
 		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo.');
 
 		$file = $request->file('archivo');
 
-
-		//$contents_utf8 = mb_convert_encoding($file, 'UTF-8', mb_detect_encoding($file,mb_list_encodings(), true));
-		//dd($contents_utf8);
-
 		// $registros = array();
 		if(($fichero = fopen($file, "r"))===false) return back()->with('error','No se pudo leer el archivo. Intenta nuevamente.');
 
-
-		//dd(fgetcsv($fichero, 0, ";", '"'));
-		///dd(mb_detect_encoding($fichero->uri,mb_list_encodings(), true));
 
 		// Lee los nombres de los campos
 		$nombres_campos = [];
@@ -499,20 +473,7 @@ class EmpleadosNominasController extends Controller
 		// Lee los registros
 		while (($fila = fgetcsv($fichero, 0, ";", '"')) !== false) {
 
-
 			if($indice!==0){
-
-
-				/*
-				if(
-					empty($fila[0]) ||
-					empty($fila[1]) ||
-					empty($fila[4]) ||
-					empty($fila[5])
-				){
-					$error = true;
-					break;
-				}*/
 
 				$registros[] = (object) [
 					'nombre'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[0]),
@@ -553,42 +514,18 @@ class EmpleadosNominasController extends Controller
 			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, cuil, estado y sector son obligatorios.');
 		}
 
-		///dd(mb_convert_encoding($registros[0]->sector, 'UTF-8', 'ISO-8859-1'));
-		//dd(mb_detect_encoding($registros[0]->sector));
-
-
-		/*$errores = false;
-		$vueltas = 1;
-		foreach ($registros as $registro) {
-			if ($registro['nombre'] == null || $registro['nombre'] == '' || $registro['estado'] == null ||
-					$registro['estado'] == '' || $registro['sector'] == null || $registro['sector'] == '') {
-				$respuesta_error = "El excel tiene datos mal cargados en la fila " . $vueltas;
-				return back()->with('error', $respuesta_error);
-			}
-			if (!isset($registro['nombre']) || !isset($registro['email']) || !isset($registro['telefono']) ||
-					!isset($registro['dni']) || !isset($registro['estado']) || !isset($registro['sector'])) {
-				$errores = true;
-			}else {
-				$errores = false;
-			}
-			$vueltas++;
-		}
-
-		if ($errores)  return back()->with('error', 'El excel no tiene las cabeceras correctas. Debe tener: nombre, email, telefono, dni, estado y sector obligatoriamente');*/
-
 
 		/// GUARDAR DATOS
-
-		// Traigo todos los empleados de la nómina actual del cliente actual
-		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
-		$nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
-
 		$empleados_borrables = [];
 		$empleados_inexistentes = [];
 		$empleados_actualizados = [];
 		$empleados_existentes = [];
+		$empleados_transferidos = [];
 
-
+		// Traigo todos los empleados de la nómina actual del cliente actual
+		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
+		// $nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+		$nomina_actual = Nomina::all();
 
 		///validar registros
 		$errores = [];
@@ -599,7 +536,7 @@ class EmpleadosNominasController extends Controller
 					'fila'=>$kr+2,
 					'columna'=>'DNI',
 					'valor'=>$registro->dni,
-					'error'=>'Ingrese un valor válido para este campo. (sólamente números)'
+					'error'=>'Ingrese un valor válido para este campo. (8 dígitos, solamente números)'
 				];
 			}
 			if(!$registro->nombre){
@@ -610,7 +547,7 @@ class EmpleadosNominasController extends Controller
 					'error'=>'Falta ingresar un valor en este campo.'
 				];
 			}
-			if(!$registro->estado ){
+			if(!$registro->estado){
 				$errores[] = (object) [
 					'fila'=>$kr+2,
 					'columna'=>'Estado',
@@ -640,37 +577,69 @@ class EmpleadosNominasController extends Controller
 
 			}
 
+			foreach($nomina_actual as $n_actual){
+				if($n_actual->dni == $registro->dni && $n_actual->id_cliente!=auth()->user()->id_cliente_actual && $request->mover==='1'){
+					if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($n_actual)){
+						$errores[] = (object) [
+							'fila'=>$kr+2,
+							'columna'=>'Nombre',
+							'valor'=>$registro->nombre,
+							'error'=>$has_ausentismo_tarea_liviana
+						];
+					}
+					break;
+				}
+			}
+
 		}
 
 		//dd($errores);
-		if(!empty($errores)){
-			return back()->with(compact('errores'));
-		}
+		if(!empty($errores)) return back()->with(compact('errores'));
 
 
-		foreach ($registros as $kr=>$registro){
-			if(!$empleado_id = $this->buscar_en_dbb($nomina_actual,$registro)){
+		foreach ($registros as $kr=>$registro):
+
+			$empleado_existente = false;
+			foreach($nomina_actual as $n_actual){
+				if($n_actual->dni == $registro->dni && $n_actual->email==$registro->email){
+					$empleado_existente = $n_actual;
+					break;
+				}
+			}
+
+			//dd($empleado_existente);
+
+			if(!$empleado_existente){
 				// Crear empleado inexistente
 				$nomina = new Nomina;
 				$nomina->id_cliente = auth()->user()->id_cliente_actual;
 				$empleados_inexistentes[] = $registro;
 			}else{
-				$nomina = Nomina::find($empleado_id);
-				if($request->coincidencia==1) $empleados_actualizados[] = $registro;
-
+				//$nomina = Nomina::find($empleado);
+				$nomina = clone $empleado_existente;
+				if($request->coincidencia==='1') $empleados_actualizados[] = $registro;
 				$empleados_existentes[] = $registro;
+
+				// el empleado existe en otra empresa
+				if( $empleado_existente->id_cliente != auth()->user()->id_cliente_actual && $request->mover==='1'){
+					$empleados_transferidos[] = $empleado_existente;
+					$nomina->id_cliente = auth()->user()->id_cliente_actual;
+					$nomina->created_at = Carbon::now();
+				}
+
 			}
+
+			///dd($nomina);
 
 
 			// Actualizar empleado existente
-			if(!$empleado_id || ($empleado_id && $request->coincidencia==1)){
+			if(!$empleado_existente || ($empleado_existente && $request->coincidencia==='1')){
+
 				$nomina->nombre = $registro->nombre;
 				$nomina->email = strtolower($registro->email);
 
 				$nomina->dni = preg_replace('/[^0-9]/', '', $registro->dni);
 
-				/*$f_nac_arr = explode('/',$registro->fecha_nacimiento);
-				$nomina->fecha_nacimiento = $f_nac_arr[2].'-'.$f_nac_arr[1].'-'.$f_nac_arr[0];*/
 				if($registro->fecha_nacimiento){
 					$nomina->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $registro->fecha_nacimiento);
 				}else{
@@ -692,37 +661,60 @@ class EmpleadosNominasController extends Controller
 
 			}
 
-			if(!$empleado_id){
+
+			if(!$empleado_existente){
 				/// guardo en el historial de la nómina con el cliente cuando se crea
 				NominaClienteHistorial::create([
 					'nomina_id'=>$nomina->id,
 					'cliente_id'=>auth()->user()->id_cliente_actual,
 					'user_id'=>auth()->user()->id
 				]);
+
+			}else{
+
+				if( $empleado_existente->id_cliente != auth()->user()->id_cliente_actual && $request->mover==='1' ){
+
+					//dd($empleado_existente);
+
+					NominaClienteHistorial::create([
+						'nomina_id'=>$nomina->id,
+						'cliente_id'=>auth()->user()->id_cliente_actual,
+						'user_id'=>auth()->user()->id
+					]);
+					$this->nomina_historial($empleado_existente,'resta');
+					//$trabajador->created_at = Carbon::now(); //// se pisa la fecha original de creación!
+					$this->nomina_historial($nomina,'suma');
+
+				}
+
 			}
 
-		}
+
+		endforeach; // end registros
+
+
+		$nomina_actual = Nomina::all();
 
 
 		foreach ($nomina_actual as $ke=>$empleado){
-			if(!$this->buscar_en_csv($registros,$empleado)){
-				$empleados_borrables[] = $empleado->id;
+			//$empleado->refresh();
+			foreach($registros as $kr=>$registro){
+				if($empleado->dni==$registro->dni && $empleado->email==$registro->email && $empleado->id_cliente==auth()->user()->id_cliente_actual){
+					$empleados_borrables[] = $empleado->id;
+					break;
+				}
 			}
 		}
 
+
 		// Antes se borrada el registro. Ahora se actualiza el estado a Inactivo
-		// if($request->borrar==1){
-		// 	Nomina::whereIn('id',$empleados_borrables)->delete();
-		// }
-		if ($request->borrar == 1) {
-			Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
-		}
+		// Nomina::whereIn('id',$empleados_borrables)->delete();
+		if($request->borrar==='1') Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 
 
 
 		// Registrar cantidad de empleados en cada carga
 		$now = CarbonImmutable::now();
-
 		$values = [
 			'total'=>count($registros),
 			'nuevos'=>count($empleados_inexistentes),
@@ -736,11 +728,6 @@ class EmpleadosNominasController extends Controller
 			'cliente_id'=>auth()->user()->id_cliente_actual,
 			'updated_at'=>$now
 		];
-
-		///dd($now->startOfMonth()->subMonth());
-		//dd($values);
-
-
 		NominaImportacion::updateOrCreate(
 			[
 				'year_month'=>$now->format('Ym'),
@@ -752,18 +739,17 @@ class EmpleadosNominasController extends Controller
 		//dd($values);
 
 
-		///Actualizo el historial de nómina
+		/// Actualizo el historial de nómina
 		$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
 			->orderBy('year_month','desc')
 			->first();
-		$total_nomina = count($nomina_actual)+count($empleados_inexistentes)-($request->borrar==1 ? count($empleados_borrables) : 0);
+		$total_nomina = count($nomina_actual)+count($empleados_inexistentes)-($request->borrar==='1' ? count($empleados_borrables) : 0);
 		$nomina_historial = new NominaHistorial;
 		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
 		$nomina_historial->cliente_id = auth()->user()->id_cliente_actual;
 		$nomina_historial->cantidad = $total_nomina;
-
 		if($nomina_historial_creado){
-			//si existe el registro del mes se actualiza
+			// si existe el registro del mes se actualiza
 			if($nomina_historial_creado->year_month==CarbonImmutable::now()->format('Ym')){
 				$nomina_historial = $nomina_historial_creado;
 				$nomina_historial->cantidad = $total_nomina;
@@ -779,18 +765,7 @@ class EmpleadosNominasController extends Controller
 
 	}
 
-	public function buscar_en_dbb($empleados,$registro){
-		foreach($empleados as $ke=>$empleado){
-			if($empleado->dni==$registro->dni) return $empleado->id;
-		}
-		return false;
-	}
-	public function buscar_en_csv($registros,$empleado){
-		foreach($registros as $kr=>$registro){
-			if($empleado->dni==$registro->dni) return true;
-		}
-		return false;
-	}
+
 
 
 	public function exportar(Request $request)

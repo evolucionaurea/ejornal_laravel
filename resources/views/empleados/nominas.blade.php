@@ -38,7 +38,7 @@
 			<p>Se encontraron los siguientes errores al importar el archivo:</p>
 			<ul class="list-group list-group-flush small">
 				@foreach(\Session::get('errores') as $error)
-				<li class="list-group-item py-1 px-0">Fila: {{ $error->fila }} | Columna: {{ $error->columna }} | Error:
+				<li class="list-group-item py-1 px-0">Fila: {{ $error->fila }} | Columna: {{ $error->columna }} | Valor: {{ $error->valor }} | Error:
 					{{ $error->error }}</li>
 				@endforeach
 			</ul>
@@ -103,50 +103,54 @@
 
 							<hr>
 
-							<h6>¿Si durante la carga encontramos trabajadores que ya fueron cargados que desea hacer?
-							</h6>
+							<h6 class="mb-0">Si durante la carga encontramos trabajadores que ya fueron cargados, ¿Qué deseas hacer?</h6>
+							<div class="small text-muted font-italic mb-2">Se considerará una coincidencia cuando el <b>dni</b> y el <b>cuil</b> que figura en el archivo excel sea el mismo que el registro guardado en la base de datos.</div>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="coincidencia"
 									id="no_modificar_trabajador_radio" value="2" checked>
-								<label class="form-check-label" for="no_modificar_trabajador_radio">No modificarlo.
-									Dejar el que está actualmente cargado.</label>
+								<label class="form-check-label" for="no_modificar_trabajador_radio">No modificarlo. Dejar el que está actualmente cargado.</label>
 							</div>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="coincidencia"
 									id="actualizar_trabajador_radio" value="1">
-								<label class="form-check-label" for="actualizar_trabajador_radio">Actualizar con los
-									datos del presente excel</label>
+								<label class="form-check-label" for="actualizar_trabajador_radio">Actualizar con los datos del presente excel</label>
 							</div>
 
 							<hr>
 
-							<h6>
-								¿Que hacer con los trabajadores previamente guardados que no estén en el archivo excel?
-							</h6>
+							<h6>¿Que hacer con los trabajadores previamente guardados que no estén en el archivo excel?</h6>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="borrar" id="no_borrar_trabajador"
 									value="0" checked>
-								<label class="form-check-label" for="no_borrar_trabajador">Dejar el que está
-									actualmente cargado.</label>
+								<label class="form-check-label" for="no_borrar_trabajador">Dejar el que está actualmente cargado.</label>
 							</div>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="borrar" id="borrar_trabajador"
 									value="1">
-								<label class="form-check-label" for="borrar_trabajador">
-									Marcarlos como inactivos
-								</label>
+								<label class="form-check-label" for="borrar_trabajador">Marcarlos como inactivos</label>
 							</div>
 
 
 							<hr>
+							<h6>Si el trabajador existe en la nómina de otra sucursal o empresa, ¿Qué hacer?</h6>
+							<div class="form-check">
+								<input type="radio" class="form-check-input" name="mover" id="no_mover_trabajador" value="0" checked>
+								<label for="no_mover_trabajador" class="form-check-label">No transferir, dejarlo en la nómina de la empresa a la que pertenece.</label>
+							</div>
+							<div class="form-check">
+								<input type="radio" class="form-check-input" name="mover" id="mover_trabajador" value="1">
+								<label for="mover_trabajador" class="form-check-label">Transferirlo en la nómina de la empresa actual ({{ auth()->user()->cliente_actual ? auth()->user()->cliente_actual->nombre : '[Debes seleccionar un cliente]' }}).</label>
+							</div>
+							<hr>
 
 
-							<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal"><i
-									class="fa fa-fw fa-times"></i> Cerrar</button>
+							<button type="button" class="btn-ejornal btn-ejornal-gris-claro" data-dismiss="modal">
+								<i class="fa fa-fw fa-times"></i> Cerrar
+							</button>
 
-							<button type="submit" class="btn-ejornal btn-ejornal-success"><i
-									class="fa fa-fw fa-save"></i> Comenzar Importación</button>
-
+							<button type="submit" class="btn-ejornal btn-ejornal-success">
+								<i class="fa fa-fw fa-save"></i> Comenzar Importación
+							</button>
 
 						</form>
 					</div>

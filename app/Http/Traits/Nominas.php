@@ -10,6 +10,7 @@ use App\CovidVacuna;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Ausentismo;
+use App\TareaLiviana;
 use App\Preocupacional;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -299,5 +300,37 @@ trait Nominas
 		);
 
 	}
+
+	public function hasAusentismoOrTareaLiviana($trabajador){
+
+		///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
+		$ausentismo = Ausentismo::where('id_trabajador',$trabajador->id)
+			->where(function($query){
+				$query
+					->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
+					->orWhereNull('fecha_final');
+			})
+			->get();
+		if($ausentismo->count()){
+			return 'Este trabajador posee un ausentismo vigente y no puede ser cambiado de cliente/sucursal.';
+		}
+
+		///VALIDAR QUE NO TENGA UNA TAREA ADECUADA VIGENTE
+		$tarea_liviana = TareaLiviana::where('id_trabajador',$trabajador->id)
+			->where(function($query){
+				$query
+					->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
+					->orWhereNull('fecha_final');
+			})
+			->get();
+		if($tarea_liviana->count()){
+			return 'Este trabajador posee una tarea adecuada vigente y no puede ser cambiado de cliente/sucursal.';
+		}
+
+
+		return false;
+	}
+
+
 
 }

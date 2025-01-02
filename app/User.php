@@ -64,5 +64,10 @@ class User extends Authenticatable
 		return $this->belongsTo(Especialidad::class,'id_especialidad');
 	}
 
+	public function cliente_actual()
+	{
+		return $this->belongsTo(Cliente::class,'id_cliente_actual');
+	}
+
 
 }
