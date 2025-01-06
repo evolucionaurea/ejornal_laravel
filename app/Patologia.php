@@ -13,4 +13,9 @@ class Patologia extends Model
     // Campos habilitados para ingresar
     protected $fillable = ['nombre'];
 
+    public function caratulas()
+    {
+        return $this->hasMany(Caratula::class, 'id_patologia');
+    }
+
 }

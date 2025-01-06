@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Caratula;
 use Illuminate\Http\Request;
 use App\ConsultaEnfermeria;
 use App\DiagnosticoConsulta;
@@ -483,7 +484,6 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		return;
 
 	}
-
 
 
 }

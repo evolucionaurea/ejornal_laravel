@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Nutricional;
+use App\Caratula;
 use App\Patologia;
 use Illuminate\Http\Request;
 
@@ -86,9 +86,13 @@ class EmpleadosPatologiasController extends Controller
      */
     public function destroy($id)
     {
-        $patologias = Nutricional::where('id_patologia', $id)->count();
-        if ($patologias > 0) {
-            return back()->with('error', 'No puedes eliminar esta patologia porque es utilizada por consultas nutricionales');
+        $caratulas = Caratula::where('id_patologia', $id)->count();
+        if ($caratulas > 0) {
+            return back()->with(
+                'error', 
+                'No puedes eliminar esta patologia porque es utilizada por algunas caratulas. Deberia cambiar todas las caratulas donde
+                se vea esta patologia para poder eliminarla.'
+            );
         }
         $patologia = Patologia::find($id);
         $patologia->delete();

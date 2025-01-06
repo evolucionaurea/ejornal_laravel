@@ -264,7 +264,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// CONSULTAS Nutricionales
-	Route::resource('empleados/consultas/nutricionales', 'EmpleadosNutricionalesController', [
+	Route::resource('empleados/consultas/nutricionales', 'EmpleadosConsultaNutricionalController', [
 		'names' => [
 			'index' => 'empleados.consultas.nutricionales'
 		]
@@ -275,6 +275,16 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 			'index' => 'empleados.consultas.patologias'
 		]
 	]);
+
+
+	Route::get('empleados/caratulas', 'EmpleadosCaratulaController@index')->name('empleados.caratulas');
+	Route::get('empleados/nominas/caratulas/create/{id_nomina}', 'EmpleadosCaratulaController@create')->name('empleados.nominas.caratulas.create');
+	Route::post('empleados/nominas/caratulas', 'EmpleadosCaratulaController@store')->name('empleados.nominas.caratulas.store');
+	Route::get('empleados/nominas/caratulas/{caratula}', 'EmpleadosCaratulaController@show')->name('empleados.nominas.caratulas.show');
+	Route::get('empleados/nominas/caratulas/{caratula}/edit', 'EmpleadosCaratulaController@edit')->name('empleados.nominas.caratulas.edit');
+	Route::put('empleados/nominas/caratulas/{caratula}', 'EmpleadosCaratulaController@update')->name('empleados.nominas.caratulas.update');
+	Route::delete('empleados/nominas/caratulas/{caratula}', 'EmpleadosCaratulaController@destroy')->name('empleados.nominas.caratulas.destroy');
+	
 
 
 });

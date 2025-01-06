@@ -66,4 +66,11 @@ class Nomina extends Model
   }
 
 
+  public function caratulas()
+  {
+      return $this->hasMany(Caratula::class, 'id_nomina');
+  }
+
+
+
 }

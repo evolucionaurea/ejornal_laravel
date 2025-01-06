@@ -1,93 +1,100 @@
 <div class="tarjeta">
 
 	{{-- PRINCIPAL --}}
-	<div class="row">
+	<div class="d-flex justify-content-between align-items-start">
 
-		<div class="col-lg-4 col-md-3 col-sm-12 text-center">
-			@if ($trabajador->foto)
-			{{-- <img style="width: 300px;" src="" class="rounded"> --}}
-			<div class="foto-perfil" style="background-image: url({{ $trabajador->photo_url }})"></div>
-			@else
-			<i class="fas fa-user fa-10x"></i>
-			@endif
-			<br>
-			<br>
-			<h5>{{$trabajador->nombre}}</h5>
-		</div>
-
-		<div class="col-lg-4 col-md-5 col-sm-12">
-
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<b>CUIL: </b>
+		<!-- Primer <ul>: borde blanco suave -->
+		<div class="p-2" style="background-color: #ebebeb; color: #535353;">
+			<h4 class="text-black p-2 mb-0">Datos rapidos</h4>
+			<ul class="d-flex flex-wrap"
+				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 20px;">
+				<li style="p- background: transparent; color: rgb(58, 58, 58);">
+					<b>CUIL:</b>
+					<br>
 					@if ($trabajador->email !== null && $trabajador->email !== '')
-					<span>{{$trabajador->email}}</span>
+					<span>{{ $trabajador->email }}</span>
 					@else
-					{{'No fue cargado'}}
+					{{ 'No fue cargado' }}
 					@endif
 				</li>
-				<li class="list-group-item">
-					<b>DNI: </b> {{$trabajador->dni}}
-				</li>
-				<li class="list-group-item">
-					<b>Activo: </b>
+				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
+					<b>Activo:</b>
+					<br>
 					@if ($trabajador->estado == 1)
-					Si
+					Sí
 					@else
 					No
 					@endif
 				</li>
-				<li class="list-group-item">
-					<b>Teléfono: </b>
+				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
+					<b>Teléfono:</b>
+					<br>
 					@if ($trabajador->telefono !== null && $trabajador->telefono !== '')
-					<a href="tel:{{$trabajador->telefono}}">{{$trabajador->telefono}}</a>
+					<a href="tel:{{$trabajador->telefono}}" style="color: white;">{{$trabajador->telefono}}</a>
 					@else
-					{{'No fue cargado'}}
+					{{ 'No fue cargado' }}
 					@endif
 				</li>
-				<li class="list-group-item">
-					<b>Fecha Nacimiento:</b> {{$trabajador->fecha_nacimiento ?
-					$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}
+				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
+					<b>Fecha Nacimiento:</b>
+					<br>
+					{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]'
+					}}
 				</li>
-				@if($trabajador->fecha_nacimiento)
-				<li class="list-group-item">
-					<b>Edad: </b> {{$trabajador->edad}}
-				</li>
-				@endif
+			</ul>
+		</div>
 
+		<!-- Segundo <ul>: fondo azul oscuro y letras azul claro -->
+		@if ($caratula)
+		<div class="p-2" style="background-color: #1a3b63; color: #8cb3ff;">
+			<h4 class="text-white p-2 mb-0">Caratula</h4>
+			<ul class="d-flex flex-wrap"
+				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 20px;">
+				<li style="p-2 background: transparent;">
+					<b>Última Patología:</b>
+					<br>
+					<span>{{ $caratula->patologia->nombre }}</span>
+				</li>
+				<li style="p-2 background: transparent;">
+					<b>Medicación habitual:</b>
+					<br>
+					{{ $caratula->medicacion_habitual }}
+				</li>
+				<li style="p-2 background: transparent;">
+					<b>Antecedentes:</b>
+					<br>
+					{{ $caratula->antecedentes }}
+				</li>
+				<li style="p-2 background: transparent;">
+					<b>Alergias:</b>
+					<br>
+					{{ $caratula->alergias }}
+				</li>
+				<li style="p-2 background: transparent;">
+					<b>Peso:</b>
+					<br>
+					{{ $caratula->peso }}
+				</li>
+				<li style="p-2 background: transparent;">
+					<b>Altura:</b>
+					<br>
+					{{ $caratula->altura }}
+				</li>
+				<li style="p-2 background: transparent;">
+					<b>IMC:</b>
+					<br>
+					{{ $caratula->imc }}
+				</li>
 			</ul>
 		</div>
-		<div class="col-lg-4 col-md-4 col-sm-12">
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<b>Calle: </b> {{$trabajador->calle}}
-				</li>
-				<li class="list-group-item">
-					<b>Nro: </b> {{$trabajador->nro}}
-				</li>
-				<li class="list-group-item">
-					<b>Entre calles: </b> {{$trabajador->entre_calles}}
-				</li>
-				<li class="list-group-item">
-					<b>Localidad: </b> {{$trabajador->localidad}}
-				</li>
-				<li class="list-group-item">
-					<b>Partido: </b> {{$trabajador->partido}}
-				</li>
-				<li class="list-group-item">
-					<b>Codigo postal: </b> {{$trabajador->cod_postal}}
-				</li>
-
-			</ul>
+		@else
+		<div class="alert alert-info">
+			<h4>Caratula</h4>
+			<p>Sin contenido cargado aún</p>
 		</div>
-		<div class="col-sm-12">
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<b>Observaciones: </b> {{$trabajador->observaciones}}
-				</li>
-			</ul>
-		</div>
+		@endif
 	</div>
+
 
 
 	{{-- TESTEOS Y VACUNAS --}}
@@ -268,5 +275,68 @@
 
 
 	</div>
+
+	<div class="accordion" id="accordionInfoInicial">
+		{{-- Acorddeon Info Principal --}}
+		<div class="card">
+			<div class="card-header bg-dark text-white" id="headingInfoInicial">
+				<h2 class="mb-0 d-flex">
+					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+						data-target="#collapseInfoInicial" aria-expanded="false" aria-controls="collapseInfoInicial">
+						<h6>Informacion principal</h6>
+					</button>
+					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseInfoInicial"
+						class="fal fa-chevron-circle-down text-white"></i>
+				</h2>
+			</div>
+			<div id="collapseInfoInicial" class="collapse ? 'show' : ''}}" aria-labelledby="headingInfoInicial"
+				data-parent="#accordionInfoInicial">
+				<div class="card-body table-responsive">
+					<div class="col-lg-4 col-md-4 col-sm-12">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">
+								<b>DNI: </b> {{$trabajador->dni}}
+							</li>
+							@if($trabajador->fecha_nacimiento)
+							<li class="list-group-item">
+								<b>Edad: </b> {{$trabajador->edad}}
+							</li>
+							@endif
+							<li class="list-group-item">
+								<b>Calle: </b> {{$trabajador->calle}}
+							</li>
+							<li class="list-group-item">
+								<b>Nro: </b> {{$trabajador->nro}}
+							</li>
+							<li class="list-group-item">
+								<b>Entre calles: </b> {{$trabajador->entre_calles}}
+							</li>
+							<li class="list-group-item">
+								<b>Localidad: </b> {{$trabajador->localidad}}
+							</li>
+							<li class="list-group-item">
+								<b>Partido: </b> {{$trabajador->partido}}
+							</li>
+							<li class="list-group-item">
+								<b>Codigo postal: </b> {{$trabajador->cod_postal}}
+							</li>
+
+						</ul>
+					</div>
+					<div class="col-sm-12">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">
+								<b>Observaciones: </b> {{$trabajador->observaciones}}
+							</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
 
 </div>

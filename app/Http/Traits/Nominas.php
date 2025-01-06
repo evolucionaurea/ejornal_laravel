@@ -10,6 +10,7 @@ use App\CovidVacuna;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Ausentismo;
+use App\Caratula;
 use App\Preocupacional;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -195,6 +196,8 @@ trait Nominas
 	{
 		$clientes = $this->getClientesUser();
 
+		$caratula = Caratula::where('id_nomina', $id)->latest()->first();
+
 		$trabajador = Nomina::findOrFail($id);
 
 
@@ -276,7 +279,7 @@ trait Nominas
 		foreach($preocupacionales as $preocupacional){
 			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
 				'fecha'=>$preocupacional->fecha,
-				'tipo'=>$preocupacional->tipo->nombre,
+				'tipo' => isset($preocupacional->tipo) ? $preocupacional->tipo->nombre : 'Sin especificar',
 				'evento'=>'Exámen Médico Complementario',
 				'observaciones'=>$preocupacional->observaciones,
 				'usuario'=>'',
@@ -287,6 +290,7 @@ trait Nominas
 
 
 		return compact(
+			'caratula',
 			'trabajador',
 			'consultas_medicas',
 			'consultas_enfermeria',
