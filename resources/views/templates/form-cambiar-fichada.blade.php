@@ -1,5 +1,6 @@
 <form data-form="cambiar-fichada">
-	<p>Fecha actual: <strong data-content="current_date"></strong></p>
+	<p>Empleado: <strong data-content="empleado"></strong></p>
+	<p>Fecha registro actual: <strong data-content="current_date"></strong></p>
 	{{-- <input type="hidden" name="old_date" > --}}
 	<input type="hidden" name="id">
 	<input type="hidden" name="action">

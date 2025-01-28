@@ -84,6 +84,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	/// REPORTES
 
 	// Fichadas
+	Route::get('admin/reportes/fichada_nueva/{id}','AdminReporteController@find_fichada');
 	Route::get('admin/reportes_fichadas_nuevas/exportar','AdminReporteController@exportar_fichadas');
 	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('/admin/reportes_fichadas_nuevas');
 

@@ -112,11 +112,12 @@ $(() => {
 
 		const td = $(btn.currentTarget).closest('td')
 		const action = $(btn.currentTarget).attr('data-action')
-		const oldDate = $(btn.currentTarget).attr('data-fecha')
+
 		const tr = $(btn.currentTarget).closest('tr')
 		const id = tr.attr('data-id')
 
 		const fecha = td.find('span').text()
+		const empleado = tr.find('td:first-of-type').text()
 
 		//return console.log( oldDate, action, id )
 
@@ -126,10 +127,27 @@ $(() => {
 		// Obtener el valor directamente del data-ingreso o data-egreso
 		///const valor = isEditIngreso ? $(this).data('ingreso') : $(this).data('egreso');
 
-		const response = await get_template('/templates/form-cambiar-fichada')
+		const promise = await Promise.all([
+			get_template('/templates/form-cambiar-fichada'),
+			axios.get(`/admin/reportes/fichada_nueva/${id}`)
+		])
+
+		const response = promise[0]
+		const fichada = promise[1].data
+
+
 		const form = $(response)
-		form.find('[data-content="current_date"]').text(fecha)
-		//form.find('[name="old_date"]').val(oldDate)
+		form.find('[data-content="current_date"]').text(`${action=='ingreso' ? fichada.ingreso : fichada.egreso} hs.`)
+		form.find('[data-content="empleado"]').text(fichada.user.nombre)
+
+		const old_date_obj = new Date(action=='ingreso' ? fichada.ingreso_carbon : fichada.egreso_carbon)
+
+		const old_month = old_date_obj.getMonth()+1
+		const old_day = old_date_obj.getDate()
+		const old_date = `${old_day<10 ? '0'+old_day : old_day}/${old_month<10 ? '0'+old_month : old_month}/${old_date_obj.getFullYear()}`
+		//console.log(old_date_obj.getHours())
+
+		form.find('[name="new_date"]').val(old_date)
 		form.find('[name="id"]').val(id)
 		form.find('[name="action"]').val(action)
 
@@ -137,12 +155,14 @@ $(() => {
 			const option = dom('option')
 			const hour = i<10 ? `0${i}` : i
 			option.val(hour).text(hour)
+			if(i==old_date_obj.getHours()) option.attr({selected:true})
 			form.find('[name="new_hour"]').append(option)
 		}
 		for(var m=0; m<=59; m++){
 			const option = dom('option')
 			const minutes = m<10 ? `0${m}` : m
 			option.val(minutes).text(minutes)
+			if(m==old_date_obj.getMinutes()) option.attr({selected:true})
 			form.find('[name="new_minutes"]').append(option)
 		}
 
@@ -195,19 +215,6 @@ $(() => {
 
 		if(!swal.isConfirmed) return false
 
-		/*try{
-			swal.value.id_loggeado = $('#id_loggeado').val()
-			const response = await axios.post('/api/cambiar_fichada',swal.value)
-
-			Swal.fire('Éxito', 'La fichada se actualizó correctamente', 'success')
-
-			table.datatable_instance.ajax.reload()
-
-		}catch(error){
-			Swal.fire('Error', error.response.data.message, 'error')
-		}*/
-
-
 	})
 
 	$('body').on('submit','[data-form="cambiar-fichada"]',async form=>{
@@ -216,10 +223,15 @@ $(() => {
 
 		try{
 			const response = await axios.post('/admin/reportes/cambiar_fichada',post)
-			//console.log(response.data)
+			///console.log(response)
 			toastr.success(response.data.message)
-			table.datatable_instance.ajax.reload()
+
+			$('[data-table="fichadas"]').find(`[data-id="${response.data.last_record.id}"]`)
 			Swal.close()
+
+			$('.dataTables_filter input').val(response.data.last_record.user.nombre).trigger('keyup').effect('highlight').effect('pulsate')
+			//table.datatable_instance.ajax.reload()
+
 		}catch(error){
 			toastr.error(error.response.data.message)
 		}
