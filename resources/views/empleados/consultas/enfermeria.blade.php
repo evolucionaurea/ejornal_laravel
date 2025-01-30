@@ -27,11 +27,8 @@
 
 		<div class="tarjeta">
 
-			@php
-			$export = true;
-			@endphp
 
-			@include('../../modulos.busqueda_fecha')
+			@include('../../modulos/busqueda_consultas')
 
 
 			<table data-table="consultas-enfermeria" class="table table-striped table-hover table-sm">
@@ -41,12 +38,11 @@
 					<tr>
 						<th>ID</th>
 						<th>Trabajador</th>
+						<th>Estado</th>
 						<th>Fecha</th>
 						<th>Derivación</th>
 						<th>Cargado por</th>
-
 						<th>Acciones</th>
-
 					</tr>
 				</thead>
 				<!--Table head-->

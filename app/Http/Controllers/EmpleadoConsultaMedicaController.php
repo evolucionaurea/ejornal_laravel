@@ -54,6 +54,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			'consultas_medicas.*',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
+		->with('trabajador')
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id_cliente', auth()->user()->id_cliente_actual);
@@ -67,7 +68,7 @@ class EmpleadoConsultaMedicaController extends Controller
 
 		if($request->search){
 			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search['value'].'%';
+				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('consultas_medicas.derivacion_consulta','like',$filtro)
 					->orWhere('consultas_medicas.tratamiento','like',$filtro)
@@ -75,6 +76,19 @@ class EmpleadoConsultaMedicaController extends Controller
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
+
+		if($request->estado!=''){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+		}
+		if($request->dni){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
+		}
+
+
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];

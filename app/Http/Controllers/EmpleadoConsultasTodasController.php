@@ -57,6 +57,7 @@ class EmpleadoConsultasTodasController extends Controller
 			'diagnostico_consulta.nombre as diagnostico',
 			DB::raw('"Médica" as tipo') // Agregamos un campo tipo para identificar consultas médicas
 		)
+		->with('trabajador')
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id_cliente', auth()->user()->id_cliente_actual);
@@ -73,13 +74,14 @@ class EmpleadoConsultasTodasController extends Controller
 			'diagnostico_consulta.nombre as diagnostico',
 			DB::raw('"Enfermería" as tipo') // Agregamos un campo tipo para identificar consultas de enfermería
 		)
+		->with('trabajador')
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_enfermerias.id_cliente', auth()->user()->id_cliente_actual);
 
 
 		if ($request->search) {
-			$filtro = '%' . $request->search['value'] . '%';
+			$filtro = '%' . $request->search . '%';
 
 			$medicas->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
@@ -104,6 +106,23 @@ class EmpleadoConsultasTodasController extends Controller
 		if ($request->to) {
 			$medicas->whereDate('consultas_medicas.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 			$enfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		}
+
+		if($request->estado!=''){
+			$medicas->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+			$enfermerias->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+		}
+		if($request->dni){
+			$medicas->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
+			$enfermerias->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
 		}
 
 		$query = $medicas->union($enfermerias);

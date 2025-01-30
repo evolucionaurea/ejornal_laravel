@@ -13,18 +13,15 @@
 
 		<div class="cabecera">
 			<h2>Todas las consultas</h2>
-			<p>Aquí puede ver el listado de todas las consultas médicas y de enfermeria</p>
+			<p>Aquí puede ver el listado de todas las consultas médicas y de enfermería</p>
 		</div>
 
 		@include('../../mensajes_validacion')
 
 		<div class="tarjeta">
 
-			@php
-			$export = true;
-			@endphp
 
-			@include('../../modulos.busqueda_fecha')
+			@include('../../modulos/busqueda_consultas')
 
 
 			<table data-table="consultas" class="table table-striped table-hover table-sm">
@@ -35,12 +32,11 @@
 						<th>ID</th>
 						<th>Consulta</th>
 						<th>Trabajador</th>
+						<th>Estado</th>
 						<th>Fecha</th>
 						<th>Derivación</th>
 						<th>Cargado por</th>
-
 						<th>Acciones</th>
-
 					</tr>
 				</thead>
 				<!--Table head-->
