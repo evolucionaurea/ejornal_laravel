@@ -178,6 +178,16 @@ hr.hr-line-dashed {
   border-top: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
+.form-control::-moz-placeholder {
+  color: #8c8c8c;
+  font-style: italic;
+}
+
+.form-control::placeholder {
+  color: #8c8c8c;
+  font-style: italic;
+}
+
 .btn-ejornal {
   color: white !important;
   cursor: pointer;
@@ -605,6 +615,10 @@ table.table {
     white-space: normal;
     width: 100%;
   }
+}
+
+.select2-dropdown {
+  z-index: 1080 !important;
 }
 
 .select2-container--default.select2-container--focus .select2-selection--multiple {

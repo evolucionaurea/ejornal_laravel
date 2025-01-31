@@ -20,7 +20,7 @@ class CreateAgendaTable extends Migration
             $table->unsignedBigInteger('nomina_id')->nullable();
             $table->dateTime('fecha_inicio');
             $table->dateTime('fecha_final');
-            $table->text('comentarios');
+            $table->text('comentarios')->nullable();
             $table->unsignedInteger('estado_id')->nullable();
             $table->timestamps();
 

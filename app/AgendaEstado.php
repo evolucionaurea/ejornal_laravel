@@ -10,5 +10,5 @@ class AgendaEstado extends Model
   protected $table = 'agenda_estados';
 
   // Campos habilitados para ingresar
-  protected $fillable = ['nombre','reference'];
+  protected $fillable = ['nombre','referencia','descripcion','color'];
 }

@@ -1,0 +1,28 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use App\AgendaEstado;
+use App\Nomina;
+use App\Cliente;
+
+class Agenda extends Model
+{
+  // Nombre de la tabla
+  protected $table = 'agenda';
+
+  // Campos habilitados para ingresar
+  protected $fillable = ['user_id','cliente_id','nomina_id','fecha_inicio','fecha_final','estado_id'];
+
+
+  public function estado(){
+  	return $this->belongsTo(AgendaEstado::class,'estado_id');
+  }
+  public function trabajador(){
+  	return $this->belongsTo(Nomina::class,'nomina_id');
+  }
+  public function cliente(){
+  	return $this->belongsTo(Cliente::class,'cliente_id');
+  }
+}

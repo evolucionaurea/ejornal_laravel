@@ -176,3 +176,8 @@ select{
 hr.hr-line-dashed{
   border-top: 1px dashed rgba(0,0,0,.1);
 }
+
+.form-control::placeholder{
+  color:rgb(140,140,140);
+  font-style: italic;
+}
