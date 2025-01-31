@@ -264,4 +264,9 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 
+	// AGENDA
+	Route::get('empleados/agenda','EmpleadosAgendaController@index')->name('empleados/agenda');
+
+
+
 });

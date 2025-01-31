@@ -19,6 +19,18 @@
 #sidebar-wrapper .list-group {
   width: 16rem;
   max-width: 16rem;
+
+  .new{
+    background-color:$ejornal_claro;
+    color:$blue_dark;
+    border-top-left-radius:2pt;
+    border-bottom-left-radius:2pt;
+    padding:.05rem .25rem;
+    font-size: 9pt;
+    position:absolute;
+    right:0;
+    line-height:1;
+  }
 }
 
 #page-content-wrapper {

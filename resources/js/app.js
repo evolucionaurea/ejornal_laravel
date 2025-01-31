@@ -87,6 +87,8 @@ if(route=='preocupacionales.edit') require('./empleados/preocupacionales.create'
 if(route=='medicas.create') require('./empleados/consultas.medicas.create')
 if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
 
+if(route=='empleados/agenda') require('./empleados/agenda')
+
 
 
 //CLIENTES

@@ -20,5 +20,8 @@ class TemplatesController extends Controller
 	public function form_cambiar_fichada(){
 		return view('templates.form-cambiar-fichada');
 	}
+	public function form_agendar_evento(){
+		return view('templates.form-agendar-evento');
+	}
 
 }
