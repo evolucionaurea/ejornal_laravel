@@ -83,7 +83,8 @@ $(()=>{
 			const response = await axios.post('/empleados/agenda/agregar_turno',post)
 			toastr.success(response.data.message)
 
-			Swal.close()
+			//Swal.close()
+			window.location.reload()
 
 		}catch(error){
 			toastr.error(error.response.data.message)

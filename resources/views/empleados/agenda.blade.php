@@ -27,7 +27,28 @@
 						<h4>Próximos Turnos</h4>
 					</div>
 					<div class="tarjeta-body">
-						xx
+						@if($turnos)
+						<div class="timeline">
+							@foreach($turnos as $turno)
+							<div class="timeline-card">
+								<div class="content">
+									<div class="datetime">{{ $turno->fecha_inicio_formatted }}</div>
+									<div class="title">{{ $turno->trabajador->nombre }}</div>
+									<div class="remaining">Faltan 1 día</div>
+									<div class="comments">{!! $turno->comentarios ?? '<span class="text-muted font-italic">[sin comentarios]</span>' !!}</div>
+								</div>
+								<div class="actions">
+									<button class="btn btn-primary">
+										<i class="fa fa-pencil"></i>
+									</button>
+									<button class="btn btn-danger">
+										<i class="fa fa-trash"></i>
+									</button>
+								</div>
+							</div>
+							@endforeach
+						</div>
+						@endif
 					</div>
 					<div class="tarjeta-footer">
 

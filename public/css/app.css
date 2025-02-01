@@ -625,6 +625,66 @@ table.table {
   border: 1px solid #376d7a;
 }
 
+.timeline .timeline-card {
+  border-left: 1px solid #3490dc;
+  padding-left: 1rem;
+  padding-top: 0;
+  padding-bottom: 2rem;
+  position: relative;
+  display: flex;
+}
+
+.timeline .timeline-card:before {
+  content: '';
+  border-radius: 50%;
+  background-color: #3490dc;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: -5px;
+  top: 8px;
+}
+
+.timeline .timeline-card:hover {
+  background-color: #f0f0f0;
+}
+
+.timeline .timeline-card .content {
+  width: 100%;
+}
+
+.timeline .timeline-card .content .datetime {
+  font-size: 14pt;
+  color: #3490dc;
+  margin-bottom: .5rem;
+}
+
+.timeline .timeline-card .content .title {
+  font-size: 12pt;
+  color: black;
+}
+
+.timeline .timeline-card .content .remaining {
+  font-size: 10pt;
+}
+
+.timeline .timeline-card .content .comments {
+  padding-top: .25rem;
+  font-size: 11pt;
+}
+
+.timeline .timeline-card .actions {
+  min-width: 80px;
+  text-align: right;
+}
+
+.timeline .timeline-card .actions .btn {
+  padding: .25rem;
+  line-height: 1;
+  font-size: 8pt;
+  margin: .25rem;
+}
+
 #sidebar-wrapper {
   min-height: 100vh;
   margin-left: -15rem;

@@ -20,7 +20,18 @@ class EmpleadosAgendaController extends Controller
 	public function index(){
 
 		$clientes = $this->getClientesUser();
-		return view('empleados.agenda',compact('clientes'));
+
+		$now = CarbonImmutable::now();
+
+		$turnos = Agenda::where('user_id',auth()->user()->id)
+			->where('cliente_id',auth()->user()->id_cliente_actual)
+			->where('fecha_inicio','>=',$now)
+			->with('trabajador')
+			->orderBy('fecha_inicio','asc')
+			->take(5)->get();
+
+
+		return view('empleados.agenda',compact('clientes','turnos'));
 	}
 
 	public function store(Request $request){
