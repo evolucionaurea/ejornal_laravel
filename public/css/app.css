@@ -1004,6 +1004,20 @@ table.table {
   background-color: #f2f2f2;
 }
 
+.calendar-event {
+  background-color: #2f4050;
+  color: white !important;
+  font-size: 8pt;
+}
+
+.calendar-event .fc-daygrid-event-dot {
+  border-color: #6cb2eb;
+}
+
+.calendar-event .fc-event-title {
+  font-weight: 300;
+}
+
 .bloque_codigo pre {
   padding: 10px;
   color: white;

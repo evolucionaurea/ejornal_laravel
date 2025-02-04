@@ -1,6 +1,10 @@
-<form data-form="agregar-turno" class="text-left p-3">
+<form data-form="agregar-turno" class="text-left">
 
 	@csrf
+
+
+	<h4 data-content="form-title"></h4>
+	<div data-content="form-caption" class="text-muted font-italic small mb-3"></div>
 
 
 	<div class="mb-3">
@@ -63,8 +67,6 @@
 		<i class="fa fa-save fa-fw"></i>
 		<span>Guardar Turno</span>
 	</button>
-
-	<hr>
 
 
 </form>

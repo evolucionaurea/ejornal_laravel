@@ -135,4 +135,30 @@ class EmpleadosAgendaController extends Controller
 		return $query->get();
 	}
 
+	public function search(Request $request)
+	{
+
+		$from = CarbonImmutable::createFromTimeString($request->from);
+		$to = CarbonImmutable::createFromTimeString($request->to);
+
+		$query = Agenda::with(['cliente','trabajador'])
+			->where('fecha_inicio','>=',$from)
+			->where('fecha_inicio','<=',$to)
+			->get();
+
+		return response()->json([
+			'from' => $from,
+			'to' => $to,
+			'results' => $query
+		]);
+
+	}
+	public function find($id){
+
+		$turno = Agenda::with(['trabajador','cliente','estado'])->find($id);
+		return response()->json([
+			'data' => $turno
+		]);
+	}
+
 }

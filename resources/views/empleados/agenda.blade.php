@@ -37,6 +37,7 @@
 									<div class="remaining">Faltan 1 día</div>
 									<div class="comments">{!! $turno->comentarios ?? '<span class="text-muted font-italic">[sin comentarios]</span>' !!}</div>
 								</div>
+								@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1 )
 								<div class="actions">
 									<button class="btn btn-primary">
 										<i class="fa fa-pencil"></i>
@@ -45,6 +46,7 @@
 										<i class="fa fa-trash"></i>
 									</button>
 								</div>
+								@endif
 							</div>
 							@endforeach
 						</div>
@@ -81,5 +83,8 @@
 
 
 </div>
+
+
+@include('modulos.modal')
 
 @endsection
