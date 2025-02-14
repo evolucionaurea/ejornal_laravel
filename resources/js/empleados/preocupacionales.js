@@ -50,10 +50,13 @@ $(()=>{
 					className:'align-middle',
 					render:v=>{
 						if(v.fecha_vencimiento==null) return `<span class="text-muted font-style-italic">[sin vencimiento]</span>`
-						return v.fecha_vencimiento
+						return `
+							<div>${v.fecha_vencimiento}</div>
+							${v.estado_vencimiento_label}
+						`
 					}
 				},
-				{
+				/*{
 					data:'vencimiento_label',
 					name:'vencimiento_label',
 					className:'align-middle',
@@ -63,7 +66,7 @@ $(()=>{
 					data:'completado_label',
 					className:'align-middle',
 					name:'completado'
-				},
+				},*/
 				{
 					data:'archivos',
 					name:'file_path',

@@ -34,8 +34,7 @@
 		@endif
 
 
-		<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post"
-			enctype="multipart/form-data">
+		<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
 
 			@csrf
 
@@ -104,28 +103,25 @@
 							<option value="1" {{ old('tiene_vencimiento')==='1' ? 'selected' : '' }}>Si</option>
 						</select>
 					</div>
+					<div  data-toggle="vencimiento" class="form-group col-lg-3 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
+						<label for="">Fecha de Vencimiento</label>
+						<input name="fecha_vencimiento" type="text" class="form-control" value="{{ old('fecha_vencimiento') }}">
+					</div>
 
-					<div data-toggle="vencimiento"
-						class="col-lg-6 border-left p-4 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
+					<div data-toggle="vencimiento" class="col-lg-3 p-4 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
 						<div class="row">
-							<div class="form-group col-lg-6">
-								<label for="">Fecha de Vencimiento</label>
-								<input name="fecha_vencimiento" type="text" class="form-control"
-									value="{{ old('fecha_vencimiento') }}">
-							</div>
-							<div class="form-group col-lg-6">
+							{{-- <div class="form-group col-lg-6">
 								<label for="">Completado</label>
 								<select name="completado" class="form-control">
 									<option value="0" {{ old('completado')==='0' ? 'selected' : '' }}>No</option>
 									<option value="1" {{ old('completado')==='1' ? 'selected' : '' }}>Si</option>
 								</select>
-							</div>
+							</div> --}}
 						</div>
-						<div class="form-group">
+						{{-- <div class="form-group">
 							<label for="">Comentarios</label>
-							<textarea name="completado_comentarios" rows="5" class="form-control"
-								disabled>{{ old("completado_comentarios") }}</textarea>
-						</div>
+							<textarea name="completado_comentarios" rows="5" class="form-control" >{{ old("completado_comentarios") }}</textarea>
+						</div> --}}
 					</div>
 
 				</div>
@@ -144,8 +140,7 @@
 									<tr class="bg-light">
 										<th colspan="2">
 											<label for="" class="mb-0">Adjuntar archivos</label>
-											<span class="small text-muted font-italic">Puedes adjuntar más de 1
-												archivo</span>
+											<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
 										</th>
 									</tr>
 								</thead>
@@ -177,8 +172,7 @@
 			</div>
 
 			<div class="text-center m-5">
-				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Crear
-					preocupacional</button>
+				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Crear preocupacional</button>
 			</div>
 		</form>
 

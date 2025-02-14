@@ -106,16 +106,16 @@
 							<option value="1" {{ $preocupacional->fecha_vencimiento ? 'selected' : '' }} >Si</option>
 						</select>
 					</div>
+					<div class="form-group col-lg-3" data-toggle="vencimiento" {{ !is_null($preocupacional->fecha_vencimiento) ? '' : 'd-none' }}>
+						<label for="">Fecha de Vencimiento</label>
+						<input name="fecha_vencimiento" type="text" class="form-control"
+							value="{{ $preocupacional->fecha_vencimiento ? $preocupacional->fecha_vencimiento->format('d/m/Y') : '' }}">
+					</div>
 
-					<div data-toggle="vencimiento"
-						class="col-lg-6 border-left p-4 {{ !is_null($preocupacional->fecha_vencimiento) ? '' : 'd-none' }}">
+					<div
+						class="col-lg-6 p-4 {{ !is_null($preocupacional->fecha_vencimiento) ? '' : 'd-none' }}">
 						<div class="row">
-							<div class="form-group col-lg-6">
-								<label for="">Fecha de Vencimiento</label>
-								<input name="fecha_vencimiento" type="text" class="form-control"
-									value="{{ $preocupacional->fecha_vencimiento ? $preocupacional->fecha_vencimiento->format('d/m/Y') : '' }}">
-							</div>
-							<div class="form-group col-lg-6">
+							{{-- <div class="form-group col-lg-6">
 								<label for="">Completado</label>
 								<select name="completado" class="form-control">
 									<option value="0" {{ $preocupacional->completado===0 ? 'selected' : '' }}>No
@@ -123,13 +123,12 @@
 									<option value="1" {{ $preocupacional->completado===1 ? 'selected' : '' }}>Si
 									</option>
 								</select>
-							</div>
+							</div> --}}
 						</div>
-						<div class="form-group">
+						{{-- <div class="form-group">
 							<label for="">Comentarios</label>
-							<textarea name="completado_comentarios" rows="5" class="form-control" {{
-								$preocupacional->completado ? '' : 'disabled' }}>{{ $preocupacional->completado_comentarios }}</textarea>
-						</div>
+							<textarea name="completado_comentarios" rows="5" class="form-control" {{ !$preocupacional->completado ? '' : 'disabled' }}>{{ $preocupacional->completado_comentarios }}</textarea>
+						</div> --}}
 					</div>
 
 				</div>

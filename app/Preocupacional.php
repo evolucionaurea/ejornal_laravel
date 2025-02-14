@@ -23,19 +23,19 @@ class Preocupacional extends Model
 		'fecha'=>'date:d/m/Y',
 		'fecha_vencimiento'=>'date:d/m/Y',
 	];
-	protected $appends = ['estado_vencimiento','vencimiento_label','completado_label'];
+	protected $appends = ['estado_vencimiento_label','vencimiento_label','completado_label'];
 
 
-	public function trabajador(){
-		return $this->belongsTo(Nomina::class,'id_nomina')->withTrashed();
-	}
 
-	public function getEstadoVencimientoAttribute()
+	public function getEstadoVencimientoLabelAttribute()
 	{
-		if(is_null($this->fecha_vencimiento)) return null;
-		if($this->completado) return null;
+		if(is_null($this->fecha_vencimiento)) return '<span class="text-muted font-style-italic">[sin vencimiento]</span>';
+		if($this->completado) return '<span class="badge badge-success">completado</span>';
+
 		$now = Carbon::now();
-		return (int) ($this->fecha_vencimiento <= $now);
+		if($this->fecha_vencimiento <= $now) return '<span class="badge badge-danger">vencido</span>';
+		$diff = $this->fecha_vencimiento->diffInDays($now);
+		return '<span class="badge badge-secondary">vence en '.$diff.' días</span>';
 	}
 	public function getVencimientoLabelAttribute()
 	{
@@ -53,7 +53,16 @@ class Preocupacional extends Model
 	{
 		if(is_null($this->fecha_vencimiento)) return '';
 		return '<span class="badge badge-'.($this->completado?'success':'danger').'">'.($this->completado?'completado':'sin completar').'</span>';
+	}
+	public function getCreatedAtFormattedAttribute()
+	{
+		return $this->created_at->format('d/m/Y H:i:s \h\s.');
+	}
 
+
+
+	public function trabajador(){
+		return $this->belongsTo(Nomina::class,'id_nomina')->withTrashed();
 	}
 
 	public function archivos()
@@ -68,11 +77,6 @@ class Preocupacional extends Model
 
 	public function cliente(){
 		return $this->belongsTo(Cliente::class,'id_cliente');
-	}
-
-	public function getCreatedAtFormattedAttribute()
-	{
-		return $this->created_at->format('d/m/Y H:i:s \h\s.');
 	}
 
 
