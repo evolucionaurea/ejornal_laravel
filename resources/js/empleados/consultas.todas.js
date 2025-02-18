@@ -28,6 +28,8 @@ $(()=>{
 					name:'nombre',
 					data:'trabajador',
 					render:v=>{
+						console.log('ver', v);
+						
 						if(v==null) return '<span class="text-muted font-italic">[trabajador no encontrado]</span>'
 						return `
 							<div>${v.nombre}</div>

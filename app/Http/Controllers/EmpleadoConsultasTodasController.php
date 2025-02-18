@@ -88,9 +88,11 @@ class EmpleadoConsultasTodasController extends Controller
 			DB::raw('NULL as id_diagnostico_consulta'), // Ajuste para que coincida con otras consultas
 			'consultas_nutricionales.fecha_atencion as fecha',
 			DB::raw('NULL as derivacion_consulta'),
+			DB::raw('NULL as user'),
 			DB::raw('NULL as diagnostico'),
-			DB::raw('"Nutricional" as tipo')
+			DB::raw('"Nutricional" as tipo'),
 		)
+		->with('trabajador')
 		->join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
 		->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
 		
@@ -139,12 +141,18 @@ class EmpleadoConsultasTodasController extends Controller
 			$enfermerias->whereHas('trabajador',function($query) use ($request){
 				$query->where('estado',$request->estado);
 			});
+			$nutricionales->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
 		}
 		if($request->dni){
 			$medicas->whereHas('trabajador',function($query) use ($request){
 				$query->where('dni',$request->dni);
 			});
 			$enfermerias->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
+			$nutricionales->whereHas('trabajador',function($query) use ($request){
 				$query->where('dni',$request->dni);
 			});
 		}

@@ -22,6 +22,9 @@
 				<i class="fas fa-user fa-lg ml-4"></i>
 				@endif
 				<span class="ml-2">{{$trabajador->nombre}}</span>
+				@if( auth()->user()->id_cliente_actual != $trabajador->id_cliente)
+				<span class="badge badge-dark">transferido</span>
+				@endif
 			</div>
 			<p>Aquí podrá ver las consultas y ausentismos del trabajador</p>
 			<div class="cabecera_acciones">

@@ -4,7 +4,7 @@
 	<div class="d-flex justify-content-between align-items-start">
 
 		<!-- Primer <ul>: borde blanco suave -->
-		<div class="p-2" style="background-color: #ebebeb; color: #535353;">
+		<div class="p-2" style="background-color: #ebebeb; color: #535353; flex-grow:1">
 			<h4 class="text-black p-2 mb-0">Datos rapidos</h4>
 			<ul class="d-flex flex-wrap"
 				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 20px;">
@@ -55,26 +55,10 @@
 		</div>
 
 
-		<div class="col-lg-4 col-md-3 col-sm-12 text-center">
-			@if ($trabajador->foto)
-			{{-- <img style="width: 300px;" src="" class="rounded"> --}}
-			<div class="foto-perfil" style="background-image: url({{ $trabajador->photo_url }})"></div>
-			@else
-			<i class="fas fa-user fa-10x"></i>
-			@endif
-			<br>
-			<br>
-			<h5>{{$trabajador->nombre}}</h5>
-
-			@if( auth()->user()->id_cliente_actual != $trabajador->id_cliente)
-			<span class="badge badge-dark">transferido</span>
-			@endif
-
-		</div>
 
 		<!-- Segundo <ul>: fondo azul oscuro y letras azul claro -->
 		@if ($caratula)
-		<div class="p-2" style="background-color: #1a3b63; color: #8cb3ff;">
+		<div class="p-2" style="background-color: #1a3b63; color: #8cb3ff; flex-grow:1">
 			<h4 class="text-white p-2 mb-0">Caratula</h4>
 			<ul class="d-flex flex-wrap"
 				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 20px;">
