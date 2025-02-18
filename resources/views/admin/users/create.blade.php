@@ -72,6 +72,14 @@
 						</select>
 					</div>
 
+					<div class="form-group col-md-4 select_permiso_edicion_fichadas">
+						<label>Permiso Edicion Fichadas</label>
+						<select name="permiso_edicion_fichada" class="form-control form-control-sm">
+							<option value="0">No</option>
+							<option value="1">Si</option>
+						</select>
+					</div>
+
 					<div class="form-group col-md-4">
 						<label>Contraseña</label>
 						<input name="password" type="password" class="form-control form-control-sm" placeholder="">

@@ -17,15 +17,21 @@ $(()=>{
 			order:[[ 1, "desc" ]],
 			columns:[
 				{
-					data:'trabajador',
+					data:null,
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
+						//console.log('objeto v', v);
+
+						if(v==null) return '<span class="text-muted">[No Ingresado]</span>'
+
 						return `
-							<div>${v.nombre}<div>
-							<div class="small">DNI: ${v.dni}</div>
-							<div class="small">Tel: ${v.telefono}</div>
-						`
+							<div>${v.trabajador.nombre}</div>
+							<div class="small">DNI: ${v.trabajador.dni}</div>
+							<div class="small">Tel: ${v.trabajador.telefono}</div>
+							${v.id_cliente != v.trabajador_cliente ? '<span class="badge badge-dark">transferido</span>' : ''}
+						`;
+
 					}
 				},
 				{
@@ -44,10 +50,13 @@ $(()=>{
 					className:'align-middle',
 					render:v=>{
 						if(v.fecha_vencimiento==null) return `<span class="text-muted font-style-italic">[sin vencimiento]</span>`
-						return v.fecha_vencimiento
+						return `
+							<div>${v.fecha_vencimiento}</div>
+							${v.estado_vencimiento_label}
+						`
 					}
 				},
-				{
+				/*{
 					data:'vencimiento_label',
 					name:'vencimiento_label',
 					className:'align-middle',
@@ -57,7 +66,7 @@ $(()=>{
 					data:'completado_label',
 					className:'align-middle',
 					name:'completado'
-				},
+				},*/
 				{
 					data:'archivos',
 					name:'file_path',
@@ -88,6 +97,8 @@ $(()=>{
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+
+						if(v.id_cliente != v.trabajador_cliente) return ''
 
 						return `
 						<div class="acciones_tabla justify-content-end">

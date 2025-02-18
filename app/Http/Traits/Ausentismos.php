@@ -41,7 +41,7 @@ trait Ausentismos {
 				'nominas.nombre as trabajador_nombre',
 				'nominas.dni as trabajador_dni',
 				'nominas.sector as trabajador_sector',
-				//'nominas.id_cliente',
+				'nominas.id_cliente as trabajador_cliente',
 				'nominas.estado as trabajador_estado',
 
 				'ausentismo_tipo.nombre as ausentismo_tipo',
@@ -140,28 +140,7 @@ trait Ausentismos {
 				->whereDate('fecha_final','>=',$now);*/
 
 		}
-		// if($request->ausentes=='mes-anterior'){
 
-		// 	$query->where(function($query) use ($now){
-		// 		$query->where(function($query) use ($now){
-		// 			$query
-		// 				->whereBetween('fecha_inicio',[$now->startOfMonth()->subMonth(),$now->startOfMonth()->subMonth()->endOfMonth()])
-		// 				->where(function($query) use ($now){
-		// 					$query->where('fecha_final','<=',$now->startOfMonth()->subMonth()->endOfMonth())
-		// 						->orWhere('fecha_final',null);
-		// 				});
-		// 		})
-		// 		// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
-		// 		->orWhere(function($query) use ($now){
-		// 			$query->where('fecha_inicio','<',$now->startOfMonth()->subMonth())
-		// 				->where(function($query) use ($now){
-		// 					$query->where('fecha_final','>=',$now->startOfMonth()->subMonth()->endOfMonth())
-		// 						->orWhere('fecha_final',null);
-		// 				});
-		// 		});
-		// 	});
-
-		// }
 		if($request->ausentes=='mes-anterior'){
 
 			// Fecha del primer día del mes anterior

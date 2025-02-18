@@ -20,7 +20,8 @@ class User extends Authenticatable
 
 	// Campos habilitados para ingresar
 	protected $fillable = [
-	   'id_rol', 'nombre', 'apellido', 'estado', 'personal_interno', 'email', 'permiso_desplegables', 'onedrive', 'cuil'
+	   'id_rol', 'nombre', 'apellido', 'estado', 'personal_interno', 'email', 'permiso_desplegables', 'onedrive', 'cuil',
+	   'permiso_edicion_fichada'
 	];
 
 	/**
@@ -61,6 +62,11 @@ class User extends Authenticatable
 	public function especialidad()
 	{
 		return $this->belongsTo(Especialidad::class,'id_especialidad');
+	}
+
+	public function cliente_actual()
+	{
+		return $this->belongsTo(Cliente::class,'id_cliente_actual');
 	}
 
 

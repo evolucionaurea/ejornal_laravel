@@ -163,6 +163,9 @@ class AdminUserController extends Controller
 		}else {
 			$user->personal_interno = 0;
 		}
+		if ($request->rol == 1) {
+			$user->permiso_edicion_fichada = $request->permiso_edicion_fichada;
+		}
 		if ($request->rol == 2) {
 			$user->permiso_desplegables = $request->permiso_desplegables;
 			$user->id_especialidad = $request->especialidad;
@@ -292,7 +295,7 @@ class AdminUserController extends Controller
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
 			'email' => 'required|email',
-			'estado' => 'required|numeric',
+			'estado' => 'required|numeric'
 		]);
 
 		if ($request->rol == 2) {
@@ -345,6 +348,9 @@ class AdminUserController extends Controller
 		$user->nombre = $request->nombre;
 		$user->email = $request->email;
 		$user->estado = $request->estado;
+		if ($request->rol == 1) {
+			$user->permiso_edicion_fichada = $request->permiso_edicion_fichada;
+		}
 		if (isset($request->personal_interno) && !empty($request->personal_interno) && $request->personal_interno == 'on' && $request->rol == 2) {
 		$user->personal_interno = 1;
 		}else {

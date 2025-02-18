@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 //use OwenIt\Auditing\Contracts\Auditable;
 use App\User;
 use App\Cliente;
@@ -27,6 +28,37 @@ class FichadaNueva extends Model
     'egreso' => 'datetime:d/m/Y - H:i:s'
   ];
 
+  public function getDispositivoAttribute()
+  {
+
+    switch ($this->attributes['dispositivo']) {
+
+      case 'desktop':
+        $device = 'Escritorio';
+        break;
+      case 'phone':
+        $device = 'Móvil';
+        break;
+      case 'tablet':
+        $device = 'Tablet';
+        break;
+      case 'robot':
+        $device = 'Robot';
+        break;
+
+      case 'other':
+        $device = 'Otro';
+        break;
+
+      default:
+        $device = 'Desconocido';
+        break;
+    }
+
+    return $device;
+
+  }
+
 
   public function user(){
   	return $this->belongsTo(User::class, 'id_user');
@@ -37,7 +69,7 @@ class FichadaNueva extends Model
 
   public function getIngresoCarbonAttribute()
   {
-  	return Carbon::parse($this->ingreso);
+  	return CarbonImmutable::parse($this->ingreso); //CHEQUEAR EN SERVIDOR
   }
   public function getIngresoFormattedAttribute()
   {
@@ -47,7 +79,7 @@ class FichadaNueva extends Model
 
   public function getEgresoCarbonAttribute()
   {
-  	return Carbon::parse($this->egreso);
+  	return CarbonImmutable::parse($this->egreso);//->timezone('America/Argentina/Buenos_Aires');
   }
   public function getEgresoFormattedAttribute()
   {
@@ -61,5 +93,7 @@ class FichadaNueva extends Model
 
   	return $this->ingreso_carbon->diff($this->egreso_carbon)->format('%H:%I');
   }
+
+
 
 }

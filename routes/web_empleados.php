@@ -169,6 +169,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/preocupacionales/destroy/{id}','EmpleadosPreocupacionalesController@destroy');
 	Route::post('empleados/preocupacionales/busqueda','EmpleadosPreocupacionalesController@busqueda');
 	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
+	Route::get('empleados/preocupacionales/find/{id}', 'EmpleadosPreocupacionalesController@find');
 
 
 	//Tipo Preocupacionales

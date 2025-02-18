@@ -54,6 +54,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			'consultas_medicas.*',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
+		->with('trabajador')
 		->join('nominas', 'consultas_medicas.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id_cliente', auth()->user()->id_cliente_actual);
@@ -67,7 +68,7 @@ class EmpleadoConsultaMedicaController extends Controller
 
 		if($request->search){
 			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search['value'].'%';
+				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('consultas_medicas.derivacion_consulta','like',$filtro)
 					->orWhere('consultas_medicas.tratamiento','like',$filtro)
@@ -75,6 +76,19 @@ class EmpleadoConsultaMedicaController extends Controller
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
+
+		if($request->estado!=''){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+		}
+		if($request->dni){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
+		}
+
+
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
@@ -419,10 +433,15 @@ class EmpleadoConsultaMedicaController extends Controller
 			return back()->with('error', 'No se encontraron consultas');
 		}
 
-		$query = ConsultaMedica::select('consultas_medicas.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
-		->join('nominas','nominas.id','consultas_medicas.id_nomina')
-		->join('diagnostico_consulta','diagnostico_consulta.id','consultas_medicas.id_diagnostico_consulta')
-		->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_medicas.fecha', 'desc');
+		$query = ConsultaMedica::select(
+			'consultas_medicas.*',
+			'nominas.nombre',
+			'nominas.email',
+			'diagnostico_consulta.nombre as diagnostico'
+		)
+			->join('nominas','nominas.id','consultas_medicas.id_nomina')
+			->join('diagnostico_consulta','diagnostico_consulta.id','consultas_medicas.id_diagnostico_consulta')
+			->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_medicas.fecha', 'desc');
 
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -442,7 +461,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
 		fputcsv($fp,[
 			'Trabajador',
-			'Email',
+			'CUIL',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -464,7 +483,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			fputcsv($fp,[
 				$consulta->nombre,
 				$consulta->email,
-				$consulta->fecha,
+				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,
 				$consulta->derivacion_consulta,
 				($consulta->amerita_salida ? 'Si' : 'No'),
@@ -476,8 +495,8 @@ class EmpleadoConsultaMedicaController extends Controller
 				$consulta->tension_arterial,
 				$consulta->frec_cardiaca,
 				$consulta->anamnesis,
-				$consulta->tratamiento,
-				$consulta->observaciones
+				str_replace(["\r", "\n"],' ',$consulta->tratamiento),
+				str_replace(["\r", "\n"],' ',$consulta->observaciones)
 			],';');
 		}
 		fseek($fp, 0);

@@ -14,8 +14,29 @@ $(()=>{
 		datatable_options:{
 			columns:[
 				{
-					data:'nombre',
-					name:'nominas.nombre'
+					data:null,
+					name:'nominas.nombre',
+					render:v=>{
+
+						if(v.trabajador.deleted_at != null){
+							return `
+								<div>${v.trabajador.nombre}</div>
+								<span class="badge badge-danger">eliminado</span>
+							`
+						}
+
+						let output = `
+						<div>
+							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-dark">${v.trabajador.nombre}</a>
+						</div>`
+						if(v.id_cliente != v.trabajador_cliente){
+							output += `<span class="badge badge-dark">transferido</span>`
+						}else{
+							output += `<span class="badge badge-${v.trabajador.estado==1 ? 'success' : 'danger'}">${v.trabajador.estado==1 ? 'activo' : 'inactivo'}</span>`
+						}
+						return output
+
+					}
 				},
 				{
 					data:row=>row,
@@ -134,12 +155,17 @@ $(()=>{
 									<i title="Historial" class="fas fa-book"></i>
 								</a>
 
-								<a title="Editar" href="tareas_livianas/${v.id}/edit">
-									<i class="fas fa-pencil"></i>
-								</a>
-								<button data-toggle="delete" data-id="${v.id}" title="Eliminar" type="submit">
-									<i class="fas fa-trash"></i>
-								</button>
+								${
+									v.id_cliente == v.trabajador_cliente ?
+									`<a title="Editar" href="tareas_livianas/${v.id}/edit">
+											<i class="fas fa-pencil"></i>
+										</a>
+										<button data-toggle="delete" data-id="${v.id}" title="Eliminar" type="submit">
+											<i class="fas fa-trash"></i>
+										</button>`
+									:
+									''
+								}
 							</div>
 						`
 

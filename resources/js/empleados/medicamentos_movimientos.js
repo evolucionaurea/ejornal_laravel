@@ -72,6 +72,14 @@ $(()=>{
 					}
 				},
 				{
+					data:'ingreso',
+					name:'ingreso',
+					className:'align-middle border-left',
+					render:v=>{
+						return v==null || v==0 ? '-' : v
+					}
+				},
+				{
 					data:'egreso',
 					name:'egreso',
 					className:'align-middle border-left',

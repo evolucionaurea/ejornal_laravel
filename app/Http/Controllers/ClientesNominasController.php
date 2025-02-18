@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Nomina;
 use App\Cliente;
 use App\NominaHistorial;
+use App\NominaClienteHistorial;
 use App\Http\Traits\Nominas;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
@@ -42,8 +43,8 @@ class ClientesNominasController extends Controller
 	{
 
 		$cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
-		->select('clientes.nombre')
-		->first();
+			->select('clientes.nombre')
+			->first();
 
 		return view('clientes.nominas_historial', compact('cliente'));
 
@@ -82,6 +83,72 @@ class ClientesNominasController extends Controller
 			'recordsTotal'=>$total,
 			'recordsFiltered'=>$records_filtered,
 			'data'=>$historial,
+			'request'=>$request->all()
+		];
+
+	}
+
+
+
+	// VISTA
+	public function movimientos()
+	{
+
+		$cliente = Cliente::where('id', auth()->user()->id_cliente_relacionar)
+			->select('clientes.nombre')
+			->first();
+		$clientes = false;
+
+		return view('clientes.nominas_movimientos', compact('cliente','clientes'));
+	}
+	//DATOS AJAX
+	public function movimientos_listado(Request $request)
+	{
+
+		$nominas_clientes = Nomina::select('*')
+			->withCount('movimientos_cliente')
+			->having('movimientos_cliente_count','>',1)
+			->pluck('id');
+
+
+		//DB::raw('COUNT(*) as cantidad')
+		$query = NominaClienteHistorial::select('*')
+			->with(['trabajador','cliente','usuario'])
+			->whereIn('nomina_id',$nominas_clientes)
+			->whereIn('cliente_id',[auth()->user()->id_cliente_relacionar])
+
+			->orderBy('created_at','desc');
+
+		$total = $query->count();
+
+		if($request->cliente_id){
+			$query->where('cliente_id',$request->cliente_id);
+		}
+
+		if(isset($request->search)){
+			$search = '%'.$request->search.'%';
+			$query->where(function($query) use($search){
+				$query
+					->whereHas('trabajador',function($query) use($search){
+						$query->where('nombre','like',$search);
+					})
+					->orWhereHas('cliente',function($query) use($search){
+						$query->where('nombre','like',$search);
+					})
+					->orWhereHas('usuario',function($query) use($search){
+						$query->where('nombre','like',$search);
+					});
+			});
+		}
+
+		$total_filtered = $query->count();
+
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
 			'request'=>$request->all()
 		];
 

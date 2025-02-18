@@ -5,6 +5,9 @@ export default class Tablas {
 
 		$.extend(this,obj)
 
+		this.typing_timer
+		this.typing_interval = 3000
+
 		this.init()
 	}
 
@@ -35,7 +38,7 @@ export default class Tablas {
 		this.datatable_options.serverSide = true
 		this.datatable_options.processing = true
 		this.datatable_options.deferRender = true
-		if(('dom' in this.datatable_options)==false) this.datatable_options.dom = '<"table-spacer-top"lf>t<"table-spacer-bottom"ip>'
+		if(('dom' in this.datatable_options)==false) this.datatable_options.dom = '<"table-spacer-top"ilf>t<"table-spacer-bottom"ip>'
 
 		this.datatable_options.ajax = {
 			url:`${this.controller}${this.get_path}`,
@@ -43,7 +46,7 @@ export default class Tablas {
 			data:d=>{
 				d._token = csfr
 				$.extend(d,this.set_filters())
-				console.log(d)
+				//console.log(d)
 				loading()
 			}
 		}
@@ -117,6 +120,13 @@ export default class Tablas {
 
 	init(){
 
+		if(this.table.attr('id')==undefined){
+			const rand_id = `table_${window.random(1111,9999)}`
+			this.table.attr('id',rand_id)
+		}
+		this.table_id = this.table.attr('id')
+		console.log(this.table_id)
+
 
 		/*Borrar*/
 		this.table.on('click','[data-toggle="delete"]',btn=>{
@@ -139,6 +149,20 @@ export default class Tablas {
 
 
 		if('server_side' in this && this.server_side==true){
+
+			/*$(`#${this.table_id} input`).on('keyup', input=>{
+				// Reiniciar el temporizador
+				clearTimeout(this.typing_timer)
+				const query = $(input.currentTarget).val()
+
+				// Configurar un nuevo temporizador
+				this.typing_timer = setTimeout(function() {
+					// Realizar la búsqueda después del tiempo de espera
+					table.search(query).draw()
+				}, this.typing_interval)
+			})*/
+
+
 			this.dt_server_side()
 		}
 

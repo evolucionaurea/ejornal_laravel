@@ -142,11 +142,13 @@
 		{{-- ESTUDIOS COMPLEMENTARIOS --}}
 		<section class="tarjeta">
 			<h5 class="mb-1">Vencimientos de Estudios Complementarios</h5>
+			<div class="font-italic small text-muted">Se mostrarán los estudio complementarios próximos a vencer (hasta 60 días) y aquellos que hayan vencido.</div>
 			<hr>
 
 			<form data-toggle="busqueda-preocupacionales">
 				<input type="hidden" name="completado" value="0">
 				<input type="hidden" name="vencimiento" value="1">
+				<input type="hidden" name="vencimiento_dias" value="361">
 			</form>
 
 			<div class="table-responsivex">
@@ -157,8 +159,8 @@
 							<th>Fecha</th>
 							<th>Tipo de Estudio</th>
 							<th>Vencimiento</th>
-							<th>Estado Venc.</th>
-							<th>Completado</th>
+							{{-- <th>Estado Venc.</th> --}}
+							{{-- <th>Completado</th> --}}
 							<th>Documentación</th>
 							<th class="text-right">Acciones <i class="fa fa-question-circle fa-fw" data-swal="Click en el <i class='fa fa-check-circle text-success'></i> para marcar al estudio como completado"></i></th>
 						</tr>

@@ -32,10 +32,16 @@ $(()=>{
 					name:'nominas.nombre',
 					className:'align-middle',
 					render:v=>{
-						return `
-							<div><b>${v.trabajador_nombre}</b></div>
-							<div class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</div>
-						`
+						let output = `
+						<div>
+							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-dark">${v.trabajador_nombre}</a>
+						</div>`
+						if(v.id_cliente != v.trabajador_cliente){
+							output += `<span class="badge badge-dark">transferido</span>`
+						}else{
+							output += `<span class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</span>`
+						}
+						return output
 					}
 				},
 				{
@@ -122,6 +128,8 @@ $(()=>{
 
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 
+						//if(v.id_cliente != v.trabajador_cliente) return ''
+
 						let regreso_trabajar = null;
 						let hoy;
 						let mostrar_extension;
@@ -182,14 +190,18 @@ $(()=>{
 									<i title="Historial" class="fas fa-book"></i>
 								</a>
 
-								<a title="Editar" href="ausentismos/${v.id}/edit">
-									<i class="fas fa-pencil"></i>
-								</a>
-								<button data-toggle="delete" data-id="${v.id}" title="Eliminar" >
-									<i class="fas fa-trash"></i>
-								</button>
-							</div>
-						`
+								${
+									v.id_cliente == v.trabajador_cliente ?
+									`<a title="Editar" href="ausentismos/${v.id}/edit">
+										<i class="fas fa-pencil"></i>
+									</a>
+									<button data-toggle="delete" data-id="${v.id}" title="Eliminar" >
+										<i class="fas fa-trash"></i>
+									</button>`
+									:
+									''
+								}
+							</div>`
 
 					}
 				}

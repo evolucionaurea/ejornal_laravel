@@ -95,8 +95,8 @@
 						<th>Fecha</th>
 						<th>Tipo de Estudio</th>
 						<th>Vencimiento</th>
-						<th>Estado Venc.</th>
-						<th>Completado</th>
+						{{-- <th>Estado Venc.</th> --}}
+						{{-- <th>Completado</th> --}}
 						<th>Documentación</th>
 						<th>Acciones</th>
 					</tr>

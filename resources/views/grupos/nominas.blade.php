@@ -19,7 +19,13 @@
 			<p>Aquí puede ver el listado de trabajadores de la sucursal seleccionada: <b>{{ $cliente_actual->nombre }}</b></p>
 
 			<div class="cabecera_acciones">
-				<a href="{{route('/grupos/nominas_historial')}}" class="btn-ejornal btn-dark" ><i class="fas fa-file-excel fa-fw"></i> Historial</a>
+				<a href="{{route('/grupos/nominas_historial')}}" class="btn-ejornal btn-dark" >
+					<i class="fas fa-file-excel fa-fw"></i> Historial
+				</a>
+				<a href="{{route('/grupos/nominas_movimientos')}}" class="btn-ejornal btn-dark" >
+					<i class="fas fa-sync fa-fw"></i> Ver Movimientos
+				</a>
+
 			</div>
 
 		</div>

@@ -25,12 +25,14 @@ class TareaLiviana extends Model
     'fecha_regreso_trabajar'=>'date:d/m/Y'
   ];
 
+  protected $appends = ['trabajador_perfil_url','created_at_formatted'];
+
 
   public function tipo() {
   	return $this->belongsTo(TareaLivianaTipo::class,'id_tipo');
   }
   public function trabajador(){
-    return $this->belongsTo(Nomina::class,'id_trabajador');
+    return $this->belongsTo(Nomina::class,'id_trabajador')->withTrashed();
   }
   /*public function cliente(){
     return $this->hasOneThrough(Cliente::class,Nomina::class,'id','id','id_trabajador','id_cliente');
@@ -44,6 +46,16 @@ class TareaLiviana extends Model
   }
   public function comunicacion(){
     return $this->hasOne(ComunicacionLiviana::class,'id_tarea_liviana');
+  }
+
+
+  public function getCreatedAtFormattedAttribute()
+  {
+    return $this->created_at->format('d/m/Y H:i:s \h\s.');
+  }
+  public function getTrabajadorPerfilUrlAttribute()
+  {
+    return url('/empleados/nominas/'.$this->id_trabajador);
   }
 
 }

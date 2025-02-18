@@ -8,6 +8,7 @@ $(()=>{
 	]
 
 	const fields = [
+		{roles:[1],class:'.select_permiso_edicion_fichadas'},
 		{roles:[2],class:'.mostrar_personal_interno'},
 		{roles:[2],class:'.mostrar_clientes'},
 		{roles:[2],class:'.mostrar_permiso_desplegables'},

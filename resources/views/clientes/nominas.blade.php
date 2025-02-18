@@ -16,7 +16,12 @@
 			<p>Aquí puede ver el listado de trabajadores de su empresa</p>
 
 			<div class="form-group">
-				<a href="{{url('clientes/nominas/historial')}}" class="btn btn-dark btn-sm"><i class="fa fa-calendar fa-fw"></i> Ver Historial</a>
+				<a href="{{url('clientes/nominas/historial')}}" class="btn btn-dark btn-sm">
+					<i class="fa fa-calendar fa-fw"></i> Ver Historial
+				</a>
+				<a href="{{route('/clientes/nominas/movimientos')}}" class="btn btn-dark btn-sm" >
+					<i class="fas fa-sync fa-fw"></i> Ver Movimientos
+				</a>
 			</div>
 
 		</div>

@@ -46,7 +46,7 @@ class GruposResumenController extends Controller
 						$query->select('cliente_id','cantidad','year_month')->where('year_month','=',$today->format('Ym'))->first();
 					}])*/
 
-					//total nóminas
+					//todo: total nóminas desde el historial
 					->withCount('nominas')
 					->withCount(['nominas as nominas_mes_anterior'=>function($query) use ($today){
 						$query->whereDate('created_at','<=',$today->firstOfMonth()->subMonth()->endOfMonth()->toDateString());
@@ -58,7 +58,7 @@ class GruposResumenController extends Controller
 			}
 		]);
 
-		//dd($clientes_nominas->clientes);
+		//dd($clientes_nominas->clientes[5]->toArray());
 
 
 		//DB::enableQueryLog();
@@ -570,6 +570,7 @@ class GruposResumenController extends Controller
 
 		// Traits > Clientes
 		$output = array_merge($clientes_grupo,$this->resumen($id_cliente));
+		$output['id_cliente'] = $id_cliente;
 
 		return view('grupos.resumen_cliente', $output);
 	}

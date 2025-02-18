@@ -24,11 +24,16 @@ $(()=>{
 					name:'nominas.nombre',
 					className:'align-middle',
 					render:v=>{
-						const estado = v.trabajador_estado == '1' ? `<span class="badge badge-success">activo</span>` : `<span class="badge badge-danger">inactivo</span>`
-						return `
-							<div>${v.trabajador_nombre}</div>
-							${estado}
-						`
+
+						let output = `<div><b>${v.trabajador_nombre}</b></div>`
+
+						if(v.id_cliente != v.trabajador_cliente){
+							output += `<span class="badge badge-dark">transferido</span>`
+						}else{
+							output += `<span class="badge badge-${v.trabajador_estado==1 ? 'success' : 'danger'}">${v.trabajador_estado==1 ? 'activo' : 'inactivo'}</span>`
+						}
+
+						return output
 					}
 				},
 				{

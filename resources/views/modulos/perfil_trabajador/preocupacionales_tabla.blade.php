@@ -2,6 +2,7 @@
 	<thead>
 		<tr>
 			<th>Fecha</th>
+			<th>Tipo Estudio</th>
 			<th>Observaciones</th>
 			<th>Archivo</th>
 			<th>Cliente</th>
@@ -11,7 +12,8 @@
 		@foreach ($preocupacionales as $preocupacional)
 		<tr>
 			<td>{{ (!empty($preocupacional->fecha)) ? date('d/m/Y',strtotime($preocupacional->fecha)) : "" }}</td>
-			<td>{{$preocupacional->observaciones}}</td>
+			<td>{{ $preocupacional->tipo->name }}</td>
+			<td>{{ $preocupacional->observaciones }}</td>
 			<td>
 				@if ($preocupacional->archivo)
 				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('preocupacionales.archivo', $preocupacional->id)}}">

@@ -228,6 +228,7 @@ class EmpleadosAusentismosController extends Controller
 		$comunicacion->id_ausentismo = $ausentismo->id;
 		$comunicacion->id_tipo = $request->tipo_comunicacion;
 		$comunicacion->descripcion = $request->descripcion;
+		$comunicacion->user = auth()->user()->nombre;
 		$comunicacion->save();
 
 		if($request->archivos_comunicacion){

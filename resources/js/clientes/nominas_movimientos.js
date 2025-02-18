@@ -1,0 +1,53 @@
+import Tablas from '../classes/Tablas.js';
+
+$(()=>{
+
+	console.log('nominas.movimientos')
+
+
+	new Tablas({
+		controller:'/clientes/nominas',
+		get_path:'/movimientos_listado',
+		table:$('[data-table="movimientos"]'),
+		modulo_busqueda:$('[data-toggle="busqueda-filtros"]'),
+		server_side:true,
+
+		datatable_options:{
+			ordering:false,
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
+			columns:[
+				{
+					data:'trabajador',
+					name:'trabajador',
+					render:v=>{
+						if(v==null) return ''
+						return v.nombre
+					}
+				},
+				{
+					data:'cliente',
+					name:'cliente',
+					render:v=>{
+						if(v==null) return ''
+						return v.nombre
+					}
+				},
+				{
+					data:'usuario',
+					name:'usuario',
+					render:v=>{
+						if(v==null) return ''
+						return v.nombre
+					}
+				},
+				{
+					data:'created_at',
+					name:'created_at'
+				}
+
+			]
+		}
+
+	})
+
+})

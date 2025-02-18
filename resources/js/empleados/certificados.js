@@ -20,7 +20,10 @@ $(()=>{
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
-						return v.ausentismo.trabajador.nombre
+						let output = `<div>${v.ausentismo.trabajador.nombre}</div>`
+						if(v.id_cliente != v.trabajador_cliente) output += `<span class="badge badge-dark">transferido</span>`
+
+						return output
 					}
 				},
 				{
@@ -98,6 +101,7 @@ $(()=>{
 					render:(v,type,row,meta)=>{
 
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '<span class="text-muted small font-italic">[debes fichar]</span>'
+						if(v.id_cliente != v.trabajador_cliente) return ''
 
 						return `
 						<button data-toggle="editar-certificado" class="btn-ejornal btn-ejornal-dark btn-tiny">

@@ -30,11 +30,13 @@ class Ausentismo extends Model
 		'fecha_regreso_trabajar'=>'date:d/m/Y'
 	];
 
+	protected $appends = ['created_at_formatted','trabajador_perfil_url'];
+
 	public function tipo(){
 		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
 	}
 	public function trabajador(){
-		return $this->belongsTo(Nomina::class,'id_trabajador');
+		return $this->belongsTo(Nomina::class,'id_trabajador')->withTrashed();
 	}
 
 	/*public function cliente(){
@@ -54,5 +56,16 @@ class Ausentismo extends Model
 	// public function comunicaciones(){
 	// 	return $this->hasMany(Comunicacion::class,'id_ausentismo');
 	// }
+
+	public function getCreatedAtFormattedAttribute()
+	{
+		if(is_null($this->created_at)) return $this->created_at;
+		return $this->created_at->format('d/m/Y H:i:s \h\s.');
+	}
+
+	public function getTrabajadorPerfilUrlAttribute()
+	{
+		return url('/empleados/nominas/'.$this->id_trabajador);
+	}
 
 }

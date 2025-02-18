@@ -5,53 +5,50 @@
 @section('content')
 
 <div class="d-flex" id="wrapper">
-    @include('partials.sidebar_empleados')
-    <div id="page-content-wrapper">
-        @include('partials.nav_sup')
+	@include('partials.sidebar_empleados')
+	<div id="page-content-wrapper">
+		@include('partials.nav_sup')
 
-        {{-- Contenido de la pagina --}}
+		{{-- Contenido de la pagina --}}
 
-        <div class="cabecera">
-            <h2>Todas las consultas</h2>
-            <p>Aquí puede ver el listado de todas las consultas médicas y de enfermeria</p>
-        </div>
+		<div class="cabecera">
+			<h2>Todas las consultas</h2>
+			<p>Aquí puede ver el listado de todas las consultas médicas y de enfermería</p>
+		</div>
 
-        @include('../../mensajes_validacion')
+		@include('../../mensajes_validacion')
 
-        <div class="tarjeta">
-
-            @php
-            $export = true;
-            @endphp
-
-            @include('../../modulos.busqueda_fecha')
+		<div class="tarjeta">
 
 
-            <table class="table table-striped table-hover table-sm tabla_consultas_todas">
+			@include('../../modulos/busqueda_consultas')
 
-                <!--Table head-->
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Consulta</th>
-                        <th>Trabajador</th>
-                        <th>Fecha</th>
-                        <th>Derivación</th>
 
-                        <th>Acciones</th>
+			<table data-table="consultas" class="table table-striped table-hover table-sm">
 
-                    </tr>
-                </thead>
-                <!--Table head-->
+				<!--Table head-->
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Consulta</th>
+						<th>Trabajador</th>
+						<th>Estado</th>
+						<th>Fecha</th>
+						<th>Derivación</th>
+						<th>Cargado por</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<!--Table head-->
 
-                <!--Table body-->
-                <tbody></tbody>
-                <!--Table body-->
-            </table>
-        </div>
+				<!--Table body-->
+				<tbody></tbody>
+				<!--Table body-->
+			</table>
+		</div>
 
-        {{-- Contenido de la pagina --}}
-    </div>
+		{{-- Contenido de la pagina --}}
+	</div>
 </div>
 
 

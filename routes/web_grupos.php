@@ -20,6 +20,10 @@ Route::group(['middleware'=>App\Http\Middleware\Autenticacion_grupos::class],fun
 
 	Route::get('grupos/nominas_historial', 'GruposNominasController@historial')->name('/grupos/nominas_historial');
 	Route::post('grupos/nominas/historial_listado', 'GruposNominasController@historial_listado')->name('/grupos/nominas/historial_listado');
+
+	Route::get('grupos/nominas_movimientos', 'GruposNominasController@movimientos')->name('/grupos/nominas_movimientos');
+	Route::post('grupos/nominas/movimientos_listado', 'GruposNominasController@movimientos_listado')->name('/grupos/nominas/movimientos_listado');
+
 	Route::get('grupos/nominas', 'GruposNominasController@index')->name('/grupos/nominas');
 	Route::post('grupos/nominas/busqueda','GruposNominasController@busqueda');
 	Route::get('grupos/nominas/exportar','GruposNominasController@exportar');

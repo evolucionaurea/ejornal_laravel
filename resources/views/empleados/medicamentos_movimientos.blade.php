@@ -93,6 +93,7 @@
 						<th>Cargado por</th>
 						<th>Para</th>
 						<th>Suministrados</th>
+						<th>Ingreso</th>
 						<th>Egreso</th>
 						<th>Motivo</th>
 						<th>Fecha</th>

@@ -11,6 +11,7 @@ use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Ausentismo;
 use App\Caratula;
+use App\TareaLiviana;
 use App\Preocupacional;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -235,7 +236,7 @@ trait Nominas
 
 
 		$preocupacionales = Preocupacional::where('id_nomina',$id)
-			->with(['trabajador','cliente'])
+			->with(['trabajador','cliente','tipo'])
 			/*->whereHas('trabajador',function($query){
 				$query->where('id_cliente', auth()->user()->id_cliente_actual);
 			})*/
@@ -270,7 +271,7 @@ trait Nominas
 			$resumen_historial[$medica->fecha->format('Ymd')] = (object) [
 				'fecha'=>$medica->fecha,
 				'tipo'=>$medica->diagnostico->nombre,
-				'evento'=>'Consulta Enfermería',
+				'evento'=>'Consulta Médicas',
 				'observaciones'=>$medica->observaciones,
 				'usuario'=>$medica->user,
 				'cliente'=>$medica->cliente
@@ -303,5 +304,37 @@ trait Nominas
 		);
 
 	}
+
+	public function hasAusentismoOrTareaLiviana($trabajador){
+
+		///VALIDAR QUE NO TENGA UN AUSENTISMO VIGENTE
+		$ausentismo = Ausentismo::where('id_trabajador',$trabajador->id)
+			->where(function($query){
+				$query
+					->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
+					->orWhereNull('fecha_final');
+			})
+			->get();
+		if($ausentismo->count()){
+			return 'Este trabajador posee un ausentismo vigente y no puede ser cambiado de cliente/sucursal.';
+		}
+
+		///VALIDAR QUE NO TENGA UNA TAREA ADECUADA VIGENTE
+		$tarea_liviana = TareaLiviana::where('id_trabajador',$trabajador->id)
+			->where(function($query){
+				$query
+					->where('fecha_final','>=',Carbon::now()->format('Y-m-d'))
+					->orWhereNull('fecha_final');
+			})
+			->get();
+		if($tarea_liviana->count()){
+			return 'Este trabajador posee una tarea adecuada vigente y no puede ser cambiado de cliente/sucursal.';
+		}
+
+
+		return false;
+	}
+
+
 
 }

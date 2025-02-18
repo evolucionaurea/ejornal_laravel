@@ -53,6 +53,8 @@ class EmpleadosResumenController extends Controller
 
 		$clientes = $this->getClientesUser();
 
+		///dd($clientes);
+
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
 		->where('nominas.estado', 1)
 		->get();

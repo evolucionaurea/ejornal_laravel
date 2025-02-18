@@ -53,6 +53,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			'consultas_enfermerias.*',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
+		->with('trabajador')
 		->join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_enfermerias.id_cliente', auth()->user()->id_cliente_actual);
@@ -66,13 +67,26 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 
 		if($request->search){
 			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search['value'].'%';
+				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('consultas_enfermerias.derivacion_consulta','like',$filtro)
 					->orWhere('consultas_enfermerias.observaciones','like',$filtro)
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
+
+		if($request->estado!=''){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+		}
+		if($request->dni){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
+		}
+
+
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
@@ -323,8 +337,17 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		$consulta_enfermeria = ConsultaEnfermeria::join('nominas', 'consultas_enfermerias.id_nomina', 'nominas.id')
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_enfermerias.id', $id)
-		->where('nominas.id_cliente',auth()->user()->id_cliente_actual) //IMPORTANTE: comprobar que está consultando a trabajadores de la nómina del cliente actual
-		->select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.telefono', 'nominas.dni', 'nominas.estado', 'nominas.email', DB::raw('diagnostico_consulta.nombre diagnostico'))
+		->where('consultas_enfermerias.id_cliente',auth()->user()->id_cliente_actual) //IMPORTANTE: comprobar que está consultando a trabajadores de la nómina del cliente actual
+		->select(
+				'consultas_enfermerias.*',
+				'nominas.nombre',
+				'nominas.telefono',
+				'nominas.dni',
+				'nominas.estado',
+				'nominas.id_cliente as trabajador_cliente',
+				'nominas.email',
+				DB::raw('diagnostico_consulta.nombre diagnostico')
+			)
 		->first();
 
 		$clientes = $this->getClientesUser();
@@ -414,10 +437,15 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			return back()->with('error', 'Debes fichar para utilizar esta funcionalidad.');
 		}
 
-		$query = ConsultaEnfermeria::select('consultas_enfermerias.*', 'nominas.nombre', 'nominas.email','diagnostico_consulta.nombre as diagnostico')
-		->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
-		->join('diagnostico_consulta','diagnostico_consulta.id','consultas_enfermerias.id_diagnostico_consulta')
-		->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_enfermerias.fecha', 'desc');
+		$query = ConsultaEnfermeria::select(
+			'consultas_enfermerias.*',
+			'nominas.nombre',
+			'nominas.email',
+			'diagnostico_consulta.nombre as diagnostico'
+		)
+			->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
+			->join('diagnostico_consulta','diagnostico_consulta.id','consultas_enfermerias.id_diagnostico_consulta')
+			->where('nominas.id_cliente',auth()->user()->id_cliente_actual)->orderBy('consultas_enfermerias.fecha', 'desc');
 
 		if($request->from) $query->whereDate('consultas_enfermerias.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
@@ -437,7 +465,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
 		fputcsv($fp,[
 			'Trabajador',
-			'Email',
+			'CUIL',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -450,16 +478,16 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			'Tensión Arterial',
 			'Frec. Cardíaca',
 			'Anamnesis',
-			'Tratamiento',
 			'Observaciones',
 		],';');
+
 
 		foreach($consultas as $consulta){
 
 			fputcsv($fp,[
 				$consulta->nombre,
 				$consulta->email,
-				$consulta->fecha,
+				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,
 				$consulta->derivacion_consulta,
 				($consulta->amerita_salida ? 'Si' : 'No'),
@@ -471,8 +499,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				$consulta->tension_arterial,
 				$consulta->frec_cardiaca,
 				$consulta->anamnesis,
-				$consulta->tratamiento,
-				$consulta->observaciones
+				str_replace(["\r", "\n"],' ',$consulta->observaciones)
 			],';');
 		}
 		fseek($fp, 0);

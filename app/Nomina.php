@@ -26,7 +26,7 @@ class Nomina extends Model
     'fecha_nacimiento'=>'date:d/m/Y'
   ];
 
-  protected $appends = ['edad'];
+  protected $appends = ['edad','perfil_url'];
 
 
   public function ausentismos()
@@ -63,6 +63,11 @@ class Nomina extends Model
   public function getEdadAttribute(){
     if(!$this->fecha_nacimiento) return null;
     return $this->fecha_nacimiento->diffInYears(now());
+  }
+
+  public function getPerfilUrlAttribute()
+  {
+    return url('/empleados/nominas/'.$this->id);
   }
 
 

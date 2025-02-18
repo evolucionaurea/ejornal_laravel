@@ -15,97 +15,112 @@ use Illuminate\Http\Request;
 
 class Autenticacion_empleados
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next)
-    {
-        $user_loggeado = auth()->user();
+	/**
+	 * Handle an incoming request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Closure  $next
+	 * @return mixed
+	 */
+	public function handle($request, Closure $next)
+	{
 
-        // Obtener información del usuario logueado
-        $user = User::where('users.email', $user_loggeado->email)
-            ->select('users.id_rol', 'users.id_cliente_actual', 'fichada')
-            ->first();
+		$user_loggeado = auth()->user();
 
-        // Verificar los clientes activos del usuario
-        $clientes_activos = 0;
-        $clientes = ClienteUser::where('id_user', $user_loggeado->id)
-            ->select('id_cliente')
-            ->get();
+		// Obtener información del usuario logueado
+		/*$user = User::where('users.email', $user_loggeado->email)
+			->select('users.id_rol', 'users.id_cliente_actual', 'fichada')
+			->first();*/
 
-        $clientes_activos_ids = [];
+		// Verificar los clientes activos del usuario
+		///$clientes_activos = 0;
+		$clientes = ClienteUser::where('id_user', $user_loggeado->id)
+			->with('cliente')
+			->select('id_cliente')
+			->get();
 
-        foreach ($clientes as $cliente) {
-            $buscar_cliente = Cliente::where('id', $cliente->id_cliente)->first();
-            if ($buscar_cliente != null) {
-                $clientes_activos++;
-                $clientes_activos_ids[] = $cliente->id_cliente;  // Guardar los IDs de clientes activos
-            }
-        }
+		if(!$clientes) return redirect('/')->with('error', 'No tienes clientes asignados en tu cuenta. Comunícate con los administradores del sitio para que te asignen algún cliente.');
 
-        // Solo aplica a los usuarios con rol de empleado (id_rol = 2)
-        if ($user->id_rol == 2 && $clientes_activos > 0) {
+		//$clientes_activos_ids = [];
+		/*foreach ($clientes as $cliente) {
+			if(!$cliente->cliente) continue;
+			$clientes_activos++;
+			$clientes_activos_ids[] = $cliente->id_cliente;  // Guardar los IDs de clientes activos
+		}*/
 
-            // Validar que el usuario está trabajando para un cliente activo
-            if (!in_array($user->id_cliente_actual, $clientes_activos_ids)) {
+		// Solo aplica a los usuarios con rol de empleado (id_rol = 2)
+		if ($user_loggeado->id_rol != 2) {
+			return redirect('web_oficial')->with('error', 'Tu rol asignado no tiene permisos para acceder a esta sección.');
+		}
 
-                // Verificar si el usuario tiene una fichada activa
-                if ($user_loggeado->fichada == 1) {
-                    // Desfichar al usuario si tiene una fichada activa
-                    $this->desficharUsuario($user_loggeado);
-                }
+		// Si no tiene un cliente seleccionado busco el primero de la lista de los asignados
+		if(!$user_loggeado->id_cliente_actual){
+			$user = User::findOrFail($user_loggeado->id);
+			$user->id_cliente_actual = $clientes[0]->id_cliente;
+			$user->save();
+			//dd($clientes[0]->id_cliente);
+		}
 
-                // Redirigir después de desfichar
-                return redirect('/')
-                    ->with('error', 'El cliente actual ya no está asignado a tu cuenta. 
-                    Has sido deslogueado y debes iniciar sesión nuevamente.');
-            }
+		// Validar que el usuario está trabajando para un cliente activo
+		//if (!in_array($user_loggeado->id_cliente_actual, $clientes_activos_ids)) {
+			// Redirigir después de desfichar
+			//return redirect('/')->with('error', 'El cliente actual ya no está asignado a tu cuenta. Has sido deslogueado y debes iniciar sesión nuevamente.');
+		///}
 
-            // Si el cliente actual es válido, continuar con la solicitud
-            return $next($request);
+		// Verificar si el usuario tiene una fichada activa
+		if ($user_loggeado->fichada == 1) {
+			// Obtener la última fichada del usuario
+			$verificar_fichada_nueva = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
 
-        } else {
-            // Redirigir si no es empleado o no tiene clientes activos
-            return redirect('web_oficial')
-                ->with('error', 'Email o contraseña incorrectas');
-        }
-    }
+			if ($verificar_fichada_nueva && $verificar_fichada_nueva->egreso === null) {
+				// Verificar si han pasado más de 12 horas desde el ingreso
+				$ingreso = Carbon::parse($verificar_fichada_nueva->ingreso);
+				$ahora = Carbon::now();
 
-    /**
-     * Desficha al usuario, guardando la información de la fichada.
-     */
-    private function desficharUsuario($user_loggeado)
-    {
-        $usuario = User::find($user_loggeado->id);
-        $usuario->fichada = 0;  // Marcar que el usuario ya no está fichado
-        $usuario->save();
+				if ($ingreso->diffInHours($ahora) > 12) {
+					// Desfichar al usuario si han pasado más de 12 horas
+					$this->desficharUsuario($user_loggeado);
+				}
+			}
+		}
 
-        $egreso = Carbon::now();
 
-        // Obtener la última fichada del usuario
-        $fichada = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
+		// Si el cliente actual es válido, continuar con la solicitud
+		return $next($request);
+	}
 
-        if ($fichada) {
-            $f_ingreso = new DateTime($fichada->ingreso);
-            $f_egreso = new DateTime();
-            $time = $f_ingreso->diff($f_egreso);
+	/**
+	 * Desficha al usuario, guardando la información de la fichada.
+	 */
+	private function desficharUsuario($user_loggeado)
+	{
+		$usuario = User::find($user_loggeado->id);
+		$usuario->fichada = 0;  // Marcar que el usuario ya no está fichado
+		$usuario->save();
 
-            // Formatear el tiempo dedicado
-            $tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
+		$egreso = Carbon::now();
 
-            // Registrar información adicional de la ficha (IP, sistema operativo, etc.)
-            $agent = new Agent();
-            $fichada->egreso = $egreso;
-            $fichada->tiempo_dedicado = $tiempo_dedicado;
-            $fichada->ip = \Request::ip();
-            $fichada->sistema_operativo = $agent->platform();
-            $fichada->browser = $agent->browser();
-            $fichada->dispositivo = $agent->deviceType();
-            $fichada->save();
-        }
-    }
+		// Obtener la última fichada del usuario
+		$fichada = FichadaNueva::where('id_user', $user_loggeado->id)->latest()->first();
+
+		if ($fichada) {
+			$f_ingreso = new DateTime($fichada->ingreso);
+			$f_egreso = new DateTime();
+			$time = $f_ingreso->diff($f_egreso);
+
+			// Formatear el tiempo dedicado
+			$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
+
+			// Registrar información adicional de la ficha (IP, sistema operativo, etc.)
+			$agent = new Agent();
+			$fichada->egreso = $egreso;
+			$fichada->tiempo_dedicado = $tiempo_dedicado;
+			$fichada->ip = \Request::ip();
+			$fichada->sistema_operativo = $agent->platform();
+			$fichada->browser = $agent->browser();
+			$fichada->dispositivo = device_spanish($agent->deviceType());
+
+			$fichada->save();
+		}
+	}
 }

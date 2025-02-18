@@ -17,5 +17,8 @@ class TemplatesController extends Controller
 	public function form_certificado(){
 		return view('templates.form-certificado');
 	}
+	public function form_cambiar_fichada(){
+		return view('templates.form-cambiar-fichada');
+	}
 
 }

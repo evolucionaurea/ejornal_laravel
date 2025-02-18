@@ -33,6 +33,7 @@ class ClientesResumenController extends Controller
 
 		//// Traits > Clientes
 		$output = array_merge(['cliente'=>$cliente],$this->resumen($id_cliente));
+		$output['id_cliente'] = $id_cliente;
 
 		return view('clientes.resumen', $output);
 

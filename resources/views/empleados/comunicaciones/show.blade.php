@@ -22,10 +22,14 @@
 					href="{{ url('empleados/ausentismos') }}?{{$_SERVER['QUERY_STRING']}}">
 					<i class="fas fa-arrow-circle-left fa-fw"></i> <span>Volver</span>
 				</a>
+
+				@if( $ausencia->id_cliente == $ausencia->trabajador->id_cliente)
 				<a data-toggle="modal" data-target="#cargar_comunicaciones_ausentismo"
 					class="btn-ejornal btn-ejornal-success" href="#">
 					<i class="fas fa-plus-circle fa-fw"></i> <span>Crear Comunicación</span>
 				</a>
+				@endif
+
 			</div>
 		</div>
 
@@ -57,9 +61,12 @@
 					<br>
 					<br>
 					<h5>
-						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info"
-							title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
+						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info" title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
 					</h5>
+
+					@if( $ausencia->id_cliente != $ausencia->trabajador->id_cliente)
+					<span class="badge badge-dark">transferido</span>
+					@endif
 				</div>
 
 				<div class="col-lg-8 col-md-9 col-sm-12">

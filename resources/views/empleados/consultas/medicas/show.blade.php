@@ -46,7 +46,7 @@
 						</div>
 						<ul class="col-lg-10 col-md-8 list-group list-group-flush">
 							<li class="list-group-item">
-								<b>Email: </b> {{$consulta_medica->email}}
+								<b>CUIL: </b> {{$consulta_medica->email}}
 							</li>
 							<li class="list-group-item">
 								<b>Diagnostico: </b> {{$consulta_medica->diagnostico}}

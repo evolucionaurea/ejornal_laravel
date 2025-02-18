@@ -74,7 +74,7 @@
     margin-bottom: 10px;
   }
 
-  & span{
+  & > span{
     color: white;
     margin-bottom: 10px;
 
@@ -89,6 +89,20 @@
     color: #c2c2c2;
     font-size: 10px;
   }
+
+  & .client-selector{
+    width:100%;
+
+    & .select2{
+      width: 100%;
+      max-width:200px;
+
+      & .select2-selection__rendered{
+        font-size: 10pt;
+      }
+    }
+  }
+
 
 }
 

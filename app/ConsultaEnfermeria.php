@@ -16,6 +16,7 @@ class ConsultaEnfermeria extends Model
 
   // Nombre de la tabla
   protected $table = 'consultas_enfermerias';
+  protected $appends = ['created_at_formatted'];
 
   // Campos habilitados para ingresar
   protected $fillable = [
@@ -33,11 +34,16 @@ class ConsultaEnfermeria extends Model
     return $this->belongsTo(DiagnosticoConsulta::class,'id_diagnostico_consulta');
   }
   public function trabajador(){
-    return $this->belongsTo(Nomina::class,'id_nomina');
+    return $this->belongsTo(Nomina::class,'id_nomina')->withTrashed();
   }
 
   public function cliente(){
     return $this->belongsTo(Cliente::class,'id_cliente');
+  }
+
+  public function getCreatedAtFormattedAttribute()
+  {
+    return $this->created_at->format('d/m/Y H:i:s \h\s.');
   }
 
 }

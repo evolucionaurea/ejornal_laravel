@@ -20,7 +20,13 @@ use App\ConsultaEnfermeria;
 use App\Comunicacion;
 use App\Cliente;
 use App\TipoComunicacion;
+use App\Preocupacional;
+use App\TareaLiviana;
+use App\ComunicacionLiviana;
+use App\TareaLivianaDocumentacion;
+use App\EdicionFichada;
 use App\Http\Traits\Ausentismos;
+
 
 class AdminReporteController extends Controller
 {
@@ -36,68 +42,81 @@ class AdminReporteController extends Controller
 	{
 		return view('admin.reportes.fichadas');
 	}
-
-
 	public function fichadas_ajax(Request $request)
 	{
-		/*$query = FichadaNueva::selectRaw('
-						fichadas_nuevas.*,
-						users.nombre as user_nombre,
-						users.estado as user_estado,
-						IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-						clientes.nombre as cliente_nombre
-				')
-				->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-				->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-				->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');*/
 
-		$query = FichadaNueva::select('*')
-							->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-							->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-							->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente')
-							->with('user.especialidad')
-							->with('cliente');
+		$query = FichadaNueva::selectRaw('
+			fichadas_nuevas.*,
+			users.nombre as user_nombre,
+			users.estado as user_estado,
+			IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
+			clientes.nombre as cliente_nombre,
+			(
+				fichadas_nuevas.id = (
+					SELECT MAX(fn.id)
+					FROM fichadas_nuevas fn
+					WHERE fn.id_user = fichadas_nuevas.id_user
+				)
+			) as ultimo_registro_user
+		')
+		->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
+		->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
+		->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente')
+		->with(['user.especialidad', 'cliente']);
 
 		$total_records = $query->count();
 
+		// Filtro por estado de usuario
 		if ($request->estado && $request->estado !== 'todos') {
 			$estado = $request->estado === 'activos' ? 1 : 0;
-			//$query->where('users.estado', $estado);
-			$query->whereHas('user',function($query) use($estado){
-				$query->where('estado',$estado);
+			$query->whereHas('user', function($query) use($estado) {
+				$query->where('estado', $estado);
 			});
 		}
-		$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
-			$query
-				->whereHas('user',function($query) use($filtro){
-					$query->where('nombre','like',$filtro);
+
+		// Filtro de búsqueda general por nombre de usuario o cliente
+		if ($request->search['value']) {
+			$filtro = '%' . $request->search['value'] . '%';
+			$query->where(function($query) use ($filtro) {
+			$query->whereHas('user', function($query) use($filtro) {
+					$query->where('nombre', 'like', $filtro);
 				})
-				->orWhereHas('cliente',function($query) use($filtro){
-					$query->where('nombre','like',$filtro);
+				->orWhereHas('cliente', function($query) use($filtro) {
+					$query->where('nombre', 'like', $filtro);
 				});
-		});
-		if($request->from) {
+			});
+		}
+
+		// Filtro de rango de fechas
+		if ($request->from) {
 			$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
-		if($request->to) {
+		if ($request->to) {
 			$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
-		//$query->orderBy('ingreso', 'desc');
-		if($request->order){
+		// Ordenación según el parámetro de orden
+		if ($request->order) {
 			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
+			$dir = $request->order[0]['dir'];
 			$query->orderBy($sort, $dir);
+		} else {
+			$query->orderBy('ingreso', 'desc'); // Ordenación por defecto
 		}
 
+		// Respuesta con datos filtrados y paginados
+		/*$data = $query->skip($request->start)->take($request->length)->first();
+		dd($data->toArray());*/
 		return [
 			'draw' => $request->draw,
 			'recordsTotal' => $total_records,
 			'recordsFiltered' => $query->count(),
 			'data' => $query->skip($request->start)->take($request->length)->get(),
-			'request' => $request->all()
+			'request' => $request->all(),
+			'user'=>auth()->user()
 		];
+
+
 	}
 	public function exportar_fichadas($id_cliente=null, Request $request)
 	{
@@ -115,40 +134,12 @@ class AdminReporteController extends Controller
 			['name'=>'ingreso']
 		];
 		$request->length = 15000;
+		//$request->length = 2;
 
 
 		$fichadas = $this->fichadas_ajax($request)['data'];
+		//dd($fichadas->toArray()[1]['egreso_carbon']->format('H:i'));
 
-		//$agent = new Agent;
-		//dd($agent->deviceType());
-
-		///dd( mb_convert_case($fichadas[1]->ingreso_carbon->translatedFormat('l'),MB_CASE_TITLE,'UTF-8'));
-
-		/*$filtro = '%'.$request->search['value'].'%';
-		$query = FichadaNueva::selectRaw('
-						fichadas_nuevas.*,
-						users.nombre as user_nombre,
-						users.estado as user_estado,
-						IF(users.id_especialidad = 0, "No aplica", especialidades.nombre) as user_especialidad,
-						clientes.nombre as cliente_nombre
-				')
-				->join('users', 'users.id', '=', 'fichadas_nuevas.id_user')
-				->leftJoin('especialidades', 'especialidades.id', '=', 'users.id_especialidad')
-				->join('clientes', 'clientes.id', '=', 'fichadas_nuevas.id_cliente');
-
-		if ($request->estado && $request->estado !== 'todos') {
-				$estado = $request->estado === 'activos' ? 1 : 0;
-				$query->where('users.estado', $estado);
-		}
-
-		if($request->from) {
-				$query->whereDate('ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if($request->to) {
-				$query->whereDate('egreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}
-
-		$fichadas = $query->get();*/
 
 		$now = Carbon::now();
 		$file_name = 'fichadas-'.$now->format('YmdHis').'.csv';
@@ -208,6 +199,134 @@ class AdminReporteController extends Controller
 
 		return;
 	}
+	public function cambiar_fichada(Request $request){
+
+
+		$request->validate([
+			'id' => 'required|integer|exists:fichadas_nuevas,id',
+			'new_date' => 'required|string', // Cambiado a 'string' para manipulación
+			'action' => 'required|string',
+		]);
+
+		if(!auth()->user()->permiso_edicion_fichada){
+			return response()->json([
+				'success'=>false,
+				'message'=>'No estás autorizado para cambiar la fecha de la fichada.'
+			],400);
+		}
+
+		// Obtener datos del usuario autenticado
+		$fichada = FichadaNueva::find($request->id);
+		if (!$fichada) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Fichada no encontrada.'
+			], 404);
+		}
+
+		$userId = auth()->user()->id;
+		//$oldValue = $request->oldDate;
+		$old_date = $request->action == 'ingreso' ? $fichada->ingreso : $fichada->egreso;
+
+
+		//$oldDateObj = new DateTime($oldValue);
+		// Convertir la nueva fecha desde el formato DD/MM/YYYY
+		$dateParts = explode('/', $request->new_date);
+
+		if (count($dateParts) === 3) {
+			// Crear la fecha en formato 'YYYY-MM-DD'
+			$formattedDate = "{$dateParts[2]}-{$dateParts[1]}-{$dateParts[0]} {$request->new_hour}:{$request->new_minutes}"; // '2024-10-25'
+			//dd($oldValue);
+			$newDate = new DateTime($formattedDate); // Crear el objeto DateTime
+		} else {
+			return response()->json([
+				'success' => false,
+				'message' => 'Formato de fecha inválido.'
+			], 400);
+		}
+
+		// Buscar la fichada existente
+
+
+		// Obtener el id_user de la fichada
+		$fichadaUserId = $fichada->id_user;
+
+		// Verificar si es la última fichada del usuario
+		$ultimoRegistro = FichadaNueva::where('id_user', $fichadaUserId)
+				->with('user')
+				->orderBy('id', 'desc')
+				->first();
+		if (!$ultimoRegistro || $ultimoRegistro->id != $fichada->id) {
+				return response()->json([
+					'success' => false,
+					'message' => 'No es posible editar el registro porque no es la última fichada del usuario.'
+				], 400);
+		}
+		//dd($ultimoRegistro);
+
+
+		// Asignar id_user y id_fichada
+		$edicionFichada = new EdicionFichada();
+		$edicionFichada->id_user = auth()->user()->id;
+		$edicionFichada->id_fichada = $fichada->id;
+
+		// Validar según el tipo de edición
+		if ($request->action=='ingreso') {
+			// Validar que el egreso no tenga una fecha inferior a la nueva fecha de ingreso
+			if ($ultimoRegistro->egreso && new DateTime($ultimoRegistro->egreso) < $newDate) {
+					return response()->json([
+						'success' => false,
+						'message' => 'El egreso registrado es anterior a la nueva fecha de ingreso.'
+					], 400);
+			}
+
+			$ultimoRegistro->ingreso = $newDate;
+			$ultimoRegistro->save();
+
+			$edicionFichada->old_ingreso = $fichada->ingreso;
+			$edicionFichada->new_ingreso = $newDate;
+			$edicionFichada->old_egreso = null;
+			$edicionFichada->new_egreso = null;
+		}
+		if ($request->action=='egreso') {
+			// Validar que el ingreso no tenga una fecha mayor a la nueva fecha de egreso
+			if ($ultimoRegistro->ingreso && new DateTime($ultimoRegistro->ingreso) > $newDate) {
+					return response()->json([
+						'success' => false,
+						'message' => 'El ingreso registrado es posterior a la nueva fecha de egreso.'
+					], 400);
+			}
+
+			$ultimoRegistro->egreso = $newDate;
+			$ultimoRegistro->save();
+
+			$edicionFichada->old_egreso = $fichada->egreso;
+			$edicionFichada->new_egreso = $newDate;
+			$edicionFichada->old_ingreso = null;
+			$edicionFichada->new_ingreso = null;
+		}
+
+
+
+		// Obtener la IP y el dispositivo
+		$agent = new Agent();
+		$edicionFichada->ip = $request->ip();
+		$edicionFichada->dispositivo = $agent->browser() . ' (' . $agent->platform() . ' ' . $agent->version($agent->platform()) . ' | '. device_spanish($agent->deviceType()) .')';
+
+		// Guardar el registro
+		$edicionFichada->save();
+
+		return response()->json([
+			'success' => true,
+			'message'=>'La fichada se actualizó correctamente!',
+			'last_record'=>$ultimoRegistro
+		]);
+
+	}
+	public function find_fichada($id){
+		return FichadaNueva::where('id',$id)->with('user')->first();
+	}
+
 
 
 
@@ -723,6 +842,330 @@ class AdminReporteController extends Controller
 		return $comunicaciones_filtradas;
 
 		}
+
+	}
+
+
+	// vista
+	public function actividad_usuarios()
+	{
+		$clientes = Cliente::orderBy('nombre','asc')->get();
+		$users = User::where('id_rol',2)->orderBy('nombre','asc')->get();
+		return view('admin.reportes.actividad_usuarios',compact('clientes','users'));
+	}
+	// ajax/datatable
+	public function search_actividad_usuarios(Request $request)
+	{
+
+		/*
+		Consulta Medica
+		Consulta enfermeria
+		Ausentismo
+		Comunicacion
+		Documentacion
+
+		Estudio complementario !
+
+		Tareas livianas
+		Tareas livianas > comunicación
+		Tareas livianas > documentación
+		*/
+
+		$medicas = ConsultaMedica::select(
+				'consultas_medicas.id_cliente',
+				'consultas_medicas.id_nomina',
+				'consultas_medicas.user',
+				'consultas_medicas.created_at',
+				DB::raw('"Consulta Médica" as actividad'),
+				DB::raw('clientes.nombre as cliente_nombre'),
+				DB::raw('nominas.nombre as trabajador_nombre'),
+				'users.estado'
+			)
+			->join('clientes','clientes.id','consultas_medicas.id_cliente')
+			->join('nominas','nominas.id','consultas_medicas.id_nomina')
+			->leftJoin('users','users.nombre','consultas_medicas.user');
+
+
+		$enfermerias = ConsultaEnfermeria::select(
+			'consultas_enfermerias.id_cliente',
+			'consultas_enfermerias.id_nomina',
+			'consultas_enfermerias.user',
+			'consultas_enfermerias.created_at',
+			DB::raw('"Consulta Enfermería" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('clientes','clientes.id','consultas_enfermerias.id_cliente')
+			->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
+			->leftJoin('users','users.nombre','consultas_enfermerias.user');
+
+
+		$ausentismos = Ausentismo::select(
+			'ausentismos.id_cliente',
+			'ausentismos.id_trabajador as id_nomina',
+			'ausentismos.user',
+			'ausentismos.created_at',
+			DB::raw('"Ausentismo" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('clientes','clientes.id','ausentismos.id_cliente')
+			->join('nominas','nominas.id','ausentismos.id_trabajador')
+			->leftJoin('users','users.nombre','ausentismos.user');
+
+		$comunicaciones = Comunicacion::select(
+			'ausentismos.id_cliente',
+			'ausentismos.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(comunicaciones.user,ausentismos.user) as user' ),
+			'comunicaciones.created_at',
+			DB::raw('"Comunicación Ausentismo" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('ausentismos','ausentismos.id','comunicaciones.id_ausentismo')
+			->join('clientes','clientes.id','ausentismos.id_cliente')
+			->join('nominas','nominas.id','ausentismos.id_trabajador')
+			->leftJoin('users','users.nombre','ausentismos.user');
+
+
+
+		$documentaciones = AusentismoDocumentacion::select(
+			'ausentismos.id_cliente',
+			'ausentismos.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(ausentismo_documentacion.user,ausentismos.user) as user' ),
+			'ausentismo_documentacion.created_at',
+			DB::raw('"Documentación Ausentismo" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('ausentismos','ausentismos.id','ausentismo_documentacion.id_ausentismo')
+			->join('clientes','clientes.id','ausentismos.id_cliente')
+			->join('nominas','nominas.id','ausentismos.id_trabajador')
+			->leftJoin('users','users.nombre','ausentismos.user');
+
+
+
+		$preocupacionales = Preocupacional::select(
+			'preocupacionales.id_cliente',
+			'preocupacionales.id_nomina',
+			'preocupacionales.user',
+			'preocupacionales.created_at',
+			DB::raw('"Estudio Complementario" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('clientes','clientes.id','preocupacionales.id_cliente')
+			->join('nominas','nominas.id','preocupacionales.id_nomina')
+			->leftJoin('users','users.nombre','preocupacionales.user');
+
+
+
+
+		$tareas_livianas = TareaLiviana::select(
+			'tareas_livianas.id_cliente',
+			'tareas_livianas.id_trabajador as id_nomina',
+			'tareas_livianas.user',
+			'tareas_livianas.created_at',
+			DB::raw('"Tarea Adecuada" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('clientes','clientes.id','tareas_livianas.id_cliente')
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador')
+			->leftJoin('users','users.nombre','tareas_livianas.user');
+
+
+		$comunicaciones_tareas_livianas = ComunicacionLiviana::select(
+			'tareas_livianas.id_cliente',
+			'tareas_livianas.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(comunicaciones_livianas.user,tareas_livianas.user) as user' ),
+			'comunicaciones_livianas.created_at',
+			DB::raw('"Comunicación Tarea Adecuada" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('tareas_livianas','tareas_livianas.id','comunicaciones_livianas.id_tarea_liviana')
+			->join('clientes','clientes.id','tareas_livianas.id_cliente')
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador')
+			->leftJoin('users','users.nombre','comunicaciones_livianas.user');
+
+
+		$documentaciones_tareas_livianas = TareaLivianaDocumentacion::select(
+			'tareas_livianas.id_cliente',
+			'tareas_livianas.id_trabajador as id_nomina',
+			DB::raw( 'IFNULL(tarea_liviana_documentacion.user,tareas_livianas.user) as user' ),
+			'tarea_liviana_documentacion.created_at',
+			DB::raw('"Documentación Tarea Adecuada" as actividad'),
+			DB::raw('clientes.nombre as cliente_nombre'),
+			DB::raw('nominas.nombre as trabajador_nombre'),
+			'users.estado'
+		)
+			->join('tareas_livianas','tareas_livianas.id','tarea_liviana_documentacion.id_tarea_liviana')
+			->join('clientes','clientes.id','tareas_livianas.id_cliente')
+			->join('nominas','nominas.id','tareas_livianas.id_trabajador')
+			->leftJoin('users','users.nombre','tarea_liviana_documentacion.user');
+
+
+		DB::enableQueryLog();
+
+
+		$query = DB::query()
+			->fromSub(function($query) use(
+				$medicas,
+				$enfermerias,
+				$ausentismos,
+				$documentaciones,
+				$comunicaciones,
+				$preocupacionales,
+				$tareas_livianas,
+				$comunicaciones_tareas_livianas,
+				$documentaciones_tareas_livianas
+			){
+
+				$query->select('*')
+					->from($medicas)
+					->union($enfermerias)
+					->union($ausentismos)
+					->union($documentaciones)
+					->union($comunicaciones)
+					->union($preocupacionales)
+					->union($tareas_livianas)
+					->union($comunicaciones_tareas_livianas)
+					->union($documentaciones_tareas_livianas);
+
+			},'uniones');
+
+
+		/*$query = $medicas
+			->union($enfermerias)
+			->union($ausentismos)
+			->union($comunicaciones)
+			->union($documentaciones)
+			->union($preocupacionales)
+			->union($tareas_livianas)
+			->union($comunicaciones_tareas_livianas)
+			->union($documentaciones_tareas_livianas);*/
+
+
+
+		$total_records = $query->count();
+
+
+		if ($request->search) {
+			$filtro = '%' . $request->search['value'] . '%';
+
+			$query->where(function($query) use ($filtro){
+				$query
+					->where('actividad','like',$filtro)
+					->orWhere('trabajador_nombre','like',$filtro);
+			});
+		}
+
+		if($request->from_date) {
+			$query->whereDate('created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d'));
+		}
+		if($request->to_date) {
+			$query->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d'));
+		}
+		if($request->cliente){
+			$query->where('id_cliente',$request->cliente);
+		}
+		if($request->user){
+			$query->where('user',$request->user);
+		}
+		if($request->estado!==null){
+			$query->where('estado',$request->estado);
+		}
+
+		$total_filtered = $query->count();
+
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}else{
+			$query->orderBy('fecha','desc');
+		}
+
+
+
+		$data = $query->skip($request->start)->take($request->length)->get()->toArray();
+		foreach($data as $k=>$row){
+			$data[$k]->created_at_formatted = Carbon::createFromFormat('Y-m-d H:i:s',$row->created_at)->format('d/m/Y H:i:s  \h\s.');
+		}
+
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total_records,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$data,
+			'request'=>$request->all(),
+			'query'=>DB::getQueryLog()
+		];
+
+	}
+	public function exportar_actividad_usuarios(Request $request){
+
+		$request->search = ['value' => null];
+		$request->start = 0;
+		$request->order = [
+			[
+				'dir'=>'desc',
+				'column'=>2
+			]
+		];
+		$request->columns = [
+			['name'=>'user'],
+			['name'=>'cliente_nombre'],
+			['name'=>'created_at']
+		];
+		$request->length = 25000;
+
+
+		$actividades = $this->search_actividad_usuarios($request)['data'];
+
+
+
+		$now = Carbon::now();
+		$file_name = 'actividades-'.$now->format('YmdHis').'.csv';
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp, [
+				'Usuario',
+				'Cliente',
+				'Fecha',
+				'Actividad',
+				'Trabajador'
+		], ';');
+
+		foreach($actividades as $actividad){
+
+			fputcsv($fp, [
+				$actividad->user,
+				$actividad->cliente_nombre,
+				$actividad->created_at_formatted,
+				$actividad->actividad,
+				$actividad->trabajador_nombre
+			], ';');
+		}
+
+		//dd($fp);
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+		return;
 
 	}
 

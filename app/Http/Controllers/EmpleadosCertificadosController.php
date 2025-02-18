@@ -25,7 +25,11 @@ class EmpleadosCertificadosController extends Controller
 
 	public function busqueda(Request $request)
 	{
-		$query = AusentismoDocumentacion::select('ausentismo_documentacion.*')
+		$query = AusentismoDocumentacion::select(
+			'ausentismo_documentacion.*',
+			'nominas.id_cliente as trabajador_cliente',
+			'ausentismos.id_cliente'
+		)
 			->with(['ausentismo'=>function($query){
 				$query
 					->select('id','fecha_inicio','fecha_final','fecha_regreso_trabajar','id_trabajador','id_tipo')
@@ -37,11 +41,12 @@ class EmpleadosCertificadosController extends Controller
 					}]);
 			}])
 			->with('archivos')
-			->whereHas('ausentismo',function($query){
+			/*->whereHas('ausentismo',function($query){
 				$query->whereHas('trabajador',function($query){
 					$query->where('id_cliente',auth()->user()->id_cliente_actual);
 				});
-			})
+			})*/
+			->where('ausentismos.id_cliente',auth()->user()->id_cliente_actual)
 			->join('ausentismos', 'ausentismo_documentacion.id_ausentismo', 'ausentismos.id')
 			->join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
 			->join('ausentismo_tipo', 'ausentismos.id_tipo', 'ausentismo_tipo.id');

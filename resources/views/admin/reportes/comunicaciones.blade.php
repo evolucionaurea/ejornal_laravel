@@ -14,7 +14,7 @@
 		{{-- Contenido de la pagina --}}
 
 		<div class="cabecera">
-			<h2>Reportes / Comuinicaciones</h2>
+			<h2>Reportes / Comunicaciones</h2>
 			<p>Aquí puede ver los reportes del sistema</p>
 		</div>
 

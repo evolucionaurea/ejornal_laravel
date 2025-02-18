@@ -447,7 +447,9 @@
 						<tr>
 							<td>{{ $top->trabajador->nombre }}</td>
 							<td>
-							@if ($top->trabajador->regreso_trabajo)
+							@if( $top->id_cliente!= $id_cliente)
+								<span class="badge badge-dark">transferido</span>
+							@elseif ($top->trabajador->regreso_trabajo)
 								<span class="badge badge-danger">ausente</span>
 							@endif
 							</td>
@@ -475,7 +477,12 @@
 					@if($ausentismos_top_10_solicitudes)
 					@foreach ($ausentismos_top_10_solicitudes as $falta)
 						<tr>
-							<td>{{ $falta->trabajador->nombre }}</td>
+							<td>
+								<div>{{ $falta->trabajador->nombre }}</div>
+								@if( $falta->id_cliente!=$id_cliente)
+								<span class="badge badge-dark">transferido</span>
+								@endif
+							</td>
 							<td>{{ $falta->total }}</td>
 						</tr>
 					@endforeach

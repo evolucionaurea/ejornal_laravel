@@ -12,6 +12,17 @@
 		<div class="cabecera">
 			<h2>Reportes</h2>
 			<p>Aquí puedes ver los reportes de las fichadas.</p>
+			@if (auth()->user()->permiso_edicion_fichada == 1)
+			<div class="alert alert-success">
+				Tienes permiso para editar las fichadas.
+				<b>Ten en cuenta que se realizan muchas validaciones y por tanto la seccion demora en cargar</b>
+			</div>
+			@else
+			<div class="alert alert-danger">
+				No tienes permiso para editar las fichadas
+			</div>
+			@endif
+			<input id="id_loggeado" type="hidden" name="id_loggeado" value="{{ auth()->user()->id }}">
 		</div>
 
 		@include('../mensajes_validacion')

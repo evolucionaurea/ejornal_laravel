@@ -34,13 +34,13 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/users" class="{{ setActiveSub('/admin/users') }}" >
+					<ol data-route="/admin/users" class="{{ setActiveSub('/admin/users') }}">
 						<a href="{{url('/admin/users')}}">Listado</a>
 					</ol>
-					<ol data-route="users.create" class="{{ setActiveSub('users.create') }}" >
+					<ol data-route="users.create" class="{{ setActiveSub('users.create') }}">
 						<a href="{{url('admin/users/create')}}">Crear usuario</a>
 					</ol>
-					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}" >
+					{{-- <ol class="{{ setActiveSub('/admin/users_fichadas_nuevas') }}">
 						<a href="{{url('admin/users_fichadas_nuevas')}}">Fichadas</a>
 					</ol> --}}
 				</ul>
@@ -57,10 +57,10 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/clientes" class="{{ setActiveSub('/admin/clientes') }}" >
+					<ol data-route="/admin/clientes" class="{{ setActiveSub('/admin/clientes') }}">
 						<a href="{{url('/admin/clientes')}}">Listado</a>
 					</ol>
-					<ol data-route="admin.clientes.create" class="{{ setActiveSub('clientes.create') }}" >
+					<ol data-route="admin.clientes.create" class="{{ setActiveSub('clientes.create') }}">
 						<a href="{{url('/admin/clientes/create')}}">Crear cliente</a>
 					</ol>
 				</ul>
@@ -76,10 +76,10 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/grupos" class="{{ setActiveSub('/admin/grupos') }}" >
+					<ol data-route="/admin/grupos" class="{{ setActiveSub('/admin/grupos') }}">
 						<a href="{{url('/admin/grupos')}}">Listado</a>
 					</ol>
-					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}" >
+					<ol data-route="grupos.create" class="{{ setActiveSub('grupos.create') }}">
 						<a href="{{url('/admin/grupos/create')}}">Crear grupo</a>
 					</ol>
 				</ul>
@@ -95,11 +95,11 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}" >
+					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}">
 						<a href="{{url('/admin/medicamentos')}}">Listado</a>
 					</ol>
 					<ol data-route="/admin/movimiento_medicamentos"
-						class="{{ setActiveSub('/admin/movimiento_medicamentos') }}" >
+						class="{{ setActiveSub('/admin/movimiento_medicamentos') }}">
 						<a href="{{url('/admin/movimiento_medicamentos')}}">Movimientos</a>
 					</ol>
 				</ul>
@@ -116,20 +116,28 @@
 			<div class="dropdownContent">
 				<ul>
 					<ol data-route="/admin/reportes_fichadas_nuevas"
-						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}" >
+						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}">
 						<a href="{{url('/admin/reportes_fichadas_nuevas')}}">Fichadas</a>
 					</ol>
-					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}" >
+					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}">
 						<a href="{{url('/admin/reportes_ausentismos')}}">Ausentismos</a>
 					</ol>
-					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('reportes_certificaciones') }}" >
+					<ol data-route="reportes_certificaciones" class="{{ setActiveSub('reportes_certificaciones') }}">
 						<a href="{{url('/admin/reportes_certificaciones')}}">Certificaciones</a>
 					</ol>
-					<ol data-route="reportes_consultas" class="{{ setActiveSub('reportes_consultas') }}" >
+					<ol data-route="reportes_consultas" class="{{ setActiveSub('reportes_consultas') }}">
 						<a href="{{url('/admin/reportes_consultas')}}">Consultas</a>
 					</ol>
-					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}" >
+					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}">
 						<a href="{{url('/admin/reportes_comunicaciones')}}">Comunicaciones</a>
+					</ol>
+					<ol data-route="/admin/reportes/actividad_usuarios"
+						class="{{ setActiveSub('/admin/reportes/actividad_usuarios') }}">
+						<a href="{{url('/admin/reportes/actividad_usuarios')}}">Actividad Usuarios</a>
+					</ol>
+					<ol data-route="/admin/reportes/ediciones_fichadas"
+						class="{{ setActiveSub('/admin/reportes/ediciones_fichadas') }}">
+						<a href="{{url('/admin/reportes/ediciones_fichadas')}}">Ediciones Fichadas</a>
 					</ol>
 				</ul>
 			</div>
