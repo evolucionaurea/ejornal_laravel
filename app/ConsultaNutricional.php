@@ -14,7 +14,6 @@ class ConsultaNutricional extends Model
     protected $fillable = [
         'id_nomina',
         'tipo', 
-        'fecha', 
         'objetivos', 
         'gustos_alimentarios', 
         'comidas_diarias',
@@ -35,6 +34,11 @@ class ConsultaNutricional extends Model
     public function nomina()
     {
         return $this->belongsTo(Nomina::class, 'id_nomina');
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'id_cliente');
     }
 
 }

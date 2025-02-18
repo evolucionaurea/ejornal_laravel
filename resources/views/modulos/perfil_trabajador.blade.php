@@ -38,9 +38,19 @@
 				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
 					<b>Fecha Nacimiento:</b>
 					<br>
-					{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]'
+					{{
+					$trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]'
 					}}
 				</li>
+				@if ($trabajador->fecha_nacimiento != null)
+				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
+					<b>Edad:</b>
+					<br>
+					{{
+					\Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age
+					}} años
+				</li>
+				@endif
 			</ul>
 		</div>
 

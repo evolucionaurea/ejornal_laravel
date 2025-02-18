@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Traits\Clientes;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
+use App\ConsultaNutricional;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -75,6 +76,21 @@ class EmpleadoConsultasTodasController extends Controller
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_enfermerias.id_cliente', auth()->user()->id_cliente_actual);
 
+		// Nutricional
+		$nutricionales = ConsultaNutricional::select(
+			'nominas.nombre',
+			'consultas_nutricionales.id',
+			'consultas_nutricionales.id_nomina',
+			DB::raw('NULL as id_diagnostico_consulta'), // Ajuste para que coincida con otras consultas
+			'consultas_nutricionales.fecha_atencion as fecha',
+			DB::raw('NULL as derivacion_consulta'),
+			DB::raw('NULL as diagnostico'),
+			DB::raw('"Nutricional" as tipo')
+		)
+		->join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
+		->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
+		
+
 
 		if ($request->search) {
 			$filtro = '%' . $request->search['value'] . '%';
@@ -92,19 +108,26 @@ class EmpleadoConsultasTodasController extends Controller
 					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
 					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
 			});
+
+			$nutricionales->where(function ($query) use ($filtro) {
+				$query->where('nominas.nombre', 'like', $filtro);
+			});
+
 		}
 
 		if ($request->from) {
 			$medicas->whereDate('consultas_medicas.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 			$enfermerias->whereDate('consultas_enfermerias.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$nutricionales->whereDate('consultas_nutricionales.fecha_atencion', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 
 		if ($request->to) {
 			$medicas->whereDate('consultas_medicas.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 			$enfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$nutricionales->whereDate('consultas_nutricionales.fecha_atencion', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
-		$query = $medicas->union($enfermerias);
+		$query = $medicas->union($enfermerias)->union($nutricionales);
 		$total = $query->count();
 
 		if($request->order){
@@ -151,6 +174,7 @@ class EmpleadoConsultasTodasController extends Controller
 		//$dataEnfermerias = $enfermerias->skip($request->start)->take($request->length)->get();
 
 		//$data = $dataMedicas->concat($dataEnfermerias);
+		
 
 		return [
 			'draw' => $request->draw,

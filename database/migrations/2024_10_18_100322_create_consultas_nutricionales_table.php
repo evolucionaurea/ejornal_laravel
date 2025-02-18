@@ -18,9 +18,9 @@ class CreateConsultasNutricionalesTable extends Migration
             $table->unsignedBigInteger('id_nomina');
             $table->unsignedBigInteger('id_cliente');
             $table->enum('tipo', ['inicial', 'seguimiento'])->default('inicial');
+            $table->date('fecha_atencion')->nullable();
 
             //Consulta Inicial
-            $table->date('fecha');
             $table->text('objetivos')->nullable();
             $table->text('gustos_alimentarios')->nullable();
             $table->text('comidas_diarias')->nullable();
@@ -29,7 +29,6 @@ class CreateConsultasNutricionalesTable extends Migration
             $table->text('alergias_alimentarias')->nullable();
 
             // Consulta Seguimiento
-            $table->date('fecha_atencion')->nullable();
             $table->text('act_fisica')->nullable();
             $table->decimal('circunferencia_cintura', 5, 2)->nullable(); // Hasta 3 enteros y 2 decimales
             $table->decimal('porcent_masa_grasa', 5, 2)->nullable();     // Hasta 3 enteros y 2 decimales
