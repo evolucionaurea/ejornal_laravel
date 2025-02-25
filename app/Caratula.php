@@ -13,7 +13,6 @@ class Caratula extends Model
     // Campos habilitados para ingresar
     protected $fillable = [
         'id_nomina',
-        'id_patologia', 
         'medicacion_habitual', 
         'antecedentes', 
         'alergias', 
@@ -22,9 +21,9 @@ class Caratula extends Model
         'imc'
     ];
 
-    public function patologia()
+    public function patologias()
     {
-        return $this->belongsTo(Patologia::class, 'id_patologia');
+        return $this->belongsToMany(Patologia::class, 'caratula_patologia', 'id_caratula', 'id_patologia')->withTimestamps();
     }
 
     public function nomina()

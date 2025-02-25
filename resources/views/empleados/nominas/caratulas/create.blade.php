@@ -50,7 +50,7 @@
                             <a data-toggle="modal" data-target="#patologiaCrearModal" href="#"><i
                                     class="fas fa-plus-circle"></i></a>
                         </label>
-                        <select required name="id_patologia" class="form-control form-control-sm">
+                        <select multiple required name="id_patologia[]" class="form-control form-control-sm select_2">
                             @foreach ($patologias as $patologia)
                             <option value="{{ $patologia->id }}">{{ $patologia->nombre }}</option>
                             @endforeach

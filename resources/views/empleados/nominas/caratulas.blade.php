@@ -33,7 +33,17 @@
                         <td>{{ $caratula->id }}</td>
                         <td>{{ $caratula->nomina->nombre }}</td>
                         <td>{{ $caratula->cliente->nombre }}</td>
-                        <td>{{ $caratula->patologia->nombre ?? 'sin cargar' }}</td>
+                        <td>
+                            @if ($caratula->patologias->count() > 0)
+                            <ul>
+                                @foreach ($caratula->patologias as $patologia)
+                                <li>{{ $patologia->nombre }}</li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <span>Sin cargar</span>
+                            @endif
+                        </td>
                         <td class="acciones_tabla" scope="row">
                             <a title="Create"
                                 href="{{ route('empleados.nominas.caratulas.create', $caratula->nomina->id) }}">

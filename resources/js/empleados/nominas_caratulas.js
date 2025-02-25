@@ -41,4 +41,10 @@ $(()=>{
 	});
 
 
+	$('.select_2').select2({
+		placeholder: "Seleccione una o más patologías",
+		allowClear: true
+	});
+	
+
 })

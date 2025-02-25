@@ -15,7 +15,7 @@ class Patologia extends Model
 
     public function caratulas()
     {
-        return $this->hasMany(Caratula::class, 'id_patologia');
+        return $this->belongsToMany(Caratula::class, 'caratula_patologia', 'id_patologia', 'id_caratula')->withTimestamps();
     }
 
 }

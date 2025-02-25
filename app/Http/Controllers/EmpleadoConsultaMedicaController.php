@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Caratula;
 use Illuminate\Http\Request;
 use App\ConsultaMedica;
 use App\DiagnosticoConsulta;
@@ -335,6 +336,23 @@ class EmpleadoConsultaMedicaController extends Controller
 			]);
 		}
 
+
+		// Obtener la última carátula
+		$ultimaCaratula = Caratula::where('id_nomina', $request->id_nomina)
+			->where('id_cliente', auth()->user()->id_cliente_actual)
+			->latest()
+			->first();
+
+		// Actualizar solo si se encontró una carátula y los valores de peso y altura están presentes
+		if ($ultimaCaratula && isset($request->peso) && !empty($request->peso) && isset($request->altura) && !empty($request->altura)) {
+			$ultimaCaratula->update([
+				'peso' => $request->peso,
+				'altura' => $request->altura,
+				'imc' => $request->imc
+			]);
+		}
+
+	
 		return redirect('empleados/consultas/medicas')->with('success','Consulta médica guardada con éxito');
 
 

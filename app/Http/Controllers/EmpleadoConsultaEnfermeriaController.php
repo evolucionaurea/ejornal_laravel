@@ -320,6 +320,22 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			]);
 		}
 
+
+		// Obtener la última carátula
+		$ultimaCaratula = Caratula::where('id_nomina', $request->id_nomina)
+			->where('id_cliente', auth()->user()->id_cliente_actual)
+			->latest()
+			->first();
+
+		// Actualizar solo si se encontró una carátula y los valores de peso y altura están presentes
+		if ($ultimaCaratula && isset($request->peso) && !empty($request->peso) && isset($request->altura) && !empty($request->altura)) {
+			$ultimaCaratula->update([
+				'peso' => $request->peso,
+				'altura' => $request->altura,
+				'imc' => $request->imc
+			]);
+		}
+
 		return redirect('empleados/consultas/enfermeria')->with('success', 'Consulta de enfermería guardada con éxito.');
 
 

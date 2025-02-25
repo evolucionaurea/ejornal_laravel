@@ -28,3 +28,4 @@ Route::post('/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@cli
 Route::get('/get_ultima_caratula/{id_nomina}', 'EndpointsController@getUltimaCaratula');
 Route::get('/get_caratula_nomina/{id_nomina}/{id_cliente_actual}', 'EndpointsController@getCaratulaNomina');
 Route::post('/actualizar_caratula', 'EndpointsController@actualizarCaratula');
+Route::get('/patologias', 'EndpointsController@getPatologias');

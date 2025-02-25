@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\EdicionFichada;
 use App\FichadaNueva;
+use App\Patologia;
 use Jenssegers\Agent\Agent;
 use DateTime;
 
@@ -186,65 +187,88 @@ class EndpointsController extends Controller
 		}
 
 
-    public function getCaratulaNomina($id_nomina, $id_cliente_actual)
-    {
-        $caratula = Caratula::with(['patologia', 'nomina', 'cliente'])  // Cargar relaciones
-            ->where('id_nomina', $id_nomina)
-            ->where('id_cliente', $id_cliente_actual)
-            ->orderBy('created_at', 'desc')
-            ->first();
-    
-        // Formatear la respuesta antes de devolverla
-        $caratulaData = [
-            'estado' => !empty($caratula) ? true : false,
-            'data' => $caratula ? $caratula->toArray() + [  // Incluye todos los campos de la carátula
-                'patologia' => $caratula->patologia ? [
-                    'id' => $caratula->patologia->id,
-                    'nombre' => $caratula->patologia->nombre
-                ] : null,
-                'nomina' => $caratula->nomina ? [
-                    'id' => $caratula->nomina->id,
-                    'nombre' => $caratula->nomina->nombre
-                ] : null,
-                'cliente' => $caratula->cliente ? [
-                    'id' => $caratula->cliente->id,
-                    'nombre' => $caratula->cliente->nombre
-                ] : null
-            ] : null
-        ];
-    
-        return response()->json($caratulaData);
-    }
+		public function getCaratulaNomina($id_nomina, $id_cliente_actual)
+		{
+			$caratula = Caratula::with(['patologias', 'nomina', 'cliente'])  // Cargar patologías desde la tabla intermedia
+				->where('id_nomina', $id_nomina)
+				->where('id_cliente', $id_cliente_actual)
+				->orderBy('created_at', 'desc')
+				->first();
+		
+			// Formatear la respuesta antes de devolverla
+			$caratulaData = [
+				'estado' => !empty($caratula) ? true : false,
+				'data' => $caratula ? $caratula->toArray() + [  // Incluye todos los campos de la carátula
+					'patologias' => $caratula->patologias->map(function($patologia) {
+						return [
+							'id' => $patologia->id,
+							'nombre' => $patologia->nombre
+						];
+					}),
+					'nomina' => $caratula->nomina ? [
+						'id' => $caratula->nomina->id,
+						'nombre' => $caratula->nomina->nombre
+					] : null,
+					'cliente' => $caratula->cliente ? [
+						'id' => $caratula->cliente->id,
+						'nombre' => $caratula->cliente->nombre
+					] : null
+				] : null
+			];
+		
+			return response()->json($caratulaData);
+		}
+		
 
     
-    public function actualizarCaratula(Request $request)
-    {
+		public function actualizarCaratula(Request $request)
+		{
+			try {
+				$caratula = new Caratula();
+				$caratula->id_nomina = $request->trabajador_id_edit_caratula;
+				$caratula->id_cliente = $request->cliente_id_edit_caratula;
+				$caratula->medicacion_habitual = $request->medicacion_habitual_edit_caratula;
+				$caratula->antecedentes = $request->antecedentes_edit_caratula;
+				$caratula->alergias = $request->alergias_edit_caratula;
+				$caratula->peso = $request->peso_edit_caratula;
+				$caratula->altura = $request->altura_edit_caratula;
+				$caratula->imc = $request->imc_edit_caratula;
+				$caratula->save();
+		
+				// Sincronizar las patologías
+				if ($request->has('patologia_id_edit_caratula')) {
+					$caratula->patologias()->sync($request->patologia_id_edit_caratula);  // Sincronizar con la tabla intermedia
+				}
+		
+				return response()->json([
+					'estado' => true,
+					'data' => 'Caratula actualizada correctamente'
+				]);
+			} catch (\Throwable $th) {
+				return response()->json([
+					'estado' => false,
+					'data' => $th->getMessage()
+				]);
+			}
+		}
 
-      try {
-        $caratula = new Caratula();
-        $caratula->id_nomina = $request->trabajador_id_edit_caratula;
-        $caratula->id_cliente = $request->cliente_id_edit_caratula;
-        $caratula->id_patologia = $request->patologia_id_edit_caratula;
-        $caratula->medicacion_habitual = $request->medicacion_habitual_edit_caratula;
-        $caratula->antecedentes = $request->antecedentes_edit_caratula;
-        $caratula->alergias = $request->alergias_edit_caratula;
-        $caratula->peso = $request->peso_edit_caratula;
-        $caratula->altura = $request->altura_edit_caratula;
-        $caratula->imc = $request->imc_edit_caratula;
-        $caratula->save();
-  
-        return response()->json([
-          'estado' => true,
-          'data' => 'Caratula actualizada correctamente'
-        ]);
-      } catch (\Throwable $th) {
-        return response()->json([
-          'estado' => true,
-          'data' => $th->getMessage()
-        ]);
-      }
+		public function getPatologias()
+		{
+			try {
+				$patologias = Patologia::all();
 
-    }
+				return response()->json([
+					'estado' => true,
+					'data' => $patologias
+				]);
+			} catch (\Throwable $th) {
+				return response()->json([
+					'estado' => false,
+					'data' => $th->getMessage()
+				]);
+			}
+		}
+		
     
     
 

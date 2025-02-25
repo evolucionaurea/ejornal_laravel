@@ -22,6 +22,7 @@ class EmpleadosConsultaNutricionalController extends Controller
     {
         $clientes = $this->getClientesUser();
         $paginatedNutricion = ConsultaNutricional::with(['nomina', 'cliente']) 
+            ->orderBy('created_at', 'desc')
             ->paginate(10); 
     
         return view('empleados.consultas.nutricionales', compact('paginatedNutricion', 'clientes'));

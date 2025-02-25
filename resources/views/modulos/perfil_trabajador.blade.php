@@ -2,110 +2,111 @@
 
 	{{-- PRINCIPAL --}}
 	<div class="d-flex justify-content-between align-items-start">
-
 		<!-- Primer <ul>: borde blanco suave -->
 		<div class="p-2" style="background-color: #ebebeb; color: #535353; flex-grow:1">
-			<h4 class="text-black p-2 mb-0">Datos rapidos</h4>
-			<ul class="d-flex flex-wrap"
-				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 20px;">
-				<li style="p- background: transparent; color: rgb(58, 58, 58);">
-					<b>CUIL:</b>
-					<br>
-					@if ($trabajador->email !== null && $trabajador->email !== '')
-					<span>{{ $trabajador->email }}</span>
-					@else
-					{{ 'No fue cargado' }}
-					@endif
-				</li>
-				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
-					<b>Activo:</b>
-					<br>
+			<h4 class="text-black p-2 mb-0">Información principal</h4>
+			<ul
+				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
+				<li style="background: transparent; color: rgb(58, 58, 58);">
+					<b>Activo:</b><br>
 					@if ($trabajador->estado == 1)
 					Sí
 					@else
 					No
 					@endif
 				</li>
-				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
-					<b>Teléfono:</b>
-					<br>
+				<li style="background: transparent; color: rgb(58, 58, 58);">
+					<b>DNI / CUIL:</b><br>
+					@if ($trabajador->dni !== null && $trabajador->dni !== '')
+					<span>{{ $trabajador->dni }}</span>
+					@else
+					{{ 'No fue cargado' }}
+					@endif
+				</li>
+				<li style="background: transparent; color: rgb(58, 58, 58);">
+					<b>Eamil:</b><br>
+					@if ($trabajador->email !== null && $trabajador->email !== '')
+					<span>{{ $trabajador->email }}</span>
+					@else
+					{{ 'No fue cargado' }}
+					@endif
+				</li>
+				<li style="background: transparent; color: rgb(58, 58, 58);">
+					<b>Fecha Nacimiento:</b><br>
+					{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]'
+					}}
+				</li>
+				@if ($trabajador->fecha_nacimiento != null)
+				<li style="background: transparent; color: rgb(58, 58, 58);">
+					<b>Edad:</b><br>
+					{{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años
+				</li>
+				@endif
+				<li style="background: transparent; color: rgb(58, 58, 58);">
+					<b>Teléfono:</b><br>
 					@if ($trabajador->telefono !== null && $trabajador->telefono !== '')
 					<a href="tel:{{$trabajador->telefono}}" style="color: white;">{{$trabajador->telefono}}</a>
 					@else
 					{{ 'No fue cargado' }}
 					@endif
 				</li>
-				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
-					<b>Fecha Nacimiento:</b>
-					<br>
-					{{
-					$trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]'
-					}}
-				</li>
-				@if ($trabajador->fecha_nacimiento != null)
-				<li style="p-2 background: transparent; color: rgb(58, 58, 58);">
-					<b>Edad:</b>
-					<br>
-					{{
-					\Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age
-					}} años
-				</li>
-				@endif
 			</ul>
 		</div>
-
-
 
 		<!-- Segundo <ul>: fondo azul oscuro y letras azul claro -->
 		@if ($caratula)
 		<div class="p-2" style="background-color: #1a3b63; color: #8cb3ff; flex-grow:1">
-			<h4 class="text-white p-2 mb-0">Caratula</h4>
-			<ul class="d-flex flex-wrap"
-				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 20px;">
-				<li style="p-2 background: transparent;">
-					<b>Última Patología:</b>
-					<br>
-					<span>{{ $caratula->patologia->nombre }}</span>
+			<h4 class="text-white p-2 mb-0">Carátula</h4>
+			<ul
+				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
+				<li style="background: transparent;">
+					<b>Última Patología:</b><br>
+					@if ($caratula->patologias && count($caratula->patologias) > 0)
+					<ul class="list-group d-flex flex-wrap flex-row">
+						@foreach ($caratula->patologias as $patologia)
+						<li class="list-group-item" style="margin-right: 5px;">
+							{{ $patologia->nombre }}
+						</li>
+						@endforeach
+					</ul>
+					@else
+					{{ 'No fue cargado' }}
+					@endif
 				</li>
-				<li style="p-2 background: transparent;">
-					<b>Medicación habitual:</b>
-					<br>
+				<li style="background: transparent;">
+					<b>Medicación habitual:</b><br>
 					{{ $caratula->medicacion_habitual }}
 				</li>
-				<li style="p-2 background: transparent;">
-					<b>Antecedentes:</b>
-					<br>
+				<li style="background: transparent;">
+					<b>Antecedentes:</b><br>
 					{{ $caratula->antecedentes }}
 				</li>
-				<li style="p-2 background: transparent;">
-					<b>Alergias:</b>
-					<br>
+				<li style="background: transparent;">
+					<b>Alergias:</b><br>
 					{{ $caratula->alergias }}
 				</li>
-				<li style="p-2 background: transparent;">
-					<b>Peso:</b>
-					<br>
+				<li style="background: transparent;">
+					<b>Peso:</b><br>
 					{{ $caratula->peso }}
 				</li>
-				<li style="p-2 background: transparent;">
-					<b>Altura:</b>
-					<br>
+				<li style="background: transparent;">
+					<b>Altura:</b><br>
 					{{ $caratula->altura }}
 				</li>
-				<li style="p-2 background: transparent;">
-					<b>IMC:</b>
-					<br>
+				<li style="background: transparent;">
+					<b>IMC:</b><br>
 					{{ $caratula->imc }}
 				</li>
 			</ul>
 		</div>
 		@else
 		<div class="alert alert-info">
-			<h4>Caratula</h4>
+			<h4>Carátula</h4>
 			<p>Sin contenido cargado aún</p>
 		</div>
 		@endif
 	</div>
+
 
 
 
@@ -295,7 +296,7 @@
 				<h2 class="mb-0 d-flex">
 					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
 						data-target="#collapseInfoInicial" aria-expanded="false" aria-controls="collapseInfoInicial">
-						<h6>Informacion principal</h6>
+						<h6>Informacion adicional</h6>
 					</button>
 					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseInfoInicial"
 						class="fal fa-chevron-circle-down text-white"></i>
@@ -306,14 +307,6 @@
 				<div class="card-body table-responsive">
 					<div class="col-lg-4 col-md-4 col-sm-12">
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item">
-								<b>DNI: </b> {{$trabajador->dni}}
-							</li>
-							@if($trabajador->fecha_nacimiento)
-							<li class="list-group-item">
-								<b>Edad: </b> {{$trabajador->edad}}
-							</li>
-							@endif
 							<li class="list-group-item">
 								<b>Calle: </b> {{$trabajador->calle}}
 							</li>

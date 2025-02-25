@@ -22,11 +22,10 @@ class EmpleadosCaratulaController extends Controller
     {
         $clientes = $this->getClientesUser(); // Obtener los clientes del usuario actual
     
-        // Filtrar las carátulas por los clientes obtenidos
-        $caratulas = Caratula::with(['nomina', 'cliente', 'patologia'])
-            ->whereIn('id_cliente', $clientes->pluck('id')) // Filtrar por clientes permitidos
-            ->orderBy('created_at', 'desc') // Ordenar por la fecha de creación en orden descendente
-            ->get();
+        $caratulas = Caratula::with(['nomina', 'cliente', 'patologias'])
+        ->whereIn('id_cliente', $clientes->pluck('id'))
+        ->orderBy('created_at', 'desc')
+        ->get();
     
         // Agrupar por el campo único del trabajador (nombre en este caso) y obtener la más reciente
         $caratulasUnicas = $caratulas
@@ -86,15 +85,16 @@ class EmpleadosCaratulaController extends Controller
         $validatedData = $request->validate([
             'peso' => 'required',
             'altura' => 'required',
-            'imc' => 'required'
+            'imc' => 'required',
+            'id_patologia' => 'nullable|array', // Permitir múltiples patologías
+            'id_patologia.*' => 'exists:patologias,id' // Validar que existen en la DB
         ]);
-
+ 
         $nomina = Nomina::find($request->id_nomina);
 
         $caratula = new Caratula();
         $caratula->id_nomina = $request->id_nomina;
         $caratula->id_cliente = $nomina->cliente->id;
-        $caratula->id_patologia = $request->id_patologia;
         $caratula->medicacion_habitual = $request->medicacion_habitual;
         $caratula->antecedentes = $request->antecedentes;
         $caratula->alergias = $request->alergias;
@@ -102,6 +102,11 @@ class EmpleadosCaratulaController extends Controller
         $caratula->altura = $request->altura;
         $caratula->imc = $request->imc;
         $caratula->save();
+
+         // Guardar la relación en la tabla intermedia
+         if ($request->has('id_patologia')) {
+            $caratula->patologias()->sync($request->id_patologia);
+        }
 
         return redirect('empleados/nominas/'.$request->id_nomina)->with('success', 'Caratula guardada con éxito');
     }
@@ -115,7 +120,11 @@ class EmpleadosCaratulaController extends Controller
     public function show($id)
     {
         $clientes = $this->getClientesUser();
-        $caratulas = Caratula::where('id_nomina', $id)->orderBy('created_at', 'desc')->get();
+        $caratulas = Caratula::with('patologias') // Cargar patologías desde la tabla intermedia
+            ->where('id_nomina', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('empleados.nominas.caratulas.show', compact('caratulas', 'clientes'));
     }
 
@@ -150,15 +159,15 @@ class EmpleadosCaratulaController extends Controller
      */
     public function destroy($id)
     {
-        // Encuentra la carátula por su ID y elimínala
         $caratula = Caratula::find($id);
         
         if ($caratula) {
-            $caratula->delete();  // Elimina la carátula
-            return back()->with('success', 'Caratula eliminada con éxito');
+            $caratula->patologias()->detach(); // Eliminar relaciones en la tabla intermedia
+            $caratula->delete();
+            return back()->with('success', 'Carátula eliminada con éxito');
         }
-    
-        return back()->with('error', 'Caratula no encontrada');
+
+        return back()->with('error', 'Carátula no encontrada');
     }
     
 }

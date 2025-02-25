@@ -45,7 +45,17 @@
                     @foreach ($caratulas as $caratula)
                     <tr>
                         <td>{{ $caratula->id }}</td>
-                        <td>{{ $caratula->patologia->nombre ?? 'sin cargar' }}</td>
+                        <td>
+                            @if ($caratula->patologias->count() > 0)
+                            <ul>
+                                @foreach ($caratula->patologias as $patologia)
+                                <li>{{ $patologia->nombre }}</li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <span>Sin cargar</span>
+                            @endif
+                        </td>
                         <td>{{ $caratula->medicacion_habitual }}</td>
                         <td>{{ $caratula->antecedentes }}</td>
                         <td>{{ $caratula->alergias }}</td>
