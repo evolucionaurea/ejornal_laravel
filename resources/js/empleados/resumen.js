@@ -97,9 +97,9 @@ $(()=>{
 
 
 						return `
-						<div class="acciones_tabla justify-content-end">
-							<button data-toggle="completado" data-id="${v.id}" title="Marcar como completado" class="btn-success" >
-								<i class="fas fa-check"></i>
+						<div class="acciones_tablax justify-content-endx">
+							<button data-toggle="completado" data-id="${v.id}" title="Marcar como completado" class="btn btn-tiny tag_ejornal_success" >
+								<i class="fas fa-check"></i> <span>Marcar como completado</span>
 							</button>
 						</div>`
 					}
@@ -118,10 +118,17 @@ $(()=>{
 		const id = $(btn.currentTarget).attr('data-id')
 		const tr = $(btn.currentTarget).closest('tr')
 
-		//const preocupacional = await axios.get(`/empleados/preocupacionales/find/${id}`)
-		//console.log(preocupacional.data)
+		const form_preocupacional = await axios.get(`/templates/form-completar-preocupacional`)
+		//return console.log(form_preocupacional.data)
 
-		const swal = await Swal.fire({
+		const form = $(form_preocupacional.data)
+		form.find('[name="id"]').val(id)
+
+		$('#popups').find('.modal-body').html(form)
+		$('#popups').find('.modal-dialog').removeClass('modal-lg')
+		$('#popups').modal('show')
+
+		/*const swal = await Swal.fire({
 			input:'textarea',
 			inputLabel:'Marcar completado y dejar un comentario',
 			inputPlaceholder:'Ingresa un comentario',
@@ -133,8 +140,9 @@ $(()=>{
 			confirmButtonText:'Guardar',
 			reverseButtons:true
 		})
-		if(swal.isDismissed) return false
-		try{
+		if(swal.isDismissed) return false*/
+
+		/*try{
 			const response = await axios.post(`preocupacionales/completar`,{
 				id:id,
 				comentarios:swal.value
@@ -143,7 +151,7 @@ $(()=>{
 			tr.remove()
 		}catch(e){
 			toastr.error('Hubo un error en la solicitud')
-		}
+		}*/
 	})
 
 })

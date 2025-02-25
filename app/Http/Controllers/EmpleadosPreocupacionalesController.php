@@ -145,8 +145,9 @@ class EmpleadosPreocupacionalesController extends Controller
 			->orderBy('nombre', 'asc')
 			->get();
 		$clientes = $this->getClientesUser();
-
 		$tipos = PreocupacionalTipoEstudio::all();
+
+		//session()->flash('resultado','Lorem ipsumxx');
 
 		return view('empleados.preocupacionales.create', compact(
 			'clientes',

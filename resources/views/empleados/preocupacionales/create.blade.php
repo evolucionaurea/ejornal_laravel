@@ -82,7 +82,7 @@
 
 					<div class="form-group col-lg-3">
 						<label for="">Resultado</label>
-						<input name="resultado" type="text" class="form-control" value="{{ old('resultado') }}">
+						<input name="resultado" type="text" class="form-control" value="{{ session('resultado', old('resultado')) }}">
 					</div>
 
 				</div>

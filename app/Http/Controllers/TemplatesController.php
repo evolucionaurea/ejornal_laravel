@@ -21,4 +21,8 @@ class TemplatesController extends Controller
 		return view('templates.form-cambiar-fichada');
 	}
 
+	public function form_completar_preocupacional(){
+		return view('templates.form-completar-preocupacional');
+	}
+
 }

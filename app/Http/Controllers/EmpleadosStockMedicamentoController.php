@@ -226,11 +226,24 @@ class EmpleadosStockMedicamentoController extends Controller
 
 		$cliente = Cliente::findOrFail(auth()->user()->id_cliente_actual);
 
+		$request->start = 0;
+		$request->length = 15000;
+		$request->draw = 1;
 
-		///$request->length = 10;
+		$request->columns = [
+			[
+				'name'=>'motivo'
+			]
+		];
+		$request->order = [
+			[
+				'column'=>0,
+				'dir'=>'desc'
+			]
+		];
+
 		$response = $this->searchHistorial($request);
 		//dd($response['data']->toArray());
-
 
 		$historial = $response['data'];
 
@@ -269,7 +282,7 @@ class EmpleadosStockMedicamentoController extends Controller
 				(is_null($history->suministrados) || $history->suministrados==0 ? '' : $history->suministrados),
 				(is_null($history->egreso) || $history->egreso==0 ? '' : $history->egreso),
 				$history->motivo,
-				$history->fecha_ingreso
+				$history->created_at
 			],';');
 		}
 		fseek($fp, 0);
