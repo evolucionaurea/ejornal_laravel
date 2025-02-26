@@ -1,5 +1,7 @@
 <form data-form="completar-preocupacional">
 
+	@csrf
+
 	<input type="hidden" name="id">
 
 	<h4>Marcar completado y dejar un comentario</h4>

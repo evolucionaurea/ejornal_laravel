@@ -11,7 +11,7 @@
 
         <div class="cabecera">
             <h2>Listado de carátulas</h2>
-            <p>Aquí puede ver el listado de las ultimas carátulas de los trabajadores de la empresa</p>
+            <p>Aquí puede ver el listado de las últimas carátulas de los trabajadores de la empresa.</p>
         </div>
 
         @include('mensajes_validacion')
@@ -30,29 +30,29 @@
                 <tbody>
                     @foreach ($paginatedCaratulas as $caratula)
                     <tr>
-                        <td>{{ $caratula->id }}</td>
-                        <td>{{ $caratula->nomina->nombre }}</td>
-                        <td>{{ $caratula->cliente->nombre }}</td>
-                        <td>
+                        <td class="align-middle">{{ $caratula->id }}</td>
+                        <td class="align-middle">{{ $caratula->nomina->nombre }}</td>
+                        <td class="align-middle">{{ $caratula->cliente->nombre }}</td>
+                        <td class="align-middle">
                             @if ($caratula->patologias->count() > 0)
-                            <ul>
+                            <ul class="list-group list-group-flush">
                                 @foreach ($caratula->patologias as $patologia)
-                                <li>{{ $patologia->nombre }}</li>
+                                <li class="list-group-item p-1">{{ $patologia->nombre }}</li>
                                 @endforeach
                             </ul>
                             @else
                             <span>Sin cargar</span>
                             @endif
                         </td>
-                        <td class="acciones_tabla" scope="row">
-                            <a title="Create"
-                                href="{{ route('empleados.nominas.caratulas.create', $caratula->nomina->id) }}">
-                                <i class="fas fa-plus"></i>
-                            </a>
-                            <a title="Ver"
-                                href="{{ route('empleados.nominas.caratulas.show', $caratula->nomina->id) }}">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                        <td class="align-middle" scope="row">
+                            <div class="acciones_tabla">
+                                <a title="Create" href="{{ route('empleados.nominas.caratulas.create', $caratula->nomina->id) }}">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                                <a title="Ver" href="{{ route('empleados.nominas.caratulas.show', $caratula->nomina->id) }}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

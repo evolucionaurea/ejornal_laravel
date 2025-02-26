@@ -13,7 +13,7 @@
         {{-- Contenido de la pagina --}}
 
         <div class="cabecera">
-            <h2>Creación de caratulas</h2>
+            <h2>Creación de carátulas</h2>
             <p>Crearás una carátula para <b>{{ $trabajador->nombre }}</b></p>
             <div class="cabecera_acciones">
                 <a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas/' . $trabajador->id) }}">
@@ -44,7 +44,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-3">
                         <label>
-                            Patologia
+                            Patología
                             <a data-toggle="modal" data-target="#patologiaVerModal" href="#"><i
                                     class="fas fa-eye"></i></a>
                             <a data-toggle="modal" data-target="#patologiaCrearModal" href="#"><i
@@ -58,12 +58,12 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label>Peso</label>
-                        <input name="peso" type="number" class="form-control" value="{{ old(" peso") }}">
+                        <input name="peso" type="number" class="form-control" value="{{ old("peso") }}">
                     </div>
                     <div class="form-group col-md-3">
                         <label>Altura</label>
                         <div class="input-group">
-                            <input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
+                            <input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
                             <div class="input-group-append">
                                 <span class="input-group-text">cm.</span>
                             </div>
@@ -71,25 +71,23 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label>IMC</label>
-                        <input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
-                        <input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
+                        <input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
+                        <input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
                     </div>
                     <div class="form-group col-md-6">
-                        <label>Medicacion habitual</label>
-                        <textarea class="form-control form-control-sm" name="medicacion_habitual" rows="2"
-                            cols="80"></textarea>
+                        <label>Medicación habitual</label>
+                        <textarea class="form-control form-control-sm" name="medicacion_habitual" rows="2" cols="80">{{ old("medicacion_habitual") }}</textarea>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Antecedentes</label>
-                        <textarea class="form-control form-control-sm" name="antecedentes" rows="2"
-                            cols="80"></textarea>
+                        <textarea class="form-control form-control-sm" name="antecedentes" rows="2" cols="80">{{ old("antecedentes") }}</textarea>
                     </div>
                     <div class="form-group col-md-12">
                         <label>Alergias</label>
-                        <textarea class="form-control form-control-sm" name="alergias" rows="2" cols="80"></textarea>
+                        <textarea class="form-control form-control-sm" name="alergias" rows="2" cols="80">{{ old("alergias") }}</textarea>
                     </div>
                 </div>
-                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar Caratula</button>
+                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar Carátula</button>
             </form>
         </div>
 
@@ -105,7 +103,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="patologiaVerModalLabel">Ver patologia</h5>
+                <h5 class="modal-title" id="patologiaVerModalLabel">Ver patologías</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -129,7 +127,7 @@
                     @endforeach
                     @else
                     <p class="alert alert-warning">
-                        No hay patologias creadas aun.
+                        No hay patologías creadas aún.
                     </p>
                     @endif
                 </ul>
@@ -145,7 +143,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="patologiaCrearModalLabel">Nueva patologia</h5>
+                <h5 class="modal-title" id="patologiaCrearModalLabel">Nueva patología</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

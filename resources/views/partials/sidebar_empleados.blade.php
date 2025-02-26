@@ -86,8 +86,8 @@
 						class="{{ setActiveSub('/empleados/nominas/movimientos') }}">
 						<a href="{{url('/empleados/nominas/movimientos')}}">Movimientos</a>
 					</ol>
-					<ol data-route="/empleados/caratulas" class="{{ setActiveSub('/empleados/caratulas') }}">
-						<a href="{{route('empleados.caratulas')}}">Caratulas</a>
+					<ol data-route="empleados.caratulas" class="{{ setActiveSub('empleados.caratulas') }}">
+						<a href="{{route('empleados.caratulas')}}">Carátulas</a>
 					</ol>
 
 				</ul>

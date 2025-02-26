@@ -138,7 +138,7 @@ class EmpleadosPreocupacionalesController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create()
+	public function create(Request $request)
 	{
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
 			->where('estado', '=', 1)
@@ -147,7 +147,24 @@ class EmpleadosPreocupacionalesController extends Controller
 		$clientes = $this->getClientesUser();
 		$tipos = PreocupacionalTipoEstudio::all();
 
-		//session()->flash('resultado','Lorem ipsumxx');
+		if($request->renovar){
+			$preocupacional = Preocupacional::findOrFail($request->id);
+			//dd($preocupacional->observaciones);
+			/*$preocupacional->id_nomina = $request->trabajador;
+			$preocupacional->id_cliente = auth()->user()->id_cliente_actual;
+			$preocupacional->fecha = $fecha;
+			*/
+
+			session()->flash('trabajador',$preocupacional->id_nomina);
+			session()->flash('fecha',$preocupacional->fecha->format('d/m/Y'));
+			session()->flash('tipo_estudio_id',$preocupacional->tipo_estudio_id);
+			session()->flash('resultado',$preocupacional->resultado);
+			session()->flash('observaciones',$preocupacional->observaciones);
+
+			session()->flash('tiene_vencimiento',!is_null($preocupacional->fecha_vencimiento) ? '1' : '');
+			session()->flash('fecha_vencimiento',$preocupacional->fecha_vencimiento->format('d/m/Y'));
+		}
+
 
 		return view('empleados.preocupacionales.create', compact(
 			'clientes',
@@ -195,6 +212,10 @@ class EmpleadosPreocupacionalesController extends Controller
 		///$preocupacional->archivo = $nombre;
 
 		if($request->tiene_vencimiento){
+			$validatedData = $request->validate([
+				'fecha_vencimiento' => 'required'
+			]);
+
 			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
 			$preocupacional->completado = 0;
 			///$preocupacional->completado_comentarios  = $request->completado_comentarios;
@@ -278,8 +299,10 @@ class EmpleadosPreocupacionalesController extends Controller
 		$preocupacional = Preocupacional::find($id);
 		$ruta = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}");
 		$ruta_archivo = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}/{$preocupacional->hash_archivo}");
-		unlink($ruta_archivo);
-		rmdir($ruta);
+
+		if(file_exists($ruta_archivo)) unlink($ruta_archivo);
+		if(is_dir($ruta)) rmdir($ruta);
+
 		$preocupacional->delete();
 		return back()->with('success', 'Preocupacional eliminado correctamente');
 
@@ -303,12 +326,14 @@ class EmpleadosPreocupacionalesController extends Controller
 			return false;
 		}
 
+		//dd($request->json());
+
 		$preocupacional->completado = 1;
 		$preocupacional->completado_comentarios = $request->comentarios;
 		$preocupacional->save();
 
 		return [
-			'message'=>'El estudio se ha marcado como <b>Completado </b>correctamente.',
+			'message'=>'El estudio se ha marcado como <b>Completado</b> correctamente.',
 			'status'=>'ok'
 		];
 	}

@@ -3,7 +3,7 @@ import toastr from 'toastr';
 
 $(()=>{
 
-	new Tablas({
+	const table_preocupacionales = new Tablas({
 		controller:'/empleados/preocupacionales',
 		get_path:'/busqueda',
 		delete_path:'/destroy',
@@ -152,6 +152,30 @@ $(()=>{
 		}catch(e){
 			toastr.error('Hubo un error en la solicitud')
 		}*/
+	})
+
+
+	$('#popups').on('submit','[data-form="completar-preocupacional"]',async form=>{
+		form.preventDefault()
+		const post = get_form(form.currentTarget)
+		post.renovar_estudio = $(form.currentTarget).find('#renovar_estudio').is(':checked') ? 1 : 0
+
+		try{
+			const response = await axios.post(`preocupacionales/completar`,post)
+			toastr.success(response.data.message)
+
+			if(post.renovar_estudio==1){
+				window.location.href = `/empleados/preocupacionales/create?renovar=1&id=${post.id}`
+			}else{
+				table_preocupacionales.datatable_instance.ajax.reload()
+			}
+
+
+		}catch(e){
+			toastr.error('Hubo un error en la solicitud. Intenta nuevamente.')
+		}
+
+
 	})
 
 })
