@@ -82,11 +82,13 @@ class EmpleadosPreocupacionalesController extends Controller
 			}
 		}
 		if(!is_null($request->vencimiento_estado)){
-			if($request->vencimiento_estado==='1'){
+			if($request->vencimiento_estado==='vencidos'){
 				$query->whereDate('fecha_vencimiento','<',$now);
 			}
-			if($request->vencimiento_estado==='0'){
-				$query->whereDate('fecha_vencimiento','>=',$now);
+			if($request->vencimiento_estado==='vencimiento_proximo'){
+				$hasta_fecha = $now->addDays(30);
+				$query->where('fecha_vencimiento','<=',$hasta_fecha);
+				$query->where('fecha_vencimiento','>',$now);
 			}
 		}
 		if(!is_null($request->completado)){
@@ -217,7 +219,7 @@ class EmpleadosPreocupacionalesController extends Controller
 			]);
 
 			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
-			$preocupacional->completado = 0;
+			//$preocupacional->completado = 0;
 			///$preocupacional->completado_comentarios  = $request->completado_comentarios;
 		}
 		///$preocupacional->save();

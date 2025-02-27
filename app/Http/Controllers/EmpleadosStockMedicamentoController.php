@@ -247,6 +247,8 @@ class EmpleadosStockMedicamentoController extends Controller
 
 		$historial = $response['data'];
 
+		//dd($historial[0]);
+
 
 		$hoy = Carbon::now();
 		$file_name = 'movimiento_medicamentos_'.Str::slug($cliente->nombre,'_','es').'_'.$hoy->format('YmdHis').'.csv';
@@ -268,16 +270,16 @@ class EmpleadosStockMedicamentoController extends Controller
 
 		foreach($historial as $history){
 			///$estado = $nomina->estado ? 'activo' : 'inactivo';
-			$tipo = '';
+			$tipo = '[Ingreso/Egreso]';
 			if($history->id_consulta_enfermeria) $tipo = 'Enfermería';
 			if($history->id_consulta_medica) $tipo = 'Médica';
 
 			fputcsv($fp,[
-				$history->medicamento,
+				$history->stock_medicamento->medicamento->nombre,
 				$tipo,
-				$history->user,
-				$history->cliente,
-				($history->trabajador ?? ''),
+				$history->user ?? $history->stock_medicamento->user->nombre,
+				$history->stock_medicamento->cliente->nombre,
+				($history->trabajador ?? '[no aplica]'),
 				(is_null($history->ingreso) || $history->ingreso==0 ? '' : $history->ingreso),
 				(is_null($history->suministrados) || $history->suministrados==0 ? '' : $history->suministrados),
 				(is_null($history->egreso) || $history->egreso==0 ? '' : $history->egreso),

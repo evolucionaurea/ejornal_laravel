@@ -21,13 +21,14 @@ class EmpleadosConsultaNutricionalController extends Controller
     public function index()
     {
         $clientes = $this->getClientesUser();
-        $paginatedNutricion = ConsultaNutricional::with(['nomina', 'cliente']) 
+        $paginatedNutricion = ConsultaNutricional::with(['nomina', 'cliente'])
+            ->where('id_cliente', auth()->user()->id_cliente_actual)
             ->orderBy('created_at', 'desc')
-            ->paginate(10); 
-    
+            ->paginate(10);
+
         return view('empleados.consultas.nutricionales', compact('paginatedNutricion', 'clientes'));
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -53,9 +54,9 @@ class EmpleadosConsultaNutricionalController extends Controller
     {
         $validatedData = $request->validate([
             'id_nomina' => 'required|exists:nominas,id',
-            'id_cliente' => 'required|exists:clientes,id', 
-            'tipo' => 'required|in:inicial,seguimiento', 
-            'fecha_atencion' => 'required', 
+            'id_cliente' => 'required|exists:clientes,id',
+            'tipo' => 'required|in:inicial,seguimiento',
+            'fecha_atencion' => 'required',
             // Campos opcionales
             'objetivos' => 'nullable|string',
             'gustos_alimentarios' => 'nullable|string',
@@ -129,7 +130,7 @@ class EmpleadosConsultaNutricionalController extends Controller
     {
         $clientes = $this->getClientesUser();
         $nutricional = ConsultaNutricional::with(['nomina', 'cliente'])->find($id);
-        return view('empleados.consultas.nutricionales.show', compact('nutricional', 'clientes')); 
+        return view('empleados.consultas.nutricionales.show', compact('nutricional', 'clientes'));
     }
 
     /**

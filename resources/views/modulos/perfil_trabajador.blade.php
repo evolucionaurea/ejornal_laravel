@@ -1,12 +1,11 @@
 <div class="tarjeta">
 
 	{{-- PRINCIPAL --}}
-	<div class="d-flex justify-content-between align-items-start">
+	<div class="row align-items-star">
 		<!-- Primer <ul>: borde blanco suave -->
-		<div class="p-2" style="background-color: #ebebeb; color: #535353; flex-grow:1">
+		<div class="p-2 col-lg-6" style="background-color: #ebebeb; color: #535353;">
 			<h4 class="text-black p-2 mb-0">Información principal</h4>
-			<ul
-				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
+			<ul style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
 				<li style="background: transparent; color: rgb(58, 58, 58);">
 					<b>Activo:</b><br>
 					@if ($trabajador->estado == 1)
@@ -24,7 +23,7 @@
 					@endif
 				</li>
 				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>Eamil:</b><br>
+					<b>Email:</b><br>
 					@if ($trabajador->email !== null && $trabajador->email !== '')
 					<span>{{ $trabajador->email }}</span>
 					@else
@@ -45,7 +44,7 @@
 				<li style="background: transparent; color: rgb(58, 58, 58);">
 					<b>Teléfono:</b><br>
 					@if ($trabajador->telefono !== null && $trabajador->telefono !== '')
-					<a href="tel:{{$trabajador->telefono}}" style="color: white;">{{$trabajador->telefono}}</a>
+					<a href="tel:{{$trabajador->telefono}}" style="color: #45526e;">{{$trabajador->telefono}}</a>
 					@else
 					{{ 'No fue cargado' }}
 					@endif
@@ -55,7 +54,7 @@
 
 		<!-- Segundo <ul>: fondo azul oscuro y letras azul claro -->
 		@if ($caratula)
-		<div class="p-2" style="background-color: #1a3b63; color: #8cb3ff; flex-grow:1">
+		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
 			<h4 class="text-white p-2 mb-0">Carátula</h4>
 			<ul
 				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
@@ -100,7 +99,7 @@
 			</ul>
 		</div>
 		@else
-		<div class="alert alert-info">
+		<div class="col-lg-6 p-4 alert-info">
 			<h4>Carátula</h4>
 			<p>Sin contenido cargado aún</p>
 		</div>

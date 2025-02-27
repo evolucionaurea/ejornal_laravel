@@ -58,8 +58,8 @@
 						<div class="col-md-6 d-none" data-toggle="vencimiento">
 							<select name="vencimiento_estado" class="form-control form-control-sm">
 								<option value="">--Seleccionar Estado--</option>
-								<option value="1">Vencidos</option>
-								<option value="0">Vencimiento próximo</option>
+								<option value="vencidos">Vencidos</option>
+								<option value="vencimiento_proximo">Vencimiento próximo (30 días)</option>
 							</select>
 						</div>
 						<div class="col-md-6 d-none" data-toggle="vencimiento">
