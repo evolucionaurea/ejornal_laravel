@@ -76,7 +76,17 @@
                         <div class="card-body">
                             <h5 class="card-title">Fecha de Atención: {{
                                 \Carbon\Carbon::parse($nutricional->fecha_atencion)->format('d/m/Y') }}</h5>
-                            <p class="card-text"><strong>Tipo de consulta:</strong> {{ ucfirst($nutricional->tipo) }}
+                            <p class="card-text">
+                                <strong>Tipo de consulta:</strong>
+                                {{ ucfirst($nutricional->tipo) }}
+                            </p>
+                            <p class="card-text">
+                                <strong>User que lo registra:</strong>
+                                @if ($nutricional->user != null)
+                                {{ $nutricional->user }}
+                                @else
+                                {{ 'No guardado' }}
+                                @endif
                             </p>
 
                             <div class="row">

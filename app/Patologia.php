@@ -11,7 +11,7 @@ class Patologia extends Model
     protected $table = 'patologias';
 
     // Campos habilitados para ingresar
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'user'];
 
     public function caratulas()
     {

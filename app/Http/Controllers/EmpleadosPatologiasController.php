@@ -37,6 +37,7 @@ class EmpleadosPatologiasController extends Controller
 
         $patologia = new Patologia();
         $patologia->nombre = $request->nombre;
+        $patologia->user = auth()->user()->nombre;
         $patologia->save();
         return back()->with('success', 'Guardado exitosamente');
     }

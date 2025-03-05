@@ -40,8 +40,9 @@
         </div>
 
         <div class="tarjeta">
-            <form action="{{action('EmpleadosConsultaNutricionalController@store')}}" accept-charset="UTF-8"
-                method="post" enctype="multipart/form-data">
+            <form id="form_guardar_consulta_nutricional"
+                action="{{action('EmpleadosConsultaNutricionalController@store')}}" accept-charset="UTF-8" method="post"
+                enctype="multipart/form-data">
                 @csrf
                 <div class="form-row">
                     <div class="form-group col-md-3">

@@ -101,6 +101,7 @@ class EmpleadosCaratulaController extends Controller
         $caratula->peso = $request->peso;
         $caratula->altura = $request->altura;
         $caratula->imc = $request->imc;
+        $caratula->user = auth()->user()->nombre;
         $caratula->save();
 
          // Guardar la relación en la tabla intermedia

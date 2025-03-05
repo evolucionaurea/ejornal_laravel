@@ -18,7 +18,8 @@ class Caratula extends Model
         'alergias', 
         'peso',
         'altura',
-        'imc'
+        'imc',
+        'user'
     ];
 
     public function patologias()

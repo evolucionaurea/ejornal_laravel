@@ -47,7 +47,7 @@
                         <td>{{ $nutricional->nomina->nombre }}</td>
                         <td>{{ $nutricional->cliente->nombre }}</td>
                         <td>{{ $nutricional->tipo }}</td>
-                        <td>{{ $nutricional->fecha_atencion }}</td>
+                        <td>{{ date('d/m/Y', strtotime($nutricional->fecha_atencion)) }}</td>
                         <td class="acciones_tabla" scope="row">
                             <a title="Ver"
                                 href="{{ route('empleados.consultas.nutricionales.show', $nutricional->id) }}">

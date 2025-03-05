@@ -32,7 +32,8 @@ class ConsultaNutricional extends Model
         'transito_intestinal',
         'evolucion',
         'prox_cita',
-        'medicaciones'
+        'medicaciones',
+        'user'
     ];
 
     public function nomina()

@@ -33,6 +33,7 @@
                         <th>Patología</th>
                         <th>Medicacion habitual</th>
                         <th>Antecedentes</th>
+                        <th>User que lo carga</th>
                         <th>Alergias</th>
                         <th>Peso</th>
                         <th>Altura</th>
@@ -58,11 +59,18 @@
                         </td>
                         <td>{{ $caratula->medicacion_habitual }}</td>
                         <td>{{ $caratula->antecedentes }}</td>
+                        <td>
+                            @if ($caratula->user != null)
+                            {{ $caratula->user }}
+                            @else
+                            {{ 'No guardado' }}
+                            @endif
+                        </td>
                         <td>{{ $caratula->alergias }}</td>
                         <td>{{ $caratula->peso }}</td>
                         <td>{{ $caratula->altura }}</td>
                         <td>{{ $caratula->imc }}</td>
-                        <td>{{ $caratula->created_at }}</td>
+                        <td>{{ date('d/m/Y H:i:s', strtotime($caratula->created_at)) }}</td>
                         <td class="acciones_tabla" scope="row">
                             <form action="{{ route('empleados.nominas.caratulas.destroy', $caratula->id) }}"
                                 method="post">

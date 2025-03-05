@@ -81,6 +81,7 @@ class EmpleadosConsultaNutricionalController extends Controller
         $consultaNutricional->id_nomina = $validatedData['id_nomina'];
         $consultaNutricional->id_cliente = $validatedData['id_cliente'];
         $consultaNutricional->tipo = $validatedData['tipo'];
+        $consultaNutricional->user = auth()->user()->nombre;
         $consultaNutricional->fecha_atencion = Carbon::createFromFormat('d/m/Y', $validatedData['fecha_atencion']);
 
         // Asignar los campos adicionales según el tipo de consulta
