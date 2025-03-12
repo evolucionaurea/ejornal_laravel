@@ -18,16 +18,29 @@ class EmpleadosConsultaNutricionalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $clientes = $this->getClientesUser();
-        $paginatedNutricion = ConsultaNutricional::with(['nomina', 'cliente'])
-            ->where('id_cliente', auth()->user()->id_cliente_actual)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
+        $query = ConsultaNutricional::with(['nomina', 'cliente'])
+            ->where('id_cliente', auth()->user()->id_cliente_actual);
+    
+        // Filtros de fechas
+        if ($request->filled('fecha_desde')) {
+            $fechaDesde = Carbon::createFromFormat('d-m-Y', $request->fecha_desde)->format('Y-m-d');
+            $query->whereDate('fecha_atencion', '>=', $fechaDesde);
+        }
+    
+        if ($request->filled('fecha_hasta')) {
+            $fechaHasta = Carbon::createFromFormat('d-m-Y', $request->fecha_hasta)->format('Y-m-d');
+            $query->whereDate('fecha_atencion', '<=', $fechaHasta);
+        }
+    
+        $paginatedNutricion = $query->orderBy('created_at', 'desc')->paginate(10);
+    
         return view('empleados.consultas.nutricionales', compact('paginatedNutricion', 'clientes'));
     }
+    
+    
 
 
     /**

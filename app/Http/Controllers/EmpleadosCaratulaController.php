@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Traits\Clientes;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Carbon\Carbon;
 
 class EmpleadosCaratulaController extends Controller
 {
@@ -118,16 +119,30 @@ class EmpleadosCaratulaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $clientes = $this->getClientesUser();
-        $caratulas = Caratula::with('patologias') // Cargar patologías desde la tabla intermedia
+        
+        $query = Caratula::with('patologias')
             ->where('id_nomina', $id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+            ->orderBy('created_at', 'desc');
+    
+        // Filtros por fecha
+        if ($request->filled('fecha_desde')) {
+            $fechaDesde = Carbon::createFromFormat('d-m-Y', $request->fecha_desde)->startOfDay()->toDateTimeString();
+            $query->where('created_at', '>=', $fechaDesde);
+        }
+    
+        if ($request->filled('fecha_hasta')) {
+            $fechaHasta = Carbon::createFromFormat('d-m-Y', $request->fecha_hasta)->endOfDay()->toDateTimeString();
+            $query->where('created_at', '<=', $fechaHasta);
+        }
+    
+        $caratulas = $query->get();
+    
         return view('empleados.nominas.caratulas.show', compact('caratulas', 'clientes'));
     }
+    
 
     /**
      * Show the form for editing the specified resource.

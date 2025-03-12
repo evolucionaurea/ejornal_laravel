@@ -26,9 +26,31 @@
             @endif
         </div>
 
+
+
         @include('../mensajes_validacion')
 
         <div class="tarjeta">
+            <!-- Formulario de filtros -->
+            <form method="GET" action="{{ route('empleados.consultas.nutricionales') }}" class="mb-3">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="fecha_desde">Fecha Desde:</label>
+                        <input type="text" id="fecha_desde" name="fecha_desde" class="form-control form-control-sm"
+                            autocomplete="off" value="{{ request('fecha_desde') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="fecha_hasta">Fecha Hasta:</label>
+                        <input type="text" id="fecha_hasta" name="fecha_hasta" class="form-control form-control-sm"
+                            autocomplete="off" value="{{ request('fecha_hasta') }}">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn-ejornal btn-ejornal-base">Filtrar</button>
+                        <a href="{{ route('empleados.consultas.nutricionales') }}"
+                            class="btn-ejornal btn-ejornal-gris-claro">Traer todo</a>
+                    </div>
+                </div>
+            </form>
             <table class="table table-striped table-sm tabla" id="nutricionTable">
                 <thead>
                     <tr>
@@ -62,7 +84,7 @@
 
             {{-- Paginación --}}
             <div class="d-flex justify-content-center">
-                {{ $paginatedNutricion->links() }}
+                {{ $paginatedNutricion->appends(request()->query())->links() }}
             </div>
         </div>
 
@@ -71,15 +93,26 @@
 </div>
 
 
+<!-- Scripts -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 <script>
+    $(function () {
+        $("#fecha_desde, #fecha_hasta").datepicker({
+            dateFormat: "dd-mm-yy",
+            dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+            dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
-        const table = $('#nutricionTable').DataTable({
-            paging: false,  // Pagina el contenido usando la paginación de Laravel
+        $('#nutricionTable').DataTable({
+            paging: false,
             info: false,
-            searching: true,  // Habilita el buscador
+            searching: true,
         });
     });
 </script>
