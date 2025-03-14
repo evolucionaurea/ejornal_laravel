@@ -23,6 +23,7 @@ use App\TipoComunicacion;
 use App\Preocupacional;
 use App\TareaLiviana;
 use App\ComunicacionLiviana;
+use App\ConsultaNutricional;
 use App\TareaLivianaDocumentacion;
 use App\EdicionFichada;
 use App\Http\Traits\Ausentismos;
@@ -666,6 +667,58 @@ class AdminReporteController extends Controller
 	}
 
 
+
+	public function consultas_nutricionales(Request $request)
+	{
+		
+		$query = ConsultaNutricional::select(
+			'nominas.nombre',
+			'consultas_nutricionales.id',
+			'consultas_nutricionales.id_nomina',
+			'consultas_nutricionales.fecha_atencion as fecha',
+			DB::raw('NULL as derivacion_consulta'),
+			DB::raw('NULL as diagnostico'),
+			)
+			->with('trabajador.cliente')
+			->whereHas('trabajador',function($query){
+				$query->where('deleted_at',null);
+			})
+			->join('nominas','consultas_nutricionales.id_nomina', 'nominas.id')
+			->join('clientes','nominas.id_cliente', 'clientes.id');
+
+		$total = $query->count();
+
+		if($request->fecha_inicio){
+			$fecha_inicio = Carbon::createFromFormat('d/m/Y',$request->fecha_inicio);
+			$query->where('fecha','>=',$fecha_inicio);
+		}
+		if($request->fecha_final){
+			$fecha_final = Carbon::createFromFormat('d/m/Y',$request->fecha_final);
+			$query->where('fecha','<=',$fecha_final);
+		}
+		if($request->keywords){
+			$query->whereHas('trabajador',function($query) use($request){
+				$query->where('nombre','LIKE',"%{$request->keywords}%");
+			});
+		}
+
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
+		];
+
+	}
 
 
 	public function descargar_documentacion($id)

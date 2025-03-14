@@ -67,7 +67,12 @@ $(()=>{
 				{
 					className:'align-middle',
 					name:'user',
-					data:'user'
+					// data:'user'
+					data:row=>row,
+					render:(v)=>{
+						if(v.user == null) return '[No registrado]';
+						return v.user
+					}
 				},
 
 				{

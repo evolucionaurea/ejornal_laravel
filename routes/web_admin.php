@@ -113,6 +113,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::get('admin/reportes_consultas', 'AdminReporteController@reportes_consultas')->name('reportes_consultas');
 	Route::post('admin/reportes/consultas_medicas', 'AdminReporteController@consultas_medicas');
 	Route::post('admin/reportes/consultas_enfermeria', 'AdminReporteController@consultas_enfermeria');
+	Route::post('admin/reportes/consultas_nutricionales', 'AdminReporteController@consultas_nutricionales');
 
 	//Route::post('admin/reportes/filtrar_consultas_medicas', 'AdminReporteController@filtrarConsultasMedicas')->name('reportes.filtrar_consultas_medicas');
 	//Route::post('admin/reportes/filtrar_consultas_enfermeria', 'AdminReporteController@filtrarConsultasEnfermeria')->name('reportes.filtrar_consultas_enfermeria');
