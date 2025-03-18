@@ -464,21 +464,31 @@ trait Clientes {
 			)+1 total_dias,
 			id_trabajador"
 		)*/
-		$ausentismos_top_10 = Ausentismo::selectRaw("
-			SUM(
-				ABS(DATEDIFF(
-					IF(
-						IFNULL(
-							fecha_final,
-							DATE(NOW())
-						) >= DATE(NOW()),
-						DATE(NOW()),
-						fecha_final
-					),
-					fecha_inicio
-				)) + 1
-			) total_dias,
+		$ausentismos_top_10 = Ausentismo::selectRaw(
+		// 	"
+		// 	SUM(
+		// 		ABS(DATEDIFF(
+		// 			IF(
+		// 				IFNULL(
+		// 					fecha_final,
+		// 					DATE(NOW())
+		// 				) >= DATE(NOW()),
+		// 				DATE(NOW()),
+		// 				fecha_final
+		// 			),
+		// 			fecha_inicio
+		// 		)) + 1
+		// 	) total_dias,
 
+		// 	id_trabajador, id_cliente
+		// ")
+		"
+		SUM(
+			ABS(DATEDIFF(
+				IFNULL(fecha_final, DATE(NOW())), 
+				IF(fecha_inicio < DATE(NOW()) - INTERVAL 1 YEAR, DATE(NOW()) - INTERVAL 1 YEAR, fecha_inicio)
+				)) + 1
+			) as total_dias,
 			id_trabajador, id_cliente
 		")
 			->where('id_cliente',$id_cliente)
@@ -494,7 +504,8 @@ trait Clientes {
 				(
 					SELECT COUNT(a.id)
 					FROM ausentismos a
-					WHERE (a.fecha_final IS NULL OR a.fecha_final>DATE(NOW())) AND a.id_trabajador=nominas.id
+					WHERE (a.fecha_final IS NULL OR a.fecha_final>DATE(NOW())) 
+					AND a.id_trabajador=nominas.id
 				) as regreso_trabajo");
 			}])
 			->whereHas('tipo',function($query){

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\CovidTesteo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
+use App\ConsultaNutricional;
 use App\CovidVacuna;
 // use Jenssegers\Agent\Agent;
 use Microsoft\Graph\Graph;
@@ -103,6 +104,11 @@ class EmpleadosResumenController extends Controller
 		->whereDate('consultas_enfermerias.fecha', '=', Carbon::now()->format('Y-m-d'))
 		->count();
 
+		$consultas_nutricionales = ConsultaNutricional::join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->whereDate('consultas_nutricionales.fecha_atencion', '=', Carbon::now()->format('Y-m-d'))
+		->count();
+
 		/*$vacunados_varias_dosis = CovidVacuna::join('nominas', 'covid_vacunas.id_nomina', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->selectRaw('covid_vacunas.id_nomina, count(*)')
@@ -146,6 +152,12 @@ class EmpleadosResumenController extends Controller
 		->whereYear('consultas_enfermerias.fecha', '=', $fecha_actual->year)
 		->count();
 
+		$nutricionales_mes = ConsultaNutricional::join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->whereMonth('consultas_nutricionales.fecha_atencion', '=', $fecha_actual->month)
+		->whereYear('consultas_nutricionales.fecha_atencion', '=', $fecha_actual->year)
+		->count();
+
 		/*$ausencia_covid = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->where('ausentismos.fecha_regreso_trabajar', '!=', null)
@@ -158,7 +170,7 @@ class EmpleadosResumenController extends Controller
 		->count();*/
 
 		return view('empleados.resumen', compact('clientes', 'total_nomina', 'ausentes_hoy', 'consultas_medicas',
-		'medicas_mes', 'enfermerias_mes', 'consultas_enfermeria','ausencia_covid'));
+		'medicas_mes', 'enfermerias_mes', 'consultas_enfermeria', 'nutricionales_mes', 'ausencia_covid', 'consultas_nutricionales'));
 	}
 
 
