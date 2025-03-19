@@ -32,7 +32,7 @@
 			$export = true;
 			@endphp
 			@include('../../modulos.busqueda_fecha')
-			<table data-table="fichadas" class="table table-striped table-hover table-sm">
+			<table data-table="fichadas" class="table table-bordered table-striped table-hoverx table-sm">
 				<thead>
 					<tr>
 						<th>Empleado</th>
@@ -47,6 +47,7 @@
 
 						<th>Sistema/Browser</th>
 						<th>IP</th>
+						<th class="text-right">Acciones</th>
 					</tr>
 				</thead>
 				<tbody>

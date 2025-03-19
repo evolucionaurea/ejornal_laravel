@@ -478,6 +478,34 @@ table.table {
   width: 100%;
 }
 
+table.table .has-floating-btn {
+  position: relative;
+}
+
+table.table .has-floating-btn .floating-btn {
+  position: absolute;
+  background-color: #dfdfdf;
+  color: black;
+  bottom: 0;
+  right: 0;
+  height: 20px;
+  width: 26px;
+  border-top-left-radius: 4pt;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+table.table .has-floating-btn .floating-btn i {
+  font-size: 8pt;
+}
+
+table.table .has-floating-btn .floating-btn:hover {
+  background-color: black;
+  color: white;
+  text-decoration: none;
+}
+
 @media screen and (max-width: 991px) {
   table.table th {
     font-size: 9pt;

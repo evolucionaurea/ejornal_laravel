@@ -18,7 +18,7 @@ $(()=>{
 			}
 
 			return $(`
-				<tr>
+				<tr data-id="${trabajador.id}" >
 					<td>
 						<div>${trabajador}</div>
 						${(certificado.id_cliente != certificado.trabajador_cliente) ? `<span class="badge badge-dark">transferido</span>` : ''}

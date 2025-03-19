@@ -216,8 +216,8 @@ class AdminReporteController extends Controller
 			],400);
 		}
 
-		// Obtener datos del usuario autenticado
-		$fichada = FichadaNueva::find($request->id);
+		// Obtener datos de la fichada a editar
+		$fichada = FichadaNueva::where('id',$request->id)->with('user')->first();
 		if (!$fichada) {
 			return response()->json([
 				'success' => false,
@@ -236,7 +236,7 @@ class AdminReporteController extends Controller
 
 		if (count($dateParts) === 3) {
 			// Crear la fecha en formato 'YYYY-MM-DD'
-			$formattedDate = "{$dateParts[2]}-{$dateParts[1]}-{$dateParts[0]} {$request->new_hour}:{$request->new_minutes}"; // '2024-10-25'
+			$formattedDate = "{$dateParts[2]}-{$dateParts[1]}-{$dateParts[0]} {$request->new_hour}:{$request->new_minutes}:00"; // '2024-10-25'
 			//dd($oldValue);
 			$newDate = new DateTime($formattedDate); // Crear el objeto DateTime
 		} else {
@@ -246,24 +246,39 @@ class AdminReporteController extends Controller
 			], 400);
 		}
 
-		// Buscar la fichada existente
+		// validar que no se superponga con la fecha de otra fichada
+		$fichadaUserId = $fichada->id_user;
+
+		$solapamiento = FichadaNueva::where('id_user',$fichadaUserId)
+			->where('id','!=',$fichada->id)
+			->whereRaw("'{$formattedDate}' >= ingreso AND '{$formattedDate}' < egreso")
+			->first();
+
+		if($solapamiento){
+
+			return response()->json([
+				'success' => false,
+				'message' => 'La fecha/hora ingresada se superpone con otra fichada'
+			], 400);
+
+		}
+
 
 
 		// Obtener el id_user de la fichada
-		$fichadaUserId = $fichada->id_user;
 
 		// Verificar si es la última fichada del usuario
-		$ultimoRegistro = FichadaNueva::where('id_user', $fichadaUserId)
+		/*$ultimoRegistro = FichadaNueva::where('id_user', $fichadaUserId)
 				->with('user')
 				->orderBy('id', 'desc')
 				->first();
+		dd($ultimoRegistro);
 		if (!$ultimoRegistro || $ultimoRegistro->id != $fichada->id) {
 				return response()->json([
 					'success' => false,
 					'message' => 'No es posible editar el registro porque no es la última fichada del usuario.'
 				], 400);
-		}
-		//dd($ultimoRegistro);
+		}*/
 
 
 		// Asignar id_user y id_fichada
@@ -274,15 +289,15 @@ class AdminReporteController extends Controller
 		// Validar según el tipo de edición
 		if ($request->action=='ingreso') {
 			// Validar que el egreso no tenga una fecha inferior a la nueva fecha de ingreso
-			if ($ultimoRegistro->egreso && new DateTime($ultimoRegistro->egreso) < $newDate) {
+			if ($fichada->egreso && new DateTime($fichada->egreso) < $newDate) {
 					return response()->json([
 						'success' => false,
 						'message' => 'El egreso registrado es anterior a la nueva fecha de ingreso.'
 					], 400);
 			}
 
-			$ultimoRegistro->ingreso = $newDate;
-			$ultimoRegistro->save();
+			$fichada->ingreso = $newDate;
+			$fichada->save();
 
 			$edicionFichada->old_ingreso = $fichada->ingreso;
 			$edicionFichada->new_ingreso = $newDate;
@@ -291,15 +306,15 @@ class AdminReporteController extends Controller
 		}
 		if ($request->action=='egreso') {
 			// Validar que el ingreso no tenga una fecha mayor a la nueva fecha de egreso
-			if ($ultimoRegistro->ingreso && new DateTime($ultimoRegistro->ingreso) > $newDate) {
+			if ($fichada->ingreso && new DateTime($fichada->ingreso) > $newDate) {
 					return response()->json([
 						'success' => false,
 						'message' => 'El ingreso registrado es posterior a la nueva fecha de egreso.'
 					], 400);
 			}
 
-			$ultimoRegistro->egreso = $newDate;
-			$ultimoRegistro->save();
+			$fichada->egreso = $newDate;
+			$fichada->save();
 
 			$edicionFichada->old_egreso = $fichada->egreso;
 			$edicionFichada->new_egreso = $newDate;
@@ -320,7 +335,7 @@ class AdminReporteController extends Controller
 		return response()->json([
 			'success' => true,
 			'message'=>'La fichada se actualizó correctamente!',
-			'last_record'=>$ultimoRegistro
+			'last_record'=>$fichada
 		]);
 
 	}
@@ -670,7 +685,7 @@ class AdminReporteController extends Controller
 
 	public function consultas_nutricionales(Request $request)
 	{
-		
+
 		$query = ConsultaNutricional::select(
 			'nominas.nombre',
 			'consultas_nutricionales.id',

@@ -35,7 +35,7 @@ $(()=>{
 			if(user.grupo!=null) grupo = user.grupo.nombre
 
 			return $(`
-				<tr>
+			<tr data-id="${user.id}">
 				<td>${user.nombre}</td>
 				<td>${user.email}</td>
 				<td>${user.especialidad!=null?user.especialidad:''}</td>
