@@ -44,3 +44,7 @@ Route::group(['middleware' => ['autenticacion']], function () {
 Route::fallback(function(){
 	return view('errors.404');
 });
+Route::get('/migrar', function () {
+	Artisan::call('migrate');
+	return "Migraciones ejecutadas.";
+});
