@@ -45,8 +45,6 @@ $(()=>{
 					name:'telefono',
 					className:'align-middle border-left',
 					render:v=>{
-						console.log(v.telefono);
-
 						return v.telefono==null ? '<span class="text-muted font-italic">[no cargado]</span>' : `<a class="text-dark" href="tel:${v.telefono}">${v.telefono}</a>`
 					}
 				},

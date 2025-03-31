@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use App\Nomina;
+use App\NominaClienteHistorial;
 use App\Cliente;
 use App\CovidTesteo;
 use App\CovidVacuna;
@@ -333,6 +334,67 @@ trait Nominas
 
 
 		return false;
+	}
+
+
+	public function movimientosListado($cliente_ids=[],Request $request){
+
+		$nominas_clientes = Nomina::select('*')
+			->withCount('movimientos_cliente')
+			->having('movimientos_cliente_count','>',1)
+			->pluck('id');
+
+
+		//DB::raw('COUNT(*) as cantidad')
+		$query = NominaClienteHistorial::select('*')
+			->with(['trabajador','cliente','usuario'])
+			->whereIn('nomina_id',$nominas_clientes)
+			->whereIn('cliente_id',$cliente_ids)
+
+			->orderBy('created_at','desc');
+
+		$total = $query->count();
+
+		if($request->cliente_id){
+			$query->where('cliente_id',$request->cliente_id);
+		}
+
+		if(isset($request->search)){
+			$search = '%'.$request->search.'%';
+			$query->where(function($query) use($search){
+				$query
+					->whereHas('trabajador',function($query) use($search){
+						$query
+							->where('nombre','like',$search)
+							->orWhere('dni','like',$search);
+					})
+					->orWhereHas('cliente',function($query) use($search){
+						$query->where('nombre','like',$search);
+					})
+					->orWhereHas('usuario',function($query) use($search){
+						$query->where('nombre','like',$search);
+					});
+			});
+		}
+
+		if($request->order){
+			//$sort = $request->columns[$request->order[0]['column']]['name'];
+			//$dir  = $request->order[0]['dir'];
+			//$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
+		];
+
+
 	}
 
 

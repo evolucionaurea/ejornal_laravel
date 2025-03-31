@@ -104,7 +104,7 @@ class EmpleadosPreocupacionalesController extends Controller
 		// BUSQUEDA
 		if(isset($request->search)){
 			$query->where(function($query) use($request) {
-				$filtro = '%'.$request->search['value'].'%';
+				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('nominas.email','like',$filtro)
 					->orWhere('nominas.dni','like',$filtro)

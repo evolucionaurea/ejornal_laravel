@@ -148,6 +148,7 @@ class EmpleadoConsultasTodasController extends Controller
 
 			$medicas->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhere('nominas.dni', 'like', $filtro)
 					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
 					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
 					->orWhere('consultas_medicas.observaciones', 'like', $filtro)

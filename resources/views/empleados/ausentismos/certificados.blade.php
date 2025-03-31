@@ -29,7 +29,7 @@
 				<div class="d-flex flex-wrap col-md-8 align-items-center">
 
 					<div class="mb-1 col-md-6">
-						<input name="search" class="form-control form-control-sm" placeholder="Buscar por trabajador, médico o institución..." value="{{ Request::get('search') }}"></input>
+						<input name="search" class="form-control form-control-sm" placeholder="Buscar por trabajador. dni, cuil, médico o institución..." value="{{ Request::get('search') }}"></input>
 					</div>
 
 					<div class="mb-1 col-md-3" >

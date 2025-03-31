@@ -35,7 +35,12 @@
 				<div class="col-lg-8">
 
 					<div class="row">
-						<div class="col-lg-4">
+
+						<div class="col-lg-6">
+							<input placeholder="Filtrar por trabajador, dni, cuil, tel o sector..." name="search" class="form-control form-control-sm" value="">
+						</div>
+
+						<div class="col-lg-6">
 							<select name="tipo" class="form-control form-control-sm select_2">
 								<option value="">--Todos los tipos--</option>
 								@foreach ($tipos as $tipo)
@@ -43,12 +48,12 @@
 								@endforeach
 							</select>
 						</div>
-						<div class="col-lg-4">
-							<input placeholder="Desde" name="from" type="datetime" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+						<div class="col-lg-6">
+							<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
 						</div>
 
-						<div class="col-lg-4">
-							<input placeholder="Hasta" name="to" type="datetime" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+						<div class="col-lg-6">
+							<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
 						</div>
 
 					</div>

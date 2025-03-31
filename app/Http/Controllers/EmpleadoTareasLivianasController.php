@@ -53,11 +53,12 @@ class EmpleadoTareasLivianasController extends Controller
 		->with('trabajador');
 
 		$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
+			$filtro = '%'.$request->search.'%';
 			$query->where('nominas.nombre','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
-				->orWhere('nominas.telefono','like',$filtro);
+				->orWhere('nominas.telefono','like',$filtro)
+				->orWhere('nominas.sector','like',$filtro);
 		});
 
 		if($request->from) $query->whereDate('tareas_livianas.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));

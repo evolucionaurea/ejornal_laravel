@@ -485,7 +485,7 @@ trait Clientes {
 		"
 		SUM(
 			ABS(DATEDIFF(
-				IFNULL(fecha_final, DATE(NOW())), 
+				IFNULL(fecha_final, DATE(NOW())),
 				IF(fecha_inicio < DATE(NOW()) - INTERVAL 1 YEAR, DATE(NOW()) - INTERVAL 1 YEAR, fecha_inicio)
 				)) + 1
 			) as total_dias,
@@ -504,7 +504,7 @@ trait Clientes {
 				(
 					SELECT COUNT(a.id)
 					FROM ausentismos a
-					WHERE (a.fecha_final IS NULL OR a.fecha_final>DATE(NOW())) 
+					WHERE (a.fecha_final IS NULL OR a.fecha_final>DATE(NOW()))
 					AND a.id_trabajador=nominas.id
 				) as regreso_trabajo");
 			}])
@@ -518,12 +518,17 @@ trait Clientes {
 							->orWhere('agrupamiento',null);
 					});
 			})
-			->where('fecha_inicio','>=',$today->subYear())
+			->where(function($query) use($today){
+				$query
+					->where('fecha_inicio','>=',$today->subYear())
+					->orWhere('fecha_final','>=',$today->subYear());
+			})
 			->groupBy('id_trabajador')
 			->orderBy('total_dias','desc')
 			->limit(10)
 			->get();
-		//dd(DB::getQueryLog());
+		//echo(DB::getQueryLog()[0]['query']);
+		//dd(DB::getQueryLog()[0]['bindings']);
 		//dd($ausentismos_top_10->toArray());
 
 		$ausentismos_top_10_solicitudes = Ausentismo::
@@ -549,7 +554,11 @@ trait Clientes {
 							->orWhere('agrupamiento',null);
 					});
 			})
-			->where('fecha_inicio','>=',$today->subYear())
+			->where(function($query) use($today){
+				$query
+					->where('fecha_inicio','>=',$today->subYear())
+					->orWhere('fecha_final','>=',$today->subYear());
+			})
 			->groupBy('id_trabajador')
 			->orderBy('total','desc')
 			->limit(10)

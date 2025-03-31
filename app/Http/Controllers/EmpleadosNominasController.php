@@ -838,60 +838,8 @@ class EmpleadosNominasController extends Controller
 		return view('empleados.nominas.movimientos',compact('clientes'));
 	}
 	public function movimientos_search(Request $request){
-
-
-		$nominas_clientes = Nomina::select('*')
-			->withCount('movimientos_cliente')
-			->having('movimientos_cliente_count','>',1)
-			->pluck('id');
 		$cliente_ids = $this->getClientesIds();
-
-		//DB::raw('COUNT(*) as cantidad')
-		$query = NominaClienteHistorial::select('*')
-			->with(['trabajador','cliente','usuario'])
-			->whereIn('nomina_id',$nominas_clientes)
-			->whereIn('cliente_id',$cliente_ids)
-
-			->orderBy('created_at','desc');
-
-		$total = $query->count();
-
-		if($request->cliente_id){
-			$query->where('cliente_id',$request->cliente_id);
-		}
-
-		if(isset($request->search)){
-			$search = '%'.$request->search.'%';
-			$query->where(function($query) use($search){
-				$query
-					->whereHas('trabajador',function($query) use($search){
-						$query->where('nombre','like',$search);
-					})
-					->orWhereHas('cliente',function($query) use($search){
-						$query->where('nombre','like',$search);
-					})
-					->orWhereHas('usuario',function($query) use($search){
-						$query->where('nombre','like',$search);
-					});
-			});
-		}
-
-		if($request->order){
-			//$sort = $request->columns[$request->order[0]['column']]['name'];
-			//$dir  = $request->order[0]['dir'];
-			//$query->orderBy($sort,$dir);
-		}
-
-		$total_filtered = $query->count();
-
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'request'=>$request->all()
-		];
+		return $this->movimientosListado($cliente_ids,$request);
 	}
 
 

@@ -12,6 +12,7 @@ $(()=>{
 		delete_message:'¿Seguro deseas borrar esta tarea liviana?',
 
 		datatable_options:{
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 			columns:[
 				{
 					data:null,
@@ -79,7 +80,7 @@ $(()=>{
 					data:row=>row,
 					orderable:false,
 					render:v=>{
-						console.log(v)
+
 						if(v.fecha_final == null){
 							return '[Ausente]'
 						}else{
