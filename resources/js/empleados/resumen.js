@@ -16,6 +16,7 @@ $(()=>{
 
 		datatable_options:{
 			order:[[ 3, "asc" ]],
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 			columns:[
 				{
 					data:null,

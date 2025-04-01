@@ -169,6 +169,7 @@
 			<input type="hidden" name="completado" value="0">
 			<input type="hidden" name="vencimiento" value="1">
 			<input type="hidden" name="vencimiento_dias" value="60">
+			<input type="hidden" name="search" value="">
 		</form>
 
 		<div class="table-responsivex">
