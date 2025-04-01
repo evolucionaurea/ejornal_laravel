@@ -59,6 +59,7 @@ if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos_extension_licencia')
 if(route=='ausentismos.create') require('./empleados/ausentismos_create')
 if(route=='ausentismos.edit') require('./empleados/ausentismos_create')
+if(route=='ausentismo') require('./empleados/ausentismo')
 
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas')
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas_extension_licencia')

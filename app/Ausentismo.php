@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 //use OwenIt\Auditing\Contracts\Auditable;
+use Carbon\CarbonImmutable;
 use App\AusentismoTipo;
 use App\Nomina;
 use App\Cliente;
@@ -66,6 +67,14 @@ class Ausentismo extends Model
 	public function getTrabajadorPerfilUrlAttribute()
 	{
 		return url('/empleados/nominas/'.$this->id_trabajador);
+	}
+
+	public function getTotalDaysAttribute()
+	{
+		$fin = $this->fecha_final ?? CarbonImmutable::now();
+		$diff = date_diff($this->fecha_inicio,$fin);
+
+		return $diff->days;
 	}
 
 }

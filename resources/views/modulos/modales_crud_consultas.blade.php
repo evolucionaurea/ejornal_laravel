@@ -1,6 +1,5 @@
 <!-- Modal Cargar tipo de medicación -->
-<div class="modal fade" id="cargar_medicacion_abrir" tabindex="-1" aria-labelledby="cargar_medicacion_titulo"
-	aria-hidden="true">
+<div class="modal fade" id="cargar_medicacion_abrir" tabindex="-1" >
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -47,11 +46,8 @@
 </div>
 
 
-
-
 <!-- Modal confirmación Final -->
-<div class="modal fade" id="consulta_confirmacion_final" tabindex="-1"
-	aria-labelledby="consulta_confirmacion_final_Titulo" aria-hidden="true">
+<div class="modal fade" id="consulta_confirmacion_final" tabindex="-1" >
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">

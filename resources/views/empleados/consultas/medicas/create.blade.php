@@ -187,12 +187,14 @@
 
 
 
+@include('../../modulos/modales_crud_consultas')
+
 <!-- Modal Crear tipo diagnostico consulta -->
-<div class="modal fade" id="crear_diagnostico" tabindex="-1" aria-labelledby="diagnostico_titulo" aria-hidden="true">
+<div class="modal fade" id="crear_diagnostico" tabindex="-1">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="diagnostico_titulo">Crear tipo de diagnostico</h5>
+				<h5 class="modal-title" id="diagnostico_titulo">Crear tipo de diagnóstico</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -201,8 +203,7 @@
 
 				<div class="row">
 					<div class="col-md-12">
-						<form action="{{action('EmpleadoConsultaMedicaController@tipo')}}" accept-charset="UTF-8"
-							method="post">
+						<form action="{{action('EmpleadoConsultaMedicaController@tipo')}}" accept-charset="UTF-8" method="post">
 							{{ csrf_field() }}
 							<div class="form-group">
 								<label>Nombre</label>
@@ -221,10 +222,8 @@
 </div>
 
 
-
 <!-- Modal Ver tipo Diagnostico consulta -->
-<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1" aria-labelledby="ver_tipo_diagnostico_titulo"
-	aria-hidden="true">
+<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -272,10 +271,8 @@
 </div>
 
 
-
 <!-- Modal edicion Caratula -->
-<div class="modal fade" id="modalEdicionCaratula" tabindex="-1" role="dialog"
-	aria-labelledby="modalEdicionCaratulaLabel" aria-hidden="true">
+<div class="modal fade" id="modalEdicionCaratula" tabindex="-1" >
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -332,10 +329,6 @@
 		</div>
 	</div>
 </div>
-
-
-
-@include('../../modulos/modales_crud_consultas')
 
 
 

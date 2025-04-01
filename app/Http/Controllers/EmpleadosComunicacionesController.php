@@ -162,7 +162,8 @@ class EmpleadosComunicacionesController extends Controller
 			}
 		}
 
-		return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+		return redirect('empleados/ausentismo/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+		//return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
 	}
 
 

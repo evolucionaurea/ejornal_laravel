@@ -48,6 +48,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// AUSENTISMOS
+	Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show')->name('ausentismo');
 	Route::get('empleados/ausentismos/exportar','EmpleadosAusentismosController@exportar');
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
 		'names' => [
@@ -276,7 +277,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 			'destroy' => 'empleados.consultas.nutricionales.destroy',  // Eliminar un recurso específico
 		],
 	]);
-	
+
 
 	Route::resource('empleados/consultas/patologias', 'EmpleadosPatologiasController', [
 		'names' => [
@@ -292,7 +293,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/nominas/caratulas/{id}/edit', 'EmpleadosCaratulaController@edit')->name('empleados.nominas.caratulas.edit');
 	Route::put('empleados/nominas/caratulas/{id}', 'EmpleadosCaratulaController@update')->name('empleados.nominas.caratulas.update');
 	Route::delete('empleados/nominas/caratulas/{id}', 'EmpleadosCaratulaController@destroy')->name('empleados.nominas.caratulas.destroy');
-	
+
 
 
 });
