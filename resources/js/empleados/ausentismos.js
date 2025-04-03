@@ -184,7 +184,7 @@ $(()=>{
 									 ''
 								}
 
-								<a title="Historial" href="ausentismos/${v.id_trabajador}">
+								<a title="Historial" href="ausentismos/${v.id}">
 									<i title="Historial" class="fas fa-book"></i>
 								</a>
 
