@@ -26,7 +26,6 @@
 		@endif
 
 
-
 		<div class="cabecera">
 			<h2>Detalles del Ausentismo</h2>
 			<div class="cabecera_acciones">
@@ -56,7 +55,14 @@
 						<li class="list-group-item p-2 small">DNI: {!! $ausentismo->trabajador->dni ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
 						<li class="list-group-item p-2 small">CUIL: {!! $ausentismo->trabajador->email ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
 						<li class="list-group-item p-2 small">Teléfono: {!! $ausentismo->trabajador->telefono ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
-						<li class="list-group-item p-2 small">Estado: <span class="badge badge-{{ $ausentismo->trabajador->estado ? 'success' : 'danger' }}">{{ $ausentismo->trabajador->estado ? 'activo' : 'inactivo' }}</span> </li>
+						<li class="list-group-item p-2 small">
+							Estado:
+							@if( $ausentismo->id_cliente != $ausentismo->trabajador->id_cliente)
+							<span class="badge badge-dark">transferido</span>
+							@else
+							<span class="badge badge-{{ $ausentismo->trabajador->estado ? 'success' : 'danger' }}">{{ $ausentismo->trabajador->estado ? 'activo' : 'inactivo' }}</span>
+							@endif
+						</li>
 						<li class="list-group-item p-2 small">Sector: {{ $ausentismo->trabajador->sector }}</li>
 						<li class="list-group-item p-2 small">Fecha Alta: {{ $ausentismo->trabajador->created_at->format('d/m/Y') }}</li>
 					</ul>
@@ -65,10 +71,11 @@
 				<div class="col-lg-4 border-left">
 					<div class="font-weight-bold">Datos del Ausentismo</div>
 					<ul class="list-group">
-						<li class="list-group-item p-2">Tipo: {{ $ausentismo->tipo->nombre }}</li>
-						<li class="list-group-item p-2">Fecha Inicio: {{ $ausentismo->fecha_inicio->format('d/m/Y') }}</li>
-						<li class="list-group-item p-2">Fecha Final: {{ $ausentismo->fecha_final->format('d/m/Y') }}</li>
-						<li class="list-group-item p-2">Total días: {{ $ausentismo->total_days }}</li>
+						<li class="list-group-item p-2 small">Tipo: {{ $ausentismo->tipo->nombre }}</li>
+						<li class="list-group-item p-2 small">Fecha Inicio: {{ $ausentismo->fecha_inicio->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2 small">Fecha Final: {{ $ausentismo->fecha_final->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2 small">Total días: {{ $ausentismo->total_days }}</li>
+						<li class="list-group-item p-2 small">Usuario que registró: {{ $ausentismo->user }}</li>
 					</ul>
 				</div>
 
@@ -86,7 +93,7 @@
 					<thead>
 						@if( $ausentismo->id_cliente == $ausentismo->trabajador->id_cliente)
 						<tr>
-							<th colspan="3">
+							<th colspan="5">
 								<button data-toggle="modal" data-target="#cargar_comunicaciones_ausentismo" class="btn-ejornal btn-ejornal-success" >
 									<i class="fas fa-plus-circle fa-fw"></i> <span>Crear Comunicación</span>
 								</button>
@@ -97,6 +104,8 @@
 							<th>Tipo</th>
 							<th>Descripción</th>
 							<th>Archivos</th>
+							<th>Última Actualización</th>
+							<th>Usuario que registra</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -105,15 +114,19 @@
 							<td class="align-middle">{{ $comunicacion->tipo->nombre }}</td>
 							<td class="align-middle">{{ $comunicacion->descripcion }}</td>
 							<td class="align-middle">
-								@if($comunicacion->archivos)
+								@if($comunicacion->archivos->toArray())
 								<button class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">Archivos</button>
 								<li class="dropdown-menu">
 									@foreach($comunicacion->archivos as $archivo)
 									<a href="{{ route('comunicaciones.verArchivo', ['id' => $archivo->id_comunicacion, 'hash' => $archivo->hash_archivo]) }}" target="_blank" class="dropdown-item">{{ $archivo->archivo }}</a>
 									@endforeach
 								</li>
+								@else
+								<span class="text-muted font-italic">[no se adjuntaron archivos]</span>
 								@endif
 							</td>
+							<td class="align-middle">{{ $comunicacion->updated_at->format('d/m/Y') }}</td>
+							<td class="align-middle">{{ $comunicacion->user }}</td>
 						</tr>
 						@endforeach
 					</tbody>
@@ -180,7 +193,7 @@
 								@endforeach
 
 								@else
-								<span>no se adjuntaron archivos</span>
+								<span class="text-muted font-italic">[no se adjuntaron archivos]</span>
 								@endif
 							</td>
 							<td class="align-middle">

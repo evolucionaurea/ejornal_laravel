@@ -154,15 +154,11 @@ $(()=>{
 							}
 						}
 
-						/*<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
-									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
-									<span>(${v.comunicaciones_count})</span>
-								</a>
+						/**/
 
-								<a title="Certificados" href="documentaciones/${v.id}" class="btn-label">
-									<i title="Certificados" class="fas fa-files-medical"></i>
-									<span>(${v.documentaciones_count})</span>
-								</a>*/
+						/*	<a title="Ver Ausentismo (Com: ${v.comunicaciones_count} / Cert: ${v.documentaciones_count})" href="ausentismo/${v.id}">
+										<i class="fa fa-eye"></i>
+									</a>*/
 
 						return `
 							<div class="acciones_tabla justify-content-end">
@@ -190,9 +186,17 @@ $(()=>{
 
 								${
 									v.id_cliente == v.trabajador_cliente ? `
-									<a title="Ver Ausentismo (Com: ${v.comunicaciones_count} / Cert: ${v.documentaciones_count})" href="ausentismo/${v.id}">
-										<i class="fa fa-eye"></i>
+
+									<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
+										<i title="Comunicaciones" class="fas fa-bullhorn"></i>
+										<span>(${v.comunicaciones_count})</span>
 									</a>
+
+									<a title="Certificados" href="documentaciones/${v.id}" class="btn-label">
+										<i title="Certificados" class="fas fa-files-medical"></i>
+										<span>(${v.documentaciones_count})</span>
+									</a>
+
 									<a title="Editar" href="ausentismos/${v.id}/edit">
 										<i class="fas fa-pencil"></i>
 									</a>
