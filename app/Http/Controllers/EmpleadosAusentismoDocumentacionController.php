@@ -161,7 +161,9 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 			return back()->with('error', 'Debes adjuntar un archivo');
 		}*/
 
-		return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
+		return redirect('empleados/ausentismo/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
+
+		//return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
 
 	}
 

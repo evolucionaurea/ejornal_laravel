@@ -82,8 +82,7 @@
 					</ol>
 					@endif
 
-					<ol data-route="/empleados/movimientos"
-						class="{{ setActiveSub('/empleados/nominas/movimientos') }}">
+					<ol data-route="/empleados/nominas/movimientos" class="{{ setActiveSub('/empleados/nominas/movimientos') }}">
 						<a href="{{url('/empleados/nominas/movimientos')}}">Movimientos</a>
 					</ol>
 					<ol data-route="empleados.caratulas" class="{{ setActiveSub('empleados.caratulas') }}">
@@ -130,7 +129,7 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
-					<ol data-route="/empleados/tareas_livianas">
+					<ol data-route="/empleados/tareas_livianas" class="{{ setActiveSub('/empleados/tareas_livianas') }}" >
 						<a href="{{url('/empleados/tareas_livianas')}}">Listado</a>
 					</ol>
 					@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
@@ -138,12 +137,10 @@
 						<a href="{{url('/empleados/tareas_livianas/create')}}">Agregar Tarea Adecuada</a>
 					</ol>
 					@endif
-					<ol data-route="/empleados/comunicaciones_livianas"
-						class="{{ setActiveSub('/empleados/comunicaciones_livianas') }}">
+					<ol data-route="/empleados/comunicaciones_livianas" class="{{ setActiveSub('/empleados/comunicaciones_livianas') }}">
 						<a href="{{url('/empleados/comunicaciones_livianas')}}">Comunicaciones</a>
 					</ol>
-					<ol data-route="/empleados/certificados_livianos"
-						class="{{ setActiveSub('/empleados/certificados_livianos') }}">
+					<ol data-route="/empleados/certificados_livianos" class="{{ setActiveSub('/empleados/certificados_livianos') }}">
 						<a href="{{url('/empleados/certificados_livianos')}}">Certificados</a>
 					</ol>
 				</ul>

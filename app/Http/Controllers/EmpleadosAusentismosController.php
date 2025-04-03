@@ -292,91 +292,14 @@ class EmpleadosAusentismosController extends Controller
 	public function show($id)
 	{
 
-		return view('empleados.ausentismos.show',$this->perfilTrabajador($id));
-
-		/*$clientes = $this->getClientesUser();
-
-		$trabajador = Nomina::findOrFail($id);
-
-		$testeos = CovidTesteo::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-		$vacunas = CovidVacuna::where('id_nomina',$id)
-			->with('tipo')
-			->orderBy('fecha', 'desc')
-			->get();
-
-		$consultas_medicas = ConsultaMedica::where('id_nomina',$id)
-			->with('diagnostico')
-			->orderBy('fecha','desc')
-			->get();
-
-		$consultas_enfermeria = ConsultaEnfermeria::where('id_nomina',$id)
-			->with('diagnostico')
-			->orderBy('fecha','desc')
-			->get();
-
-		$ausentismos = Ausentismo::where('id_trabajador', $id)
-			->with([
-				'trabajador',
-				'tipo',
-				'comunicaciones.tipo',
-				'documentaciones',
-				'cliente',
-				'comunicaciones.archivos'
-			])
-			->orderBy('fecha_inicio', 'desc')
-			->get();
-
-		$preocupacionales = Preocupacional::where('id_nomina',$id)
-			->with('trabajador')
-			->where('id_cliente', auth()->user()->id_cliente_actual)
-			->orderBy('fecha', 'desc')
-			->get();
-
+		$ausentismo = Ausentismo::findOrFail($id);
 		$clientes = $this->getClientesUser();
 
-		$resumen_historial = DB::table('consultas_medicas')
-			->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Médica" as evento'), 'consultas_medicas.observaciones as observaciones')
-			->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
-			->where('fecha', '<>', '0000-00-00')
-			->where('user', '<>', '')
-			->where('id_nomina', $id)
-			->unionAll(DB::table('consultas_enfermerias')
-				->select('fecha', 'diagnostico_consulta.nombre as tipo', 'user as usuario', DB::raw('"Consulta Enfermería" as evento'), 'consultas_enfermerias.observaciones as observaciones')
-				->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', '=', 'diagnostico_consulta.id')
-				->where('fecha', '<>', '0000-00-00')
-				->where('user', '<>', '')
-				->where('id_nomina', $id)
-			)
-			->unionAll(DB::table('ausentismos')
-				->select('fecha_inicio as fecha', 'ausentismo_tipo.nombre as tipo', 'user as usuario', DB::raw('"Ausentismo" as evento'), 'ausentismos.comentario as observaciones')
-				->join('ausentismo_tipo', 'ausentismos.id_tipo', '=', 'ausentismo_tipo.id')
-				->where('fecha_inicio', '<>', '0000-00-00')
-				->where('user', '<>', '')
-				->where('id_trabajador', $id)
-			)
-			->unionAll(DB::table('preocupacionales')
-				->select('fecha', DB::raw('"Archivo adjunto" as tipo'), 'nominas.nombre as usuario', DB::raw('"Exámen Médico Complementario" as evento'), 'preocupacionales.observaciones as observaciones')
-				->join('nominas', 'preocupacionales.id_nomina', '=', 'nominas.id')
-				->where('fecha', '<>', '0000-00-00')
-				->where('id_nomina', $id)
-			)
-			->orderBy('fecha', 'desc')
-			->get();
+		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
+		///dd($ausentismo->trabajador);
 
-		return view('empleados.ausentismos.show', compact(
-			'trabajador',
-			'consultas_medicas',
-			'consultas_enfermeria',
-			'ausentismos',
-			'clientes',
-			'vacunas',
-			'testeos',
-			'preocupacionales',
-			'resumen_historial'
-		));*/
+		return view('empleados.ausentismos.show',compact('ausentismo','clientes','tipo_comunicaciones'));
+
 	}
 
 

@@ -181,9 +181,11 @@
 
 
 
+@include('../../modulos/modales_crud_consultas')
+
 
 <!-- Modal Crear tipo diagnostico consulta -->
-<div class="modal fade" id="crear_diagnostico" tabindex="-1" aria-labelledby="diagnostico_titulo" aria-hidden="true">
+<div class="modal fade" id="crear_diagnostico" tabindex="-1" >
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -216,10 +218,8 @@
 </div>
 
 
-
 <!-- Modal Ver tipo Diagnostico consulta -->
-<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1" aria-labelledby="ver_tipo_diagnostico_titulo"
-	aria-hidden="true">
+<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1" >
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -267,10 +267,8 @@
 </div>
 
 
-
 <!-- Modal edicion Caratula -->
-<div class="modal fade" id="modalEdicionCaratula" tabindex="-1" role="dialog"
-	aria-labelledby="modalEdicionCaratulaLabel" aria-hidden="true">
+<div class="modal fade" id="modalEdicionCaratula" tabindex="-1" >
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -327,9 +325,6 @@
 		</div>
 	</div>
 </div>
-
-
-@include('../../modulos/modales_crud_consultas')
 
 
 @endsection

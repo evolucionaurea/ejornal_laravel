@@ -8,7 +8,7 @@
 		<div class="row">
 
 			<div class="mb-1 col-md-6">
-				<input name="search" class="form-control form-control-sm" placeholder="Buscar..." value="{{ Request::get('search') }}"></input>
+				<input name="search" class="form-control form-control-sm" placeholder="Buscar por nombre, dni, cuil o tel..." value="{{ Request::get('search') }}"></input>
 			</div>
 
 

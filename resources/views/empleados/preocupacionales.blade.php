@@ -34,6 +34,11 @@
 
 				<div class="col-lg-6">
 					<div class="row">
+
+						<div class="col-md-12">
+							<input type="text" name="search" class="form-control form-control-sm" placeholder="Filtrar por trabajador, dni, cuil, tel...">
+						</div>
+
 						<div class="col-md-6">
 							<input placeholder="Fecha Desde" name="from" type="text" class="form-control form-control-sm" value="">
 						</div>

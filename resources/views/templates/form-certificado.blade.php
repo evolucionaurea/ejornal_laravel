@@ -80,7 +80,7 @@
 
 		<hr class="hr-line-dashed">
 
-		<button class="btn-ejornal btn-ejornal-success">Crear Certificado</button>
+		<button class="btn-ejornal btn-ejornal-success">Guardar Certificado</button>
 
 	</div>
 
