@@ -136,4 +136,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	Route::get('admin/reportes/ediciones_fichadas', 'AdminEdicionFichadaController@index')->name('/admin/reportes/ediciones_fichadas');
 
+
+	Route::get('admin/errores', 'ErrorController@index')->name('/admin/errores');
+
 });
