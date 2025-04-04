@@ -14,7 +14,6 @@ class AddUserIdToErroresTable extends Migration
     public function up()
     {
         Schema::table('errores', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_user')->nullable()->after('line');
             $table->foreign('id_user')->references('id')->on('users')->onDelete('set null');
         });
     }
