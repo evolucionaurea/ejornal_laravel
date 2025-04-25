@@ -310,6 +310,18 @@ class EmpleadosPreocupacionalesController extends Controller
 
 	}
 
+	public function show($id)
+	{
+
+		$preocupacional = Preocupacional::with(['trabajador','tipo','archivos'])->where('id',$id)->first();
+		$clientes = $this->getClientesUser();
+
+		return view('empleados.preocupacionales.show',compact(
+			'clientes',
+			'preocupacional'
+		));
+	}
+
 
 
 	public function descargar_archivo($id)

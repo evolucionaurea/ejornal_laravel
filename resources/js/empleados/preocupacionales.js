@@ -103,6 +103,11 @@ $(()=>{
 
 						return `
 						<div class="acciones_tabla justify-content-end">
+
+							<a title="Ver" href="preocupacionales/${v.id}/" >
+								<i class="fas fa-eye"></i>
+							</a>
+
 							<a title="Editar" href="preocupacionales/${v.id}/edit" >
 								<i class="fas fa-pen"></i>
 							</a>
