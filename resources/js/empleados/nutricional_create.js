@@ -45,7 +45,7 @@ $(() => {
     ////////////////// Caratula ////////////////
 	
 	function dibujarCaratula(data)
-	{
+	{		
 		const caratula = document.getElementById('caratula');
 		const formulario = document.getElementById('form_guardar_consulta_nutricional');
 		if (data.estado) {

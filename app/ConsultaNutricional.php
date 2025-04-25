@@ -13,6 +13,7 @@ class ConsultaNutricional extends Model
     protected $casts = [
         'fecha'=>'date:d/m/Y'
       ];
+    protected $dates = ['fecha_atencion'];
 
     // Campos habilitados para ingresar
     protected $fillable = [

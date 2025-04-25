@@ -12,6 +12,7 @@ use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Ausentismo;
 use App\Caratula;
+use App\ConsultaNutricional;
 use App\TareaLiviana;
 use App\Preocupacional;
 use Illuminate\Support\Str;
@@ -223,6 +224,11 @@ trait Nominas
 			->orderBy('fecha','desc')
 			->get();
 
+		$consultas_nutricionales = ConsultaNutricional::where('id_nomina',$id)
+		->with(['nomina','cliente'])
+		->orderBy('fecha_atencion','desc')
+		->get();
+
 		$ausentismos = Ausentismo::where('id_trabajador', $id)
 			->with([
 				'trabajador',
@@ -278,6 +284,16 @@ trait Nominas
 				'cliente'=>$medica->cliente
 			];
 		}
+		foreach($consultas_nutricionales as $nutricional){
+			$resumen_historial[$nutricional->fecha_atencion->format('Ymd')] = (object) [
+				'fecha'=>$nutricional->fecha_atencion,
+				'tipo'=>$nutricional->tipo,
+				'evento'=>'Consulta Nutricional',
+				'Objetivos'=>$nutricional->objetivos,
+				'usuario'=>$nutricional->user,
+				'cliente'=>$nutricional->cliente
+			];
+		}
 		foreach($preocupacionales as $preocupacional){
 			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
 				'fecha'=>$preocupacional->fecha,
@@ -289,13 +305,13 @@ trait Nominas
 			];
 		}
 		krsort($resumen_historial);
-
-
+		
 		return compact(
 			'caratula',
 			'trabajador',
 			'consultas_medicas',
 			'consultas_enfermeria',
+			'consultas_nutricionales',
 			'ausentismos',
 			'clientes',
 			'vacunas',

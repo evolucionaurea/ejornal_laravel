@@ -52,10 +52,18 @@ class EmpleadosConsultaNutricionalController extends Controller
     {
         $clientes = $this->getClientesUser();
         $patologias = Patologia::all();
-        $nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+    
+        // Filtrar por 'estado' y ordenar alfabéticamente por 'nombre'
+        $nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
+            ->where('estado', 1)  // Filtramos las nominas donde el estado es 1
+            ->orderBy('nombre', 'asc')  // Ordenamos alfabéticamente por 'nombre'
+            ->get();
+    
         $cliente = Cliente::find(auth()->user()->id_cliente_actual);
+    
         return view('empleados.consultas.nutricionales.create', compact('patologias', 'clientes', 'nominas', 'cliente'));
     }
+    
 
     /**
      * Store a newly created resource in storage.

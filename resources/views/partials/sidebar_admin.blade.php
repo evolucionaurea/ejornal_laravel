@@ -150,13 +150,17 @@
 			</a>
 		</li>
 		@endif
-		@if (auth()->user()->email == 'sebas_admin@ejornal.com.ar')
 		<li class="{{ setActive('/admin/errores') }} menu_sin_sub_menu">
 			<a href="{{url('/admin/errores')}}" class="list-group-item list-group-item-action sidebar_item">
 				<i class="fas fa-exclamation-triangle"></i>
 				<span>Errores</span>
 			</a>
 		</li>
-		@endif
+		<li class="{{ setActive('/admin/configuraciones') }} menu_sin_sub_menu">
+			<a href="{{url('/admin/configuraciones')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-tools"></i>
+				<span>Configuraciones</span>
+			</a>
+		</li>
 	</div>
 </div>

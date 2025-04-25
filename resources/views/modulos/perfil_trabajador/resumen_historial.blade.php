@@ -16,13 +16,23 @@
             <td class="align-middle">{{ $resumen->evento }}</td>
             <td class="align-middle">{{ $resumen->tipo }}</td>
             <td class="align-middle">
+                @if (isset($resumen->observaciones) && $resumen->observaciones != null)
                 {{ strlen($resumen->observaciones) > 100
                 ? substr($resumen->observaciones, 0, 100) . '...' : $resumen->observaciones }}
+                @else
+                {{ 'N/A' }}
+                @endif
             </td>
             <td class="align-middle">
                 {{ $resumen->cliente->nombre }}
             </td>
-            <td class="align-middle">{{ $resumen->usuario }}</td>
+            <td class="align-middle">
+                @if (isset($resumen->usuario) && $resumen->usuario != null)
+                {{ $resumen->usuario }}
+                @else
+                {{ '[No registrado]' }}
+                @endif
+            </td>
         </tr>
         @endforeach
     </tbody>

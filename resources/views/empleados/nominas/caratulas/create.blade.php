@@ -58,12 +58,12 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label>Peso</label>
-                        <input name="peso" type="number" class="form-control" value="{{ old("peso") }}">
+                        <input name="peso" type="number" class="form-control" value="{{ old(" peso") }}">
                     </div>
                     <div class="form-group col-md-3">
                         <label>Altura</label>
                         <div class="input-group">
-                            <input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
+                            <input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
                             <div class="input-group-append">
                                 <span class="input-group-text">cm.</span>
                             </div>
@@ -71,20 +71,23 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label>IMC</label>
-                        <input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
-                        <input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
+                        <input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
+                        <input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
                     </div>
                     <div class="form-group col-md-6">
                         <label>Medicación habitual</label>
-                        <textarea class="form-control form-control-sm" name="medicacion_habitual" rows="2" cols="80">{{ old("medicacion_habitual") }}</textarea>
+                        <textarea class="form-control form-control-sm" name="medicacion_habitual" rows="2"
+                            cols="80">{{ old("medicacion_habitual") }}</textarea>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Antecedentes</label>
-                        <textarea class="form-control form-control-sm" name="antecedentes" rows="2" cols="80">{{ old("antecedentes") }}</textarea>
+                        <textarea class="form-control form-control-sm" name="antecedentes" rows="2"
+                            cols="80">{{ old("antecedentes") }}</textarea>
                     </div>
                     <div class="form-group col-md-12">
                         <label>Alergias</label>
-                        <textarea class="form-control form-control-sm" name="alergias" rows="2" cols="80">{{ old("alergias") }}</textarea>
+                        <textarea class="form-control form-control-sm" name="alergias" rows="2"
+                            cols="80">{{ old("alergias") }}</textarea>
                     </div>
                 </div>
                 <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar Carátula</button>
@@ -113,17 +116,27 @@
                     @if (count($patologias) > 0)
                     @foreach ($patologias as $patologia)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ $patologia->nombre }}
-                        <span class="badge badge-danger badge-pill">
-                            <form class="" action="{{route('patologias.destroy', $patologia->id)}}" method="post">
-                                {{ csrf_field() }}
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button title="Eliminar" type="submit">
+                        <span>{{ $patologia->nombre }}</span>
+                        <div class="d-flex gap-2">
+                            <!-- Botón Editar -->
+                            <button type="button" class="p-1 mr-1 text-info btn-editar-patologia" data-toggle="modal"
+                                data-target="#editarPatologiaModal" data-id="{{ $patologia->id }}"
+                                data-nombre="{{ $patologia->nombre }}" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+
+                            <!-- Botón Eliminar -->
+                            <form action="{{ route('patologias.destroy', $patologia->id) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button class="p-1 text-danger" type="submit" title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        </span>
+                        </div>
                     </li>
+
                     @endforeach
                     @else
                     <p class="alert alert-warning">
@@ -161,6 +174,53 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal Editar Patología Reutilizable -->
+<div class="modal fade" id="editarPatologiaModal" tabindex="-1" aria-labelledby="editarPatologiaModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editarPatologiaForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarPatologiaModalLabel">Editar Patología</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input required type="text" name="nombre" class="form-control" id="editarPatologiaNombre">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-ejornal btn-ejornal-gris-claro"
+                        data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-ejornal btn-ejornal-base">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).on('click', '.btn-editar-patologia', function () {
+        let id = $(this).data('id');
+        let nombre = $(this).data('nombre');
+
+        // Setea el nombre
+        $('#editarPatologiaNombre').val(nombre);
+
+        // Cambia la acción del form
+        let ruta = "{{ url('empleados/consultas/patologias') }}/" + id;
+        $('#editarPatologiaForm').attr('action', ruta);
+    });
+</script>
+
 
 
 @endsection

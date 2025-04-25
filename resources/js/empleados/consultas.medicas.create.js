@@ -171,20 +171,20 @@ $(()=>{
 				<h4>Caratula</h4>
 				<div class="row">
 					<div class="col-md-3">
-						<p><strong>Cliente:</strong> ${data.data.cliente.nombre} kg</p>
-						<p><strong>Trabajador:</strong> ${data.data.nomina.nombre} cm</p>
-						</div>
+						<p><strong>Trabajador:</strong> ${data.data.nomina.nombre} </p>
+						<p><strong>Patologías:</strong> ${data.data.patologias.map(p => p.nombre).join(', ')}</p>
+					</div>
 				<div class="col-md-3">
-                    <p><strong>Patologías:</strong> ${data.data.patologias.map(p => p.nombre).join(', ')}</p>
                     <p><strong>Medicación Habitual:</strong> ${data.data.medicacion_habitual}</p>
+					<p><strong>Peso:</strong> ${data.data.peso} kg</p>
                 </div>
 					<div class="col-md-3">
-						<p><strong>Peso:</strong> ${data.data.peso} kg</p>
 						<p><strong>Altura:</strong> ${data.data.altura} cm</p>
+						<p><strong>IMC:</strong> ${data.data.imc}</p>
 					</div>
 					<div class="col-md-3">
-						<p><strong>IMC:</strong> ${data.data.imc}</p>
 						<p><strong>Alergias:</strong> ${data.data.alergias}</p>
+						<p><strong>Antecedentes:</strong> ${data.data.antecedentes}</p>
 					</div>
 					<div class="col-md-12">
 						<button id="usarDatos" class="btn-ejornal btn-ejornal-base">Usar estos datos para IMC</button>

@@ -5,7 +5,8 @@
 		<!-- Primer <ul>: borde blanco suave -->
 		<div class="p-2 col-lg-6" style="background-color: #ebebeb; color: #535353;">
 			<h4 class="text-black p-2 mb-0">Información principal</h4>
-			<ul style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
+			<ul
+				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
 				<li style="background: transparent; color: rgb(58, 58, 58);">
 					<b>Activo:</b><br>
 					@if ($trabajador->estado == 1)
@@ -256,6 +257,29 @@
 
 				<div class="card-body table-responsive">
 					@include('modulos.perfil_trabajador.consultas_enfermeria_tabla')
+				</div>
+
+			</div>
+		</div>
+
+
+		{{-- Nutricionales --}}
+		<div class="card">
+			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingNutricional">
+				<h2 class="mb-0 d-flex">
+					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+						data-target="#collapseNutricional" aria-expanded="false" aria-controls="collapseNutricional">
+						<h6>Consultas Nutricionales ({{ count($consultas_nutricionales) }})</h6>
+					</button>
+					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseNutricional"
+						class="fal fa-chevron-circle-down text-white"></i>
+				</h2>
+			</div>
+			<div id="collapseNutricional" class="collapse {{count($consultas_nutricionales) ? 'show' : ''}}"
+				aria-labelledby="headingNutricional" data-parent="#accordionExample">
+
+				<div class="card-body table-responsive">
+					@include('modulos.perfil_trabajador.consultas_nutricionales_tabla')
 				</div>
 
 			</div>

@@ -118,15 +118,15 @@ class EmpleadoConsultasTodasController extends Controller
 			DB::raw('NULL as id_diagnostico_consulta'), // Ajuste para que coincida con otras consultas
 			'consultas_nutricionales.fecha_atencion as fecha',
 			DB::raw('NULL as derivacion_consulta'),
-			DB::raw('NULL as user'),
+			'consultas_nutricionales.user', // Asegúrate de incluir el campo 'user' aquí
 			DB::raw('NULL as diagnostico'),
-			DB::raw('"Nutricional" as tipo'),
+			DB::raw('"Nutricional" as tipo')
 		)
 		->with('trabajador')
 		->join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
 		->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
-
-		if($extended){
+		
+		if ($extended) {
 			$nutricionales->addSelect(
 				DB::raw('NULL as amerita_salida'),
 				DB::raw('NULL as tratamiento'),
@@ -140,6 +140,7 @@ class EmpleadoConsultasTodasController extends Controller
 				DB::raw('NULL as frec_cardiaca')
 			);
 		}
+		
 
 
 

@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Caratula;
-use App\Patologia;
+use App\Configuracion;
 use Illuminate\Http\Request;
 
-class EmpleadosPatologiasController extends Controller
+class AdminConfiguracionController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        //
+        $data = Configuracion::first();
+        if (gettype($data) == 'object') {
+            $configuracion = $data;
+        }else{
+            $configuracion = null;
+        }
+        return view('admin.configuraciones', compact('configuracion'));
     }
 
     /**
@@ -31,15 +41,11 @@ class EmpleadosPatologiasController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-			'nombre' => 'required'
-		]);
+        $configuracion = new Configuracion();
+        $configuracion->online = $request->online;
+        $configuracion->save();
 
-        $patologia = new Patologia();
-        $patologia->nombre = $request->nombre;
-        $patologia->user = auth()->user()->nombre;
-        $patologia->save();
-        return back()->with('success', 'Guardado exitosamente');
+        return back()->with('success', 'Configuración guardada correctamente.');
     }
 
     /**
@@ -73,10 +79,11 @@ class EmpleadosPatologiasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $patologia = Patologia::find($id);
-        $patologia->nombre = $request->nombre;
-        $patologia->save();
-        return back()->with('success', 'Guardado exitosamente');
+        $configuracion = Configuracion::find($id);
+        $configuracion->online = $request->online;
+        $configuracion->save();
+
+        return back()->with('success', 'Configuración actualizada correctamente.');
     }
 
     /**
@@ -87,17 +94,6 @@ class EmpleadosPatologiasController extends Controller
      */
     public function destroy($id)
     {
-        $patologia = Patologia::withCount('caratulas')->findOrFail($id);
-    
-        if ($patologia->caratulas_count > 0) {
-            return back()->with(
-                'error',
-                'No puedes eliminar esta patología porque está siendo utilizada por algunas carátulas. Deberías desvincularla primero.'
-            );
-        }
-    
-        $patologia->delete();
-        return back()->with('success', 'Eliminado exitosamente');
+        //
     }
-    
 }

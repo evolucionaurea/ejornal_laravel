@@ -27,9 +27,7 @@ $(()=>{
 					className:'align-middle',
 					name:'nombre',
 					data:'trabajador',
-					render:v=>{
-						console.log('ver', v);
-						
+					render:v=>{						
 						if(v==null) return '<span class="text-muted font-italic">[trabajador no encontrado]</span>'
 						return `
 							<div>${v.nombre}</div>
@@ -69,7 +67,7 @@ $(()=>{
 					name:'user',
 					// data:'user'
 					data:row=>row,
-					render:(v)=>{
+					render:(v)=>{						
 						if(v.user == null) return '[No registrado]';
 						return v.user
 					}
