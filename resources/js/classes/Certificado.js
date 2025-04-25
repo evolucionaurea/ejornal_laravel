@@ -20,40 +20,6 @@ class Certificado {
 			})
 	}
 
-	validar_matricula(){
-		// let matricula_nacional = $('.nro_matricula_nacional').val();
-		// let url = '/empleados/documentaciones/validarMatricula';
-		// let usuario = 'jrpichot';
-		// let clave = 'JavierPichot00';
-		// let nombre = 'Juan';
-		// let apellido = 'Perez';
-		// let codigo = '025158';
-		// let nrodoc = '32105897';
-
-		// axios.post(url, {
-		//   usuario: usuario,
-		//   clave: clave,
-		//   nombre: nombre,
-		//   apellido: apellido,
-		//   codigo: codigo,
-		//   nrodoc: nrodoc,
-		//   matricula: matricula_nacional
-		//   })
-		//   .then(function (response) {
-		//     console.log(response);
-		//     $('.matricula_validada_hidden').val(1);
-		//     $('.matricula_tilde').css('display', 'block');
-		//     $('.matricula_cruz').css('display', 'none');
-		//   })
-		//   .catch(function (error) {
-		//     $('.matricula_cruz').css('display', 'block');
-		//     $('.matricula_tilde').css('display', 'none');
-		//     $('.matricula_validada_hidden').val(0);
-		//     console.log(error);
-		//   });
-
-	}
-
 	pop_certificado(data=false){
 
 		const $form = $(this.form_certificado)
@@ -142,7 +108,6 @@ class Certificado {
 		this.table.on('click','[data-toggle="editar-certificado"]',async btn=>{
 			const tr = $(btn.currentTarget).closest('tr')
 			const id = tr.attr('data-id')
-			console.log(id)
 			const response = await axios.get(`/empleados/documentaciones/find_ajax/${id}`)
 			if(response.status!=200){
 				Swal.fire({
