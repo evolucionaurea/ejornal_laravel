@@ -48,6 +48,18 @@ class ErrorController extends Controller
 
         return view('admin.errores', compact('errores'));
     }
+
+    public function limpiar(Request $request)
+    {
+        // Obtener los IDs de los últimos 50 registros
+        $ids = Error::orderBy('created_at', 'desc')->limit(50)->pluck('id');
+    
+        // Borrar todos los registros que NO estén en esos IDs
+        Error::whereNotIn('id', $ids)->delete();
+    
+        return redirect()->route('/admin/errores')->with('success', 'Errores limpiados correctamente.');
+    }
+    
     
 
 }

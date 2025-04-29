@@ -539,6 +539,7 @@ class EmpleadosAusentismosController extends Controller
 
 	public function extensionComunicacion(Request $request)
 	{
+
 		$validatedData = $request->validate([
 			'fecha_final' => 'required',
 			'descripcion' => 'required'

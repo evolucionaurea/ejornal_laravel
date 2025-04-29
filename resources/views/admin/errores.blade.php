@@ -26,6 +26,14 @@
         <div class="cabecera">
             <h2>Errores</h2>
             <p>Listado de errores</p>
+            <form action="{{ route('admin.limpiar_errores') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn-ejornal btn-ejornal-gris-claro">
+                    <i class="fas fa-broom"></i>
+                    Dejar últimos 50 errores
+                </button>
+            </form>
+
         </div>
 
         @include('../mensajes_validacion')

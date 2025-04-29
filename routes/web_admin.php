@@ -138,6 +138,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 
 	Route::get('admin/errores', 'ErrorController@index')->name('/admin/errores');
+	Route::post('admin/errores', 'ErrorController@limpiar')->name('admin.limpiar_errores');
 
 
 	Route::resource('admin/configuraciones', 'AdminConfiguracionController', [
