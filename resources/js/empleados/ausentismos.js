@@ -166,18 +166,13 @@ $(()=>{
 									(mostrar_extension == true)
 									?
 									`
-									 <button
-										class="extension_de_licencia"
-										title="extension de licencia"
-										data-toggle="modal"
-										data-target="#extensionLicenciaModal"
-										data-info="${v.id}"
-									 >
+									<button class="extension_de_licencia" title="extension de licencia" data-toggle="modal-extension-licencia" data-id="${v.id}" >
 										<i title="extension de licencia" class="fas fa-forward"></i>
-									 </button>
-									 `
-									 :
-									 ''
+									</button>
+									`
+									:
+
+									''
 								}
 
 								<a title="Historial" href="ausentismos/${v.id}">
@@ -214,6 +209,13 @@ $(()=>{
 			]
 		}
 
+	})
+
+
+	$('[data-table="ausentismos"]').on('click','[data-toggle="modal-extension-licencia"]',btn=>{
+		const ausentismo_id = $(btn.currentTarget).attr('data-id')
+		$('#extensionLicenciaModal').modal('show')
+		$('#extensionLicenciaModal').find('[name="id_ausentismo"]').val(ausentismo_id)
 	})
 
 

@@ -58,6 +58,10 @@ class Preocupacional extends Model
 	{
 		return $this->created_at->format('d/m/Y H:i:s \h\s.');
 	}
+	public function getUpdatedAtFormattedAttribute()
+	{
+		return $this->updated_at->format('d/m/Y H:i:s \h\s.');
+	}
 
 
 
