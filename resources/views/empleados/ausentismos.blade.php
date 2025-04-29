@@ -38,11 +38,12 @@
 
 
 <!-- Modal Extension de licencia -->
-<div class="modal fade" id="extensionLicenciaModal" tabindex="-1" aria-labelledby="extensionLicenciaModalLabel"
-	aria-hidden="true">
+<div class="modal fade" id="extensionLicenciaModal" tabindex="-1" aria-labelledby="extensionLicenciaModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
+
 			<div class="modal-body">
+
 				<div class="alert alert-warning" role="alert">
 					<h4 class="alert-heading">Importante!</h4>
 					<p>
@@ -50,12 +51,14 @@
 						a la vez.
 					</p>
 				</div>
+
 				<div class="row p-4">
-					<form id="form_crear_evento_ausentismo" style="width: 100%;"
-						action="{{action('EmpleadosAusentismosController@extensionComunicacion')}}"
-						enctype="multipart/form-data" accept-charset="UTF-8" method="post">
+					<form id="form_crear_evento_ausentismo" style="width: 100%;" action="{{action('EmpleadosAusentismosController@extensionComunicacion')}}" enctype="multipart/form-data" accept-charset="UTF-8" method="post" >
+
 						{{ csrf_field() }}
+
 						<input type="hidden" name="id_ausentismo" value="">
+
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label>Tipo de comunicación</label>
@@ -71,15 +74,18 @@
 									class="form-control" placeholder="">
 							</div>
 							<div class="form-group col-md-12">
-								<label>Descripcion</label>
+								<label>Descripción</label>
 								<textarea required required name="descripcion" class="form-control" rows="3"></textarea>
 							</div>
 						</div>
-						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear
-							comunicación</button>
+
+						<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear comunicación</button>
+
 					</form>
 				</div>
+
 			</div>
+
 		</div>
 	</div>
 </div>
