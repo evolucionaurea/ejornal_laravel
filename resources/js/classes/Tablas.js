@@ -127,7 +127,11 @@ export default class Tablas {
 
 		/*Borrar*/
 		this.table.on('click','[data-toggle="delete"]',async btn=>{
-			const tr = $(btn.currentTarget).closest('tr')
+			let tr = $(btn.currentTarget).closest('tr')
+			if(tr.hasClass('child')){
+				let tr_prev = $(btn.currentTarget).closest('tr').prev()
+				if(tr_prev.hasClass('parent')) tr = tr_prev
+			}
 			const id = tr.attr('data-id')
 
 			const swal_warn = await SwalWarning.fire({
