@@ -1,111 +1,69 @@
 <div class="tarjeta">
 
 	{{-- PRINCIPAL --}}
-	<div class="row align-items-star">
-		<!-- Primer <ul>: borde blanco suave -->
+	<div class="row align-items-start">
+
+		<!-- Información principal -->
 		<div class="p-2 col-lg-6" style="background-color: #ebebeb; color: #535353;">
-			<h4 class="text-black p-2 mb-0">Información principal</h4>
-			<ul
-				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
-				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>Activo:</b><br>
-					@if ($trabajador->estado == 1)
-					Sí
-					@else
-					No
+			<h4 class="text-black p-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse"
+				data-target="#infoPrincipal" aria-expanded="true" aria-controls="infoPrincipal"
+				style="cursor: pointer;">
+				Información principal
+				<i class="fas fa-chevron-down rotate-icon"></i>
+			</h4>
+			<div class="collapse show mt-2" id="infoPrincipal">
+				<ul
+					style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
+					<li><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</li>
+					<li><b>DNI / CUIL:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</li>
+					<li><b>Email:</b><br> {{ $trabajador->email ?: 'No fue cargado' }}</li>
+					<li><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
+						$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}</li>
+					@if ($trabajador->fecha_nacimiento)
+					<li><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años</li>
 					@endif
-				</li>
-				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>DNI / CUIL:</b><br>
-					@if ($trabajador->dni !== null && $trabajador->dni !== '')
-					<span>{{ $trabajador->dni }}</span>
-					@else
-					{{ 'No fue cargado' }}
-					@endif
-				</li>
-				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>Email:</b><br>
-					@if ($trabajador->email !== null && $trabajador->email !== '')
-					<span>{{ $trabajador->email }}</span>
-					@else
-					{{ 'No fue cargado' }}
-					@endif
-				</li>
-				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>Fecha Nacimiento:</b><br>
-					{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]'
-					}}
-				</li>
-				@if ($trabajador->fecha_nacimiento != null)
-				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>Edad:</b><br>
-					{{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años
-				</li>
-				@endif
-				<li style="background: transparent; color: rgb(58, 58, 58);">
-					<b>Teléfono:</b><br>
-					@if ($trabajador->telefono !== null && $trabajador->telefono !== '')
-					<a href="tel:{{$trabajador->telefono}}" style="color: #45526e;">{{$trabajador->telefono}}</a>
-					@else
-					{{ 'No fue cargado' }}
-					@endif
-				</li>
-			</ul>
+					<li><b>Teléfono:</b><br> {{ $trabajador->telefono ? "<a href='tel:$trabajador->telefono'
+							style='color: #45526e;'>$trabajador->telefono</a>" : 'No fue cargado' }}</li>
+				</ul>
+			</div>
 		</div>
 
-		<!-- Segundo <ul>: fondo azul oscuro y letras azul claro -->
-		@if ($caratula)
+		<!-- Carátula -->
 		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
-			<h4 class="text-white p-2 mb-0">Carátula</h4>
-			<ul
-				style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
-				<li style="background: transparent;">
-					<b>Última Patología:</b><br>
+			<h4 class="text-white p-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse"
+				data-target="#infoCaratula" aria-expanded="true" aria-controls="infoCaratula" style="cursor: pointer;">
+				Carátula
+				<i class="fas fa-chevron-down rotate-icon"></i>
+			</h4>
+			<div class="collapse show mt-2" id="infoCaratula">
+				@if ($caratula)
+				<ul
+					style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
 					@if ($caratula->patologias && count($caratula->patologias) > 0)
-					<ul class="list-group d-flex flex-wrap flex-row">
-						@foreach ($caratula->patologias as $patologia)
-						<li class="list-group-item" style="margin-right: 5px;">
-							{{ $patologia->nombre }}
-						</li>
-						@endforeach
-					</ul>
+					<li><b>Última Patología:</b><br>
+						<ul class="list-group d-flex flex-wrap flex-row">
+							@foreach ($caratula->patologias as $patologia)
+							<li class="list-group-item mr-1">{{ $patologia->nombre }}</li>
+							@endforeach
+						</ul>
+					</li>
 					@else
-					{{ 'No fue cargado' }}
+					<li><b>Última Patología:</b><br>No fue cargado</li>
 					@endif
-				</li>
-				<li style="background: transparent;">
-					<b>Medicación habitual:</b><br>
-					{{ $caratula->medicacion_habitual }}
-				</li>
-				<li style="background: transparent;">
-					<b>Antecedentes:</b><br>
-					{{ $caratula->antecedentes }}
-				</li>
-				<li style="background: transparent;">
-					<b>Alergias:</b><br>
-					{{ $caratula->alergias }}
-				</li>
-				<li style="background: transparent;">
-					<b>Peso:</b><br>
-					{{ $caratula->peso }}
-				</li>
-				<li style="background: transparent;">
-					<b>Altura:</b><br>
-					{{ $caratula->altura }}
-				</li>
-				<li style="background: transparent;">
-					<b>IMC:</b><br>
-					{{ $caratula->imc }}
-				</li>
-			</ul>
+					<li><b>Medicación habitual:</b><br>{{ $caratula->medicacion_habitual }}</li>
+					<li><b>Antecedentes:</b><br>{{ $caratula->antecedentes }}</li>
+					<li><b>Alergias:</b><br>{{ $caratula->alergias }}</li>
+					<li><b>Peso:</b><br>{{ $caratula->peso }}</li>
+					<li><b>Altura:</b><br>{{ $caratula->altura }}</li>
+					<li><b>IMC:</b><br>{{ $caratula->imc }}</li>
+				</ul>
+				@else
+				<div class="p-4 alert alert-info">Sin contenido cargado aún</div>
+				@endif
+			</div>
 		</div>
-		@else
-		<div class="col-lg-6 p-4 alert-info">
-			<h4>Carátula</h4>
-			<p>Sin contenido cargado aún</p>
-		</div>
-		@endif
 	</div>
+
 
 
 
