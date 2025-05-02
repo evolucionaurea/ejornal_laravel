@@ -7,6 +7,7 @@ use App\Preocupacional;
 ///use App\Cliente;
 ///use App\ClienteUser;
 use App\Http\Traits\Clientes;
+use App\Http\Traits\Preocupacionales;
 use App\Nomina;
 use App\PreocupacionalTipoEstudio;
 use App\PreocupacionalArchivo;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 class EmpleadosPreocupacionalesController extends Controller
 {
 
-	use Clientes;
+	use Clientes,Preocupacionales;
 
 	public function index()
 	{
@@ -32,107 +33,10 @@ class EmpleadosPreocupacionalesController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-		/*$query = Preocupacional::select(
-			'nominas.nombre', 'nominas.email', 'nominas.telefono',
-			'preocupacionales.fecha', 'preocupacionales.archivo', 'preocupacionales.id'
-		)
-		->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);*/
 
-		$now = CarbonImmutable::now();
+		$request->cliente_id = auth()->user()->id_cliente_actual;
 
-		DB::enableQueryLog();
-
-		$query = Preocupacional::with(['trabajador','tipo'])
-			->select(
-				'preocupacionales.*',
-				'nominas.id_cliente as trabajador_cliente'
-			)
-			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-			->join('preocupacionales_tipos_estudio', 'preocupacionales_tipos_estudio.id', 'preocupacionales.tipo_estudio_id')
-			->with('archivos')
-			->where('preocupacionales.id_cliente',auth()->user()->id_cliente_actual);
-			/*->whereHas('trabajador',function($query){
-				$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
-			});*/
-
-		$total = $query->count();
-
-		// FILTROS
-		if($request->from){
-			$query->whereDate('preocupacionales.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if($request->to){
-			$query->whereDate('preocupacionales.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}
-		/*if($request->vencimiento_from){
-			$query
-				->whereDate('fecha_vencimiento','<=',$now->addMonth())
-				->where('completado',0);
-		}*/
-		if($request->tipo){
-			$query->where('tipo_estudio_id','=',$request->tipo);
-		}
-		if(!is_null($request->vencimiento)){
-			if($request->vencimiento==='1'){
-				$query->whereNotNull('fecha_vencimiento');
-			}
-			if($request->vencimiento==='0'){
-				$query->whereNull('fecha_vencimiento');
-			}
-		}
-		if(!is_null($request->vencimiento_estado)){
-			if($request->vencimiento_estado==='vencidos'){
-				$query->whereDate('fecha_vencimiento','<',$now);
-			}
-			if($request->vencimiento_estado==='vencimiento_proximo'){
-				$hasta_fecha = $now->addDays(30);
-				$query->where('fecha_vencimiento','<=',$hasta_fecha);
-				$query->where('fecha_vencimiento','>',$now);
-			}
-		}
-		if(!is_null($request->completado)){
-			$query->where('completado','=',$request->completado);
-		}
-		if($request->vencimiento_dias){
-			$hasta_fecha = $now->addDays($request->vencimiento_dias);
-			$query->where('fecha_vencimiento','<=',$hasta_fecha);
-		}
-
-
-
-		// BUSQUEDA
-		if(isset($request->search)){
-			$query->where(function($query) use($request) {
-				$filtro = '%'.$request->search.'%';
-				$query->where('nominas.nombre','like',$filtro)
-					->orWhere('nominas.email','like',$filtro)
-					->orWhere('nominas.dni','like',$filtro)
-					->orWhere('nominas.telefono','like',$filtro)
-					->orWhere('preocupacionales_tipos_estudio.name','like',$filtro);
-			});
-		}
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-
-
-		$total_filtered = $query->count();
-
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'fichar_user'=>auth()->user()->fichar,
-			'request'=>$request->all(),
-			'query'=>DB::getQueryLog()
-		];
+		return $this->preocupacionalesAjax($request);
 	}
 
 	/**

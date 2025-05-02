@@ -115,10 +115,16 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
+
 					<ol data-route="/admin/reportes_fichadas_nuevas"
 						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}">
 						<a href="{{url('/admin/reportes_fichadas_nuevas')}}">Fichadas</a>
 					</ol>
+					<ol data-route="/admin/reportes/ediciones_fichadas"
+						class="{{ setActiveSub('/admin/reportes/ediciones_fichadas') }}">
+						<a href="{{url('/admin/reportes/ediciones_fichadas')}}">Ediciones Fichadas</a>
+					</ol>
+
 					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}">
 						<a href="{{url('/admin/reportes_ausentismos')}}">Ausentismos</a>
 					</ol>
@@ -131,14 +137,16 @@
 					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}">
 						<a href="{{url('/admin/reportes_comunicaciones')}}">Comunicaciones</a>
 					</ol>
+
+					<ol data-route="reportes_preocupacionales" class="{{ setActiveSub('reportes_preocupacionales') }}">
+						<a href="{{url('/admin/reportes_preocupacionales')}}">Est. Médicos Complementarios</a>
+					</ol>
+
 					<ol data-route="/admin/reportes/actividad_usuarios"
 						class="{{ setActiveSub('/admin/reportes/actividad_usuarios') }}">
 						<a href="{{url('/admin/reportes/actividad_usuarios')}}">Actividad Usuarios</a>
 					</ol>
-					<ol data-route="/admin/reportes/ediciones_fichadas"
-						class="{{ setActiveSub('/admin/reportes/ediciones_fichadas') }}">
-						<a href="{{url('/admin/reportes/ediciones_fichadas')}}">Ediciones Fichadas</a>
-					</ol>
+
 				</ul>
 			</div>
 		</li>

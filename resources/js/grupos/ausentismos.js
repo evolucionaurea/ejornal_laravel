@@ -63,13 +63,13 @@ $(()=>{
 						return v==null ? '[no cargada]' : v
 					}
 				},
-				{
+				/*{
 					data:'fecha_regreso_trabajar',
 					name:'fecha_regreso_trabajar',
 					render:v=>{
 						return v==null ? '[no cargada]' : v
 					}
-				},
+				},*/
 
 				{
 					data:'dias_mes_actual',
