@@ -26,19 +26,18 @@ use App\ComunicacionLiviana;
 use App\ConsultaNutricional;
 use App\TareaLivianaDocumentacion;
 use App\EdicionFichada;
-use App\Http\Traits\Ausentismos;
+use App\PreocupacionalTipoEstudio;
 
+use App\Http\Traits\Ausentismos;
+use App\Http\Traits\Preocupacionales;
 
 class AdminReporteController extends Controller
 {
 
-	use Ausentismos;
+	use Ausentismos,Preocupacionales;
 
-	// public function reportes_fichadas()
-	// {
-	//   return view('admin.reportes.fichadas');
-	// }
 
+	/* FICHADAS */
 	public function reportes_fichadas_nuevas()
 	{
 		return view('admin.reportes.fichadas');
@@ -345,8 +344,7 @@ class AdminReporteController extends Controller
 
 
 
-
-
+	/* AUSENTISMOS */
 	public function reportes_ausentismos()
 	{
 		$tipos = AusentismoTipo::get();
@@ -441,6 +439,7 @@ class AdminReporteController extends Controller
 
 	}
 
+	/* CERTIFICADOS */
 	public function reportes_certificaciones()
 	{
 		$clientes = Cliente::all();
@@ -456,11 +455,14 @@ class AdminReporteController extends Controller
 	}
 
 
+	/* CONSULTAS MEDICAS/ENFERMERIA/NUTRICIONAL */
 	public function reportes_consultas()
 	{
 		return view('admin.reportes.consultas');
 	}
 
+
+	/* COMUNICACIONES */
 	public function reportes_comunicaciones()
 	{
 		$clientes = Cliente::all();
@@ -531,6 +533,21 @@ class AdminReporteController extends Controller
 			'request'=>$request->all()
 		];
 
+	}
+
+	/* PREOCUPACIONALES */
+	public function reportes_preocupacionales(){
+
+		$clientes = Cliente::all();
+		$tipos = PreocupacionalTipoEstudio::all();
+
+		return view('admin.reportes.preocupacionales',compact(
+			'clientes',
+			'tipos'
+		));
+	}
+	public function preocupacionales(Request $request){
+		return $this->preocupacionalesAjax($request);
 	}
 
 
