@@ -523,9 +523,13 @@ class EmpleadosNominasController extends Controller
 		$empleados_transferidos = [];
 
 		// Traigo todos los empleados de la nómina actual del cliente actual
-		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
 		// $nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+
+		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
 		$nomina_actual = Nomina::all();
+		$nomina_actual_cliente = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+
+		///dd($nomina_actual->count());
 
 		///validar registros
 		$errores = [];
@@ -577,23 +581,30 @@ class EmpleadosNominasController extends Controller
 
 			}
 
-			foreach($nomina_actual as $n_actual){
-				if($n_actual->dni == $registro->dni && $n_actual->id_cliente!=auth()->user()->id_cliente_actual && $request->mover==='1'){
-					if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($n_actual)){
-						$errores[] = (object) [
-							'fila'=>$kr+2,
-							'columna'=>'Nombre',
-							'valor'=>$registro->nombre,
-							'error'=>$has_ausentismo_tarea_liviana
-						];
+
+
+			if($request->mover==='1'){
+				foreach($nomina_actual as $n_actual){
+					if($n_actual->dni == $registro->dni && $n_actual->id_cliente != auth()->user()->id_cliente_actual ){
+
+						// compruebo si tiene ausentismo o tarea liviana activo
+						if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($n_actual)){
+							$errores[] = (object) [
+								'fila'=>$kr+2,
+								'columna'=>'Nombre',
+								'valor'=>$registro->nombre,
+								'error'=>$has_ausentismo_tarea_liviana
+							];
+						}
+						break;
 					}
-					break;
 				}
+
 			}
+
 
 		}
 
-		//dd($errores);
 		if(!empty($errores)) return back()->with(compact('errores'));
 
 
@@ -607,7 +618,6 @@ class EmpleadosNominasController extends Controller
 				}
 			}
 
-			//dd($empleado_existente);
 
 			if(!$empleado_existente){
 				// Crear empleado inexistente
@@ -630,6 +640,7 @@ class EmpleadosNominasController extends Controller
 			}
 
 			///dd($nomina);
+			///dd($empleados_inexistentes);
 
 
 			// Actualizar empleado existente
@@ -693,23 +704,32 @@ class EmpleadosNominasController extends Controller
 		endforeach; // end registros
 
 
-		$nomina_actual = Nomina::all();
+		//dd($nomina_actual->count());
+
+		// ojo con esto!
+		//$nomina_actual = Nomina::where('id_cliente','!=',auth()->user()->id_cliente_actual)->get();
 
 
-		foreach ($nomina_actual as $ke=>$empleado){
-			//$empleado->refresh();
-			foreach($registros as $kr=>$registro){
-				if($empleado->dni==$registro->dni && $empleado->email==$registro->email && $empleado->id_cliente==auth()->user()->id_cliente_actual){
-					$empleados_borrables[] = $empleado->id;
-					break;
+		if($request->borrar==='1'){
+
+			foreach ($nomina_actual_cliente as $ke=>$empleado){
+				//$empleado->refresh();
+				foreach($registros as $kr=>$registro){
+					if($empleado->dni==$registro->dni && $empleado->email==$registro->email){
+						continue 2;
+					}
 				}
+
+				$empleados_borrables[] = $empleado->id;
 			}
+
+			//dd($empleados_borrables);
+
+			// Antes se borrada el registro. Ahora se actualiza el estado a Inactivo
+			// Nomina::whereIn('id',$empleados_borrables)->delete();
+			Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 		}
 
-
-		// Antes se borrada el registro. Ahora se actualiza el estado a Inactivo
-		// Nomina::whereIn('id',$empleados_borrables)->delete();
-		if($request->borrar==='1') Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 
 
 
