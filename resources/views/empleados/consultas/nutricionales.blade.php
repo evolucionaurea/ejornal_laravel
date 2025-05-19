@@ -37,13 +37,14 @@
                     <div class="col-md-2">
                         <label for="fecha_desde">Fecha Desde:</label>
                         <input type="text" id="fecha_desde" name="fecha_desde" class="form-control form-control-sm"
-                            autocomplete="off" value="{{ request('fecha_desde') }}">
+                            autocomplete="off" readonly value="{{ request('fecha_desde') }}">
                     </div>
                     <div class="col-md-2">
                         <label for="fecha_hasta">Fecha Hasta:</label>
                         <input type="text" id="fecha_hasta" name="fecha_hasta" class="form-control form-control-sm"
-                            autocomplete="off" value="{{ request('fecha_hasta') }}">
+                            autocomplete="off" readonly value="{{ request('fecha_hasta') }}">
                     </div>
+
                     <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn-ejornal btn-ejornal-base">Filtrar</button>
                         <a href="{{ route('empleados.consultas.nutricionales') }}"
@@ -100,15 +101,20 @@
 <script>
     $(function () {
         $("#fecha_desde, #fecha_hasta").datepicker({
-            dateFormat: "dd-mm-yy",
-            dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-            dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
-        });
+        dateFormat: "dd-mm-yy",
+        dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+        dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+        monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+    });
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+        // Bloquea teclas y pegado
+    $("#fecha_desde, #fecha_hasta").on('keydown paste drop', function(e) {
+        e.preventDefault();
+    });
+    
         $('#nutricionTable').DataTable({
             paging: false,
             info: false,
