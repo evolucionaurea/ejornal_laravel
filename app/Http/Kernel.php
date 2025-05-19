@@ -64,7 +64,8 @@ class Kernel extends HttpKernel
         'autenticacion' => \App\Http\Middleware\Autenticacion::class,
         'autenticacion_admin' => \App\Http\Middleware\Autenticacion_admin::class,
         'autenticacion_empleados' => \App\Http\Middleware\Autenticacion_empleados::class,
-        'autenticacion_clientes' => \App\Http\Middleware\Autenticacion_clientes::class
+        'autenticacion_clientes' => \App\Http\Middleware\Autenticacion_clientes::class,
+        'log.hits' => \App\Http\Middleware\LogRouteHits::class,
     ];
 
     /**

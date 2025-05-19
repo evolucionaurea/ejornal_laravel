@@ -5,7 +5,7 @@ Route::get('/', 'webOficialController@index')->name('web_oficial');
 Route::post('login', 'UserController@login');
 
 // Rutas protegidas por autenticacion
-Route::group(['middleware' => ['autenticacion']], function () {
+Route::group(['middleware' => ['autenticacion', 'log.hits']], function () {
 
 	// Admin
 	require 'web_admin.php';

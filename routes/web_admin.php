@@ -3,6 +3,9 @@
 
 Route::group(['middleware' => 'autenticacion_admin'], function () {
 
+	Route::get('admin/monitoreo', 'AdminMonitoreoController@index')->name('/admin/monitoreo');
+	Route::get('admin/monitoreo/metrics/{metric}', 'AdminMonitoreoController@metric')->name('admin.monitoreo.metric');
+
 	Route::get('admin/resumen', 'AdminResumenController@index')->name('/admin/resumen');
 	Route::post('admin/get_medicamentos', 'AdminResumenController@getMedicamentos');
 

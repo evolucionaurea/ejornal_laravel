@@ -23,6 +23,12 @@
 				<span>Mi cuenta</span>
 			</a>
 		</li>
+		<li class="{{ setActive('/admin/monitoreo') }} menu_sin_sub_menu">
+			<a href="{{url('/admin/monitoreo')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-desktop"></i>
+				<span>Monitoreo</span>
+			</a>
+		</li>
 
 		<li class="{{ setActive('/admin/users') }} dropdownMenu">
 			<div class="dropdownButton">
