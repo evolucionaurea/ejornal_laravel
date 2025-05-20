@@ -148,6 +148,10 @@
 						<a href="{{url('/admin/reportes_preocupacionales')}}">Est. Médicos Complementarios</a>
 					</ol>
 
+					<ol data-route="reportes_tareas_adecuadas" class="{{ setActiveSub('reportes_tareas_adecuadas') }}">
+						<a href="{{url('/admin/reportes_tareas_adecuadas')}}">Tareas Adecuadas</a>
+					</ol>
+
 					<ol data-route="/admin/reportes/actividad_usuarios"
 						class="{{ setActiveSub('/admin/reportes/actividad_usuarios') }}">
 						<a href="{{url('/admin/reportes/actividad_usuarios')}}">Actividad Usuarios</a>

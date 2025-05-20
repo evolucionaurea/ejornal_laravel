@@ -92,6 +92,16 @@ $(()=>{
 						return buttons
 					}
 				},
+				{
+					data:null,
+					name:'resultado',
+					render:v=>{
+						return `
+							<p><span class="font-weight-bold">Res.:</span> ${v.resultado ?? '[no indicado]'}</p>
+							<div class="small font-italic"><b>Obs.:</b> ${v.observaciones}</div>
+						`
+					}
+				}
 			]
 
 		}

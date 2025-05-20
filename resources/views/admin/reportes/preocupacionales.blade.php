@@ -104,6 +104,7 @@
 							<th>User que registra</th>
 							<th>Vencimiento</th>
 							<th>Documentación</th>
+							<th>Resultado / Obs.</th>
 						</tr>
 					</thead>
 					<tbody></tbody>

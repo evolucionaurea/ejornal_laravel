@@ -22,6 +22,7 @@ use App\Cliente;
 use App\TipoComunicacion;
 use App\Preocupacional;
 use App\TareaLiviana;
+use App\TareaLivianaTipo;
 use App\ComunicacionLiviana;
 use App\ConsultaNutricional;
 use App\TareaLivianaDocumentacion;
@@ -547,6 +548,23 @@ class AdminReporteController extends Controller
 		));
 	}
 	public function preocupacionales(Request $request){
+		return $this->preocupacionalesAjax($request);
+	}
+
+
+
+	/* ADECUADAS */
+	public function reportes_tareas_adecuadas(){
+
+		$clientes = Cliente::all();
+		$tipos = TareaLivianaTipo::all();
+
+		return view('admin.reportes.tareas_adecuadas',compact(
+			'clientes',
+			'tipos'
+		));
+	}
+	public function tareas_adecuadas(Request $request){
 		return $this->preocupacionalesAjax($request);
 	}
 
