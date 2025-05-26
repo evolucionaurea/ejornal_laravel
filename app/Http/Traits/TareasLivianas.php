@@ -3,23 +3,18 @@
 namespace App\Http\Traits;
 use App\TareaLiviana;
 use App\Cliente;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 trait TareasLivianas {
 
-	public function searchTareasLivianas($id_cliente=null, Request $request)
+	public function searchTareasLivianas(Request $request)
 	{
 
-		$now = Carbon::now();
+		$now = CarbonImmutable::now();
 
-		$query = TareaLiviana::join('nominas','nominas.id','=','tareas_livianas.id_trabajador')
-			/*whereHas('trabajador',function($query) use ($id_cliente){
-				return $query->where('id_cliente',$id_cliente);
-			})*/
-			->join('tareas_livianas_tipos','tareas_livianas_tipos.id','=','tareas_livianas.id_tipo')
-			->select(
+		$query = TareaLiviana::select(
 				'tareas_livianas.*',
 
 				'nominas.nombre as trabajador_nombre',
@@ -29,10 +24,18 @@ trait TareasLivianas {
 				'nominas.id_cliente',
 				'tareas_livianas_tipos.nombre as tareas_livianas_tipos'
 			)
-			->where('tareas_livianas.id_cliente',$id_cliente);
+			/*whereHas('trabajador',function($query) use ($id_cliente){
+				return $query->where('id_cliente',$id_cliente);
+			})*/
+			->join('nominas','nominas.id','=','tareas_livianas.id_trabajador')
+			->join('tareas_livianas_tipos','tareas_livianas_tipos.id','=','tareas_livianas.id_tipo')
+			->with(['trabajador','tipo','cliente','comunicacion.tipo']);
+
+		if($request->cliente_id) $query->where('tareas_livianas.id_cliente',$request->cliente_id);
+
 
 		$query->where(function($query) use($request) {
-			$filtro = '%'.$request->search['value'].'%';
+			$filtro = '%'.$request->search.'%';
 			$query->where('nominas.nombre','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
@@ -50,8 +53,8 @@ trait TareasLivianas {
 		}
 
 
-		if($request->from) $query->whereDate('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('fecha_final','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		if($request->from) $query->whereDate('fecha_inicio','>=',CarbonImmutable::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('fecha_final','<=',CarbonImmutable::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		if($request->tipo) $query->where('id_tipo',$request->tipo);
 
 
@@ -67,17 +70,19 @@ trait TareasLivianas {
 			'recordsTotal'=>$query->count(),
 			'recordsFiltered'=>$query->count(),
 			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
 			'request'=>$request->all()
 		];
 
 	}
 
 
-	public function exportTareasLivianas($idcliente=null,Request $request)
+	public function exportTareasLivianas(Request $request)
 	{
 
-		if(!$idcliente) dd('Faltan parámetros');
-		$cliente = Cliente::findOrFail($idcliente);
+		if(!$request->idcliente) dd('Faltan parámetros');
+		$cliente = Cliente::findOrFail($request->idcliente);
 
 
 
@@ -103,12 +108,12 @@ trait TareasLivianas {
 		$request->search = ['value'=>null];
 		$request->start = 0;
 		$request->length = 5000;
-		$results = $this->searchTareasLivianas($idcliente,$request);
+		$results = $this->searchTareasLivianas($request);
 		$tareas_livianas = $results['data'];
 		///dd($tareas_livianas);
 
 
-		$now = Carbon::now();
+		$now = CarbonImmutable::now();
 		$file_name = 'tareas_livianas-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';
 
 

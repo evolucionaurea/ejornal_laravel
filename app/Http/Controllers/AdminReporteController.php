@@ -31,11 +31,12 @@ use App\PreocupacionalTipoEstudio;
 
 use App\Http\Traits\Ausentismos;
 use App\Http\Traits\Preocupacionales;
+use App\Http\Traits\TareasLivianas;
 
 class AdminReporteController extends Controller
 {
 
-	use Ausentismos,Preocupacionales;
+	use Ausentismos,Preocupacionales,TareasLivianas;
 
 
 	/* FICHADAS */
@@ -565,7 +566,7 @@ class AdminReporteController extends Controller
 		));
 	}
 	public function tareas_adecuadas(Request $request){
-		return $this->preocupacionalesAjax($request);
+		return $this->searchTareasLivianas($request);
 	}
 
 

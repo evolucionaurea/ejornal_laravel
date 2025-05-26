@@ -25,7 +25,7 @@ class TareaLiviana extends Model
     'fecha_regreso_trabajar'=>'date:d/m/Y'
   ];
 
-  protected $appends = ['trabajador_perfil_url','created_at_formatted'];
+  protected $appends = ['trabajador_perfil_url','created_at_formatted','archivo_path'];
 
 
   public function tipo() {
@@ -56,6 +56,11 @@ class TareaLiviana extends Model
   public function getTrabajadorPerfilUrlAttribute()
   {
     return url('/empleados/nominas/'.$this->id_trabajador);
+  }
+
+  public function getArchivoPathAttribute()
+  {
+    return url('empleados/tareas_livianas/archivo/'.$this->id);
   }
 
 }

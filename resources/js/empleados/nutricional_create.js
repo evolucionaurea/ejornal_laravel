@@ -34,22 +34,18 @@ $(() => {
     toggleCampos(); // Ejecutar al cargar la página
 
 
-    $('#prox_cita').datepicker({
-        format: 'yyyy-mm-dd',
-        language: 'es',  
-        autoclose: true,
-    });
-    
+    $('[data-toggle="has-datepicker"]').datepicker();
+
 
 
     ////////////////// Caratula ////////////////
-	
+
 	function dibujarCaratula(data)
-	{		
+	{
 		const caratula = document.getElementById('caratula');
 		const formulario = document.getElementById('form_guardar_consulta_nutricional');
 		if (data.estado) {
-			
+
 			console.log('dibujar caratula', data.data);
 			caratula.innerHTML = `
 			<div class="caratula_contenido">
@@ -87,7 +83,7 @@ $(() => {
 					.then(json => {
 						console.log(json);
 						let patologias = json.data; // Ahora la variable patologias se define aquí
-			
+
 						// Crear modal dinámicamente
 						let modalHtml = `
 							<div class="modal fade" id="editarCaratulaModal" tabindex="-1" role="dialog" aria-labelledby="editarCaratulaLabel" aria-hidden="true">
@@ -113,7 +109,7 @@ $(() => {
 														<input type="hidden" name="trabajador_id_edit_caratula" value="${data.data.nomina.id}">
 													</div>
 												</div>
-												
+
 												<div class="row">
 													<div class="col-md-6">
 														<label for="patologia">
@@ -131,13 +127,13 @@ $(() => {
 														</select>
 														<input type="hidden" name="patologia_id_edit_caratula" value="${data.data.patologias.map(patologia => patologia.id).join(',')}">
 													</div>
-			
+
 													<div class="col-md-6">
 														<label for="peso">Peso (kg)</label>
 														<input type="number" name="peso_edit_caratula" class="form-control" value="${data.data.peso}">
 													</div>
 												</div>
-												
+
 												<div class="row">
 													<div class="col-md-6">
 														<label for="altura">Altura (cm)</label>
@@ -149,7 +145,7 @@ $(() => {
 														<input type="hidden" name="imc_disabled_edit_caratula" class="form-control" value="${data.data.imc}">
 													</div>
 												</div>
-												
+
 												<div class="row">
 													<div class="col-md-4">
 														<label for="antecedentes">Antecedentes</label>
@@ -175,21 +171,21 @@ $(() => {
 									</div>
 								</div>
 							</div>`;
-						
+
 						// Insertar el modal en el body
 						document.body.insertAdjacentHTML('beforeend', modalHtml);
 						$('#editarCaratulaModal').modal('show');
-					
+
 						// Asegurarse de que el evento se registre después de que el modal se haya mostrado
 						$('#editarCaratulaModal').on('shown.bs.modal', function () {
 							$('.select_2').select2();
 						});
-					
+
 						// Manejar el botón de guardar cambios
-						document.getElementById('guardarCaratulaConsulta').addEventListener('click', function () {                    
+						document.getElementById('guardarCaratulaConsulta').addEventListener('click', function () {
 							// Crear un objeto vacío para almacenar los datos
 							let updatedData = {};
-			
+
 							// Obtener los valores de los campos manualmente con querySelector
 							updatedData['cliente_id_edit_caratula'] = document.querySelector('[name="cliente_id_edit_caratula"]').value;
 							updatedData['trabajador_id_edit_caratula'] = document.querySelector('[name="trabajador_id_edit_caratula"]').value;
@@ -200,7 +196,7 @@ $(() => {
 							updatedData['antecedentes_edit_caratula'] = document.querySelector('[name="antecedentes_edit_caratula"]').value;
 							updatedData['alergias_edit_caratula'] = document.querySelector('[name="alergias_edit_caratula"]').value;
 							updatedData['medicacion_habitual_edit_caratula'] = document.querySelector('[name="medicacion_habitual_edit_caratula"]').value;
-							
+
 							// Enviar los datos al servidor
 							fetch(`/api/actualizar_caratula`, {
 								method: 'POST',
@@ -214,39 +210,43 @@ $(() => {
 									if (data.estado) {
 										alert(data.data);
 										// window.location.reload();
-										let idNomina = updatedData['trabajador_id_edit_caratula']; 
+										let idNomina = updatedData['trabajador_id_edit_caratula'];
 										let idClienteActual = $('#id_cliente_actual').val();
-										let dominio = window.location.origin; 
-									
+										let dominio = window.location.origin;
+
 										// Validar que no este seleccionada la opcion "Seleccionar"
 										if (idNomina != '') {
-											let url = `${dominio}/api/get_caratula_nomina/${idNomina}/${idClienteActual}`; 
-											dibujarLoader();
-										
+											let url = `${dominio}/api/get_caratula_nomina/${idNomina}/${idClienteActual}`;
+
+											loading()
+
 											// Realizar la consulta al EndpointsController
 											fetch(url, {
-												method: 'GET', 
-												headers: {	
-													'Content-Type': 'application/json', 
+												method: 'GET',
+												headers: {
+													'Content-Type': 'application/json',
 												},
 											})
 											.then(response => {
 												if (!response.ok) {
-													throw new Error('Error en la respuesta del servidor'); 
+													throw new Error('Error en la respuesta del servidor');
 												}
-												return response.json(); 
+												return response.json();
 											})
 											.then(data => {
-												$('#loader').remove();
+
+												loading({show:false})
+
 												if ($('#caratula_contenido').length) {
 													$('#caratula_contenido').remove();
 												}
-												dibujarCaratula(data); 
+
+												dibujarCaratula(data);
 											})
 											.catch(error => {
-												console.error('Error:', error); 
+												console.error('Error:', error);
 											});
-										}	
+										}
 
 
 									} else {
@@ -264,31 +264,31 @@ $(() => {
 									});
 								});
 						});
-					
+
 						// Eliminar el modal al cerrarlo
 						$('#editarCaratulaModal').on('hidden.bs.modal', function () {
 							$(this).remove();
 						});
-			
+
 					})
 					.catch(error => {
 						console.error('Error al cargar las patologías:', error);
 						alert('Hubo un error al cargar las patologías.');
 					});
 			});
-			
-			
-			
-			
-			
-			
 
-			
+
+
+
+
+
+
+
 		}else{
 			caratula.innerHTML = `
 			<div class="caratula_contenido">
 				<div class="alert alert-info">
-					No se ha creado una caratula para este trabajador de la nomina aun.
+					No se ha creado una carátula para este trabajador de la nómina aún.
 				</div>
 			</div>
 			`;
@@ -300,55 +300,23 @@ $(() => {
 		}
 	}
 
-	function dibujarLoader() {
-		const caratula = document.getElementById('caratula');
-		caratula.innerHTML = `
-		<div id="loader" class="spinner-border text-primary" role="status">
-				<span class="sr-only">Loading...</span>
-			</div>
-		`;
-	}
+	$('#id_nomina').change(async select=>{
+		let idNomina = $(select.currentTarget).val()
+		let idClienteActual = $('#id_cliente_actual').val()
+		let dominio = window.location.origin
 
+		$('#caratula').html('')
 
-	$('#id_nomina').change(function() {
-		let idNomina = $(this).val(); 
-		let idClienteActual = $('#id_cliente_actual').val();
-		let dominio = window.location.origin; 
-	
-		// Validar que no este seleccionada la opcion "Seleccionar"
-		if (idNomina != '') {
-			let url = `${dominio}/api/get_caratula_nomina/${idNomina}/${idClienteActual}`; 
-			dibujarLoader();
-		
-			// Realizar la consulta al EndpointsController
-			fetch(url, {
-				method: 'GET', 
-				headers: {
-					'Content-Type': 'application/json', 
-				},
-			})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Error en la respuesta del servidor'); 
-				}
-				return response.json(); 
-			})
-			.then(data => {
-				$('#loader').remove();
-				if ($('#caratula_contenido').length) {
-					$('#caratula_contenido').remove();
-				  }
-				dibujarCaratula(data); 
-			})
-			.catch(error => {
-				console.error('Error:', error); 
-			});
-		}
-	});
+		if(idNomina=='') return false
 
-	
+		loading()
+		const response = await axios.get(`${dominio}/api/get_caratula_nomina/${idNomina}/${idClienteActual}`)
+		loading({show:false})
+		return dibujarCaratula(response.data)
 
-////////////////// Caratula ////////////////
+	})
+
+	////////////////// Caratula ////////////////
 
 
 });

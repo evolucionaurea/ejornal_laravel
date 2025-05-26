@@ -1,6 +1,6 @@
 @extends('partials.layout')
 
-@section('title', 'Admin | Estudios Médicos Complementarios')
+@section('title', 'Admin | Tareas Adecuadas')
 
 @section('content')
 
@@ -44,7 +44,7 @@
 							<select name="tipo" class="form-control form-control-sm">
 								<option value="">--Seleccionar Tipo de Estudio--</option>
 								@foreach($tipos as $tipo)
-								<option value="{{ $tipo->id }}">{{ $tipo->name }}</option>
+								<option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
 								@endforeach
 							</select>
 						</div>
@@ -72,17 +72,18 @@
 		  <hr>
 
 		  <div class="table-responsive">
-				<table data-table="preocupacionales" class="table table-striped table-hover table-sm w-100">
+				<table data-table="tareas-livianas" class="table table-striped table-hover table-sm w-100">
 					<thead>
 						<tr>
 						  <th>Trabajador</th>
 						  <th>Cliente</th>
-						  <th>Fecha</th>
-							<th>Tipo de Estudio</th>
+						  <th>Fecha Inicio</th>
+						  <th>Fecha Final</th>
+						  <th>Fecha de Carga</th>
+							<th>Tipo</th>
 							<th>User que registra</th>
-							<th>Vencimiento</th>
 							<th>Documentación</th>
-							<th>Resultado / Obs.</th>
+							<th>Comunicaciones</th>
 						</tr>
 					</thead>
 					<tbody></tbody>

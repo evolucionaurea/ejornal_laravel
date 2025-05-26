@@ -41,6 +41,7 @@ if(route=='reportes_comunicaciones') require('./admin/reportes/comunicaciones')
 if(route=='reportes_consultas') require('./admin/reportes/consultas')
 if(route=='/admin/reportes/actividad_usuarios') require('./admin/reportes/actividad_usuarios')
 if(route=='reportes_preocupacionales') require('./admin/reportes/preocupacionales')
+if(route=='reportes_tareas_adecuadas') require('./admin/reportes/tareas_livianas')
 
 
 //EMPLEADOS

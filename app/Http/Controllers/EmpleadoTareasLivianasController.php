@@ -36,6 +36,11 @@ class EmpleadoTareasLivianasController extends Controller
 
 	public function busqueda(Request $request)
 	{
+
+		$request->cliente_id = auth()->user()->id_cliente_actual;
+		return $this->searchTareasLivianas($request);
+
+
 		$query = TareaLiviana::select(
 			'tareas_livianas.*',
 			'nominas.nombre',
@@ -415,7 +420,8 @@ class EmpleadoTareasLivianasController extends Controller
 	public function exportar(Request $request)
 	{
 		//Traits > Tareas Livianas
-		return $this->exportTareasLivianas(auth()->user()->id_cliente_actual,$request);
+		$request->auth()->user()->id_cliente_actual;
+		return $this->exportTareasLivianas($request);
 	}
 
 
