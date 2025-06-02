@@ -97,8 +97,6 @@ class EmpleadosConsultaNutricionalController extends Controller
 			'medicaciones' => 'nullable|string',
 		]);
 
-
-
 		// Crear una nueva consulta nutricional
 		$consultaNutricional = new ConsultaNutricional();
 
@@ -112,23 +110,23 @@ class EmpleadosConsultaNutricionalController extends Controller
 		// Asignar los campos adicionales según el tipo de consulta
 		switch ($validatedData['tipo']) {
 			case 'inicial':
-				$consultaNutricional->objetivos = $validatedData['objetivos'] ?? null;
-				$consultaNutricional->gustos_alimentarios = $validatedData['gustos_alimentarios'] ?? null;
-				$consultaNutricional->comidas_diarias = $validatedData['comidas_diarias'] ?? null;
-				$consultaNutricional->descanso = $validatedData['descanso'] ?? null;
-				$consultaNutricional->intolerancias_digestivas = $validatedData['intolerancias_digestivas'] ?? null;
-				$consultaNutricional->alergias_alimentarias = $validatedData['alergias_alimentarias'] ?? null;
+				$consultaNutricional->objetivos = $validatedData['objetivos'];
+				$consultaNutricional->gustos_alimentarios = $validatedData['gustos_alimentarios'];
+				$consultaNutricional->comidas_diarias = $validatedData['comidas_diarias'];
+				$consultaNutricional->descanso = $validatedData['descanso'];
+				$consultaNutricional->intolerancias_digestivas = $validatedData['intolerancias_digestivas'];
+				$consultaNutricional->alergias_alimentarias = $validatedData['alergias_alimentarias'];
 				break;
 
 			case 'seguimiento':
-				$consultaNutricional->circunferencia_cintura = $validatedData['circunferencia_cintura'] ?? null;
-				$consultaNutricional->porcent_masa_grasa = $validatedData['porcent_masa_grasa'] ?? null;
-				$consultaNutricional->porcent_masa_muscular = $validatedData['porcent_masa_muscular'] ?? null;
-				$consultaNutricional->prox_cita = Carbon::createFromFormat('d/m/Y', $validatedData['prox_cita']) ?? null;
-				$consultaNutricional->act_fisica = $validatedData['act_fisica'] ?? null;
-				$consultaNutricional->transito_intestinal = $validatedData['transito_intestinal'] ?? null;
-				$consultaNutricional->evolucion = $validatedData['evolucion'] ?? null;
-				$consultaNutricional->medicaciones = $validatedData['medicaciones'] ?? null;
+				$consultaNutricional->circunferencia_cintura = $validatedData['circunferencia_cintura'];
+				$consultaNutricional->porcent_masa_grasa = $validatedData['porcent_masa_grasa'];
+				$consultaNutricional->porcent_masa_muscular = $validatedData['porcent_masa_muscular'];
+				$consultaNutricional->prox_cita = $validatedData['prox_cita'] ? Carbon::createFromFormat('d/m/Y', $validatedData['prox_cita']) : null;
+				$consultaNutricional->act_fisica = $validatedData['act_fisica'];
+				$consultaNutricional->transito_intestinal = $validatedData['transito_intestinal'];
+				$consultaNutricional->evolucion = $validatedData['evolucion'];
+				$consultaNutricional->medicaciones = $validatedData['medicaciones'];
 				break;
 
 			default:
