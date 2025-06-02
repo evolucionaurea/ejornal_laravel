@@ -22,27 +22,27 @@ class EmpleadosCaratulaController extends Controller
     public function index()
     {
         $clientes = $this->getClientesUser(); // Obtener los clientes del usuario actual
-    
+
         $caratulas = Caratula::with(['nomina', 'cliente', 'patologias'])
         ->whereIn('id_cliente', $clientes->pluck('id'))
         ->orderBy('created_at', 'desc')
         ->get();
-    
+
         // Agrupar por el campo único del trabajador (nombre en este caso) y obtener la más reciente
         $caratulasUnicas = $caratulas
             ->groupBy('nomina.nombre')
             ->map(function ($group) {
                 return $group->sortByDesc('created_at')->first(); // Seleccionar la carátula más reciente
             });
-    
+
         // Convertir en una colección plana
         $caratulasFiltradas = $caratulasUnicas->values();
-    
+
         // Paginación manual
         $perPage = 10;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $caratulasFiltradas->forPage($currentPage, $perPage);
-    
+
         $paginatedCaratulas = new LengthAwarePaginator(
             $currentItems,
             $caratulasFiltradas->count(),
@@ -50,17 +50,17 @@ class EmpleadosCaratulaController extends Controller
             $currentPage,
             ['path' => Paginator::resolveCurrentPath()]
         );
-    
+
         return view('empleados.nominas.caratulas', compact('paginatedCaratulas', 'clientes'));
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -90,7 +90,7 @@ class EmpleadosCaratulaController extends Controller
             'id_patologia' => 'nullable|array', // Permitir múltiples patologías
             'id_patologia.*' => 'exists:patologias,id' // Validar que existen en la DB
         ]);
- 
+
         $nomina = Nomina::find($request->id_nomina);
 
         $caratula = new Caratula();
@@ -122,27 +122,27 @@ class EmpleadosCaratulaController extends Controller
     public function show(Request $request, $id)
     {
         $clientes = $this->getClientesUser();
-        
+
         $query = Caratula::with('patologias')
             ->where('id_nomina', $id)
             ->orderBy('created_at', 'desc');
-    
+
         // Filtros por fecha
         if ($request->filled('fecha_desde')) {
             $fechaDesde = Carbon::createFromFormat('d-m-Y', $request->fecha_desde)->startOfDay()->toDateTimeString();
             $query->where('created_at', '>=', $fechaDesde);
         }
-    
+
         if ($request->filled('fecha_hasta')) {
             $fechaHasta = Carbon::createFromFormat('d-m-Y', $request->fecha_hasta)->endOfDay()->toDateTimeString();
             $query->where('created_at', '<=', $fechaHasta);
         }
-    
+
         $caratulas = $query->get();
-    
+
         return view('empleados.nominas.caratulas.show', compact('caratulas', 'clientes'));
     }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -176,7 +176,7 @@ class EmpleadosCaratulaController extends Controller
     public function destroy($id)
     {
         $caratula = Caratula::find($id);
-        
+
         if ($caratula) {
             $caratula->patologias()->detach(); // Eliminar relaciones en la tabla intermedia
             $caratula->delete();
@@ -185,5 +185,5 @@ class EmpleadosCaratulaController extends Controller
 
         return back()->with('error', 'Carátula no encontrada');
     }
-    
+
 }

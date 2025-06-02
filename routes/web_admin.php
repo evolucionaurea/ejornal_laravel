@@ -129,11 +129,12 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	// Preocupacionales
 	Route::get('admin/reportes_preocupacionales', 'AdminReporteController@reportes_preocupacionales')->name('reportes_preocupacionales');
 	Route::post('admin/reportes/preocupacionales/busqueda','AdminReporteController@preocupacionales');
+	Route::get('admin/preocupacionales/archivo/{id}','AdminReporteController@descargar_archivo_preocupacionales');
 
 	// Tareas Adecuadas
 	Route::get('admin/reportes_tareas_adecuadas', 'AdminReporteController@reportes_tareas_adecuadas')->name('reportes_tareas_adecuadas');
 	Route::post('admin/reportes/tareas-adecuadas/busqueda','AdminReporteController@tareas_adecuadas');
-	Route::get('empleados/tareas_livianas/archivo/{id}','AdminResumenController@index')->name('empleados/tareas_livianas/archivo/{id}');
+	Route::get('admin/tareas_livianas/archivo/{id}','AdminReporteController@descargar_archivo_tarea_liviana');
 
 	// Actividad Usuarios
 	Route::get('admin/reportes/actividad_usuarios', 'AdminReporteController@actividad_usuarios')->name('/admin/reportes/actividad_usuarios');

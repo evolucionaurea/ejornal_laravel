@@ -83,8 +83,8 @@ $(()=>{
 						let buttons = ''
 						archivos.map((archivo,k)=>{
 							buttons += `<div class="flex flex-wrap">
-								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${archivo.file_path}" title="${archivo.archivo}" >
-									<i class="fa fa-download fa-fw"></i> <span>${archivo.archivo}</span>
+								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${archivo.file_path_admin}" title="${archivo.archivo}" >
+									<i class="fa fa-download fa-fw"></i> <span>descargar archivo</span>
 								</button>
 							</div>`
 						})
@@ -109,6 +109,7 @@ $(()=>{
 
 	$('[data-table="preocupacionales"]').on('click','[data-toggle="open-file"]',btn=>{
 		const href = $(btn.currentTarget).attr('data-href')
+		//return console.log(href)
 		window.open(href)
 	})
 

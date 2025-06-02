@@ -52,3 +52,12 @@ function device_spanish($device){
 	}
 	return $dispositivo;
 }
+function formatBytes($bytes, $precision = 2){
+	$units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+	for ($i = 0; $bytes > 1024; $i++) {
+		$bytes /= 1024;
+	}
+
+	return round($bytes, $precision) . ' ' . $units[$i];
+}

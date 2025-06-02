@@ -37,8 +37,16 @@
 
 						<form data-form="form-medicas" class="row d-flex align-items-center">
 							<div class="col-lg-2">
-								<input placeholder="Buscar trabajador" name="keywords" type="text"
-									class="form-control form-control-sm" value="">
+								<input placeholder="Buscar trabajador" name="keywords" type="text" class="form-control form-control-sm" value="">
+							</div>
+
+							<div class="col-lg-2">
+								<select name="cliente" class="form-control form-control-sm">
+									<option value="">--Filtrar por Cliente--</option>
+									@if($clientes) @foreach($clientes as $client)
+									<option value="{{ $client->id }}">{{ $client->nombre }}</option>
+									@endforeach @endif
+								</select>
 							</div>
 
 							<div class="col-lg-2">
@@ -50,7 +58,7 @@
 								<input placeholder="Hasta" name="fecha_final" type="text"
 									class="form-control form-control-sm" value="">
 							</div>
-							<div class="col-lg-3">
+							<div class="col-lg-3 border-left">
 								<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro btn-sm">
 									<i class="fas fa-search"></i> <span>Buscar</span>
 								</button>
@@ -79,7 +87,7 @@
 							<!--Table head-->
 
 							<!--Table body-->
-							<tbody class="resultados_reporte_consultas_medicas"></tbody>
+							<tbody></tbody>
 							<!--Table body-->
 						</table>
 					</div>
@@ -103,6 +111,15 @@
 							<div class="col-lg-2">
 								<input placeholder="Buscar trabajador" name="keywords" type="text"
 									class="form-control form-control-sm" value="">
+							</div>
+
+							<div class="col-lg-2">
+								<select name="cliente" class="form-control form-control-sm">
+									<option value="">--Filtrar por Cliente--</option>
+									@if($clientes) @foreach($clientes as $client)
+									<option value="{{ $client->id }}">{{ $client->nombre }}</option>
+									@endforeach @endif
+								</select>
 							</div>
 
 							<div class="col-lg-2">
@@ -143,7 +160,7 @@
 							<!--Table head-->
 
 							<!--Table body-->
-							<tbody class="resultados_reporte_consultas_medicas"></tbody>
+							<tbody></tbody>
 							<!--Table body-->
 						</table>
 
@@ -173,6 +190,15 @@
 							</div>
 
 							<div class="col-lg-2">
+								<select name="cliente" class="form-control form-control-sm">
+									<option value="">--Filtrar por Cliente--</option>
+									@if($clientes) @foreach($clientes as $client)
+									<option value="{{ $client->id }}">{{ $client->nombre }}</option>
+									@endforeach @endif
+								</select>
+							</div>
+
+							<div class="col-lg-2">
 								<input placeholder="Desde" name="fecha_inicio" type="text"
 									class="form-control form-control-sm" value="">
 							</div>
@@ -185,7 +211,7 @@
 								<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro btn-sm">
 									<i class="fas fa-search"></i> <span>Buscar</span>
 								</button>
-								<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro btn-sm">
+								<button data-toggle="clear" type="button" class="btn-ejornal btn-ejornal-gris-claro btn-sm">
 									<i class="fas fa-list"></i> <span>Mostrar todo</span>
 								</button>
 							</div>
@@ -210,7 +236,7 @@
 							<!--Table head-->
 
 							<!--Table body-->
-							<tbody class="resultados_reporte_consultas_medicas"></tbody>
+							<tbody></tbody>
 							<!--Table body-->
 						</table>
 

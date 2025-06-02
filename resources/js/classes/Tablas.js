@@ -173,6 +173,7 @@ export default class Tablas {
 
 			/*Mostrar Todo*/
 			this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
+				btn.preventDefault()
 				this.modulo_busqueda.find('[name]').val('')
 				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 			})

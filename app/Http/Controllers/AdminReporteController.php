@@ -21,6 +21,7 @@ use App\Comunicacion;
 use App\Cliente;
 use App\TipoComunicacion;
 use App\Preocupacional;
+use App\PreocupacionalArchivo;
 use App\TareaLiviana;
 use App\TareaLivianaTipo;
 use App\ComunicacionLiviana;
@@ -457,12 +458,6 @@ class AdminReporteController extends Controller
 	}
 
 
-	/* CONSULTAS MEDICAS/ENFERMERIA/NUTRICIONAL */
-	public function reportes_consultas()
-	{
-		return view('admin.reportes.consultas');
-	}
-
 
 	/* COMUNICACIONES */
 	public function reportes_comunicaciones()
@@ -540,6 +535,9 @@ class AdminReporteController extends Controller
 	/* PREOCUPACIONALES */
 	public function reportes_preocupacionales(){
 
+		///dd($_SERVER);
+		//dd(env('APP_URL'));
+
 		$clientes = Cliente::all();
 		$tipos = PreocupacionalTipoEstudio::all();
 
@@ -550,6 +548,13 @@ class AdminReporteController extends Controller
 	}
 	public function preocupacionales(Request $request){
 		return $this->preocupacionalesAjax($request);
+	}
+	public function descargar_archivo_preocupacionales($id){
+
+		$archivo = PreocupacionalArchivo::find($id);
+		$ruta = storage_path("app/preocupacionales/trabajador/{$archivo->preocupacional_id}/{$archivo->hash_archivo}");
+		return download_file($ruta);
+
 	}
 
 
@@ -567,6 +572,13 @@ class AdminReporteController extends Controller
 	}
 	public function tareas_adecuadas(Request $request){
 		return $this->searchTareasLivianas($request);
+	}
+	public function descargar_archivo_tarea_liviana($id){
+
+		$archivo = TareaLiviana::find($id);
+		$ruta = storage_path("app/tareas_livianas/trabajador/{$archivo->id}/{$archivo->hash_archivo}");
+		return download_file($ruta);
+
 	}
 
 
@@ -623,6 +635,12 @@ class AdminReporteController extends Controller
 
 
 
+	/* CONSULTAS MEDICAS/ENFERMERIA/NUTRICIONAL */
+	public function reportes_consultas()
+	{
+		$clientes = Cliente::all();
+		return view('admin.reportes.consultas',compact('clientes'));
+	}
 	public function consultas_medicas(Request $request)
 	{
 
@@ -651,6 +669,7 @@ class AdminReporteController extends Controller
 				$query->where('nombre','LIKE',"%{$request->keywords}%");
 			});
 		}
+		if($request->cliente) $query->where('consultas_medicas.id_cliente',$request->cliente);
 
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
@@ -669,7 +688,6 @@ class AdminReporteController extends Controller
 		];
 
 	}
-
 	public function consultas_enfermeria(Request $request)
 	{
 
@@ -693,6 +711,9 @@ class AdminReporteController extends Controller
 			$fecha_final = Carbon::createFromFormat('d/m/Y',$request->fecha_final);
 			$query->where('fecha','<=',$fecha_final);
 		}
+
+		if($request->cliente) $query->where('consultas_enfermerias.id_cliente',$request->cliente);
+
 		if($request->keywords){
 			$query->whereHas('trabajador',function($query) use($request){
 				$query->where('nombre','LIKE',"%{$request->keywords}%");
@@ -716,9 +737,6 @@ class AdminReporteController extends Controller
 		];
 
 	}
-
-
-
 	public function consultas_nutricionales(Request $request)
 	{
 
@@ -747,6 +765,9 @@ class AdminReporteController extends Controller
 			$fecha_final = Carbon::createFromFormat('d/m/Y',$request->fecha_final);
 			$query->where('fecha','<=',$fecha_final);
 		}
+
+		if($request->cliente) $query->where('consultas_nutricionales.id_cliente',$request->cliente);
+
 		if($request->keywords){
 			$query->whereHas('trabajador',function($query) use($request){
 				$query->where('nombre','LIKE',"%{$request->keywords}%");
@@ -776,7 +797,7 @@ class AdminReporteController extends Controller
 	{
 		$ausentismo_documentacion = AusentismoDocumentacion::find($id);
 		$ruta = storage_path("app/documentacion_ausentismo/{$ausentismo_documentacion->id}/{$ausentismo_documentacion->hash_archivo}");
-		return response()->download($ruta);
+		return download_file($ruta);
 		return back();
 	}
 
@@ -849,7 +870,7 @@ class AdminReporteController extends Controller
 		$archivo = AusentismoDocumentacionArchivos::where('ausentismo_documentacion_id',$id)->first();
 		$ruta = storage_path("app/documentacion_ausentismo/{$archivo->ausentismo_documentacion_id}/{$archivo->hash_archivo}");
 		////dd($ruta);
-		return response()->download($ruta);
+		return download_file($ruta);
 		return back();
 	}
 

@@ -31,7 +31,7 @@ class Ausentismo extends Model
 		'fecha_regreso_trabajar'=>'date:d/m/Y'
 	];
 
-	protected $appends = ['created_at_formatted','trabajador_perfil_url'];
+	protected $appends = ['created_at_formatted','trabajador_perfil_url','comentario_shortened'];
 
 	public function tipo(){
 		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
@@ -75,6 +75,9 @@ class Ausentismo extends Model
 		$diff = date_diff($this->fecha_inicio,$fin);
 
 		return $diff->days;
+	}
+	public function getComentarioShortenedAttribute(){
+		return \Str::words($this->comentario,25);
 	}
 
 }

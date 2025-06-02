@@ -78,7 +78,7 @@ $(()=>{
 						if(data.archivo==null) return `<span class="text-muted font-style-italic">[sin archivos]</span>`
 
 						return `<div class="flex flex-wrap">
-								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${data.archivo_path}" title="${data.archivo}" >
+								<button data-toggle="open-file" class="btn btn-info btn-tiny mr-3 mb-1" data-href="${data.archivo_path_admin}" title="${data.archivo}" >
 									<i class="fa fa-download fa-fw"></i> <span>descargar</span>
 								</button>
 							</div>`

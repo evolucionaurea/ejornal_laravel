@@ -159,6 +159,10 @@ hr.hr-line-dashed {
   border-top: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
+.lh-sm {
+  line-height: 1.15;
+}
+
 .btn-ejornal {
   color: white !important;
   cursor: pointer;
