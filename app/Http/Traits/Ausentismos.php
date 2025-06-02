@@ -333,7 +333,7 @@ trait Ausentismos {
 				$ausentismo->fecha_inicio->format('d/m/Y'),
 				$ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]',
 				$ausentismo->fecha_regreso ?? ($ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]'),
-				$ausentismo->comentario,
+				str_replace(["\n", "\r"], " ", $ausentismo->comentario),
 				$hoy
 			],';');
 		}
