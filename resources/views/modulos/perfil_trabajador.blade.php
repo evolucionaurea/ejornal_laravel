@@ -24,6 +24,7 @@
 					@endif
 					<li><b>Teléfono:</b><br> {{ $trabajador->telefono ? "<a href='tel:$trabajador->telefono'
 							style='color: #45526e;'>$trabajador->telefono</a>" : 'No fue cargado' }}</li>
+					<li><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</li>
 				</ul>
 			</div>
 		</div>

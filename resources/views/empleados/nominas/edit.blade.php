@@ -51,19 +51,25 @@
 							value="{{$trabajador->email}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
+						<label>Legajo</label>
+						<input name="legajo" type="text" class="form-control form-control-sm"
+							value="{{$trabajador->legajo}}" placeholder="">
+					</div>
+					<div class="form-group col-md-3">
 						<label>Telefono</label>
 						<input name="telefono" type="text" class="form-control form-control-sm"
 							value="{{$trabajador->telefono}}" placeholder="">
 					</div>
 					<div class="form-group col-md-3">
 						<label>DNI*</label>
-						<input name="dni" type="number" class="form-control form-control-sm" value="{{$trabajador->dni}}"
-							placeholder="" step="1" required>
+						<input name="dni" type="number" class="form-control form-control-sm"
+							value="{{$trabajador->dni}}" placeholder="" step="1" required>
 					</div>
 
 					<div class="form-group col-md-3">
 						<label>Fecha de Nacimiento</label>
-						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm" value="{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '' }}"
+						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm"
+							value="{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '' }}"
 							placeholder="">
 					</div>
 
@@ -86,7 +92,8 @@
 						<select name="id_cliente" class="form-control form-control-sm" required>
 							<option value="">--Seleccionar--</option>
 							@if($clientes) @foreach($clientes as $cliente):
-							<option value="{{ $cliente->id }}" {{ $cliente->id==$trabajador->id_cliente ? 'selected' : '' }} >{{ $cliente->nombre }}</option>
+							<option value="{{ $cliente->id }}" {{ $cliente->id==$trabajador->id_cliente ? 'selected' :
+								'' }} >{{ $cliente->nombre }}</option>
 							@endforeach @endif
 						</select>
 					</div>

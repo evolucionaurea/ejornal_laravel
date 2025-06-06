@@ -41,25 +41,34 @@
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Nombre *</label>
-						<input required name="nombre" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nombre')}}">
+						<input required name="nombre" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('nombre')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>CUIL</label>
-						<input name="email" type="text" class="form-control form-control-sm" placeholder="" value="{{old('email')}}">
+						<input name="email" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('email')}}">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Legajo</label>
+						<input name="legajo" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('legajo')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Teléfono</label>
-						<input name="telefono" type="text" class="form-control form-control-sm" placeholder="" value="{{old('telefono')}}">
+						<input name="telefono" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('telefono')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>DNI *</label>
-						<input required name="dni" type="number" class="form-control form-control-sm" placeholder="solamente números, sin puntos" step="1" value="{{old('dni')}}">
+						<input required name="dni" type="number" class="form-control form-control-sm"
+							placeholder="solamente números, sin puntos" step="1" value="{{old('dni')}}">
 					</div>
 
 					<div class="form-group col-md-3">
 						<label>Fecha de Nacimiento</label>
-						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm" value="{{ old('fecha_nacimiento') }}"
-							placeholder="">
+						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm"
+							value="{{ old('fecha_nacimiento') }}" placeholder="">
 					</div>
 
 					<div class="form-group col-md-3">
@@ -71,31 +80,38 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>Sector *</label>
-						<input required name="sector" type="text" class="form-control form-control-sm" placeholder="" value="{{old('sector')}}">
+						<input required name="sector" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('sector')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Calle</label>
-						<input name="calle" type="text" class="form-control form-control-sm" placeholder="" value="{{old('calle')}}">
+						<input name="calle" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('calle')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Nro</label>
-						<input name="nro" type="text" class="form-control form-control-sm" placeholder="" value="{{old('nro')}}">
+						<input name="nro" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('nro')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Entre calles</label>
-						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder="" value="{{old('entre_calles')}}">
+						<input name="entre_calles" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('entre_calles')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Localidad</label>
-						<input name="localidad" type="text" class="form-control form-control-sm" placeholder="" value="{{old('localidad')}}">
+						<input name="localidad" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('localidad')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Partido</label>
-						<input name="partido" type="text" class="form-control form-control-sm" placeholder="" value="{{old('partido')}}">
+						<input name="partido" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('partido')}}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Codigo postal</label>
-						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder="" value="{{old('cod_postal')}}">
+						<input name="cod_postal" type="text" class="form-control form-control-sm" placeholder=""
+							value="{{old('cod_postal')}}">
 					</div>
 
 					<div class="form-group col-md-3">

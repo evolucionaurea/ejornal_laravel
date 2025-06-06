@@ -56,6 +56,7 @@ trait Nominas
 				$filtro = '%'.$request->search.'%';
 				$query->where('nombre','like',$filtro)
 					->orWhere('email','like',$filtro)
+					->orWhere('legajo','like',$filtro)
 					->orWhere('dni','like',$filtro)
 					->orWhere('telefono','like',$filtro);
 			});

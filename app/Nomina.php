@@ -19,7 +19,7 @@ class Nomina extends Model
   protected $table = 'nominas';
 
   // Campos habilitados para ingresar
-  protected $fillable = ['id_cliente', 'nombre', 'email', 'telefono', 'dni', 'estado', 'foto', 'hash_foto'];
+  protected $fillable = ['id_cliente', 'nombre', 'email', 'telefono', 'dni', 'estado', 'foto', 'hash_foto', 'legajo'];
 
   protected $casts = [
     'created_at'=>'date:d/m/Y',

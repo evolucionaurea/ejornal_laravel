@@ -50,6 +50,14 @@ $(()=>{
 				},
 				{
 					data:row=>row,
+					name:'legajo',
+					className:'align-middle border-left',
+					render:v=>{
+						return v.legajo==null ? '<span class="text-muted font-italic">[no cargado]</span>' : v.legajo
+					}
+				},
+				{
+					data:row=>row,
 					name:'dni',
 					className:'align-middle border-left',
 					render:v=>{

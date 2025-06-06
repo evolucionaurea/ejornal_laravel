@@ -6,13 +6,15 @@
 
 		<div class="row">
 			<div class="mb-1 col-md-6">
-				<input name="search" class="form-control form-control-sm" placeholder="Filtrar por nombre, dni, cuil o tel..." value="{{ Request::get('search') }}" >
+				<input name="search" class="form-control form-control-sm"
+					placeholder="Filtrar por nombre, dni, cuil o tel..." value="{{ Request::get('search') }}">
 			</div>
 			<div class="mb-1 col-md-6">
-				<select name="ausentes" class="form-control form-control-sm" >
+				<select name="ausentes" class="form-control form-control-sm">
 					<option value="">--Seleccionar Filtro--</option>
 					<option value="hoy" {{Request::get('ausentes')=='hoy' ? 'selected' : '' }}>Ausentes Hoy</option>
-					<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes Hoy COVID</option>
+					<option value="covid" {{Request::get('ausentes')=='covid' ? 'selected' : '' }}>Ausentes Hoy COVID
+					</option>
 					<option value="accidente" {{Request::get('ausentes')=='accidente' ? 'selected' : '' }}>Ausentes Hoy
 						Accidente</option>
 					<option value="incidente" {{Request::get('ausentes')=='incidente' ? 'selected' : '' }}>Ausentes Hoy
@@ -36,13 +38,16 @@
 	<div class="col-lg-4 border-left align-items-center d-flex flex-wrap">
 
 		<div class="mr-1 mb-1">
-			<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-2"><i class="fas fa-search"></i> Buscar</button>
+			<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-2"><i class="fas fa-search"></i>
+				Buscar</button>
 		</div>
 		<div class="mr-1 mb-1">
-			<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!"><i class="fas fa-list"></i> Mostrar Todo</button>
+			<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!"><i
+					class="fas fa-list"></i> Mostrar Todo</button>
 		</div>
 		<div class="mr-1 mb-1">
-			<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-2"><i class="fas fa-file-excel"></i> Exportar</button>
+			<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank"
+				class="btn-ejornal btn-info mb-2"><i class="fas fa-file-excel"></i> Exportar</button>
 		</div>
 	</div>
 
@@ -60,6 +65,7 @@
 			<th>Nombre</th>
 			<th>CUIL</th>
 			<th>Tel</th>
+			<th>Legajo</th>
 			<th>DNI</th>
 			<th>Fecha Nac.</th>
 			<th>Estado</th>

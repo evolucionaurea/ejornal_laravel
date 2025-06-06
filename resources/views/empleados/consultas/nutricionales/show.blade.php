@@ -38,6 +38,9 @@
                                     <p class="card-text"><strong>Teléfono:</strong> {{ $nutricional->nomina->telefono }}
                                     </p>
                                     <p class="card-text"><strong>DNI:</strong> {{ $nutricional->nomina->dni }}</p>
+                                    <p class="card-text"><strong>Legajo:</strong>
+                                        {{ $nutricional->nomina->legajo ?: 'No fue cargado' }}
+                                    </p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="card-text"><strong>Estado:</strong> {{ $nutricional->nomina->estado == 1 ?

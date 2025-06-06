@@ -29,7 +29,8 @@
 				<div class="col-lg-3 text-center">
 
 					@if ($preocupacional->trabajador->foto)
-					<div class="foto-perfil" style="background-image: url({{ $preocupacional->trabajador->photo_url }})">
+					<div class="foto-perfil"
+						style="background-image: url({{ $preocupacional->trabajador->photo_url }})">
 					</div>
 					@else
 					<i class="fas fa-user fa-10x"></i>
@@ -39,19 +40,27 @@
 				<div class="col-lg-4">
 					<div class="font-weight-bold">{{ $preocupacional->trabajador->nombre }}</div>
 					<ul class="list-group">
-						<li class="list-group-item p-2">DNI: {!! $preocupacional->trabajador->dni ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
-						<li class="list-group-item p-2">CUIL: {!! $preocupacional->trabajador->email ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
-						<li class="list-group-item p-2">Teléfono: {!! $preocupacional->trabajador->telefono ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
+						<li class="list-group-item p-2">DNI: {!! $preocupacional->trabajador->dni ?? '<i
+								class="text-muted">[no cargado]</i>' !!}</li>
+						<li class="list-group-item p-2">CUIL: {!! $preocupacional->trabajador->email ?? '<i
+								class="text-muted">[no cargado]</i>' !!}</li>
+						<li class="list-group-item p-2">Teléfono: {!! $preocupacional->trabajador->telefono ?? '<i
+								class="text-muted">[no cargado]</i>' !!}</li>
 						<li class="list-group-item p-2">
 							Estado:
 							@if( $preocupacional->id_cliente != $preocupacional->trabajador->id_cliente)
 							<span class="badge badge-dark">transferido</span>
 							@else
-							<span class="badge badge-{{ $preocupacional->trabajador->estado ? 'success' : 'danger' }}">{{ $preocupacional->trabajador->estado ? 'activo' : 'inactivo' }}</span>
+							<span
+								class="badge badge-{{ $preocupacional->trabajador->estado ? 'success' : 'danger' }}">{{
+								$preocupacional->trabajador->estado ? 'activo' : 'inactivo' }}</span>
 							@endif
 						</li>
 						<li class="list-group-item p-2">Sector: {{ $preocupacional->trabajador->sector }}</li>
-						<li class="list-group-item p-2">Fecha Alta: {{ $preocupacional->trabajador->created_at->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2">Fecha Alta: {{
+							$preocupacional->trabajador->created_at->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2">Legajo: {{ $preocupacional->trabajador->legajo ?: 'No fue
+							cargado' }}</li>
 					</ul>
 				</div>
 
@@ -60,15 +69,21 @@
 					<ul class="list-group">
 						<li class="list-group-item p-2">Tipo: {{ $preocupacional->tipo->name }}</li>
 						<li class="list-group-item p-2">Resultado: {{ $preocupacional->resultado }}</li>
-						<li class="list-group-item p-2">Fecha Estudio: {{ $preocupacional->fecha->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2">Fecha Estudio: {{ $preocupacional->fecha->format('d/m/Y') }}
+						</li>
 						<li class="list-group-item p-2">Fecha de Carga: {{ $preocupacional->created_at_formatted }}</li>
-						<li class="list-group-item p-2">Última Modificación: {{ $preocupacional->updated_at_formatted }}</li>
+						<li class="list-group-item p-2">Última Modificación: {{ $preocupacional->updated_at_formatted }}
+						</li>
 						<li class="list-group-item p-2">Usuario que registró: {{ $preocupacional->user }}</li>
-						<li class="list-group-item p-2">Vencimiento: {!! is_null($preocupacional->fecha_vencimiento) ? '<span class="font-italic text-muted">[no tiene]</span>' : $preocupacional->fecha_vencimiento->format('d/m/Y').' '.$preocupacional->vencimiento_label !!}</li>
+						<li class="list-group-item p-2">Vencimiento: {!! is_null($preocupacional->fecha_vencimiento) ?
+							'<span class="font-italic text-muted">[no tiene]</span>' :
+							$preocupacional->fecha_vencimiento->format('d/m/Y').' '.$preocupacional->vencimiento_label
+							!!}</li>
 
 						@if(!is_null($preocupacional->fecha_vencimiento))
 						<li class="list-group-item p-2">Completado: {{ $preocupacional->completado ? 'SI' : 'NO' }}</li>
-						<li class="list-group-item p-2">Comentarios: {!! $preocupacional->completado_comentarios ?? '<span class="font-italic text-muted">[sin comentarios]</span>' !!}</li>
+						<li class="list-group-item p-2">Comentarios: {!! $preocupacional->completado_comentarios ??
+							'<span class="font-italic text-muted">[sin comentarios]</span>' !!}</li>
 						@endif
 
 					</ul>

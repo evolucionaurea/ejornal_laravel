@@ -131,6 +131,9 @@ class EmpleadosNominasController extends Controller
 		if (isset($request->observaciones) && !empty($request->observaciones)) {
 			$trabajador->observaciones = $request->observaciones;
 		}
+		if (isset($request->legajo) && !empty($request->legajo)) {
+			$trabajador->legajo = $request->legajo;
+		}
 
 		if($request->fecha_nacimiento){
 			$trabajador->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_nacimiento);
@@ -279,6 +282,7 @@ class EmpleadosNominasController extends Controller
 		$trabajador->observaciones = $request->observaciones;
 		$trabajador->estado = $request->estado;
 		$trabajador->sector = $request->sector;
+		$trabajador->legajo = $request->legajo;
 		if ($request->estado == 0) {
 			$trabajador->fecha_baja =  Carbon::now();
 		}else{
@@ -466,7 +470,6 @@ class EmpleadosNominasController extends Controller
 		// Lee los nombres de los campos
 		$nombres_campos = [];
 		$registros = [];
-		///$num_campos = count($nombres_campos);
 		$indice = 0;
 		$error = false;
 
@@ -475,6 +478,25 @@ class EmpleadosNominasController extends Controller
 
 			if($indice!==0){
 
+			// Filtrar filas completamente vacías o con solo espacios en blanco
+            $fila_tiene_contenido = false;
+            
+			// Verificar si al menos los campos obligatorios tienen contenido
+			if (!empty(trim($fila[0])) || !empty(trim($fila[1])) || !empty(trim($fila[2])) || !empty(trim($fila[3]))) {
+				$fila_tiene_contenido = true;
+			}
+			
+			// También verificar si algún otro campo tiene contenido
+			if (!$fila_tiene_contenido) {
+				for ($i = 4; $i < count($fila); $i++) {
+					if (!empty(trim($fila[$i]))) {
+						$fila_tiene_contenido = true;
+						break;
+					}
+				}
+			}
+
+			if ($fila_tiene_contenido) {
 				$registros[] = (object) [
 					'nombre'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[0]),
 					'dni'=>$fila[1],
@@ -490,9 +512,11 @@ class EmpleadosNominasController extends Controller
 					'localidad'=>isset($fila[10]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[10]) : null,
 					'partido'=>isset($fila[11]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[11]) : null,
 					'cod_postal'=>isset($fila[12]) ? $fila[12] : null,
-					'observaciones'=>isset($fila[13]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[13]) : null
+					'observaciones'=>isset($fila[13]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[13]) : null,
+					'legajo'=>isset($fila[14]) ? $fila[14] : null,
 
 				];
+			}
 			}else{
 
 				if(
@@ -509,6 +533,11 @@ class EmpleadosNominasController extends Controller
 			$indice++;
 		}
 		fclose($fichero);
+
+		// Verificar si no hay registros válidos después del filtrado
+		if (empty($registros)) {
+			return back()->with('error', 'El archivo no contiene registros válidos. Asegúrate de que tenga al menos un empleado con los campos obligatorios completos.');
+    	}
 
 		if($error){
 			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, cuil, estado y sector son obligatorios.');
@@ -666,6 +695,7 @@ class EmpleadosNominasController extends Controller
 				$nomina->partido = $registro->partido;
 				$nomina->cod_postal = $registro->cod_postal;
 				$nomina->observaciones = $registro->observaciones;
+				$nomina->legajo = $registro->legajo;
 				$nomina->estado = strtolower($registro->estado)=='activo' ? 1 : 0;
 				$nomina->fecha_baja = strtolower($registro->estado)=='activo' ? null : Carbon::now();
 				$nomina->save();
