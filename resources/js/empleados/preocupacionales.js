@@ -36,6 +36,17 @@ $(()=>{
 					}
 				},
 				{
+					data:null,
+					name:'nominas.legajo',
+					className:'align-middle',
+					render:v=>{
+						if(v.trabajador_legajo==null) return `<span class="text-muted font-style-italic">[sin cargar]</span>`
+						return `
+							<div>${v.trabajador_legajo}</div>
+						`
+					}
+				},
+				{
 					data:'fecha',
 					className:'align-middle',
 					name:'fecha'

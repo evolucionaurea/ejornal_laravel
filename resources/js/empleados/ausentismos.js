@@ -56,6 +56,14 @@ $(()=>{
 				},*/
 				{
 					data:row=>row,
+					name:'nominas.legajo',
+					className:'align-middle',
+					render:v=>{
+						return v.trabajador_legajo==null ? '[no cargado]' : v.trabajador_legajo
+					}
+				},
+				{
+					data:row=>row,
 					name:'nominas.sector',
 					className:'align-middle',
 					render:v=>{

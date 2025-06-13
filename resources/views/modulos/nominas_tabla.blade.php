@@ -7,7 +7,7 @@
 		<div class="row">
 			<div class="mb-1 col-md-6">
 				<input name="search" class="form-control form-control-sm"
-					placeholder="Filtrar por nombre, dni, cuil o tel..." value="{{ Request::get('search') }}">
+					placeholder="Filtrar por nombre, dni, cuil, legajo o tel..." value="{{ Request::get('search') }}">
 			</div>
 			<div class="mb-1 col-md-6">
 				<select name="ausentes" class="form-control form-control-sm">

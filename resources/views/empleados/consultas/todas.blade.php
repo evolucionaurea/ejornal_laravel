@@ -33,6 +33,7 @@
 						<th>Consulta</th>
 						<th>Trabajador</th>
 						<th>Estado</th>
+						<th>Legajo</th>
 						<th>Fecha</th>
 						<th>Derivación</th>
 						<th>Cargado por</th>

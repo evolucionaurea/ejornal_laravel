@@ -37,7 +37,8 @@
 					<div class="row">
 
 						<div class="col-lg-6">
-							<input placeholder="Filtrar por trabajador, dni, cuil, tel o sector..." name="search" class="form-control form-control-sm" value="">
+							<input placeholder="Filtrar por trabajador, dni, cuil, tel, legajo o sector..."
+								name="search" class="form-control form-control-sm" value="">
 						</div>
 
 						<div class="col-lg-6">
@@ -49,11 +50,13 @@
 							</select>
 						</div>
 						<div class="col-lg-6">
-							<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+							<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm"
+								value="{{$fecha_inicio ?? ''}}">
 						</div>
 
 						<div class="col-lg-6">
-							<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+							<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm"
+								value="{{$fecha_final ?? ''}}">
 						</div>
 
 					</div>
@@ -66,7 +69,9 @@
 					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!">
 						<i class="fas fa-list"></i> Mostrar todo
 					</button>
-					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-2"><i class="fas fa-file-excel"></i> Exportar</button>
+					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}"
+						target="_blank" class="btn-ejornal btn-info mb-2"><i class="fas fa-file-excel"></i>
+						Exportar</button>
 				</div>
 
 			</div>
@@ -79,6 +84,7 @@
 				<thead>
 					<tr>
 						<th>Trabajador</th>
+						<th>Legajo</th>
 						<th>DNI</th>
 						<th>Sector</th>
 						<th>Tipo</th>

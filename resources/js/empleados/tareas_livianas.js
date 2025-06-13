@@ -41,11 +41,19 @@ $(()=>{
 				},
 				{
 					data:row=>row,
+					name:'nominas.legajo',
+					render:v=>{
+						return v.trabajador.legajo==null ? '[no cargado]' : v.trabajador.legajo
+					}
+				},
+				{
+					data:row=>row,
 					name:'nominas.dni',
 					render:v=>{
 						return v.trabajador.dni==null ? '[no cargado]' : v.trabajador.dni
 					}
 				},
+				
 				{
 					data:row=>row,
 					name:'nominas.sector',

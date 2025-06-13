@@ -39,6 +39,7 @@ trait Ausentismos {
 				'ausentismos.*',
 
 				'nominas.nombre as trabajador_nombre',
+				'nominas.legajo as trabajador_legajo',
 				'nominas.dni as trabajador_dni',
 				'nominas.sector as trabajador_sector',
 				'nominas.id_cliente as trabajador_cliente',
@@ -92,6 +93,7 @@ trait Ausentismos {
 				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('nominas.email','like',$filtro)
+					->orWhere('nominas.legajo','like',$filtro)
 					->orWhere('nominas.dni','like',$filtro)
 					->orWhere('nominas.telefono','like',$filtro);
 			});
@@ -305,6 +307,7 @@ trait Ausentismos {
 		fputcsv($fp,[
 			'Trabajador',
 			'DNI',
+			'Legajo',
 			'Sector',
 			'Tipo',
 			'Fecha Inicio',
@@ -328,6 +331,7 @@ trait Ausentismos {
 			fputcsv($fp,[
 				$ausentismo->trabajador_nombre,
 				$ausentismo->trabajador_dni,
+				$ausentismo->trabajador_legajo,
 				$ausentismo->trabajador_sector,
 				$ausentismo->ausentismo_tipo,
 				$ausentismo->fecha_inicio->format('d/m/Y'),

@@ -52,6 +52,7 @@ class EmpleadoConsultaMedicaController extends Controller
 
 		$query = ConsultaMedica::select(
 			'nominas.nombre',
+			'nominas.legajo',
 			'consultas_medicas.*',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
@@ -74,6 +75,7 @@ class EmpleadoConsultaMedicaController extends Controller
 					->orWhere('consultas_medicas.derivacion_consulta','like',$filtro)
 					->orWhere('consultas_medicas.tratamiento','like',$filtro)
 					->orWhere('consultas_medicas.observaciones','like',$filtro)
+					->orWhere('nominas.legajo','like',$filtro)
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
@@ -455,6 +457,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			'consultas_medicas.*',
 			'nominas.nombre',
 			'nominas.email',
+			'nominas.legajo as legajo',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
 			->join('nominas','nominas.id','consultas_medicas.id_nomina')
@@ -480,6 +483,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		fputcsv($fp,[
 			'Trabajador',
 			'CUIL',
+			'legajo',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -501,6 +505,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			fputcsv($fp,[
 				$consulta->nombre,
 				$consulta->email,
+				$consulta->legajo,
 				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,
 				$consulta->derivacion_consulta,

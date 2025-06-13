@@ -19,6 +19,7 @@ trait TareasLivianas {
 
 				'nominas.nombre as trabajador_nombre',
 				'nominas.dni as trabajador_dni',
+				'nominas.legajo as trabajador_legajo',
 				'nominas.sector as trabajador_sector',
 
 				'nominas.id_cliente',
@@ -31,12 +32,12 @@ trait TareasLivianas {
 			->join('tareas_livianas_tipos','tareas_livianas_tipos.id','=','tareas_livianas.id_tipo')
 			->with(['trabajador','tipo','cliente','comunicacion.tipo']);
 
-		if($request->cliente_id) $query->where('tareas_livianas.id_cliente',$request->cliente_id);
-
+		if($request->idcliente) $query->where('tareas_livianas.id_cliente',$request->idcliente);
 
 		$query->where(function($query) use($request) {
 			$filtro = '%'.$request->search.'%';
 			$query->where('nominas.nombre','like',$filtro)
+				->orWhere('nominas.legajo','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
 				->orWhere('nominas.telefono','like',$filtro);
@@ -64,7 +65,6 @@ trait TareasLivianas {
 			$query->orderBy($sort,$dir);
 		}
 
-
 		return [
 			'draw'=>$request->draw,
 			'recordsTotal'=>$query->count(),
@@ -80,47 +80,29 @@ trait TareasLivianas {
 
 	public function exportTareasLivianas(Request $request)
 	{
+		$cliente = Cliente::findOrFail(auth()->user()->id_cliente_actual);
+		$request->merge([
+				'idcliente' => $cliente->id,
+				'start'     => 0,
+				'length'    => 5000,
+				'search'    => '',       // ← ahora es string, no array
+				'filtro'    => null,
+				'tipo'      => null,
+				'from'      => null,
+				'to'        => null,
+			]);
 
-		if(!$request->idcliente) dd('Faltan parámetros');
-		$cliente = Cliente::findOrFail($request->idcliente);
-
-
-
-		/*$tareas_livianas = TareaLiviana::select(
-				'tareas_livianas.*',
-
-				'nominas.nombre as trabajador_nombre',
-				'nominas.dni as trabajador_dni',
-				'nominas.sector as trabajador_sector',
-
-				'nominas.id_cliente',
-			)
-			->join('nominas','nominas.id','=','tareas_livianas.id_trabajador')
-			//->join('tareas_livianas_tipo','tareas_livianas_tipo.id','=','tareas_livianas.id_tipo')
-			->with(['tipo'=>function($query){
-				$query->select('id','nombre');
-			}])
-			->where('nominas.id_cliente',$idcliente)
-				//'tareas_livianas_tipo.nombre as tareas_livianas_tipo'
-			->orderBy('fecha_inicio','desc')
-			->get();*/
-
-		$request->search = ['value'=>null];
-		$request->start = 0;
-		$request->length = 5000;
 		$results = $this->searchTareasLivianas($request);
 		$tareas_livianas = $results['data'];
-		///dd($tareas_livianas);
-
 
 		$now = CarbonImmutable::now();
 		$file_name = 'tareas_livianas-'.Str::slug($cliente->nombre).'-'.$now->format('YmdHis').'.csv';
-
 
 		$fp = fopen('php://memory', 'w');
 		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
 		fputcsv($fp,[
 			'Trabajador',
+			'Legajo',
 			'DNI',
 			'Sector',
 			'Tipo',
@@ -140,6 +122,7 @@ trait TareasLivianas {
 			}
 			fputcsv($fp,[
 				$tarea_liviana->trabajador_nombre,
+				$tarea_liviana->trabajador_legajo,
 				$tarea_liviana->trabajador_dni,
 				$tarea_liviana->trabajador_sector,
 				$tarea_liviana->tipo->nombre,
@@ -153,11 +136,7 @@ trait TareasLivianas {
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment; filename="'.$file_name.'";');
 		fpassthru($fp);
-
-
 		return;
-
-
 
 	}
 

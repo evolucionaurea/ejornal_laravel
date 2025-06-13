@@ -38,6 +38,7 @@
 					<tr>
 						<th>ID</th>
 						<th>Trabajador</th>
+						<th>Legajo</th>
 						<th>Estado</th>
 						<th>Fecha</th>
 						<th>Derivación</th>

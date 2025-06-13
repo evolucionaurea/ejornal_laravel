@@ -49,6 +49,8 @@ class EmpleadoConsultasTodasController extends Controller
 		// Médicas
 		$medicas = ConsultaMedica::select(
 			'nominas.nombre',
+			'nominas.estado',
+			'nominas.legajo',
 			'consultas_medicas.id',
 			'consultas_medicas.id_nomina',
 			'consultas_medicas.id_diagnostico_consulta',
@@ -81,6 +83,8 @@ class EmpleadoConsultasTodasController extends Controller
 		// Enfermerías
 		$enfermerias = ConsultaEnfermeria::select(
 			'nominas.nombre',
+			'nominas.estado',
+			'nominas.legajo',
 			'consultas_enfermerias.id',
 			'consultas_enfermerias.id_nomina',
 			'consultas_enfermerias.id_diagnostico_consulta',
@@ -113,6 +117,8 @@ class EmpleadoConsultasTodasController extends Controller
 		// Nutricional
 		$nutricionales = ConsultaNutricional::select(
 			'nominas.nombre',
+			'nominas.estado',
+			'nominas.legajo',
 			'consultas_nutricionales.id',
 			'consultas_nutricionales.id_nomina',
 			DB::raw('NULL as id_diagnostico_consulta'), // Ajuste para que coincida con otras consultas
@@ -150,6 +156,7 @@ class EmpleadoConsultasTodasController extends Controller
 			$medicas->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
 					->orWhere('nominas.dni', 'like', $filtro)
+					->orWhere('nominas.legajo', 'like', $filtro)
 					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
 					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
 					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
@@ -365,6 +372,7 @@ class EmpleadoConsultasTodasController extends Controller
 		fputcsv($fp, [
 			'Tipo',
 			'Trabajador',
+			'Legajo',
 			'CUIL',
 			'Fecha',
 			'Diagnóstico',
@@ -389,6 +397,7 @@ class EmpleadoConsultasTodasController extends Controller
 			fputcsv($fp, [
 				$consulta->tipo,
 				$consulta->nombre,
+				$consulta->trabajador->legajo,
 				$consulta->trabajador->email,
 				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,

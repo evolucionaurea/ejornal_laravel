@@ -19,7 +19,8 @@ trait Preocupacionales {
 		$query = Preocupacional::with(['trabajador','tipo','cliente'])
 			->select(
 				'preocupacionales.*',
-				'nominas.id_cliente as trabajador_cliente'
+				'nominas.id_cliente as trabajador_cliente',
+				'nominas.legajo as trabajador_legajo'
 			)
 			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
 			->join('preocupacionales_tipos_estudio', 'preocupacionales_tipos_estudio.id', 'preocupacionales.tipo_estudio_id')
@@ -74,6 +75,7 @@ trait Preocupacionales {
 				$filtro = '%'.$request->search.'%';
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('nominas.email','like',$filtro)
+					->orWhere('nominas.legajo','like',$filtro)
 					->orWhere('nominas.dni','like',$filtro)
 					->orWhere('nominas.telefono','like',$filtro)
 					->orWhere('preocupacionales_tipos_estudio.name','like',$filtro);

@@ -31,7 +31,17 @@ $(()=>{
 							`
 					}
 				},
-
+				{
+					className:'align-middle',
+					name:'legajo',
+					data:'trabajador',
+					render:v=>{
+						if(v.legajo==null) return '<span class="text-muted font-italic">[Legajo no encontrado]</span>'
+						return `
+							<div>${v.legajo}</div>
+							`
+					}
+				},
 				{
 					className:'align-middle',
 					name:'estado',

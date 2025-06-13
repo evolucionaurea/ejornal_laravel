@@ -57,6 +57,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Trabajador</th>
+                        <th>Legajo</th>
                         <th>Cliente</th>
                         <th>Tipo</th>
                         <th>Fecha atencion</th>
@@ -68,6 +69,13 @@
                     <tr>
                         <td>{{ $nutricional->id }}</td>
                         <td>{{ $nutricional->nomina->nombre }}</td>
+                        <td>
+                            @if ($nutricional->nomina->legajo)
+                            {{ $nutricional->nomina->legajo }}
+                            @else
+                            {{ 'No cargado' }}
+                            @endif
+                        </td>
                         <td>{{ $nutricional->cliente->nombre }}</td>
                         <td>{{ $nutricional->tipo }}</td>
                         <td>{{ date('d/m/Y', strtotime($nutricional->fecha_atencion)) }}</td>

@@ -37,13 +37,14 @@ class EmpleadoTareasLivianasController extends Controller
 	public function busqueda(Request $request)
 	{
 
-		$request->cliente_id = auth()->user()->id_cliente_actual;
+		$request->merge(['idcliente' => auth()->user()->id_cliente_actual]);
 		return $this->searchTareasLivianas($request);
 
 
 		$query = TareaLiviana::select(
 			'tareas_livianas.*',
 			'nominas.nombre',
+			'nominas.legajo',
 			'nominas.id_cliente as trabajador_cliente',
 			'nominas.email',
 			'nominas.telefono',
@@ -60,6 +61,7 @@ class EmpleadoTareasLivianasController extends Controller
 		$query->where(function($query) use ($request) {
 			$filtro = '%'.$request->search.'%';
 			$query->where('nominas.nombre','like',$filtro)
+				->orWhere('nominas.legajo','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
 				->orWhere('nominas.telefono','like',$filtro)
@@ -419,8 +421,6 @@ class EmpleadoTareasLivianasController extends Controller
 
 	public function exportar(Request $request)
 	{
-		//Traits > Tareas Livianas
-		$request->auth()->user()->id_cliente_actual;
 		return $this->exportTareasLivianas($request);
 	}
 

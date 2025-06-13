@@ -50,6 +50,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 	{
 		$query = ConsultaEnfermeria::select(
 			'nominas.nombre',
+			'nominas.legajo',
 			'consultas_enfermerias.*',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
@@ -71,6 +72,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('consultas_enfermerias.derivacion_consulta','like',$filtro)
 					->orWhere('consultas_enfermerias.observaciones','like',$filtro)
+					->orWhere('nominas.legajo','like',$filtro)
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
@@ -457,6 +459,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			'consultas_enfermerias.*',
 			'nominas.nombre',
 			'nominas.email',
+			'nominas.legajo as legajo',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
 			->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
@@ -482,6 +485,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		fputcsv($fp,[
 			'Trabajador',
 			'CUIL',
+			'legajo',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -503,6 +507,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			fputcsv($fp,[
 				$consulta->nombre,
 				$consulta->email,
+				$consulta->legajo,
 				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,
 				$consulta->derivacion_consulta,
