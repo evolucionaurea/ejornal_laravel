@@ -106,7 +106,7 @@
 
 				<th>Hoy</th>
 
-				<th></th>
+				<th>Acciones</th>
 
 
 			</tr>

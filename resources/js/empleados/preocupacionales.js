@@ -22,8 +22,6 @@ $(()=>{
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
-						//console.log('objeto v', v);
-
 						if(v==null) return '<span class="text-muted">[No Ingresado]</span>'
 
 						return `
