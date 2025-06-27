@@ -30,9 +30,6 @@
 			</div>
 		</div>
 
-
-
-
 	</div>
 
 	<div class="col-lg-4 border-left align-items-center d-flex flex-wrap">
@@ -72,7 +69,9 @@
 			<th>Sector</th>
 			<th>Hoy</th>
 			<th>Fecha de Alta</th>
-			<th>Acciones</th>
+			<th>
+				{{ auth()->user()->rol->nombre=='empleado' ? 'Acciones' : '' }}
+			</th>
 		</tr>
 	</thead>
 	<!--Table head-->

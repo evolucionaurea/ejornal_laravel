@@ -207,20 +207,5 @@
 </div>
 
 
-<script>
-    $(document).on('click', '.btn-editar-patologia', function () {
-        let id = $(this).data('id');
-        let nombre = $(this).data('nombre');
-
-        // Setea el nombre
-        $('#editarPatologiaNombre').val(nombre);
-
-        // Cambia la acción del form
-        let ruta = "{{ url('empleados/consultas/patologias') }}/" + id;
-        $('#editarPatologiaForm').attr('action', ruta);
-    });
-</script>
-
-
 
 @endsection

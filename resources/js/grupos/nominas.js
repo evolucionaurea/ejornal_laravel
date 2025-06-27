@@ -39,6 +39,10 @@ $(()=>{
 					name:'telefono'
 				},
 				{
+					data:'legajo',
+					name:'legajo'
+				},
+				{
 					data:row=>row,
 					name:'dni',
 					render:v=>{

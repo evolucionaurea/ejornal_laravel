@@ -27,6 +27,7 @@ use App\NominaImportacion;
 use App\NominaHistorial;
 use App\NominaClienteHistorial;
 use Intervention\Image\Facades\Image;
+use App\User;
 
 
 class EmpleadosNominasController extends Controller
@@ -38,6 +39,7 @@ class EmpleadosNominasController extends Controller
 
 	public function index()
 	{
+		
 		$clientes = $this->getClientesUser();
 		return view('empleados.nominas', compact('clientes'));
 	}
@@ -457,7 +459,7 @@ class EmpleadosNominasController extends Controller
 	{
 
 
-		if(!auth()->user()->id_cliente_actual) return back()->with();
+		if(!auth()->user()->id_cliente_actual) return back()->with('error', 'Debes estar trabajando en algún cliente para poder realizar esta acción.');
 
 		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo.');
 

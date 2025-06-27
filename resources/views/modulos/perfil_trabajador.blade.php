@@ -1,29 +1,30 @@
 <div class="tarjeta">
 
 	{{-- PRINCIPAL --}}
-	<div class="row align-items-start">
+	<div class="row ">
 
 		<!-- Información principal -->
 		<div class="p-2 col-lg-6" style="background-color: #ebebeb; color: #535353;">
-			<h4 class="text-black p-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse"
+			<h4 class="text-black px-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse"
 				data-target="#infoPrincipal" aria-expanded="true" aria-controls="infoPrincipal"
 				style="cursor: pointer;">
 				Información principal
 				<i class="fas fa-chevron-down rotate-icon"></i>
 			</h4>
+			<hr>
 			<div class="collapse show mt-2" id="infoPrincipal">
 				<ul
 					style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
 					<li><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</li>
 					<li><b>DNI / CUIL:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</li>
-					<li><b>Email:</b><br> {{ $trabajador->email ?: 'No fue cargado' }}</li>
+					<li><b>Email:</b><br> {!! $trabajador->email ? '<a href="mailto:'.$trabajador->email.'" style="color:rgb(81, 120, 206) !important;">'.$trabajador->email.'</a>' : 'No fue cargado' !!}</li>
 					<li><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
 						$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}</li>
 					@if ($trabajador->fecha_nacimiento)
 					<li><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años</li>
 					@endif
-					<li><b>Teléfono:</b><br> {{ $trabajador->telefono ? "<a href='tel:$trabajador->telefono'
-							style='color: #45526e;'>$trabajador->telefono</a>" : 'No fue cargado' }}</li>
+					<li><b>Teléfono:</b><br> {!! $trabajador->telefono ? "<a href='tel:$trabajador->telefono'
+							style='color:rgb(81, 120, 206) !important;'>$trabajador->telefono</a>" : 'No fue cargado' !!}</li>
 					<li><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</li>
 				</ul>
 			</div>
@@ -31,22 +32,32 @@
 
 		<!-- Carátula -->
 		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
-			<h4 class="text-white p-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse"
-				data-target="#infoCaratula" aria-expanded="true" aria-controls="infoCaratula" style="cursor: pointer;">
-				Carátula
+			
+			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center"  data-toggle="collapse" data-target="#infoCaratula" aria-expanded="true" aria-controls="infoCaratula" style="cursor: pointer;">
+				<span>Carátula</span>
+				@if ($caratula)
+				<a href="{{ route('empleados.nominas.caratulas.edit', $trabajador->id) }}" class="btn btn-tiny btn-primary">
+					<i class="fal fa-pencil fa-fw"></i>
+					<span>Editar carátula</span>
+				</a>
+				@endif
 				<i class="fas fa-chevron-down rotate-icon"></i>
 			</h4>
+
+			<hr>
 			<div class="collapse show mt-2" id="infoCaratula">
 				@if ($caratula)
+				
 				<ul
 					style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
 					@if ($caratula->patologias && count($caratula->patologias) > 0)
-					<li><b>Última Patología:</b><br>
-						<ul class="list-group d-flex flex-wrap flex-row">
+					<li>
+						<b>Últimas Patologías:</b>
+						<div class="d-flex flex-wrap flex-row">
 							@foreach ($caratula->patologias as $patologia)
-							<li class="list-group-item mr-1">{{ $patologia->nombre }}</li>
+							<span class="badge badge-danger mr-1">{{ $patologia->nombre }}</span>
 							@endforeach
-						</ul>
+						</div>
 					</li>
 					@else
 					<li><b>Última Patología:</b><br>No fue cargado</li>
@@ -60,6 +71,10 @@
 				</ul>
 				@else
 				<div class="p-4 alert alert-info">Sin contenido cargado aún</div>
+				<a href="{{ route('empleados.nominas.caratulas.create', $trabajador->id) }}" class="btn btn-primary">
+					<i class="fal fa-plus"></i>
+					<span>Crear carátula</span>
+				</a>
 				@endif
 			</div>
 		</div>

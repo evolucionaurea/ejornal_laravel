@@ -32,10 +32,10 @@
 					href="{{ url('empleados/nominas') }}?{{$_SERVER['QUERY_STRING']}}">
 					<i class="fas fa-arrow-circle-left"></i> <span>Volver</span>
 				</a>
-				<a class="btn-ejornal btn-ejornal-base"
+				{{-- <a class="btn-ejornal btn-ejornal-base"
 					href="{{ route('empleados.nominas.caratulas.create', ['id_nomina' => $trabajador->id]) }}">
 					<i class="fas fa-plus-circle"></i> <span>Nueva caratula</span>
-				</a>
+				</a> --}}
 				@if( auth()->user()->id_cliente_actual == $trabajador->id_cliente)
 				<a href="{{ url('empleados/nominas/'.$trabajador->id.'/edit') }}"
 					class="btn-ejornal btn-ejornal-gris-claro">
