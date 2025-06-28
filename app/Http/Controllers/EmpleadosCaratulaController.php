@@ -24,8 +24,11 @@ class EmpleadosCaratulaController extends Controller
 			$clientes = $this->getClientesUser(); // Obtener los clientes del usuario actual
 
 			$caratulas = Caratula::with(['nomina', 'cliente', 'patologias'])
-			->whereIn('id_cliente', $clientes->pluck('id'))
-			->orderBy('created_at', 'desc')
+			->whereIn('caratulas.id_cliente', $clientes->pluck('id'))
+			//->orderBy('created_at', 'desc')
+			->join('nominas', 'caratulas.id_nomina', '=', 'nominas.id')
+			->orderBy('nominas.nombre', 'asc')
+			->select('caratulas.*', 'nominas.nombre as nomina_nombre')
 			->get();
 
 			// Agrupar por el campo único del trabajador (nombre en este caso) y obtener la más reciente
@@ -60,12 +63,30 @@ class EmpleadosCaratulaController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create($id_nomina)
+	public function create($id_nomina = null)
 	{
-			$clientes = $this->getClientesUser();
-			$patologias = Patologia::all();
+		$clientes = $this->getClientesUser();
+		$patologias = Patologia::all();
+		$nominas = false;
+		
+		// Si se proporciona id_nomina, buscar el trabajador
+		if ($id_nomina) {
 			$trabajador = Nomina::find($id_nomina);
-			return view('empleados.nominas.caratulas.create', compact('trabajador', 'patologias', 'clientes'));
+			if (!$trabajador) {
+				return redirect()->route('empleados.caratulas')->with('error', 'Trabajador no encontrado');
+			}
+		} else {
+			$trabajador = null;
+			
+			// Cargar las nóminas de los clientes para el selector
+			//dd(auth()->user()->id_cliente_actual);
+			$nominas = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
+				->whereDoesntHave('caratulas')
+				->orderBy('nombre')
+				->get();
+		}
+		
+		return view('empleados.nominas.caratulas.create', compact('trabajador', 'patologias', 'clientes', 'nominas'));
 	}
 
 	/**
@@ -83,7 +104,8 @@ class EmpleadosCaratulaController extends Controller
 			'id_patologia' => 'nullable|array', // Permitir múltiples patologías
 			'id_patologia.*' => 'exists:patologias,id' // Validar que existen en la DB
 		]);
-
+		
+		//dd($request->all());
 		$nomina = Nomina::find($request->id_nomina);
 
 		$caratula = new Caratula();
@@ -147,8 +169,15 @@ class EmpleadosCaratulaController extends Controller
 	{
 		$clientes = $this->getClientesUser();
 		//$trabajador = Nomina::find($id);
-		$caratula = Caratula::where('id_nomina', $id)->with(['patologias','nomina'])->first();
+		$caratula = Caratula::where('id_nomina', $id)
+			->with(['patologias','nomina'])
+			->latest()
+			->first();
+
+
 		$patologias = Patologia::all();
+
+		//dd($caratula->patologias->count());
 
 		return view('empleados.nominas.caratulas.edit',compact('caratula','clientes','patologias'));
 	}
@@ -162,7 +191,10 @@ class EmpleadosCaratulaController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$caratula_old = Caratula::where('id', $id)->with(['nomina','patologias'])->first();
+		$caratula_old = Caratula::where('id', $id)
+			->with(['nomina','patologias'])
+			->latest()
+			->first();
 		///$caratula->update($request->all());
 
 		$validatedData = $request->validate([

@@ -5,9 +5,6 @@ function calcularImc(peso, altura) {
 
 $(()=>{
 
-	let dominio = window.location.host;
-	let imc;
-
 	$(".form-row .form-group input[name='peso']").keyup(function() {
 		let peso = parseFloat($(this).val());
 		let altura = parseFloat($(".form-row .form-group input[name='altura']").val());
@@ -41,10 +38,12 @@ $(()=>{
 	});
 
 
-	$('.select_2').select2({
+	$('[name="id_nomina"]').select2();
+	$('[name="id_patologia[]"]').select2({
 		placeholder: "Seleccione una o más patologías",
 		allowClear: true
 	});
+	
 	
 
 })

@@ -12,12 +12,15 @@
 		<div class="cabecera">
 			<h2>Listado de carátulas</h2>
 			<p>Aquí puede ver el listado de las últimas carátulas de los trabajadores de la empresa.</p>
-
-			{{-- <a href="{{ route('empleados.nominas.caratulas.create', $paginatedCaratulas->first()->nomina->id) }}" class="btn btn-primary">
-				<i class="fal fa-plus"></i>
-				<span>Crear carátula</span>
-			</a> --}}
 			
+			@if (auth()->user()->fichar && auth()->user()->fichada)
+			<div class="cabecera_acciones">
+				<a href="{{ route('empleados.nominas.caratulas.create') }}" class="btn btn-primary">
+					<i class="fal fa-plus"></i>
+					<span>Crear carátula</span>
+				</a>
+			</div>
+			@endif
 		</div>
 
 		@include('mensajes_validacion')
@@ -29,8 +32,8 @@
 						<th>ID</th>
 						<th>Trabajador</th>
 						<th>Cliente</th>
-						<th>Patología</th>
-						<th>Acciones</th>
+						<th>Patologías</th>
+						<th class="text-right">Acciones</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -41,29 +44,32 @@
 						<td class="align-middle">{{ $caratula->cliente->nombre }}</td>
 						<td class="align-middle">
 							@if ($caratula->patologias->count() > 0)
-							<ul class="list-group list-group-flush">
+							{{-- <ul class="list-group list-group-flush"> --}}
 								@foreach ($caratula->patologias as $patologia)
-								<li class="list-group-item p-1">{{ $patologia->nombre }}</li>
+								<span class="badge badge-dark p-2">{{ $patologia->nombre }}</span>
 								@endforeach
-							</ul>
+							{{-- </ul> --}}
 							@else
 							<span>Sin cargar</span>
 							@endif
 						</td>
 						<td class="align-middle" scope="row">
-							<div class="acciones_tabla">
-								<a title="Create" href="{{ route('empleados.nominas.caratulas.create', $caratula->nomina->id) }}">
-										<i class="fas fa-plus"></i>
+							@if (auth()->user()->fichar && auth()->user()->fichada)
+							<div class="acciones_tabla justify-content-end">
+								<a title="Editar Carátula" href="{{ route('empleados.nominas.caratulas.edit', $caratula->nomina->id) }}">
+									<i class="fas fa-pencil"></i>
 								</a>
-								<a title="Ver" href="{{ route('empleados.nominas.caratulas.show', $caratula->nomina->id) }}">
-										<i class="fas fa-eye"></i>
+								<a title="Ver Historial de Cambios" href="{{ route('empleados.nominas.caratulas.show', $caratula->nomina->id) }}">
+									<i class="fas fa-history"></i>
 								</a>
 							</div>
+							@endif
 						</td>
 					</tr>
 					@endforeach
 				</tbody>
 			</table>
+	
 
 			{{-- Paginación --}}
 			<div class="d-flex justify-content-center">
@@ -71,10 +77,9 @@
 			</div>
 		</div>
 	</div>
+
 </div>
 
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
@@ -82,6 +87,7 @@
 			paging: false,  // Pagina el contenido usando la paginación de Laravel
 			info: false,
 			searching: true,  // Habilita el buscador
+			ordering:false
 		});
 	});
 </script>
