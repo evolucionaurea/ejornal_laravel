@@ -18,32 +18,47 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'foto',
+					className:'align-middle',
 					orderable:false,
 					render:v=>{
 						return `
-							<div class="table-thumbnail">
-								<div class="image" style="background-image:url(${v.thumb_url})"></div>
-							</div>`
+						<div class="table-thumbnail">
+						<div class="image" style="background-image:url(${v.thumb_url})"></div>
+						</div>`
 					}
 				},
 				{
 					data:'nombre',
+					className:'align-middle',
 					name:'nombre'
 				},
 				{
 					data:'email',
+					className:'align-middle',
 					name:'email'
 				},
 				{
 					data:'telefono',
+					className:'align-middle',
 					name:'telefono'
 				},
 				{
 					data:'legajo',
+					className:'align-middle',
 					name:'legajo'
 				},
 				{
 					data:row=>row,
+					name:'ultima_caratula',
+					className:'align-middle text-center',
+					orderable:false,
+					render:v=>{
+						return v.ultima_caratula ? '<span class="badge badge-success">si</span>' : '<span class="badge badge-danger">no</span>'
+					}
+				},
+				{
+					data:row=>row,
+					className:'align-middle',
 					name:'dni',
 					render:v=>{
 						return v.dni==null ? '[no cargado]' : v.dni
@@ -52,7 +67,7 @@ $(()=>{
 				{
 					data:row=>row,
 					name:'fecha_nacimiento',
-					className:'align-middle border-left',
+					className:'align-middle',
 					render:v=>{
 						if(v.fecha_nacimiento==null) return '<span class="text-muted font-italic">[no cargado]</span>'
 						return `${v.fecha_nacimiento}<br><small>Edad: ${v.edad}</small>`
@@ -61,18 +76,21 @@ $(()=>{
 				{
 					data:'estado',
 					name:'estado',
+					className:'align-middle text-center',
 					render:v=>{
 						return `<span class="badge badge-${v==1 ? 'success' : 'danger'}">${v==1 ? 'activo' : 'inactivo'}</span>`
 					}
 				},
 				{
 					data:'sector',
+					className:'align-middle',
 					name:'sector'
 				},
 
 				{
 					data:row=>row,
 					name:'hoy',
+					className:'align-middle',
 					orderable:false,
 					render:v=>{
 

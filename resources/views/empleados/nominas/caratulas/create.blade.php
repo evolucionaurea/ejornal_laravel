@@ -57,22 +57,24 @@
 				<div class="form-row">
 
 					@if (!$trabajador)
-					<div class="form-row mb-3 col-md-3">
-						<div class="form-group">
-							<label>Seleccionar Trabajador</label>
-							<select name="id_nomina" class="form-control" required>
-								<option value="">--Selecciona un trabajador--</option>							
-								@foreach ($nominas as $nomina)
-									<option value="{{ $nomina->id }}">{{ $nomina->nombre }} - {{ $nomina->dni }}</option>
-								@endforeach							
-							</select>
-							<div class="small text-muted mt-2">
-								Solamente se muestran las nóminas sin carátulas creadas.
-							</div>
-						</div>
+					<div class="form-group col-md-3">						
+						<label>Seleccionar Trabajador</label>
+						<select name="id_nomina" class="form-control" required>
+							<option value="">--Selecciona un trabajador--</option>							
+							@foreach ($nominas as $nomina)
+								<option value="{{ $nomina->id }}">{{ $nomina->nombre }} - {{ $nomina->dni }}</option>
+							@endforeach							
+						</select>
+						<div class="small text-muted mt-2">
+							Solamente se muestran las nóminas sin carátulas creadas.
+						</div>						
 					</div>
 					@else
-					<input type="hidden" name="id_nomina" value="{{ $trabajador->id }}">
+					<div class="form-group col-md-3">
+						<input type="hidden" name="id_nomina" value="{{ $trabajador->id }}" >
+						<label>Trabajador</label>
+						<input type="text" readonly value="{{ $trabajador->nombre }} - {{ $trabajador->dni }}" class="form-control"  readonly>
+					</div>
 					@endif
 
 					<div class="form-group col-md-3">
@@ -109,17 +111,21 @@
 						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
 						<input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
 					</div>
-					<div class="form-group col-md-6">
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md-4">
 						<label>Medicación habitual</label>
-						<textarea class="form-control form-control-sm" name="medicacion_habitual" rows="2" cols="80">{{ old("medicacion_habitual") }}</textarea>
+						<textarea class="form-control form-control-sm" name="medicacion_habitual" rows="8" >{{ old("medicacion_habitual") }}</textarea>
 					</div>
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-4">
 						<label>Antecedentes</label>
-						<textarea class="form-control form-control-sm" name="antecedentes" rows="2" cols="80">{{ old("antecedentes") }}</textarea>
+						<textarea class="form-control form-control-sm" name="antecedentes" rows="8" >{{ old("antecedentes") }}</textarea>
 					</div>
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-4">
 						<label>Alergias</label>
-						<textarea class="form-control form-control-sm" name="alergias" rows="2" cols="80">{{ old("alergias") }}</textarea>
+						<textarea class="form-control form-control-sm" name="alergias" rows="8" >{{ old("alergias") }}</textarea>
 					</div>
 				</div>
 				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar Carátula</button>

@@ -37,8 +37,10 @@ $(()=>{
 		$('#editarPatologiaForm').attr('action', ruta);
 	});
 
+	if( $('[name="id_nomina"]').attr('type')!='hidden' ){
+		$('[name="id_nomina"]').select2();
+	}
 
-	$('[name="id_nomina"]').select2();
 	$('[name="id_patologia[]"]').select2({
 		placeholder: "Seleccione una o más patologías",
 		allowClear: true

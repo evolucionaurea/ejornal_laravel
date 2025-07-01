@@ -78,11 +78,12 @@ if(route=='/empleados/certificados_livianos') require('./empleados/certificados_
 if(route=='empleados.consultas.todas') require('./empleados/consultas.todas')
 if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
 if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')
-if(route=='empleados.consultas.nutricionales') require('./empleados/nutricional')
+if(route=='empleados.consultas.nutricionales') require('./empleados/consultas.nutricionales')
 if(route=='empleados.consultas.nutricionales.create') require('./empleados/nutricional_create')
 
 if(route=='empleados.nominas.caratulas.create') require('./empleados/nominas_caratulas')
 if(route=='empleados.nominas.caratulas.edit') require('./empleados/nominas_caratulas')
+if(route=='empleados.nominas.caratulas.show') require('./empleados/caratulas_trabajador')
 if(route=='empleados.caratulas') require('./empleados/caratulas')
 
 if(route=='empleados.covid.testeos') require('./empleados/covid.testeos')

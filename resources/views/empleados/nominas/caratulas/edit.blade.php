@@ -84,17 +84,18 @@
 						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") ?? $caratula->imc }}">
 						<input name="imc" type="hidden" class="form-control" value="{{ old("imc") ?? $caratula->imc }}">
 					</div>
-					<div class="form-group col-md-6">
+					
+          <div class="form-group col-md-4">
 						<label>Medicación habitual</label>
-						<textarea class="form-control form-control-sm" name="medicacion_habitual" rows="2" cols="80">{{ old("medicacion_habitual") ?? $caratula->medicacion_habitual }}</textarea>
+						<textarea class="form-control form-control-sm" name="medicacion_habitual" rows="8" >{{ old("medicacion_habitual") ?? $caratula->medicacion_habitual }}</textarea>
 					</div>
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-4">
 						<label>Antecedentes</label>
-						<textarea class="form-control form-control-sm" name="antecedentes" rows="2" cols="80">{{ old("antecedentes") ?? $caratula->antecedentes }}</textarea>
+						<textarea class="form-control form-control-sm" name="antecedentes" rows="8" >{{ old("antecedentes") ?? $caratula->antecedentes }}</textarea>
 					</div>
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-4">
 						<label>Alergias</label>
-						<textarea class="form-control form-control-sm" name="alergias" rows="2" cols="80">{{ old("alergias") ?? $caratula->alergias }}</textarea>
+						<textarea class="form-control form-control-sm" name="alergias" rows="8" >{{ old("alergias") ?? $caratula->alergias }}</textarea>
 					</div>
 				</div>
 				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar Carátula</button>

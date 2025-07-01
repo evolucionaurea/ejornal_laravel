@@ -88,6 +88,11 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			});
 		}
 
+		if($request->filtro=='mes'){
+			$query->whereMonth('consultas_enfermerias.fecha', Carbon::now()->month);
+			$query->whereYear('consultas_enfermerias.fecha', Carbon::now()->year);
+		}
+
 
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
@@ -455,7 +460,12 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			return back()->with('error', 'Debes fichar para utilizar esta funcionalidad.');
 		}
 
-		$query = ConsultaEnfermeria::select(
+		$request->draw = 1;
+		$request->start = 0;
+		$request->length = 10000;
+		$consultas = $this->busqueda($request)['data'];
+
+		/* $query = ConsultaEnfermeria::select(
 			'consultas_enfermerias.*',
 			'nominas.nombre',
 			'nominas.email',
@@ -469,7 +479,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		if($request->from) $query->whereDate('consultas_enfermerias.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-		$consultas = $query->get();
+		$consultas = $query->get();*/
 
 		if (!$consultas) {
 			return back()->with('error', 'No se han encontrado consultas.');
