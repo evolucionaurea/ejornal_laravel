@@ -110,6 +110,14 @@ trait Nominas
 
 		}
 
+		if(!is_null($request->caratula_cargada)){
+			if($request->caratula_cargada=='1'){
+				$query->whereHas('caratulas');
+			}else{
+				$query->whereDoesntHave('caratulas');
+			}
+		}
+
 		//$query->onlyTrashed();
 		$records_filtered = $query->count();
 		$nominas = $query->skip($request->start)->take($request->length)->get();
@@ -157,6 +165,7 @@ trait Nominas
 			'Estado',
 			'Sector',
 			'Legajo',
+			'Carátula Cargada',
 			'Teléfono',
 			'DNI',
 			'Fecha de Nacimiento',
@@ -177,6 +186,7 @@ trait Nominas
 				$estado,
 				$nomina->sector,
 				$nomina->legajo,
+				$nomina->ultima_caratula ? 'si' : 'no',
 				$nomina->telefono,
 				$nomina->dni,
 				$nomina->fecha_final,

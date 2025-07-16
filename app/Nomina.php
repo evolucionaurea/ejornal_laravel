@@ -26,7 +26,7 @@ class Nomina extends Model
     'fecha_nacimiento'=>'date:d/m/Y'
   ];
 
-  protected $appends = ['edad','perfil_url'];
+  protected $appends = ['edad','perfil_url','ultima_caratula'];
 
 
   public function ausentismos()
@@ -73,7 +73,11 @@ class Nomina extends Model
 
   public function caratulas()
   {
-      return $this->hasMany(Caratula::class, 'id_nomina');
+    return $this->hasMany(Caratula::class, 'id_nomina');
+  }
+  public function getUltimaCaratulaAttribute()
+  {
+    return $this->caratulas()->with('patologias')->orderBy('created_at', 'desc')->first();
   }
 
 

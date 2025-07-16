@@ -5,80 +5,96 @@
 @section('content')
 
 <div class="d-flex" id="wrapper">
-    @include('partials.sidebar_empleados')
-    <div id="page-content-wrapper">
-        @include('partials.nav_sup')
+	@include('partials.sidebar_empleados')
+	<div id="page-content-wrapper">
+		@include('partials.nav_sup')
 
-        <div class="cabecera">
-            <h2>Listado de carátulas</h2>
-            <p>Aquí puede ver el listado de las últimas carátulas de los trabajadores de la empresa.</p>
-        </div>
+		<div class="cabecera">
+			<h2>Listado de carátulas</h2>
+			<p>Aquí puede ver el listado de las últimas carátulas de los trabajadores de la empresa.</p>
+			
+			@if (auth()->user()->fichar && auth()->user()->fichada)
+			<div class="cabecera_acciones">
+				<a href="{{ route('empleados.nominas.caratulas.create') }}" class="btn btn-primary">
+					<i class="fal fa-plus"></i>
+					<span>Crear carátula</span>
+				</a>
+			</div>
+			@endif
+		</div>
 
-        @include('mensajes_validacion')
+		@include('mensajes_validacion')
 
-        <div class="tarjeta">
-            <table class="table table-striped table-sm tabla" id="caratulasTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Trabajador</th>
-                        <th>Cliente</th>
-                        <th>Patología</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($paginatedCaratulas as $caratula)
-                    <tr>
-                        <td class="align-middle">{{ $caratula->id }}</td>
-                        <td class="align-middle">{{ $caratula->nomina->nombre }}</td>
-                        <td class="align-middle">{{ $caratula->cliente->nombre }}</td>
-                        <td class="align-middle">
-                            @if ($caratula->patologias->count() > 0)
-                            <ul class="list-group list-group-flush">
-                                @foreach ($caratula->patologias as $patologia)
-                                <li class="list-group-item p-1">{{ $patologia->nombre }}</li>
-                                @endforeach
-                            </ul>
-                            @else
-                            <span>Sin cargar</span>
-                            @endif
-                        </td>
-                        <td class="align-middle" scope="row">
-                            <div class="acciones_tabla">
-                                <a title="Create" href="{{ route('empleados.nominas.caratulas.create', $caratula->nomina->id) }}">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                                <a title="Ver" href="{{ route('empleados.nominas.caratulas.show', $caratula->nomina->id) }}">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
+		<div class="tarjeta">
 
-                </tbody>
-            </table>
+			<div data-toggle="busqueda-fecha" class="row">
 
-            {{-- Paginación --}}
-            <div class="d-flex justify-content-center">
-                {{ $paginatedCaratulas->links() }}
-            </div>
-        </div>
-    </div>
+				<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">				
+
+				<div class="col-lg-6">
+
+					<div class="row">
+
+						<div class="mb-1 col-md-6">
+							<input name="search" class="form-control form-control-sm"
+								placeholder="Buscar por nombre, dni, cuil, legajo o tel..."
+								value="{{ Request::get('search') }}"></input>
+						</div>
+
+						<div class="mb-1 col-md-6">
+							<select name="estado" class="form-control form-control-sm">
+								<option value="">--Seleccionar Filtro--</option>
+								<option value="1" >Trabajadores Activos</option>
+								<option value="0" >Trabajadores Inactivos</option>
+							</select>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="col-lg-4 border-left align-items-center d-flex">
+
+					<div class="mr-1 mb-1">
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i class="fas fa-search"></i>
+							Buscar</button>
+					</div>
+					<div class="mr-1 mb-1">
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i>
+							Mostrar todo</button>
+					</div>
+
+					<div class="mr-1 mb-1">
+						<button data-toggle="export" data-href="{{ 'caratulas/exportar' }}"
+							class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
+					</div>
+
+				</div>
+
+
+			</div>
+			<hr>
+
+
+			<table data-table="caratulas" class="table table-striped table-sm tabla" >
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Trabajador</th>
+						<th>Patologías</th>
+						<th>Usuario que cargó</th>
+						<th>Peso / Altura / IMC</th>
+						<th>Medicación habitual</th>
+						<th>Antecedentes</th>
+						<th>Alergias</th>
+						<th>Última modificación</th>
+						<th class="text-right">Acciones</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>			
+		</div>
+	</div>
+
 </div>
-
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const table = $('#caratulasTable').DataTable({
-            paging: false,  // Pagina el contenido usando la paginación de Laravel
-            info: false,
-            searching: true,  // Habilita el buscador
-        });
-    });
-</script>
 
 @endsection

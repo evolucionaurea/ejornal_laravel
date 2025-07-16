@@ -3,9 +3,9 @@ import Tablas from '../classes/Tablas.js';
 $(()=>{
 
 	new Tablas({
-		controller:'/empleados/consultas/medicas',
+		controller:'/empleados/consultas/nutricionales',
 		get_path:'/busqueda',
-		table:$('[data-table="consultas-medicas"]'),
+		table:$('[data-table="consultas-nutricionales"]'),
 		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
 
 		server_side:true,
@@ -44,25 +44,17 @@ $(()=>{
 				},
 				{
 					className:'align-middle',
-					name:'estado',
-					data:'trabajador',
-					orderable:false,
-					render:v=>{
-						return `<span class="badge badge-${v.estado==1?'success':'danger'}">${v.estado==1?'activo':'inactivo'}</span>`
-					}
+					name:'tipo',
+					data:'tipo',
+					orderable:false					
 				},
 
 				{
 					className:'align-middle',
-					name:'fecha',
-					data:'fecha'
+					name:'fecha_atencion',
+					data:'fecha_atencion'
 				},
-
-				{
-					className:'align-middle',
-					name:'derivacion_consulta',
-					data:'derivacion_consulta'
-				},
+				
 
 				{
 					className:'align-middle',
@@ -79,7 +71,7 @@ $(()=>{
 						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
 						return `
 						<div class="acciones_tabla justify-content-end">
-							<a title="Ver" href="medicas/${v.id}">
+							<a title="Ver" href="nutricionales/${v.id}">
 								<i class="fas fa-eye"></i>
 							</a>
 						</div>`
@@ -88,21 +80,7 @@ $(()=>{
 			]
 		},
 
-		/*render_row:consulta=>{
-			return $(`
-				<tr>
-				<td>${consulta.nombre}</td>
-				<td>${consulta.fecha}</td>
-				<td>${consulta.derivacion_consulta}</td>
 
-				<td class="acciones_tabla" scope="row">
-					<a title="Ver" href="medicas/${consulta.id}">
-						<i class="fas fa-eye"></i>
-					</a>
-				</td>
-			</tr>`
-			)
-		}*/
 	})
 
 })

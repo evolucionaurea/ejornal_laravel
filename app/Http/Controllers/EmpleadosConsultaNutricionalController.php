@@ -21,7 +21,7 @@ class EmpleadosConsultaNutricionalController extends Controller
 	public function index(Request $request)
 	{
 		$clientes = $this->getClientesUser();
-		$query = ConsultaNutricional::with(['nomina', 'cliente'])
+		/* $query = ConsultaNutricional::with(['nomina', 'cliente'])
 			->where('id_cliente', auth()->user()->id_cliente_actual);
 
 		// Filtros de fechas
@@ -35,13 +35,68 @@ class EmpleadosConsultaNutricionalController extends Controller
 			$query->whereDate('fecha_atencion', '<=', $fechaHasta);
 		}
 
-		$paginatedNutricion = $query->orderBy('created_at', 'desc')->paginate(10);
+		$paginatedNutricion = $query->orderBy('created_at', 'desc')->paginate(10); */
 
-		return view('empleados.consultas.nutricionales', compact('paginatedNutricion', 'clientes'));
+		return view('empleados.consultas.nutricionales', compact('clientes'));
 	}
+	public function busqueda(Request $request)
+	{
 
+		$query = ConsultaNutricional::select('consultas_nutricionales.*')
+		->with(['trabajador','cliente'])
+		->join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
+		->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
 
+		$total = $query->count();
+		
+		if($request->from) $query->whereDate('consultas_nutricionales.fecha_atencion','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+		if($request->to) $query->whereDate('consultas_nutricionales.fecha_atencion','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+		
+		if($request->filtro=='mes'){
+			$query->whereMonth('consultas_nutricionales.fecha_atencion', Carbon::now()->month);
+			$query->whereYear('consultas_nutricionales.fecha_atencion', Carbon::now()->year);
+		}
+		
+		//dd($request->search['value']);
+		
+		if($request->search){
+			$query->where(function($query) use($request){
+				$filtro = '%'.$request->search.'%';
+				$query->where('nominas.nombre','like',$filtro)
+				->orWhere('consultas_nutricionales.tipo','like',$filtro)										
+				->orWhere('nominas.legajo','like',$filtro);
+			});
+		}
+		
+		if($request->estado!=''){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+		}
+		if($request->dni){
+			$query->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
+		}
+		
+		
+		if($request->order){
+			$sort = $request->columns[$request->order[0]['column']]['name'];
+			$dir  = $request->order[0]['dir'];
+			$query->orderBy($sort,$dir);
+		}
+		$total_filtered = $query->count();
 
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'fichada_user'=>auth()->user()->fichada,
+			'fichar_user'=>auth()->user()->fichar,
+			'request'=>$request->all()
+		];
+	}
 
 	/**
 	 * Show the form for creating a new resource.
@@ -63,7 +118,6 @@ class EmpleadosConsultaNutricionalController extends Controller
 
 		return view('empleados.consultas.nutricionales.create', compact('patologias', 'clientes', 'nominas', 'cliente'));
 	}
-
 
 	/**
 	 * Store a newly created resource in storage.
@@ -190,4 +244,84 @@ class EmpleadosConsultaNutricionalController extends Controller
 	{
 		//
 	}
+
+
+	public function exportar(Request $request)
+	{
+
+		if (!auth()->user()->id_cliente_actual) {
+			return back()->with('error', 'No se encontraron consultas');
+		}
+
+		$request->draw = 1;
+		$request->start = 0;
+		$request->length = 10000;
+
+		$consultas = $this->busqueda($request)['data'];
+		
+		if (!$consultas) {
+			return back()->with('error', 'No se han encontrado consultas');
+		}
+
+		$hoy = Carbon::now();
+		$file_name = 'consultas-nutricionales-'.$hoy->format('YmdHis').'.csv';
+
+		$fp = fopen('php://memory', 'w');
+		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+		fputcsv($fp,[
+			'Trabajador',
+			'CUIL',
+			'Legajo',
+			'Fecha de atención',
+			'Tipo',
+			'Objetivos',
+			'Gustos alimentarios',
+			'Comidas diarias',
+			'Descanso',
+			'Intolerancias digestivas',
+			'Alergias alimentarias',
+			'Circunferencia cintura',
+			'Porcentaje masa grasa',
+			'Porcentaje masa muscular',
+			'Próxima cita',
+			'Actividad física',
+			'Transito intestinal',
+			'Evolución',
+			'Medicaciones',
+		],';');
+
+		foreach($consultas as $consulta){
+
+			fputcsv($fp,[
+				$consulta->trabajador->nombre,
+				$consulta->trabajador->dni,
+				$consulta->trabajador->legajo,
+				$consulta->fecha_atencion->format('d/m/Y'),
+				$consulta->tipo,
+				str_replace(["\r", "\n"],' ',$consulta->objetivos),
+				str_replace(["\r", "\n"],' ',$consulta->gustos_alimentarios),
+				str_replace(["\r", "\n"],' ',$consulta->comidas_diarias),
+				str_replace(["\r", "\n"],' ',$consulta->descanso),
+				str_replace(["\r", "\n"],' ',$consulta->intolerancias_digestivas),
+				str_replace(["\r", "\n"],' ',$consulta->alergias_alimentarias),
+				$consulta->circunferencia_cintura,
+				$consulta->porcent_masa_grasa,
+				$consulta->porcent_masa_muscular,
+				$consulta->prox_cita,
+				str_replace(["\r", "\n"],' ',$consulta->act_fisica),
+				str_replace(["\r", "\n"],' ',$consulta->transito_intestinal),
+				str_replace(["\r", "\n"],' ',$consulta->evolucion),
+				str_replace(["\r", "\n"],' ',$consulta->medicaciones)
+			],';');
+		}
+		fseek($fp, 0);
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="'.$file_name.'";');
+		fpassthru($fp);
+
+
+		return;
+
+	}
+
 }

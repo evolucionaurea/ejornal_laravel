@@ -26,7 +26,9 @@ use App\Preocupacional;
 use App\NominaImportacion;
 use App\NominaHistorial;
 use App\NominaClienteHistorial;
+use App\Caratula;
 use Intervention\Image\Facades\Image;
+use App\User;
 
 
 class EmpleadosNominasController extends Controller
@@ -38,6 +40,7 @@ class EmpleadosNominasController extends Controller
 
 	public function index()
 	{
+		
 		$clientes = $this->getClientesUser();
 		return view('empleados.nominas', compact('clientes'));
 	}
@@ -457,7 +460,7 @@ class EmpleadosNominasController extends Controller
 	{
 
 
-		if(!auth()->user()->id_cliente_actual) return back()->with();
+		if(!auth()->user()->id_cliente_actual) return back()->with('error', 'Debes estar trabajando en algún cliente para poder realizar esta acción.');
 
 		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo.');
 
@@ -892,5 +895,46 @@ class EmpleadosNominasController extends Controller
 		return $this->movimientosListado($cliente_ids,$request);
 	}
 
+	/**
+	 * Obtener la última carátula
+	 */
+	public function getUltimaCaratula()
+	{
+		// Opción 1: Última carátula general
+		$ultimaCaratula = Caratula::latest('id')->first();
+		
+		// Opción 2: Última carátula con relaciones
+		// $ultimaCaratula = Caratula::with(['nomina', 'patologias', 'cliente'])->latest()->first();
+		
+		// Opción 3: Última carátula del cliente actual
+		// $ultimaCaratula = Caratula::where('id_cliente', auth()->user()->id_cliente_actual)->latest()->first();
+		
+		// Opción 4: Última carátula de un trabajador específico
+		// $ultimaCaratula = Caratula::where('id_nomina', $idNomina)->latest()->first();
+		
+		return $ultimaCaratula;
+	}
+
+	/**
+	 * Obtener la última carátula de un trabajador específico
+	 */
+	public function getUltimaCaratulaTrabajador($idNomina)
+	{
+		return Caratula::where('id_nomina', $idNomina)
+			->with(['nomina', 'patologias'])
+			->latest()
+			->first();
+	}
+
+	/**
+	 * Obtener la última carátula del cliente actual
+	 */
+	public function getUltimaCaratulaCliente()
+	{
+		return Caratula::where('id_cliente', auth()->user()->id_cliente_actual)
+			->with(['nomina', 'cliente'])
+			->latest()
+			->first();
+	}
 
 }

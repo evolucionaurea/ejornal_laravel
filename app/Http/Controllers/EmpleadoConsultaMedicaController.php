@@ -91,6 +91,11 @@ class EmpleadoConsultaMedicaController extends Controller
 			});
 		}
 
+		if($request->filtro=='mes'){
+			$query->whereMonth('consultas_medicas.fecha', Carbon::now()->month);
+			$query->whereYear('consultas_medicas.fecha', Carbon::now()->year);
+		}
+
 
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
@@ -453,7 +458,12 @@ class EmpleadoConsultaMedicaController extends Controller
 			return back()->with('error', 'No se encontraron consultas');
 		}
 
-		$query = ConsultaMedica::select(
+		$request->draw = 1;
+		$request->start = 0;
+		$request->length = 10000;
+		$consultas = $this->busqueda($request)['data'];
+
+		/* $query = ConsultaMedica::select(
 			'consultas_medicas.*',
 			'nominas.nombre',
 			'nominas.email',
@@ -467,7 +477,7 @@ class EmpleadoConsultaMedicaController extends Controller
 		if($request->from) $query->whereDate('consultas_medicas.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_medicas.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-		$consultas = $query->get();
+		$consultas = $query->get(); */
 
 		if (!$consultas) {
 			return back()->with('error', 'No se han encontrado consultas');

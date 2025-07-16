@@ -42,6 +42,24 @@ class User extends Authenticatable
 		'email_verified_at' => 'datetime',
 	];
 
+	/**
+	 * Relaciones que se cargan automáticamente
+	 *
+	 * @var array
+	 */
+	protected $with = ['rol'];
+
+	/**
+	 * Accessor para obtener el rol del usuario
+	 */
+	public function getRolAttribute()
+	{
+		if (!$this->relationLoaded('rol')) {
+			$this->load('rol');
+		}
+		return $this->getRelation('rol');
+	}
+
 	public function clientes_user()
 	{
 		return $this->hasManyThrough(Cliente::class, ClienteUser::class, 'id_user', 'id', 'id', 'id_cliente');

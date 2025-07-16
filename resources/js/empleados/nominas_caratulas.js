@@ -1,50 +1,51 @@
+function calcularImc(peso, altura) {
+	let imc = peso / (Math.pow((altura/100), 2));
+	return imc.toFixed(2);
+}
+
 $(()=>{
 
-	let dominio = window.location.host;
-	let imc;
-
 	$(".form-row .form-group input[name='peso']").keyup(function() {
-		let peso = $(this).val();
-		let altura = $(".form-row .form-group input[name='altura']").val();
-		if (peso != '' && peso != null && peso != undefined && altura != '' && altura != null && altura != undefined && altura !== 0 || peso !== 0) {
-		  imc = parseFloat(peso / (Math.pow((altura/100), 2))).toFixed(2);
-			$(".form-row .form-group input[name='imc']").val(imc);
-			$(".form-row .form-group input[name='imc_disabled']").val(imc);
-		} else {
-			$(".form-row .form-group input[name='imc']").val("");
-		}
-		if ($(".form-row .form-group input[name='imc']").val() == NaN) {
-			$(".form-row .form-group input[name='imc']").val("");
-		}
-		if ($(".form-row .form-group input[name='imc']").val() == Infinity) {
-			$(".form-row .form-group input[name='imc']").val("");
-		}
+		let peso = parseFloat($(this).val());
+		let altura = parseFloat($(".form-row .form-group input[name='altura']").val());
+		if(!peso || !altura) return;
+
+		$(".form-row .form-group input[name='imc']").val(calcularImc(peso,altura));
+		$(".form-row .form-group input[name='imc_disabled']").val(calcularImc(peso,altura));
+
 	});
 
 
 	$(".form-row .form-group input[name='altura']").keyup(function() {
-		let altura = $(this).val();
-		let peso = $(".form-row .form-group input[name='peso']").val();
-		if (altura != '' && altura != null && altura != undefined && peso != '' && peso != null && peso != undefined && altura !== 0 || peso !== 0) {
-		  imc = parseFloat(peso / (Math.pow((altura/100), 2))).toFixed(2);
-			$(".form-row .form-group input[name='imc']").val(imc);
-			$(".form-row .form-group input[name='imc_disabled']").val(imc);
-		} else {
-			$(".form-row .form-group input[name='imc']").val("");
-		}
-		if ($(".form-row .form-group input[name='imc']").val() == NaN) {
-			$(".form-row .form-group input[name='imc']").val("");
-		}
-		if ($(".form-row .form-group input[name='imc']").val() == Infinity) {
-			$(".form-row .form-group input[name='imc']").val("");
-		}
+		let altura = parseFloat($(this).val());
+		let peso = parseFloat($(".form-row .form-group input[name='peso']").val());
+		if(!peso || !altura) return;
+		$(".form-row .form-group input[name='imc']").val(calcularImc(peso,altura));
+		$(".form-row .form-group input[name='imc_disabled']").val(calcularImc(peso,altura));
+
 	});
 
+	$(document).on('click', '.btn-editar-patologia', function () {
+		let id = $(this).data('id');
+		let nombre = $(this).data('nombre');
 
-	$('.select_2').select2({
+		// Setea el nombre
+		$('#editarPatologiaNombre').val(nombre);
+
+		// Cambia la acción del form
+		let ruta = "{{ url('empleados/consultas/patologias') }}/" + id;
+		$('#editarPatologiaForm').attr('action', ruta);
+	});
+
+	if( $('[name="id_nomina"]').attr('type')!='hidden' ){
+		$('[name="id_nomina"]').select2();
+	}
+
+	$('[name="id_patologia[]"]').select2({
 		placeholder: "Seleccione una o más patologías",
 		allowClear: true
 	});
+	
 	
 
 })

@@ -1,13 +1,15 @@
 {{-- SEARCH --}}
 <div data-toggle="busqueda-fecha" class="row">
 
+	<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
+
 
 	<div class="col-md-6 d-flex flex-wrap align-items-center">
 
 		<div class="row">
 
 			<div class="col-lg-8">
-				<input placeholder="Filtrar por Nombre, Consulta, Legajo, Derivación..." name="search" type="text"
+				<input placeholder="Filtrar por Nombre, Tipo, Legajo..." name="search" type="text"
 					class="form-control form-control-sm" value="">
 			</div>
 
@@ -17,10 +19,10 @@
 			</div>
 
 			<div class="col-lg-4">
-				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="">
+				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="" readonly>
 			</div>
 			<div class="col-lg-4">
-				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="">
+				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="" readonly>
 			</div>
 
 			<div class="col-lg-4">

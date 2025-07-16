@@ -121,7 +121,7 @@
 
 			<!-- Consultas Nutricionales x Mes -->
 			<div class="col-md-4 col-lg-4 mb-4">
-				<a href="{{route('empleados.consultas.enfermeria',['filtro'=>'mes'])}}"
+				<a href="{{route('empleados.consultas.nutricionales',['filtro'=>'mes'])}}"
 					class="card light-blue lighten-1 white-text">
 					<div class="card-body d-flex justify-content-between align-items-center">
 						<div>
