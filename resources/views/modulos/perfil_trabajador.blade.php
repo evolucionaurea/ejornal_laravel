@@ -33,7 +33,7 @@
 		<!-- Carátula -->
 		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
 			
-			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center"  data-toggle="collapse" data-target="#infoCaratula" aria-expanded="true" aria-controls="infoCaratula" style="cursor: pointer;">
+			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#infoCaratula" aria-expanded="true" aria-controls="infoCaratula" style="cursor: pointer;">
 				<span>Carátula</span>
 				@if ($caratula)
 				<a href="{{ route('empleados.nominas.caratulas.edit', $trabajador->id) }}" class="btn btn-tiny btn-primary">

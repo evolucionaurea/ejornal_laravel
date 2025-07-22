@@ -12,20 +12,24 @@
 
 		{{-- Contenido de la pagina --}}
 		<div class="cabecera">
-			<div class="d-flex align-items-center justify-between">
-				<h2 style="margin: 0px;">Historial de </h2>
+			<div class="d-flex align-items-center justify-content-between">
+
+				<div>
+					<h2 style="margin: 0px;">Historial de {{$trabajador->nombre}}</h2>
+					@if( auth()->user()->id_cliente_actual != $trabajador->id_cliente)
+					<span class="badge badge-dark">transferido</span>
+					@endif
+				</div>
+				
 				@if ($trabajador->foto)
-				<div class="foto-perfil"
-					style="background-image: url({{ $trabajador->photo_url }}); width: 50px; height: 50px; background-size: cover; background-position: center; border-radius: 50%;">
+				<div class="foto-perfil" style="background-image: url({{ $trabajador->photo_url }}); width:60px;height:60px; background-size: cover; background-position: center; border-radius: 50%;margin:0">
 				</div>
 				@else
 				<i class="fas fa-user fa-lg ml-4"></i>
 				@endif
-				<span class="ml-2">{{$trabajador->nombre}}</span>
-				@if( auth()->user()->id_cliente_actual != $trabajador->id_cliente)
-				<span class="badge badge-dark">transferido</span>
-				@endif
+
 			</div>
+			<hr>
 			<p>Aquí podrá ver las consultas y ausentismos del trabajador</p>
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-gris-claro"

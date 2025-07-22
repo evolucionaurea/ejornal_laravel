@@ -20,6 +20,10 @@
 					<span>Crear carátula</span>
 				</a>
 			</div>
+			@else 
+			<a data-toggle="modal" data-target="#fichada_huella" class="small text-muted font-italic">
+				<i class="fa fa-fingerprint  fa-fw"></i> Debes fichar para crear una nueva carátula
+			</a>
 			@endif
 		</div>
 

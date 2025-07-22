@@ -208,6 +208,8 @@ class EmpleadosConsultaNutricionalController extends Controller
 	{
 		$clientes = $this->getClientesUser();
 		$nutricional = ConsultaNutricional::with(['nomina', 'cliente'])->find($id);
+
+		//dd($nutricional->nomina->ultima_caratula);
 		return view('empleados.consultas.nutricionales.show', compact('nutricional', 'clientes'));
 	}
 
