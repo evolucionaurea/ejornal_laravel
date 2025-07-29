@@ -48,12 +48,16 @@
 					<div class="form-group col-md-3">
 						<label>
 							Patología
+
+              @if (auth()->user()->permiso_desplegables == 1)
 							<a data-toggle="modal" data-target="#patologiaVerModal" href="#">
 								<i class="fas fa-eye"></i>
 							</a>
 							<a data-toggle="modal" data-target="#patologiaCrearModal" href="#">
 								<i class="fas fa-plus-circle"></i>
 							</a>
+              @endif 
+              
 						</label>
 						<select multiple required name="id_patologia[]" class="form-control form-control-sm select_2">
 							@foreach ($patologias as $patologia)
