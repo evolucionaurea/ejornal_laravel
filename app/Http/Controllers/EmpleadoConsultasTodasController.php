@@ -160,17 +160,20 @@ class EmpleadoConsultasTodasController extends Controller
 					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
 					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
 					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
+					->orWhereRaw("'Médica' LIKE ?", [$filtro])
 					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
 			});
 
 			$enfermerias->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
 					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
+					->orWhereRaw("'Enfermería' LIKE ?", [$filtro])
 					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
 			});
 
 			$nutricionales->where(function ($query) use ($filtro) {
-				$query->where('nominas.nombre', 'like', $filtro);
+				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhereRaw("'Nutricional' LIKE ?", [$filtro]);
 			});
 
 		}

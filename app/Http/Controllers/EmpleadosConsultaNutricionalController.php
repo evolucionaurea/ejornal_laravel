@@ -134,6 +134,7 @@ class EmpleadosConsultaNutricionalController extends Controller
 			'id_cliente' => 'required|exists:clientes,id',
 			'tipo' => 'required|in:inicial,seguimiento',
 			'fecha_atencion' => 'required',
+			'peso'=>'required|numeric',
 			// Campos opcionales
 			'objetivos' => 'nullable|string',
 			'gustos_alimentarios' => 'nullable|string',
@@ -159,6 +160,7 @@ class EmpleadosConsultaNutricionalController extends Controller
 		$consultaNutricional->id_cliente = $validatedData['id_cliente'];
 		$consultaNutricional->tipo = $validatedData['tipo'];
 		$consultaNutricional->user = auth()->user()->nombre;
+		$consultaNutricional->peso = $validatedData['peso'];
 		$consultaNutricional->fecha_atencion = Carbon::createFromFormat('d/m/Y', $validatedData['fecha_atencion']);
 
 		// Asignar los campos adicionales según el tipo de consulta

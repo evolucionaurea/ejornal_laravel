@@ -40,10 +40,11 @@
 		</div>
 
 		<div class="tarjeta">
-			<form id="form_guardar_consulta_nutricional"
-				action="{{action('EmpleadosConsultaNutricionalController@store')}}" accept-charset="UTF-8" method="post"
-				enctype="multipart/form-data">
+			<form id="form_guardar_consulta_nutricional" action="{{action('EmpleadosConsultaNutricionalController@store')}}" accept-charset="UTF-8" method="post"  enctype="multipart/form-data">
 				@csrf
+				
+				<input type="hidden" value="{{ $cliente->id }}" name="id_cliente" id="id_cliente_actual">
+
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Trabajador <span style="color: red;">*</span></label>
@@ -54,11 +55,10 @@
 							@endforeach
 						</select>
 					</div>
-					<div class="form-group col-md-3">
+					{{-- <div class="form-group col-md-3">
 						<label>Cliente <span style="color: red;">*</span></label>
 						<input name="cliente" type="text" class="form-control" placeholder="" value="{{ $cliente->nombre }}" disabled>
-						<input type="hidden" value="{{ $cliente->id }}" name="id_cliente" id="id_cliente_actual">
-					</div>
+					</div> --}}
 					<div class="form-group col-md-3">
 						<label>Tipo <span style="color: red;">*</span></label>
 						<select required id="tipo-consulta" name="tipo" class="form-control">
@@ -70,6 +70,11 @@
 					<div class="form-group col-md-3">
 						<label>Fecha atención <span style="color: red;">*</span></label>
 						<input required data-toggle="has-datepicker" name="fecha_atencion" type="text" class="form-control" value="{{ old('fecha_atencion') }}" readonly placeholder="click para desplegar el calendario" >
+					</div>
+
+					<div class="form-group col-md-3">
+						<label for="">Peso</label>
+						<input required name="peso" type="number" class="form-control" value="{{ old('peso') }}" step="0.01" min="1">
 					</div>
 
 					{{-- Campos de tipo Inicial --}}
@@ -131,6 +136,7 @@
 						<label>Medicaciones</label>
 						<textarea class="form-control" name="medicaciones" cols="30" rows="5">{{ old('medicaciones') }}</textarea>
 					</div>
+
 				</div>
 				<button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Crear consulta nutricional</button>
 			</form>

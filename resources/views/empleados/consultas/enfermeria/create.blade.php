@@ -112,17 +112,16 @@
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Temperatura axiliar</label>
-						<input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("
-							temperatura_auxiliar") }}" step="0.01">
+						<input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("temperatura_auxiliar") }}" step="0.01">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Peso</label>
-						<input name="peso" type="number" class="form-control" value="{{ old(" peso") }}">
+						<input name="peso" type="number" class="form-control" value="{{ old("peso") }}" step="0.01" min="1">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Altura</label>
 						<div class="input-group">
-							<input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
+							<input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
 							<div class="input-group-append">
 								<span class="input-group-text">cm.</span>
 							</div>
@@ -130,26 +129,24 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>IMC</label>
-						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
-						<input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
+						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
+						<input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Glucemia</label>
-						<input name="glucemia" type="number" class="form-control" value="{{ old(" glucemia") }}">
+						<input name="glucemia" type="number" class="form-control" value="{{ old("glucemia") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Saturación oxígeno</label>
-						<input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("
-							saturacion_oxigeno") }}">
+						<input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("saturacion_oxigeno") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Tensión arterial</label>
-						<input name="tension_arterial" type="text" class="form-control" value="{{ old("
-							tension_arterial") }}">
+						<input name="tension_arterial" type="text" class="form-control" value="{{ old("tension_arterial") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Frecuencia Cardíaca</label>
-						<input name="frec_cardiaca" type="number" class="form-control" value="{{ old(" frec_cardiaca")
+						<input name="frec_cardiaca" type="number" class="form-control" value="{{ old("frec_cardiaca")
 							}}">
 					</div>
 					<div class="form-group col-md-3">

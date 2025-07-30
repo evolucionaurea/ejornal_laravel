@@ -99,12 +99,12 @@
 					</div>
 					<div class="form-group col-md-2">
 						<label>Peso</label>
-						<input name="peso" type="number" class="form-control" value="{{ old(" peso") }}">
+						<input name="peso" type="number" class="form-control" value="{{ old("peso") }}" step="0.01" min="1">
 					</div>
 					<div class="form-group col-md-2">
 						<label>Altura</label>
 						<div class="input-group">
-							<input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
+							<input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
 							<div class="input-group-append">
 								<span class="input-group-text">cm.</span>
 							</div>
@@ -112,8 +112,8 @@
 					</div>
 					<div class="form-group col-md-2">
 						<label>IMC</label>
-						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
-						<input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
+						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
+						<input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
 					</div>
 				</div>
 
