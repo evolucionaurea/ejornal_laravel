@@ -168,16 +168,18 @@ $(()=>{
 			console.log('dibujar caratula', data.data);
 			caratula.innerHTML = `
 			<div class="caratula_contenido">
-				<h4>Caratula</h4>
+				<h4 class="mb-0">Carátula</h4>
+				<div class="small text-muted font-italic">Última actualización: ${data.data.created_at_formatted} hs.</div>
+				<hr>
 				<div class="row">
 					<div class="col-md-3">
 						<p><strong>Trabajador:</strong> ${data.data.nomina.nombre} </p>
 						<p><strong>Patologías:</strong> ${data.data.patologias.map(p => p.nombre).join(', ')}</p>
 					</div>
-				<div class="col-md-3">
-                    <p><strong>Medicación Habitual:</strong> ${data.data.medicacion_habitual}</p>
-					<p><strong>Peso:</strong> ${data.data.peso} kg</p>
-                </div>
+					<div class="col-md-3">
+						<p><strong>Medicación Habitual:</strong> ${data.data.medicacion_habitual}</p>
+						<p><strong>Peso:</strong> ${data.data.peso} kg</p>
+					</div>
 					<div class="col-md-3">
 						<p><strong>Altura:</strong> ${data.data.altura} cm</p>
 						<p><strong>IMC:</strong> ${data.data.imc}</p>
@@ -186,7 +188,7 @@ $(()=>{
 						<p><strong>Alergias:</strong> ${data.data.alergias}</p>
 						<p><strong>Antecedentes:</strong> ${data.data.antecedentes}</p>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-12 border-top pt-3">
 						<button id="usarDatos" class="btn-ejornal btn-ejornal-base">Usar estos datos para IMC</button>
 						<button id="editarCaratula" class="btn-ejornal btn-ejornal-gris-claro">Actualizar Caratula</button>
 					</div>

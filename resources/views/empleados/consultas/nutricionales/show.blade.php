@@ -97,11 +97,13 @@
 								</div>
 
 								<div class="col-lg-6">
-									<p class="card-text"><b>Peso:</b> {{ $nutricional->nomina->ultima_caratula->peso }}</p>
+									<p class="card-text"><b>Peso Actual:</b> {{ $nutricional->nomina->ultima_caratula->peso }}</p>
 									<p class="card-text"><b>Altura:</b> {{ $nutricional->nomina->ultima_caratula->altura }}</p>
 									<p class="card-text"><b>IMC:</b> {{ $nutricional->nomina->ultima_caratula->imc }}</p>
 								</div>
 							</div>
+
+							<div class="small text-muted font-italic border-top pt-2">Última actualización: {{ $nutricional->nomina->ultima_caratula->created_at_formatted }} hs.</div>
 
 
 							@else 
@@ -140,6 +142,14 @@
 								{{ 'No guardado' }}
 								@endif
 							</p>
+
+							<p class="card-text">
+								<strong>Peso: </strong> {{ $nutricional->peso ?? '[no registrado]' }}
+							</p>
+
+							<hr>
+
+							<h5>Tipo de consulta: {{ $nutricional->tipo }}</h5>
 
 							<div class="row">
 								@if($nutricional->tipo == 'inicial')

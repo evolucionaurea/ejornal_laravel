@@ -5,27 +5,23 @@
 
 		<!-- Información principal -->
 		<div class="p-2 col-lg-6" style="background-color: #ebebeb; color: #535353;">
-			<h4 class="text-black px-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse"
-				data-target="#infoPrincipal" aria-expanded="true" aria-controls="infoPrincipal"
-				style="cursor: pointer;">
+			<h4 class="text-black px-2 mb-0 d-flex justify-content-between align-items-center" style="cursor: pointer;">
 				Información principal
-				<i class="fas fa-chevron-down rotate-icon"></i>
 			</h4>
 			<hr>
-			<div class="collapse show mt-2" id="infoPrincipal">
-				<ul
-					style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
-					<li><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</li>
-					<li><b>DNI / CUIL:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</li>
-					<li><b>Email:</b><br> {!! $trabajador->email ? '<a href="mailto:'.$trabajador->email.'" style="color:rgb(81, 120, 206) !important;">'.$trabajador->email.'</a>' : 'No fue cargado' !!}</li>
-					<li><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
-						$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}</li>
+			<div class="show mt-2" id="infoPrincipal">
+				<ul class="row px-2" >
+					<div class="col-4" ><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</div>
+					<div class="col-4" ><b>DNI:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</div>
+					<div class="col-4" ><b>CUIL:</b><br> {!! $trabajador->email ? '<a href="mailto:'.$trabajador->email.'" style="color:rgb(81, 120, 206) !important;">'.$trabajador->email.'</a>' : 'No fue cargado' !!}</div>
+					<div class="col-4" ><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
+						$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}</div>
 					@if ($trabajador->fecha_nacimiento)
-					<li><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años</li>
+					<div class="col-4" ><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años</div>
 					@endif
-					<li><b>Teléfono:</b><br> {!! $trabajador->telefono ? "<a href='tel:$trabajador->telefono'
-							style='color:rgb(81, 120, 206) !important;'>$trabajador->telefono</a>" : 'No fue cargado' !!}</li>
-					<li><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</li>
+					<div class="col-4" ><b>Teléfono:</b><br> {!! $trabajador->telefono ? "<a href='tel:$trabajador->telefono' style='color:rgb(81, 120, 206) !important;'>$trabajador->telefono</a>" : 'No fue cargado' !!}</div>
+					<div class="col-4" ><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</div>
+					<div class="col-4" ><b>Sector</b><br> {{ $trabajador->sector }}</div>
 				</ul>
 			</div>
 		</div>
@@ -33,7 +29,7 @@
 		<!-- Carátula -->
 		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
 			
-			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#infoCaratula" aria-expanded="true" aria-controls="infoCaratula" style="cursor: pointer;">
+			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center" style="cursor: pointer;">
 				<span>Carátula</span>
 				@if ($caratula)
 				<a href="{{ route('empleados.nominas.caratulas.edit', $trabajador->id) }}" class="btn btn-tiny btn-primary">
@@ -41,33 +37,33 @@
 					<span>Editar carátula</span>
 				</a>
 				@endif
-				<i class="fas fa-chevron-down rotate-icon"></i>
 			</h4>
 
 			<hr>
-			<div class="collapse show mt-2" id="infoCaratula">
+			<div class="show mt-2 px-2" id="infoCaratula">
 				@if ($caratula)
 				
-				<ul
-					style="list-style: none; border-radius: 10px; padding: 10px; width: 100%; gap: 10px; display: flex; flex-direction: column;">
+				<div class="row">
 					@if ($caratula->patologias && count($caratula->patologias) > 0)
-					<li>
+					<div class="col-4">
 						<b>Últimas Patologías:</b>
 						<div class="d-flex flex-wrap flex-row">
 							@foreach ($caratula->patologias as $patologia)
 							<span class="badge badge-danger mr-1">{{ $patologia->nombre }}</span>
 							@endforeach
 						</div>
-					</li>
+					</div>
 					@else
-					<li><b>Última Patología:</b><br>No fue cargado</li>
+					<div class="col-4"><b>Últimas Patologías:</b><br>No fue cargado</div>
 					@endif
-					<li><b>Medicación habitual:</b><br>{{ $caratula->medicacion_habitual }}</li>
-					<li><b>Antecedentes:</b><br>{{ $caratula->antecedentes }}</li>
-					<li><b>Alergias:</b><br>{{ $caratula->alergias }}</li>
-					<li><b>Peso:</b><br>{{ $caratula->peso }}</li>
-					<li><b>Altura:</b><br>{{ $caratula->altura }}</li>
-					<li><b>IMC:</b><br>{{ $caratula->imc }}</li>
+
+					<div class="col-4"><b>Medicación habitual:</b><br>{{ $caratula->medicacion_habitual }}</div>
+					<div class="col-4"><b>Antecedentes:</b><br>{{ $caratula->antecedentes }}</div>
+					<div class="col-4"><b>Alergias:</b><br>{{ $caratula->alergias }}</div>
+					<div class="col-4"><b>Peso:</b><br>{{ $caratula->peso }}</div>
+					<div class="col-4"><b>Altura:</b><br>{{ $caratula->altura }}</div>
+					<div class="col-4"><b>IMC:</b><br>{{ $caratula->imc }}</div>
+					<div class="col-4"><b>Última actualización:</b><br>{{ $caratula->created_at_formatted }} hs.</div>
 				</ul>
 				@else
 				<div class="p-4 alert alert-info">Sin contenido cargado aún</div>
@@ -286,14 +282,14 @@
 
 	</div>
 
-	<div class="accordion" id="accordionInfoInicial">
+	<div class="accordion w-100" id="accordionInfoInicial">
 		{{-- Acorddeon Info Principal --}}
 		<div class="card">
 			<div class="card-header bg-dark text-white" id="headingInfoInicial">
 				<h2 class="mb-0 d-flex">
 					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
 						data-target="#collapseInfoInicial" aria-expanded="false" aria-controls="collapseInfoInicial">
-						<h6>Informacion adicional</h6>
+						<h6>Información adicional</h6>
 					</button>
 					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseInfoInicial"
 						class="fal fa-chevron-circle-down text-white"></i>
@@ -301,8 +297,8 @@
 			</div>
 			<div id="collapseInfoInicial" class="collapse ? 'show' : ''}}" aria-labelledby="headingInfoInicial"
 				data-parent="#accordionInfoInicial">
-				<div class="card-body table-responsive">
-					<div class="col-lg-4 col-md-4 col-sm-12">
+				<div class="card-body table-responsive ">
+					<div class="col-12">
 						<ul class="list-group list-group-flush">
 							<li class="list-group-item">
 								<b>Calle: </b> {{$trabajador->calle}}
@@ -320,7 +316,7 @@
 								<b>Partido: </b> {{$trabajador->partido}}
 							</li>
 							<li class="list-group-item">
-								<b>Codigo postal: </b> {{$trabajador->cod_postal}}
+								<b>Código postal: </b> {{$trabajador->cod_postal}}
 							</li>
 
 						</ul>
