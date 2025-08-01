@@ -328,7 +328,36 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		}
 
 
-		// Obtener la última carátula
+		/// check si tiene carátula y crear un nuevo registro con el nuevo peso
+		$caratula = Caratula::with('patologias')
+			->where('id_nomina',$request->nomina)
+			->latest()
+			->first();	
+				
+		if($caratula){
+			$patologias_ids = $caratula->patologias->pluck('id');
+
+			$caratula_new = new Caratula();
+			$caratula_new->id_nomina = $request->nomina;
+			$caratula_new->id_cliente = auth()->user()->id_cliente_actual;
+			$caratula_new->medicacion_habitual = $caratula->medicacion_habitual;
+			$caratula_new->antecedentes = $caratula->antecedentes;
+			$caratula_new->alergias = $caratula->alergias;
+			$caratula_new->peso = $request->peso;
+			$caratula_new->altura = $request->altura;
+			$alturaMetros = $request->altura / 100;
+			$caratula_new->imc = round($request->peso / ($alturaMetros * $alturaMetros), 2);
+			$caratula_new->user = auth()->user()->nombre;
+			$caratula_new->save();
+			
+			// Guardar la relación en la tabla intermedia
+			if( !empty($patologias_ids) ){
+				$caratula_new->patologias()->sync($patologias_ids);
+			}
+		}
+		/// end carátula
+
+		/* // Obtener la última carátula
 		$ultimaCaratula = Caratula::where('id_nomina', $request->id_nomina)
 			->where('id_cliente', auth()->user()->id_cliente_actual)
 			->latest()
@@ -341,7 +370,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				'altura' => $request->altura,
 				'imc' => $request->imc
 			]);
-		}
+		} */
 
 		return redirect('empleados/consultas/enfermeria')->with('success', 'Consulta de enfermería guardada con éxito.');
 

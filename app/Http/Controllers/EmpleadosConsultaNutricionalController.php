@@ -7,8 +7,11 @@ use App\Patologia;
 use Illuminate\Http\Request;
 use App\Http\Traits\Clientes;
 use App\Nomina;
+use App\Caratula;
 use App\Cliente;
 use Carbon\Carbon;
+
+
 class EmpleadosConsultaNutricionalController extends Controller
 {
 
@@ -135,6 +138,8 @@ class EmpleadosConsultaNutricionalController extends Controller
 			'tipo' => 'required|in:inicial,seguimiento',
 			'fecha_atencion' => 'required',
 			'peso'=>'required|numeric',
+			'altura'=>'required|numeric',
+			'imc'=>'required|numeric',
 			// Campos opcionales
 			'objetivos' => 'nullable|string',
 			'gustos_alimentarios' => 'nullable|string',
@@ -157,10 +162,14 @@ class EmpleadosConsultaNutricionalController extends Controller
 
 		// Datos Obligatorios
 		$consultaNutricional->id_nomina = $validatedData['id_nomina'];
-		$consultaNutricional->id_cliente = $validatedData['id_cliente'];
+		$consultaNutricional->id_cliente = auth()->user()->id_cliente_actual;
 		$consultaNutricional->tipo = $validatedData['tipo'];
 		$consultaNutricional->user = auth()->user()->nombre;
+
 		$consultaNutricional->peso = $validatedData['peso'];
+		$consultaNutricional->altura = $validatedData['altura'];
+		$consultaNutricional->imc = $validatedData['imc'];
+
 		$consultaNutricional->fecha_atencion = Carbon::createFromFormat('d/m/Y', $validatedData['fecha_atencion']);
 
 		// Asignar los campos adicionales según el tipo de consulta
@@ -193,6 +202,38 @@ class EmpleadosConsultaNutricionalController extends Controller
 
 		// Guardar la consulta nutricional en la base de datos
 		$consultaNutricional->save();
+
+
+		/// check si tiene carátula y crear un nuevo registro con el nuevo peso
+		$caratula = Caratula::with('patologias')
+			->where('id_nomina',$request->id_nomina)
+			->latest()
+			->first();	
+				
+		if($caratula){
+			$patologias_ids = $caratula->patologias->pluck('id');
+
+			$caratula_new = new Caratula();
+			$caratula_new->id_nomina = $request->id_nomina;
+			$caratula_new->id_cliente = auth()->user()->id_cliente_actual;
+			$caratula_new->medicacion_habitual = $caratula->medicacion_habitual;
+			$caratula_new->antecedentes = $caratula->antecedentes;
+			$caratula_new->alergias = $caratula->alergias;
+			$caratula_new->peso = $request->peso;
+			$caratula_new->altura = $request->altura;
+			$alturaMetros = $request->altura / 100;
+			$caratula_new->imc = round($request->peso / ($alturaMetros * $alturaMetros), 2);
+			$caratula_new->user = auth()->user()->nombre;
+			$caratula_new->save();
+			
+			// Guardar la relación en la tabla intermedia
+			if( !empty($patologias_ids) ){
+				$caratula_new->patologias()->sync($patologias_ids);
+			}
+		}
+		/// end carátula
+
+
 
 		// Redirigir a la lista de consultas nutricionales con un mensaje de éxito
 		return redirect()->route('empleados.consultas.nutricionales')->with('success', 'Consulta nutricional creada exitosamente');

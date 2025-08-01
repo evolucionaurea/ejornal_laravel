@@ -317,7 +317,8 @@ class EmpleadoConsultaMedicaController extends Controller
 			$caratula_new->alergias = $caratula->alergias;
 			$caratula_new->peso = $request->peso;
 			$caratula_new->altura = $request->altura;
-			$caratula_new->imc = round($request->peso/$request->altura,2);
+			$alturaMetros = $request->altura / 100;
+			$caratula_new->imc = round($request->peso / ($alturaMetros * $alturaMetros), 2);
 			$caratula_new->user = auth()->user()->nombre;
 			$caratula_new->save();
 			

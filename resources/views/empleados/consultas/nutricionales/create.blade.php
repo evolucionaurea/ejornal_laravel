@@ -71,11 +71,25 @@
 						<label>Fecha atención <span style="color: red;">*</span></label>
 						<input required data-toggle="has-datepicker" name="fecha_atencion" type="text" class="form-control" value="{{ old('fecha_atencion') }}" readonly placeholder="click para desplegar el calendario" >
 					</div>
+				</div>
+
+				<div class="row">
 
 					<div class="form-group col-md-3">
 						<label for="">Peso</label>
 						<input required name="peso" type="number" class="form-control" value="{{ old('peso') }}" step="0.01" min="1">
 					</div>
+					<div class="form-group col-md-3">
+						<label for="">Altura</label>
+						<input required name="altura" type="number" class="form-control" value="{{ old('altura') }}" step="0.01" min="1">
+					</div>
+					<div class="form-group col-md-3">
+						<label for="">IMC</label>
+						<input required readonly name="imc" type="number" class="form-control" value="{{ old('imc') }}" >
+					</div>
+				</div>
+
+				<div class="row">
 
 					{{-- Campos de tipo Inicial --}}
 					<div class="form-group col-md-4 campos-inicial">

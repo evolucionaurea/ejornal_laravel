@@ -26,6 +26,8 @@ Route::delete('/delete_nominas', 'EndpointsController@deleteNominas');
 Route::post('/actualizar_cliente_actual', 'EmpleadosFichadasNuevasController@clienteActual')->name('actualizar_cliente_actual');
 
 Route::get('/get_ultima_caratula/{id_nomina}', 'EndpointsController@getUltimaCaratula');
-Route::get('/get_caratula_nomina/{id_nomina}/{id_cliente_actual}', 'EndpointsController@getCaratulaNomina');
+Route::get('/get_caratula_nomina/{id_nomina}', 'EndpointsController@getCaratulaNomina');
+Route::get('/get_caratula_modal/{id_nomina}', 'EndpointsController@getCaratulaModal');
+
 Route::post('/actualizar_caratula', 'EndpointsController@actualizarCaratula');
 Route::get('/patologias', 'EndpointsController@getPatologias');

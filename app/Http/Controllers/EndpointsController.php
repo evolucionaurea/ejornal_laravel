@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Nomina;
 use App\Ausentismo;
 use App\Caratula;
 use App\Cliente;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use App\EdicionFichada;
 use App\FichadaNueva;
 use App\Patologia;
+use Carbon\Carbon;
 use Jenssegers\Agent\Agent;
 use DateTime;
 
@@ -187,16 +187,18 @@ class EndpointsController extends Controller
 		}
 
 
-		public function getCaratulaNomina($id_nomina, $id_cliente_actual)
+		public function getCaratulaNomina($id_nomina)
 		{
 			$caratula = Caratula::with(['patologias', 'nomina', 'cliente'])  // Cargar patologías desde la tabla intermedia
 				->where('id_nomina', $id_nomina)
-				->where('id_cliente', $id_cliente_actual)
-				->orderBy('created_at', 'desc')
-				->first();
+				->latest()
+				->first();			
+			if(!$caratula) return '<div class="alert alert-info">No se ha creado una carátula para este trabajador de la nómina aún.</div>';
+
+			return view('modulos.caratula_trabajador', compact('caratula'));
 		
 			// Formatear la respuesta antes de devolverla
-			$caratulaData = [
+			/* $caratulaData = [
 				'estado' => !empty($caratula) ? true : false,
 				'data' => $caratula ? $caratula->toArray() + [  // Incluye todos los campos de la carátula
 					'patologias' => $caratula->patologias->map(function($patologia) {
@@ -216,13 +218,30 @@ class EndpointsController extends Controller
 				] : null
 			];
 		
-			return response()->json($caratulaData);
+			return response()->json($caratulaData); */
+		}
+		public function getCaratulaModal($id_nomina)
+		{
+			$caratula = Caratula::with(['patologias', 'nomina', 'cliente'])  // Cargar patologías desde la tabla intermedia
+				->where('id_nomina', $id_nomina)
+				->latest()
+				->first();	
+			$patologias = Patologia::all();
+
+			return view('modulos.modal_caratula_trabajador', compact('caratula','patologias'));
 		}
 		
 
     
+		/***************
+		TODO: mover este método al controlador de Caratulas
+		ya que se omite el middleware y no se puedo obtener los datos del usuario logueado
+		*****************/
 		public function actualizarCaratula(Request $request)
 		{
+
+			///dd(auth()->user());
+
 			try {
 				$caratula = new Caratula();
 				$caratula->id_nomina = $request->trabajador_id_edit_caratula;
@@ -233,6 +252,10 @@ class EndpointsController extends Controller
 				$caratula->peso = $request->peso_edit_caratula;
 				$caratula->altura = $request->altura_edit_caratula;
 				$caratula->imc = $request->imc_edit_caratula;
+				
+				///$caratula->user = auth()->user()->nombre;
+
+
 				$caratula->save();
 		
 				// Sincronizar las patologías
@@ -242,12 +265,12 @@ class EndpointsController extends Controller
 		
 				return response()->json([
 					'estado' => true,
-					'data' => 'Caratula actualizada correctamente'
+					'message' => 'Caratula actualizada correctamente'
 				]);
 			} catch (\Throwable $th) {
 				return response()->json([
 					'estado' => false,
-					'data' => $th->getMessage()
+					'message' => $th->getMessage()
 				]);
 			}
 		}

@@ -56,10 +56,14 @@ window.random = (min, max) => {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 window.get_template = template => {
+	window.loading()
 	return new Promise((resolve,reject)=>{
 		axios.get(template)
 			.then(response=>{
 				resolve(response.data);
+			})
+			.finally(response=>{
+				window.loading({show:false})
 			})
 			.catch(error=>{
 				reject(error);
@@ -90,4 +94,11 @@ window.get_full_formatted_date = date=>{
 	const time = window.get_hours_minutes(date)
 
 	return `${date_formatted} ${time}`
+}
+window.calculate_imc = (peso,altura) =>{
+
+	if(peso=='' || peso==null || peso==undefined || peso == '0') return ''
+	if(altura=='' || altura==null || altura==undefined || altura == '0') return ''
+
+	return parseFloat(peso / (Math.pow((altura/100), 2))).toFixed(2)
 }

@@ -15,6 +15,8 @@ class AddPesoColumnToConsultasNutricionalesTable extends Migration
     {
         Schema::table('consultas_nutricionales', function (Blueprint $table) {
             $table->float('peso')->unsigned()->nullable()->after('user');
+            $table->float('altura')->unsigned()->nullable()->after('peso');
+            $table->float('imc')->unsigned()->nullable()->after('altura');
         });
     }
 
@@ -27,6 +29,8 @@ class AddPesoColumnToConsultasNutricionalesTable extends Migration
     {
         Schema::table('consultas_nutricionales', function (Blueprint $table) {
             $table->dropColumn('peso');
+            $table->dropColumn('altura');
+            $table->dropColumn('imc');
         });
     }
 }

@@ -79,7 +79,10 @@ if(route=='empleados.consultas.todas') require('./empleados/consultas.todas')
 if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
 if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')
 if(route=='empleados.consultas.nutricionales') require('./empleados/consultas.nutricionales')
-if(route=='empleados.consultas.nutricionales.create') require('./empleados/nutricional_create')
+if(route=='empleados.consultas.nutricionales.create'){ 
+	require('./empleados/nutricional_create')
+	require('./empleados/caratula_trabajador')
+}
 
 if(route=='empleados.nominas.caratulas.create') require('./empleados/nominas_caratulas')
 if(route=='empleados.nominas.caratulas.edit') require('./empleados/nominas_caratulas')
@@ -96,8 +99,14 @@ if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='preocupacionales.create') require('./empleados/preocupacionales.create')
 if(route=='preocupacionales.edit') require('./empleados/preocupacionales.create')
 
-if(route=='medicas.create') require('./empleados/consultas.medicas.create')
-if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
+if(route=='medicas.create') {
+	require('./empleados/consultas.medicas.create')
+	require('./empleados/caratula_trabajador')
+}
+if(route=='enfermeria.create') {
+	require('./empleados/consultas.enfermeria.create')
+	require('./empleados/caratula_trabajador')
+}
 
 
 

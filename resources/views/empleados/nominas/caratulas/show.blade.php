@@ -11,8 +11,7 @@
 
 		<div class="cabecera">
 			<h2>Historial de Carátulas de {{ $trabajador->nombre }}</h2>
-			<p>Listado de todas las carátulas creadas para este trabajador de la nómina en
-				<b>{{ $trabajador->cliente->nombre }}</b>
+			<p>Listado de ediciones de la carátula para este trabajador en <b>{{ $trabajador->cliente->nombre }}</b>
 			</p>
 			<div class="row">
 				<div class="col-md-3">

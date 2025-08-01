@@ -30,7 +30,7 @@
 		@endif
 
 		<div class="tarjeta" id="caratula">
-			<p class="alert alert-info">Seleccione un trabajador de la nomina</p>
+			<p class="alert alert-info">Seleccione un trabajador de la nómina</p>
 			{{-- Se completa por JS --}}
 		</div>
 
