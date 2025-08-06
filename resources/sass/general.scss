@@ -29,12 +29,29 @@ body{
   border-radius: 1.5rem;
   border: 1px solid #e6e6e6;
   padding: 20px;
+  overflow:hidden;
 
   & h4 {
     font-weight: bold;
     font-size: 21px;
     color: $ejornal_gris_oscuro;
     margin-bottom: 20px;
+  }
+
+  .tarjeta-header{
+    border-bottom:1px solid rgb(240,240,240);
+    margin:0 -20px;
+    padding:0 20px;
+  }
+  .tarjeta-body{
+    margin:0 -20px;
+    padding:20px;
+  }
+  .tarjeta-footer{
+    border-top:1px solid rgb(240,240,240);
+    background-color:rgb(250,250,250);
+    margin:0 -20px -20px -20px;
+    padding:10px 20px;
   }
 
 }
@@ -160,6 +177,7 @@ hr.hr-line-dashed{
   border-top: 1px dashed rgba(0,0,0,.1);
 }
 
-.lh-sm{
-  line-height: 1.15;
+.form-control::placeholder{
+  color:rgb(140,140,140);
+  font-style: italic;
 }

@@ -1,0 +1,43 @@
+.timeline
+	.timeline-card
+		//border-bottom: 1px solid rgb(240,240,240)
+		border-left: 1px solid $blue
+		padding-left: 1rem
+		padding-top: 0
+		padding-bottom: 2rem
+		position: relative
+		display: flex
+		&:before
+			content: ''
+			border-radius: 50%
+			background-color: $blue
+			position: absolute
+			width: 10px
+			height: 10px
+			left:	-5px
+			top: 8px
+		&:hover
+			background-color: rgb(240,240,240)
+		.content
+			width: 100%
+			.datetime
+				//line-height: 0.5
+				font-size: 14pt
+				color: $blue
+				margin-bottom: .5rem
+			.title
+				font-size: 12pt
+				color: black
+			.remaining
+				font-size: 10pt
+			.comments
+				padding-top: .25rem
+				font-size: 11pt
+		.actions
+			min-width: 80px
+			text-align: right
+			.btn
+				padding: .25rem
+				line-height: 1
+				font-size: 8pt
+				margin: .25rem

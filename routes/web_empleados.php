@@ -303,4 +303,11 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 
+	// AGENDA
+	Route::get('empleados/agenda','EmpleadosAgendaController@index')->name('empleados/agenda');
+	Route::post('empleados/agenda/agregar_turno', 'EmpleadosAgendaController@store');
+	Route::post('empleados/agenda/buscar_turnos', 'EmpleadosAgendaController@search');
+	Route::post('empleados/agenda/turno/{id}', 'EmpleadosAgendaController@find');
+
+
 });

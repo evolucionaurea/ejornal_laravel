@@ -1,5 +1,5 @@
 import Tablas from '../../classes/Tablas.js';
-import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
 
 
 $(() => {

@@ -108,6 +108,8 @@ if(route=='enfermeria.create') {
 	require('./empleados/caratula_trabajador')
 }
 
+if(route=='empleados/agenda') require('./empleados/agenda')
+
 
 
 //CLIENTES

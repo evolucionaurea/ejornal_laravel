@@ -44,7 +44,6 @@
 	{{-- Este dato es para tomarlo por JS y saber si está trabajando actualmente (osea si fichó). En sidebar.js se usa
 	el dato --}}
 
-	@if(!$clientes)
 	<ul class="list-group list-group-flush sidebar_menu">
 		<li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
 			<a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">
@@ -53,15 +52,20 @@
 			</a>
 		</li>
 	</ul>
-	@else
+
+	@if($clientes)
 
 	<ul class="list-group list-group-flush sidebar_menu">
-		<li class="{{ setActive('/empleados/resumen') }} menu_sin_sub_menu">
-			<a href="{{url('/empleados/resumen')}}" class="list-group-item list-group-item-action sidebar_item">
-				<i class="fas fa-tachometer-fast"></i>
-				<span>Resumen</span>
+
+		<li class="{{ setActive('empleados/agenda') }} menu_sin_sub_menu">
+			<a href="{{ url('empleados/agenda') }}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-calendar"></i>
+				<span>Agenda</span>
+				<span class="new">nuevo</span>
 			</a>
 		</li>
+
+
 		<li class="{{ setActive('/empleados/nominas') }} dropdownMenu">
 			<div class="dropdownButton">
 				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
