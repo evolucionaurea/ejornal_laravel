@@ -26,5 +26,15 @@ class AdminFichadasNuevasController extends Controller
 
   }
 
+  public function destroy($id)
+  {
+
+    $fichada = FichadaNueva::findOrFail($id);
+    $fichada->delete();
+    return [
+      'status'=>'ok'
+    ];
+  }
+
 
 }

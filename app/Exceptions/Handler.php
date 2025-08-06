@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Error;
+use Illuminate\Support\Facades\Auth;
 
 class Handler extends ExceptionHandler
 {
@@ -34,6 +36,17 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        // Registrar en la base de datos solo si NO es un error 404
+        if ($this->shouldReport($exception)) {
+            Error::create([
+                'type' => get_class($exception),
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'user_id' => Auth::check() ? Auth::id() : null, // Guardar el usuario si está autenticado
+            ]);
+        }
+
         parent::report($exception);
     }
 

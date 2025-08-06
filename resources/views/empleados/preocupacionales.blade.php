@@ -34,11 +34,19 @@
 
 				<div class="col-lg-6">
 					<div class="row">
+
+						<div class="col-md-12">
+							<input type="text" name="search" class="form-control form-control-sm"
+								placeholder="Filtrar por trabajador, dni, cuil, tel...">
+						</div>
+
 						<div class="col-md-6">
-							<input placeholder="Fecha Desde" name="from" type="text" class="form-control form-control-sm" value="">
+							<input placeholder="Fecha Desde" name="from" type="text"
+								class="form-control form-control-sm" value="">
 						</div>
 						<div class="col-md-6">
-							<input placeholder="Fecha Hasta" name="to" type="text" class="form-control form-control-sm" value="">
+							<input placeholder="Fecha Hasta" name="to" type="text" class="form-control form-control-sm"
+								value="">
 						</div>
 						<div class="col-md-6">
 							<select name="tipo" class="form-control form-control-sm">
@@ -58,8 +66,8 @@
 						<div class="col-md-6 d-none" data-toggle="vencimiento">
 							<select name="vencimiento_estado" class="form-control form-control-sm">
 								<option value="">--Seleccionar Estado--</option>
-								<option value="1">Vencidos</option>
-								<option value="0">Vencimiento próximo</option>
+								<option value="vencidos">Vencidos</option>
+								<option value="vencimiento_proximo">Vencimiento próximo (30 días)</option>
 							</select>
 						</div>
 						<div class="col-md-6 d-none" data-toggle="vencimiento">
@@ -75,13 +83,15 @@
 
 				<div class="col-lg-4">
 					<div class="border-left p-4">
-						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-search"></i> Buscar</button>
-						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" ><i class="fas fa-list"></i> Mostrar todo</button>
+						<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i
+								class="fas fa-search"></i> Buscar</button>
+						<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro"><i
+								class="fas fa-list"></i> Mostrar todo</button>
 					</div>
 				</div>
 
 
-		  </div>
+			</div>
 
 			<hr>
 
@@ -92,11 +102,12 @@
 				<thead>
 					<tr>
 						<th>Trabajador</th>
+						<th>Legajo</th>
 						<th>Fecha</th>
 						<th>Tipo de Estudio</th>
 						<th>Vencimiento</th>
-						<th>Estado Venc.</th>
-						<th>Completado</th>
+						{{-- <th>Estado Venc.</th> --}}
+						{{-- <th>Completado</th> --}}
 						<th>Documentación</th>
 						<th>Acciones</th>
 					</tr>

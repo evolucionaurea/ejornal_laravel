@@ -12,7 +12,7 @@ $(()=>{
 		delete_message:'¿Seguro deseas borrar esta vacuna?',
 		render_row:vacuna=>{
 			return $(`
-				<tr>
+			<tr data-id="${vacuna.id}">
 				<td>${vacuna.nombre}</td>
 				<td>${vacuna.tipo}</td>
 				<td>${vacuna.fecha}</td>

@@ -36,6 +36,8 @@ $(()=>{
 						<div>
 							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-dark">${v.trabajador_nombre}</a>
 						</div>`
+						output += `<div class="small">DNI: ${v.trabajador_dni ?? '[no cargado]'}</div>`
+
 						if(v.id_cliente != v.trabajador_cliente){
 							output += `<span class="badge badge-dark">transferido</span>`
 						}else{
@@ -44,12 +46,20 @@ $(()=>{
 						return output
 					}
 				},
-				{
+				/*{
 					data:row=>row,
 					name:'nominas.dni',
 					className:'align-middle',
 					render:v=>{
 						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
+					}
+				},*/
+				{
+					data:row=>row,
+					name:'nominas.legajo',
+					className:'align-middle',
+					render:v=>{
+						return v.trabajador_legajo==null ? '[no cargado]' : v.trabajador_legajo
 					}
 				},
 				{
@@ -80,13 +90,19 @@ $(()=>{
 					}
 				},
 				{
-					data:'fecha_regreso_trabajar',
-					className:'align-middle',
-					name:'fecha_regreso_trabajar',
-					render:v=>{
-						return v==null ? '[no cargada]' : v
-					}
+					data:'comentario_shortened',
+					className:'align-middle small lh-sm font-italic',
+					name:'comentario',
+					width:200
 				},
+				// {
+				// 	data:'fecha_regreso_trabajar',
+				// 	className:'align-middle',
+				// 	name:'fecha_regreso_trabajar',
+				// 	render:v=>{
+				// 		return v==null ? '[no cargada]' : v
+				// 	}
+				// },
 
 				{
 					data:'dias_mes_actual',
@@ -154,45 +170,45 @@ $(()=>{
 							}
 						}
 
+						/**/
+
+						/*	<a title="Ver Ausentismo (Com: ${v.comunicaciones_count} / Cert: ${v.documentaciones_count})" href="ausentismo/${v.id}">
+										<i class="fa fa-eye"></i>
+									</a>*/
+
 						return `
 							<div class="acciones_tabla justify-content-end">
 								${
 									(mostrar_extension == true)
 									?
 									`
-									 <button
-										class="extension_de_licencia"
-										title="extension de licencia"
-										data-toggle="modal"
-										data-target="#extensionLicenciaModal"
-										data-info="${v.id}"
-									 >
+									<button class="extension_de_licencia" title="extension de licencia" data-toggle="modal-extension-licencia" data-id="${v.id}" >
 										<i title="extension de licencia" class="fas fa-forward"></i>
-									 </button>
-									 `
-									 :
-									 ''
+									</button>
+									`
+									:
+
+									''
 								}
 
-
-
-								<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
-									<i title="Comunicaciones" class="fas fa-bullhorn"></i>
-									<span>(${v.comunicaciones_count})</span>
-								</a>
-
-								<a title="Certificados" href="documentaciones/${v.id}" class="btn-label">
-									<i title="Certificados" class="fas fa-files-medical"></i>
-									<span>(${v.documentaciones_count})</span>
-								</a>
-
-								<a title="Historial" href="ausentismos/${v.id_trabajador}">
+								<a title="Historial" href="ausentismos/${v.id}">
 									<i title="Historial" class="fas fa-book"></i>
 								</a>
 
 								${
-									v.id_cliente == v.trabajador_cliente ?
-									`<a title="Editar" href="ausentismos/${v.id}/edit">
+									v.id_cliente == v.trabajador_cliente ? `
+
+									<a title="Comunicaciones" href="comunicaciones/${v.id}" class="btn-label">
+										<i title="Comunicaciones" class="fas fa-bullhorn"></i>
+										<span>(${v.comunicaciones_count})</span>
+									</a>
+
+									<a title="Certificados" href="documentaciones/${v.id}" class="btn-label">
+										<i title="Certificados" class="fas fa-files-medical"></i>
+										<span>(${v.documentaciones_count})</span>
+									</a>
+
+									<a title="Editar" href="ausentismos/${v.id}/edit">
 										<i class="fas fa-pencil"></i>
 									</a>
 									<button data-toggle="delete" data-id="${v.id}" title="Eliminar" >
@@ -209,6 +225,13 @@ $(()=>{
 			]
 		}
 
+	})
+
+
+	$('[data-table="ausentismos"]').on('click','[data-toggle="modal-extension-licencia"]',btn=>{
+		const ausentismo_id = $(btn.currentTarget).attr('data-id')
+		$('#extensionLicenciaModal').modal('show')
+		$('#extensionLicenciaModal').find('[name="id_ausentismo"]').val(ausentismo_id)
 	})
 
 

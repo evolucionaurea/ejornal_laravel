@@ -60,4 +60,14 @@ class AdminFichadasController extends Controller
 		return view('admin.fichadas', compact('fichadas'));
 	}
 
+	public function destroy($id)
+	{
+
+		$fichada = Fichada::findOrFail($id);
+		$fichada->delete();
+		return [
+			'status'=>'ok'
+		];
+	}
+
 }

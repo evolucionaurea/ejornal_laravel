@@ -40,6 +40,8 @@ if(route=='reportes_certificaciones') require('./admin/reportes/certificaciones'
 if(route=='reportes_comunicaciones') require('./admin/reportes/comunicaciones')
 if(route=='reportes_consultas') require('./admin/reportes/consultas')
 if(route=='/admin/reportes/actividad_usuarios') require('./admin/reportes/actividad_usuarios')
+if(route=='reportes_preocupacionales') require('./admin/reportes/preocupacionales')
+if(route=='reportes_tareas_adecuadas') require('./admin/reportes/tareas_livianas')
 
 
 //EMPLEADOS
@@ -56,9 +58,12 @@ if(route=='nominas.create') require('./empleados/nominas_create')
 if(route=='nominas.show') require('./empleados/nominas_show')
 
 if(route=='/empleados/ausentismos') require('./empleados/ausentismos')
-if(route=='/empleados/ausentismos') require('./empleados/ausentismos_extension_licencia')
+///if(route=='/empleados/ausentismos') require('./empleados/ausentismos_extension_licencia')
 if(route=='ausentismos.create') require('./empleados/ausentismos_create')
 if(route=='ausentismos.edit') require('./empleados/ausentismos_create')
+if(route=='ausentismos.show' || route=='ausentismo') require('./empleados/ausentismo')
+
+//if(route=='ausentismo') require('./empleados/ausentismo')
 
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas')
 if(route=='/empleados/tareas_livianas') require('./empleados/tareas_livianas_extension_licencia')
@@ -73,6 +78,16 @@ if(route=='/empleados/certificados_livianos') require('./empleados/certificados_
 if(route=='empleados.consultas.todas') require('./empleados/consultas.todas')
 if(route=='empleados.consultas.medicas') require('./empleados/consultas.medicas')
 if(route=='empleados.consultas.enfermeria') require('./empleados/consultas.enfermeria')
+if(route=='empleados.consultas.nutricionales') require('./empleados/consultas.nutricionales')
+if(route=='empleados.consultas.nutricionales.create'){ 
+	require('./empleados/nutricional_create')
+	require('./empleados/caratula_trabajador')
+}
+
+if(route=='empleados.nominas.caratulas.create') require('./empleados/nominas_caratulas')
+if(route=='empleados.nominas.caratulas.edit') require('./empleados/nominas_caratulas')
+if(route=='empleados.nominas.caratulas.show') require('./empleados/caratulas_trabajador')
+if(route=='empleados.caratulas') require('./empleados/caratulas')
 
 if(route=='empleados.covid.testeos') require('./empleados/covid.testeos')
 if(route=='empleados.covid.vacunas') require('./empleados/covid.vacunas')
@@ -84,8 +99,14 @@ if(route=='/empleados/preocupacionales') require('./empleados/preocupacionales')
 if(route=='preocupacionales.create') require('./empleados/preocupacionales.create')
 if(route=='preocupacionales.edit') require('./empleados/preocupacionales.create')
 
-if(route=='medicas.create') require('./empleados/consultas.medicas.create')
-if(route=='enfermeria.create') require('./empleados/consultas.enfermeria.create')
+if(route=='medicas.create') {
+	require('./empleados/consultas.medicas.create')
+	require('./empleados/caratula_trabajador')
+}
+if(route=='enfermeria.create') {
+	require('./empleados/consultas.enfermeria.create')
+	require('./empleados/caratula_trabajador')
+}
 
 if(route=='empleados/agenda') require('./empleados/agenda')
 

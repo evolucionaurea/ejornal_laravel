@@ -178,6 +178,37 @@ table th{
 
 table.table{
   width:100%;
+
+  .has-floating-btn{
+    position:relative;
+    //overflow:hidden;
+
+    .floating-btn{
+      position:absolute;
+      background-color:#dfdfdf;
+      color:black;
+      bottom: 0;
+      right: 0;
+      height:20px;
+      width:26px;
+      //transform:rotateZ(45deg);
+      border-top-left-radius:4pt;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      i{
+        font-size: 8pt;
+      }
+    }
+
+    .floating-btn:hover{
+      background-color:black;
+      color:white;
+      text-decoration: none;
+    }
+  }
 }
 @media screen and (max-width:991px){
   table.table{

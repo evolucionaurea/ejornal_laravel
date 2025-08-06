@@ -3,7 +3,7 @@
 
 		<div class="row">
 			<div class="mb-1 col-md-6">
-				<input name="search" class="form-control form-control-sm" placeholder="Filtrar por nombre..." value="" >
+				<input name="search" class="form-control form-control-sm" placeholder="Filtrar por nombre, dni o cliente..." value="" >
 			</div>
 
 			@if($clientes)

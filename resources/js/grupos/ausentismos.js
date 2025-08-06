@@ -25,6 +25,8 @@ $(()=>{
 					render:v=>{
 						let output = `<div><b>${v.trabajador_nombre}</b></div>`
 
+						output += `<div class="small">DNI: ${v.trabajador_dni ?? '[no cargado]'}</div>`
+
 						if(v.id_cliente != v.trabajador_cliente){
 							output += `<span class="badge badge-dark">transferido</span>`
 						}else{
@@ -34,13 +36,13 @@ $(()=>{
 						return output
 					}
 				},
-				{
+				/*{
 					data:row=>row,
 					name:'nominas.dni',
 					render:v=>{
 						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
 					}
-				},
+				},*/
 				{
 					data:row=>row,
 					name:'nominas.sector',
@@ -63,12 +65,18 @@ $(()=>{
 						return v==null ? '[no cargada]' : v
 					}
 				},
-				{
+				/*{
 					data:'fecha_regreso_trabajar',
 					name:'fecha_regreso_trabajar',
 					render:v=>{
 						return v==null ? '[no cargada]' : v
 					}
+				},*/
+				{
+					data:'comentario_shortened',
+					className:'align-middle small lh-sm font-italic',
+					name:'comentario',
+					width:200
 				},
 
 				{

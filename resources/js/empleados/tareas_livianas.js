@@ -12,6 +12,7 @@ $(()=>{
 		delete_message:'¿Seguro deseas borrar esta tarea liviana?',
 
 		datatable_options:{
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 			columns:[
 				{
 					data:null,
@@ -29,7 +30,7 @@ $(()=>{
 						<div>
 							<a href="${v.trabajador_perfil_url}" target="_blank" class="text-dark">${v.trabajador.nombre}</a>
 						</div>`
-						if(v.id_cliente != v.trabajador_cliente){
+						if(v.id_cliente != v.trabajador.id_cliente){
 							output += `<span class="badge badge-dark">transferido</span>`
 						}else{
 							output += `<span class="badge badge-${v.trabajador.estado==1 ? 'success' : 'danger'}">${v.trabajador.estado==1 ? 'activo' : 'inactivo'}</span>`
@@ -40,20 +41,28 @@ $(()=>{
 				},
 				{
 					data:row=>row,
-					name:'nominas.dni',
+					name:'nominas.legajo',
 					render:v=>{
-						return v.dni==null ? '[no cargado]' : v.dni
+						return v.trabajador.legajo==null ? '[no cargado]' : v.trabajador.legajo
 					}
 				},
 				{
 					data:row=>row,
+					name:'nominas.dni',
+					render:v=>{
+						return v.trabajador.dni==null ? '[no cargado]' : v.trabajador.dni
+					}
+				},
+				
+				{
+					data:row=>row,
 					name:'nominas.sector',
 					render:v=>{
-						return v.sector==null ? '[no cargado]' : v.sector
+						return v.trabajador.sector==null ? '[no cargado]' : v.trabajador.sector
 					}
 				},
 				{
-					data:'nombre_tarea_liviana',
+					data:'tipo.nombre',
 					name:'tarea_liviana_tipo.nombre'
 				},
 
@@ -79,7 +88,7 @@ $(()=>{
 					data:row=>row,
 					orderable:false,
 					render:v=>{
-						console.log(v)
+
 						if(v.fecha_final == null){
 							return '[Ausente]'
 						}else{

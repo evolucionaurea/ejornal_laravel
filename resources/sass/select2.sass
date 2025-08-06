@@ -1,9 +1,9 @@
 .select2-container
 	width: 100% !important
 
+$height_select2: 38px
 .select2-container--default
 	.select2-selection--single
-		$height_select2: 38px
 		border: 1px solid #ced4da !important
 		border-radius: .25rem !important
 		padding: 5px 4px !important
@@ -19,8 +19,9 @@
 			.select2-selection__choice
 				display: block !important
 	.select2-selection--multiple
-		border: 1px solid #ced4da
+		border: 1px solid #ced4da !important
 		border-radius: 1.5rem
+		min-height: $height_select2 !important
 		.select2-selection__rendered
 			.select2-selection__choice
 				border-radius: 1rem

@@ -20,7 +20,10 @@ $(()=>{
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
-						let output = `<div>${v.ausentismo.trabajador.nombre}</div>`
+						let output = `
+							<div>${v.ausentismo.trabajador.nombre}</div>
+							<div class="small text-muted">${v.ausentismo.trabajador.dni}</div>
+						`
 						if(v.id_cliente != v.trabajador_cliente) output += `<span class="badge badge-dark">transferido</span>`
 
 						return output

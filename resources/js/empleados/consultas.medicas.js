@@ -12,7 +12,7 @@ $(()=>{
 
 		datatable_options:{
 			dom:'<"table-spacer-top"il>t<"table-spacer-bottom"ip>',
-			order:[[2,'desc']],
+			order:[[4,'desc']],
 			columns:[
 				{
 					className:'align-middle',
@@ -28,6 +28,17 @@ $(()=>{
 						return `
 							<div>${v.nombre}</div>
 							<div class="small">DNI: ${v.dni}</div>
+							`
+					}
+				},
+				{
+					className:'align-middle',
+					name:'legajo',
+					data:'trabajador',
+					render:v=>{
+						if(v.legajo==null) return '<span class="text-muted font-italic">[Legajo no encontrado]</span>'
+						return `
+							<div>${v.legajo}</div>
 							`
 					}
 				},

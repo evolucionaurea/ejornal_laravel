@@ -34,8 +34,7 @@
 		@endif
 
 
-		<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post"
-			enctype="multipart/form-data">
+		<form action="{{action('EmpleadosPreocupacionalesController@store')}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
 
 			@csrf
 
@@ -58,7 +57,7 @@
 						</label>
 						<select name="tipo_estudio_id" class="form-control" required>
 							@foreach($tipos as $tipo)
-							<option value="{{ $tipo->id }}" {{ $tipo->id==old('tipo_estudio_id') ? 'selected' : '' }}
+							<option value="{{ $tipo->id }}" {{ $tipo->id==session('tipo_estudio_id',old('tipo_estudio_id')) ? 'selected' : '' }}
 								>{{ $tipo->name }}</option>
 							@endforeach
 						</select>
@@ -70,7 +69,7 @@
 							required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($trabajadores as $trabajador)
-							<option value="{{$trabajador->id}}" {{ $trabajador->id==old('trabajador') ? 'selected' : ''
+							<option value="{{$trabajador->id}}" {{ $trabajador->id==session('trabajador',old('trabajador')) ? 'selected' : ''
 								}} >{{$trabajador->nombre}}</option>
 							@endforeach
 						</select>
@@ -78,12 +77,12 @@
 
 					<div class="form-group col-lg-3">
 						<label>Fecha <small style="color: red;">*</small></label>
-						<input name="fecha" type="text" class="form-control" value="{{ old(" fecha") }}" required>
+						<input name="fecha" type="text" class="form-control" value="{{ old('fecha') }}" required>
 					</div>
 
 					<div class="form-group col-lg-3">
 						<label for="">Resultado</label>
-						<input name="resultado" type="text" class="form-control" value="{{ old('resultado') }}">
+						<input name="resultado" type="text" class="form-control" value="{{ session('resultado',old('resultado')) }}">
 					</div>
 
 				</div>
@@ -100,32 +99,13 @@
 					<div class="form-group col-lg-3">
 						<label for="">¿Tiene Vencimiento? <small style="color: red;">*</small></label>
 						<select name="tiene_vencimiento" class="form-control" required>
-							<option value="0" {{ old('tiene_vencimiento')==='0' ? 'selected' : '' }}>No</option>
-							<option value="1" {{ old('tiene_vencimiento')==='1' ? 'selected' : '' }}>Si</option>
+							<option value="0" {{ session('tiene_vencimiento',old('tiene_vencimiento'))==='0' ? 'selected' : '' }}>No</option>
+							<option value="1" {{ session('tiene_vencimiento',old('tiene_vencimiento'))==='1' ? 'selected' : '' }}>Si</option>
 						</select>
 					</div>
-
-					<div data-toggle="vencimiento"
-						class="col-lg-6 border-left p-4 {{ old('tiene_vencimiento')==='1' ? '' : 'd-none' }}">
-						<div class="row">
-							<div class="form-group col-lg-6">
-								<label for="">Fecha de Vencimiento</label>
-								<input name="fecha_vencimiento" type="text" class="form-control"
-									value="{{ old('fecha_vencimiento') }}">
-							</div>
-							<div class="form-group col-lg-6">
-								<label for="">Completado</label>
-								<select name="completado" class="form-control">
-									<option value="0" {{ old('completado')==='0' ? 'selected' : '' }}>No</option>
-									<option value="1" {{ old('completado')==='1' ? 'selected' : '' }}>Si</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="">Comentarios</label>
-							<textarea name="completado_comentarios" rows="5" class="form-control"
-								disabled>{{ old("completado_comentarios") }}</textarea>
-						</div>
+					<div data-toggle="vencimiento" class="form-group col-lg-3 {{ session('tiene_vencimiento',old('tiene_vencimiento'))==='1' ? '' : 'd-none' }}">
+						<label for="">Fecha de Vencimiento</label>
+						<input name="fecha_vencimiento" type="text" class="form-control" value="{{ old('fecha_vencimiento') }}" {{ session('tiene_vencimiento',old('tiene_vencimiento'))==='1' ? 'required' : '' }} >
 					</div>
 
 				</div>
@@ -144,8 +124,7 @@
 									<tr class="bg-light">
 										<th colspan="2">
 											<label for="" class="mb-0">Adjuntar archivos</label>
-											<span class="small text-muted font-italic">Puedes adjuntar más de 1
-												archivo</span>
+											<span class="small text-muted font-italic">Puedes adjuntar más de 1 archivo</span>
 										</th>
 									</tr>
 								</thead>
@@ -169,16 +148,14 @@
 
 					<div class="form-group col-lg-6">
 						<label>Observaciones <small style="color: red;">*</small></label>
-						<textarea name="observaciones" class="form-control" rows="6"
-							required>{{ old("observaciones") }}</textarea>
+						<textarea name="observaciones" class="form-control" rows="6" required>{{ session('observaciones',old("observaciones")) }}</textarea>
 					</div>
 
 				</div>
 			</div>
 
 			<div class="text-center m-5">
-				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Crear
-					preocupacional</button>
+				<button class="btn-ejornal btn-ejornal-success btn-ejornal-lg" type="submit" name="button">Crear preocupacional</button>
 			</div>
 		</form>
 

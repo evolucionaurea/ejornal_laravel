@@ -3,7 +3,7 @@ import toastr from 'toastr';
 
 $(()=>{
 
-	new Tablas({
+	const table_preocupacionales = new Tablas({
 		controller:'/empleados/preocupacionales',
 		get_path:'/busqueda',
 		delete_path:'/destroy',
@@ -15,7 +15,8 @@ $(()=>{
 		server_side:true,
 
 		datatable_options:{
-			order:[[ 3, "desc" ]],
+			order:[[ 3, "asc" ]],
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 			columns:[
 				{
 					data:null,
@@ -47,10 +48,13 @@ $(()=>{
 					className:'align-middle',
 					render:v=>{
 						if(v.fecha_vencimiento==null) return `<span class="text-muted font-style-italic">[sin vencimiento]</span>`
-						return v.fecha_vencimiento
+						return `
+							<div>${v.fecha_vencimiento}</div>
+							${v.estado_vencimiento_label}
+						`
 					}
 				},
-				{
+				/*{
 					data:'vencimiento_label',
 					name:'vencimiento_label',
 					className:'align-middle',
@@ -60,7 +64,7 @@ $(()=>{
 					data:'completado_label',
 					className:'align-middle',
 					name:'completado'
-				},
+				},*/
 				{
 					data:row=>row,
 					name:'file_path',
@@ -94,9 +98,9 @@ $(()=>{
 
 
 						return `
-						<div class="acciones_tabla justify-content-end">
-							<button data-toggle="completado" data-id="${v.id}" title="Marcar como completado" class="btn-success" >
-								<i class="fas fa-check"></i>
+						<div class="acciones_tablax justify-content-endx">
+							<button data-toggle="completado" data-id="${v.id}" title="Marcar como completado" class="btn btn-tiny tag_ejornal_success" >
+								<i class="fas fa-check"></i> <span>Marcar como completado</span>
 							</button>
 						</div>`
 					}
@@ -114,7 +118,18 @@ $(()=>{
 	$('[data-table="preocupacionales"]').on('click','[data-toggle="completado"]',async btn=>{
 		const id = $(btn.currentTarget).attr('data-id')
 		const tr = $(btn.currentTarget).closest('tr')
-		const swal = await Swal.fire({
+
+		const form_preocupacional = await axios.get(`/templates/form-completar-preocupacional`)
+		//return console.log(form_preocupacional.data)
+
+		const form = $(form_preocupacional.data)
+		form.find('[name="id"]').val(id)
+
+		$('#popups').find('.modal-body').html(form)
+		$('#popups').find('.modal-dialog').removeClass('modal-lg')
+		$('#popups').modal('show')
+
+		/*const swal = await Swal.fire({
 			input:'textarea',
 			inputLabel:'Marcar completado y dejar un comentario',
 			inputPlaceholder:'Ingresa un comentario',
@@ -126,8 +141,9 @@ $(()=>{
 			confirmButtonText:'Guardar',
 			reverseButtons:true
 		})
-		if(swal.isDismissed) return false
-		try{
+		if(swal.isDismissed) return false*/
+
+		/*try{
 			const response = await axios.post(`preocupacionales/completar`,{
 				id:id,
 				comentarios:swal.value
@@ -136,7 +152,31 @@ $(()=>{
 			tr.remove()
 		}catch(e){
 			toastr.error('Hubo un error en la solicitud')
+		}*/
+	})
+
+
+	$('#popups').on('submit','[data-form="completar-preocupacional"]',async form=>{
+		form.preventDefault()
+		const post = get_form(form.currentTarget)
+		post.renovar_estudio = $(form.currentTarget).find('#renovar_estudio').is(':checked') ? 1 : 0
+
+		try{
+			const response = await axios.post(`preocupacionales/completar`,post)
+			toastr.success(response.data.message)
+
+			if(post.renovar_estudio==1){
+				window.location.href = `/empleados/preocupacionales/create?renovar=1&id=${post.id}`
+			}else{
+				table_preocupacionales.datatable_instance.ajax.reload()
+			}
+
+
+		}catch(e){
+			toastr.error('Hubo un error en la solicitud. Intenta nuevamente.')
 		}
+
+
 	})
 
 })

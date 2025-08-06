@@ -1,98 +1,83 @@
 <div class="tarjeta">
 
 	{{-- PRINCIPAL --}}
-	<div class="row">
+	<div class="row ">
 
-		<div class="col-lg-4 col-md-3 col-sm-12 text-center">
-			@if ($trabajador->foto)
-			{{-- <img style="width: 300px;" src="" class="rounded"> --}}
-			<div class="foto-perfil" style="background-image: url({{ $trabajador->photo_url }})"></div>
-			@else
-			<i class="fas fa-user fa-10x"></i>
-			@endif
-			<br>
-			<br>
-			<h5>{{$trabajador->nombre}}</h5>
-
-			@if( auth()->user()->id_cliente_actual != $trabajador->id_cliente)
-			<span class="badge badge-dark">transferido</span>
-			@endif
-
+		<!-- Información principal -->
+		<div class="p-2 col-lg-6" style="background-color: #ebebeb; color: #535353;">
+			<h4 class="text-black px-2 mb-0 d-flex justify-content-between align-items-center" style="cursor: pointer;">
+				Información principal
+			</h4>
+			<hr>
+			<div class="show mt-2" id="infoPrincipal">
+				<ul class="row px-2" >
+					<div class="col-4" ><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</div>
+					<div class="col-4" ><b>DNI:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</div>
+					<div class="col-4" ><b>CUIL:</b><br> {!! $trabajador->email ? '<a href="mailto:'.$trabajador->email.'" style="color:rgb(81, 120, 206) !important;">'.$trabajador->email.'</a>' : 'No fue cargado' !!}</div>
+					<div class="col-4" ><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
+						$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}</div>
+					@if ($trabajador->fecha_nacimiento)
+					<div class="col-4" ><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años</div>
+					@endif
+					<div class="col-4" ><b>Teléfono:</b><br> {!! $trabajador->telefono ? "<a href='tel:$trabajador->telefono' style='color:rgb(81, 120, 206) !important;'>$trabajador->telefono</a>" : 'No fue cargado' !!}</div>
+					<div class="col-4" ><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</div>
+					<div class="col-4" ><b>Sector</b><br> {{ $trabajador->sector }}</div>
+				</ul>
+			</div>
 		</div>
 
-		<div class="col-lg-4 col-md-5 col-sm-12">
-
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<b>CUIL: </b>
-					@if ($trabajador->email !== null && $trabajador->email !== '')
-					<span>{{$trabajador->email}}</span>
-					@else
-					{{'No fue cargado'}}
-					@endif
-				</li>
-				<li class="list-group-item">
-					<b>DNI: </b> {{$trabajador->dni}}
-				</li>
-				<li class="list-group-item">
-					<b>Activo: </b>
-					@if ($trabajador->estado == 1)
-					Si
-					@else
-					No
-					@endif
-				</li>
-				<li class="list-group-item">
-					<b>Teléfono: </b>
-					@if ($trabajador->telefono !== null && $trabajador->telefono !== '')
-					<a href="tel:{{$trabajador->telefono}}">{{$trabajador->telefono}}</a>
-					@else
-					{{'No fue cargado'}}
-					@endif
-				</li>
-				<li class="list-group-item">
-					<b>Fecha Nacimiento:</b> {{$trabajador->fecha_nacimiento ?
-					$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}
-				</li>
-				@if($trabajador->fecha_nacimiento)
-				<li class="list-group-item">
-					<b>Edad: </b> {{$trabajador->edad}}
-				</li>
+		<!-- Carátula -->
+		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
+			
+			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center" style="cursor: pointer;">
+				<span>Carátula</span>
+				@if ($caratula)
+				<a href="{{ route('empleados.nominas.caratulas.edit', $trabajador->id) }}" class="btn btn-tiny btn-primary">
+					<i class="fal fa-pencil fa-fw"></i>
+					<span>Editar carátula</span>
+				</a>
 				@endif
+			</h4>
 
-			</ul>
-		</div>
-		<div class="col-lg-4 col-md-4 col-sm-12">
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<b>Calle: </b> {{$trabajador->calle}}
-				</li>
-				<li class="list-group-item">
-					<b>Nro: </b> {{$trabajador->nro}}
-				</li>
-				<li class="list-group-item">
-					<b>Entre calles: </b> {{$trabajador->entre_calles}}
-				</li>
-				<li class="list-group-item">
-					<b>Localidad: </b> {{$trabajador->localidad}}
-				</li>
-				<li class="list-group-item">
-					<b>Partido: </b> {{$trabajador->partido}}
-				</li>
-				<li class="list-group-item">
-					<b>Codigo postal: </b> {{$trabajador->cod_postal}}
-				</li>
+			<hr>
+			<div class="show mt-2 px-2" id="infoCaratula">
+				@if ($caratula)
+				
+				<div class="row">
+					@if ($caratula->patologias && count($caratula->patologias) > 0)
+					<div class="col-4">
+						<b>Últimas Patologías:</b>
+						<div class="d-flex flex-wrap flex-row">
+							@foreach ($caratula->patologias as $patologia)
+							<span class="badge badge-danger mr-1">{{ $patologia->nombre }}</span>
+							@endforeach
+						</div>
+					</div>
+					@else
+					<div class="col-4"><b>Últimas Patologías:</b><br>No fue cargado</div>
+					@endif
 
-			</ul>
-		</div>
-		<div class="col-sm-12">
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<b>Observaciones: </b> {{$trabajador->observaciones}}
-				</li>
-			</ul>
+					<div class="col-4"><b>Medicación habitual:</b><br>{{ $caratula->medicacion_habitual }}</div>
+					<div class="col-4"><b>Antecedentes:</b><br>{{ $caratula->antecedentes }}</div>
+					<div class="col-4"><b>Alergias:</b><br>{{ $caratula->alergias }}</div>
+					<div class="col-4"><b>Peso:</b><br>{{ $caratula->peso }}</div>
+					<div class="col-4"><b>Altura:</b><br>{{ $caratula->altura }}</div>
+					<div class="col-4"><b>IMC:</b><br>{{ $caratula->imc }}</div>
+					<div class="col-4"><b>Última actualización:</b><br>{{ $caratula->created_at_formatted }} hs.</div>
+				</ul>
+				@else
+				<div class="p-4 alert alert-info">Sin contenido cargado aún</div>
+				<a href="{{ route('empleados.nominas.caratulas.create', $trabajador->id) }}" class="btn btn-primary">
+					<i class="fal fa-plus"></i>
+					<span>Crear carátula</span>
+				</a>
+				@endif
+			</div>
 		</div>
 	</div>
+
+
+
 
 
 	{{-- TESTEOS Y VACUNAS --}}
@@ -247,6 +232,29 @@
 			</div>
 		</div>
 
+
+		{{-- Nutricionales --}}
+		<div class="card">
+			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingNutricional">
+				<h2 class="mb-0 d-flex">
+					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+						data-target="#collapseNutricional" aria-expanded="false" aria-controls="collapseNutricional">
+						<h6>Consultas Nutricionales ({{ count($consultas_nutricionales) }})</h6>
+					</button>
+					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseNutricional"
+						class="fal fa-chevron-circle-down text-white"></i>
+				</h2>
+			</div>
+			<div id="collapseNutricional" class="collapse {{count($consultas_nutricionales) ? 'show' : ''}}"
+				aria-labelledby="headingNutricional" data-parent="#accordionExample">
+
+				<div class="card-body table-responsive">
+					@include('modulos.perfil_trabajador.consultas_nutricionales_tabla')
+				</div>
+
+			</div>
+		</div>
+
 		{{-- EXAMENES --}}
 		<div class="card">
 			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingThree">
@@ -273,5 +281,60 @@
 
 
 	</div>
+
+	<div class="accordion w-100" id="accordionInfoInicial">
+		{{-- Acorddeon Info Principal --}}
+		<div class="card">
+			<div class="card-header bg-dark text-white" id="headingInfoInicial">
+				<h2 class="mb-0 d-flex">
+					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+						data-target="#collapseInfoInicial" aria-expanded="false" aria-controls="collapseInfoInicial">
+						<h6>Información adicional</h6>
+					</button>
+					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseInfoInicial"
+						class="fal fa-chevron-circle-down text-white"></i>
+				</h2>
+			</div>
+			<div id="collapseInfoInicial" class="collapse ? 'show' : ''}}" aria-labelledby="headingInfoInicial"
+				data-parent="#accordionInfoInicial">
+				<div class="card-body table-responsive ">
+					<div class="col-12">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">
+								<b>Calle: </b> {{$trabajador->calle}}
+							</li>
+							<li class="list-group-item">
+								<b>Nro: </b> {{$trabajador->nro}}
+							</li>
+							<li class="list-group-item">
+								<b>Entre calles: </b> {{$trabajador->entre_calles}}
+							</li>
+							<li class="list-group-item">
+								<b>Localidad: </b> {{$trabajador->localidad}}
+							</li>
+							<li class="list-group-item">
+								<b>Partido: </b> {{$trabajador->partido}}
+							</li>
+							<li class="list-group-item">
+								<b>Código postal: </b> {{$trabajador->cod_postal}}
+							</li>
+
+						</ul>
+					</div>
+					<div class="col-sm-12">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">
+								<b>Observaciones: </b> {{$trabajador->observaciones}}
+							</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
 
 </div>

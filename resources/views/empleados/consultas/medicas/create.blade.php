@@ -29,14 +29,21 @@
 		@endforeach
 		@endif
 
+		<div class="tarjeta" id="caratula">
+			<p class="alert alert-info">Seleccione un trabajador de la nómina</p>
+			{{-- Se completa por JS --}}
+		</div>
+
 		<div class="tarjeta">
 			<form id="form_guardar_consulta_medica" action="{{action('EmpleadoConsultaMedicaController@store')}}"
 				accept-charset="UTF-8" method="post">
 				@csrf
+				<input type="hidden" name="id_cliente_actual" id="id_cliente_actual"
+					value="{{auth()->user()->id_cliente_actual}}">
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Trabajador: <span style="color: red;">*</span></label>
-						<select name="nomina" class="form-control select_2" required>
+						<select id="id_nomina" name="nomina" class="form-control select_2" required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($nominas as $nomina)
 							<option value="{{$nomina->id}}" {{ old('nomina')==$nomina->id ? 'selected' : '' }}
@@ -60,14 +67,15 @@
 						<select name="tipo" class="form-control" required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($diagnostico_consultas as $tipo)
-							<option value="{{$tipo->id}}" {{ old('tipo')==$tipo->id ? 'selected' : '' }}>{{$tipo->nombre}}</option>
+							<option value="{{$tipo->id}}" {{ old('tipo')==$tipo->id ? 'selected' : ''
+								}}>{{$tipo->nombre}}</option>
 							@endforeach
 						</select>
 					</div>
 					<div class="form-group col-md-3">
 						<label>Fecha <span style="color: red;">*</span> </label>
 						<input required id="data_picker_gral" name="fecha" type="text" class="form-control"
-							value="{{ old("fecha") }}">
+							value="{{ old(" fecha") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Amerita salida <span style="color: red;">*</span></label>
@@ -105,7 +113,7 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>Peso</label>
-						<input name="peso" type="number" class="form-control" value="{{ old("peso") }}">
+						<input name="peso" type="number" class="form-control" value="{{ old("peso") }}" step="0.01" min="1">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Altura</label>
@@ -176,12 +184,14 @@
 
 
 
+@include('../../modulos/modales_crud_consultas')
+
 <!-- Modal Crear tipo diagnostico consulta -->
-<div class="modal fade" id="crear_diagnostico" tabindex="-1" aria-labelledby="diagnostico_titulo" aria-hidden="true">
+<div class="modal fade" id="crear_diagnostico" tabindex="-1">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="diagnostico_titulo">Crear tipo de diagnostico</h5>
+				<h5 class="modal-title" id="diagnostico_titulo">Crear tipo de diagnóstico</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -190,8 +200,7 @@
 
 				<div class="row">
 					<div class="col-md-12">
-						<form action="{{action('EmpleadoConsultaMedicaController@tipo')}}" accept-charset="UTF-8"
-							method="post">
+						<form action="{{action('EmpleadoConsultaMedicaController@tipo')}}" accept-charset="UTF-8" method="post">
 							{{ csrf_field() }}
 							<div class="form-group">
 								<label>Nombre</label>
@@ -210,10 +219,8 @@
 </div>
 
 
-
 <!-- Modal Ver tipo Diagnostico consulta -->
-<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1" aria-labelledby="ver_tipo_diagnostico_titulo"
-	aria-hidden="true">
+<div class="modal fade" id="ver_tipo_diagnostico" tabindex="-1">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -239,7 +246,8 @@
 								<tr>
 									<td>{{$tipo->nombre}}</td>
 									<td class="acciones_tabla" scope="row">
-										<form class="" action="{{route('consultas.medicas.tipo_delete', $tipo->id)}}" method="post">
+										<form class="" action="{{route('consultas.medicas.tipo_delete', $tipo->id)}}"
+											method="post">
 											{{ csrf_field() }}
 											<input type="hidden" name="_method" value="DELETE">
 											<button title="Eliminar" type="submit">
@@ -260,10 +268,64 @@
 </div>
 
 
-
-
-
-@include('../../modulos/modales_crud_consultas')
+<!-- Modal edicion Caratula -->
+<div class="modal fade" id="modalEdicionCaratula" tabindex="-1" >
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalEdicionCaratulaLabel">Editar Carátula</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="formEdicionCaratula">
+				<div class="modal-body">
+					<!-- Primera Fila -->
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="cliente">Cliente</label>
+							<input type="text" name="cliente" class="form-control" id="cliente" disabled>
+							<input type="hidden" name="cliente_id" id="cliente_id">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="trabajador">Trabajador</label>
+							<input type="text" name="trabajador" class="form-control" id="trabajador" disabled>
+							<input type="hidden" name="trabajador_id" id="trabajador_id">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="patologia">Patología</label>
+							<input type="text" name="patologia" class="form-control" id="patologia">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="peso">Peso (kg)</label>
+							<input type="number" name="peso" class="form-control" id="peso">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="altura">Altura (cm)</label>
+							<input type="number" name="altura" class="form-control" id="altura">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="imc">IMC</label>
+							<input type="text" name="imc" class="form-control" id="imc">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="alergias">Alergias</label>
+							<textarea name="alergias" class="form-control" id="alergias"></textarea>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="medicacion_habitual">Medicación Habitual</label>
+							<textarea name="medicacion_habitual" class="form-control"
+								id="medicacion_habitual"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+						<button type="submit" class="btn btn-primary btn-sm">Guardar Cambios</button>
+					</div>
+			</form>
+		</div>
+	</div>
+</div>
 
 
 

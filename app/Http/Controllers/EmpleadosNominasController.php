@@ -26,7 +26,9 @@ use App\Preocupacional;
 use App\NominaImportacion;
 use App\NominaHistorial;
 use App\NominaClienteHistorial;
+use App\Caratula;
 use Intervention\Image\Facades\Image;
+use App\User;
 
 
 class EmpleadosNominasController extends Controller
@@ -38,6 +40,7 @@ class EmpleadosNominasController extends Controller
 
 	public function index()
 	{
+		
 		$clientes = $this->getClientesUser();
 		return view('empleados.nominas', compact('clientes'));
 	}
@@ -130,6 +133,9 @@ class EmpleadosNominasController extends Controller
 		}
 		if (isset($request->observaciones) && !empty($request->observaciones)) {
 			$trabajador->observaciones = $request->observaciones;
+		}
+		if (isset($request->legajo) && !empty($request->legajo)) {
+			$trabajador->legajo = $request->legajo;
 		}
 
 		if($request->fecha_nacimiento){
@@ -279,6 +285,7 @@ class EmpleadosNominasController extends Controller
 		$trabajador->observaciones = $request->observaciones;
 		$trabajador->estado = $request->estado;
 		$trabajador->sector = $request->sector;
+		$trabajador->legajo = $request->legajo;
 		if ($request->estado == 0) {
 			$trabajador->fecha_baja =  Carbon::now();
 		}else{
@@ -453,7 +460,7 @@ class EmpleadosNominasController extends Controller
 	{
 
 
-		if(!auth()->user()->id_cliente_actual) return back()->with();
+		if(!auth()->user()->id_cliente_actual) return back()->with('error', 'Debes estar trabajando en algún cliente para poder realizar esta acción.');
 
 		if (!$request->hasFile('archivo')) return back()->with('error', 'No has subido ningún archivo.');
 
@@ -466,7 +473,6 @@ class EmpleadosNominasController extends Controller
 		// Lee los nombres de los campos
 		$nombres_campos = [];
 		$registros = [];
-		///$num_campos = count($nombres_campos);
 		$indice = 0;
 		$error = false;
 
@@ -475,6 +481,25 @@ class EmpleadosNominasController extends Controller
 
 			if($indice!==0){
 
+			// Filtrar filas completamente vacías o con solo espacios en blanco
+            $fila_tiene_contenido = false;
+            
+			// Verificar si al menos los campos obligatorios tienen contenido
+			if (!empty(trim($fila[0])) || !empty(trim($fila[1])) || !empty(trim($fila[2])) || !empty(trim($fila[3]))) {
+				$fila_tiene_contenido = true;
+			}
+			
+			// También verificar si algún otro campo tiene contenido
+			if (!$fila_tiene_contenido) {
+				for ($i = 4; $i < count($fila); $i++) {
+					if (!empty(trim($fila[$i]))) {
+						$fila_tiene_contenido = true;
+						break;
+					}
+				}
+			}
+
+			if ($fila_tiene_contenido) {
 				$registros[] = (object) [
 					'nombre'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[0]),
 					'dni'=>$fila[1],
@@ -490,9 +515,11 @@ class EmpleadosNominasController extends Controller
 					'localidad'=>isset($fila[10]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[10]) : null,
 					'partido'=>isset($fila[11]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[11]) : null,
 					'cod_postal'=>isset($fila[12]) ? $fila[12] : null,
-					'observaciones'=>isset($fila[13]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[13]) : null
+					'observaciones'=>isset($fila[13]) ? iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[13]) : null,
+					'legajo'=>isset($fila[14]) ? $fila[14] : null,
 
 				];
+			}
 			}else{
 
 				if(
@@ -510,6 +537,11 @@ class EmpleadosNominasController extends Controller
 		}
 		fclose($fichero);
 
+		// Verificar si no hay registros válidos después del filtrado
+		if (empty($registros)) {
+			return back()->with('error', 'El archivo no contiene registros válidos. Asegúrate de que tenga al menos un empleado con los campos obligatorios completos.');
+    	}
+
 		if($error){
 			return back()->with('error', 'El excel tiene datos mal cargados en la fila '.($indice+1).'<br>Los campos nombre, cuil, estado y sector son obligatorios.');
 		}
@@ -523,9 +555,13 @@ class EmpleadosNominasController extends Controller
 		$empleados_transferidos = [];
 
 		// Traigo todos los empleados de la nómina actual del cliente actual
-		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
 		// $nomina_actual = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+
+		// tener en cuenta toda la nómina para saber si ya existe el trabajador en otro cliente
 		$nomina_actual = Nomina::all();
+		$nomina_actual_cliente = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)->get();
+
+		///dd($nomina_actual->count());
 
 		///validar registros
 		$errores = [];
@@ -577,23 +613,30 @@ class EmpleadosNominasController extends Controller
 
 			}
 
-			foreach($nomina_actual as $n_actual){
-				if($n_actual->dni == $registro->dni && $n_actual->id_cliente!=auth()->user()->id_cliente_actual && $request->mover==='1'){
-					if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($n_actual)){
-						$errores[] = (object) [
-							'fila'=>$kr+2,
-							'columna'=>'Nombre',
-							'valor'=>$registro->nombre,
-							'error'=>$has_ausentismo_tarea_liviana
-						];
+
+
+			if($request->mover==='1'){
+				foreach($nomina_actual as $n_actual){
+					if($n_actual->dni == $registro->dni && $n_actual->id_cliente != auth()->user()->id_cliente_actual ){
+
+						// compruebo si tiene ausentismo o tarea liviana activo
+						if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($n_actual)){
+							$errores[] = (object) [
+								'fila'=>$kr+2,
+								'columna'=>'Nombre',
+								'valor'=>$registro->nombre,
+								'error'=>$has_ausentismo_tarea_liviana
+							];
+						}
+						break;
 					}
-					break;
 				}
+
 			}
+
 
 		}
 
-		//dd($errores);
 		if(!empty($errores)) return back()->with(compact('errores'));
 
 
@@ -607,7 +650,6 @@ class EmpleadosNominasController extends Controller
 				}
 			}
 
-			//dd($empleado_existente);
 
 			if(!$empleado_existente){
 				// Crear empleado inexistente
@@ -630,6 +672,7 @@ class EmpleadosNominasController extends Controller
 			}
 
 			///dd($nomina);
+			///dd($empleados_inexistentes);
 
 
 			// Actualizar empleado existente
@@ -655,6 +698,7 @@ class EmpleadosNominasController extends Controller
 				$nomina->partido = $registro->partido;
 				$nomina->cod_postal = $registro->cod_postal;
 				$nomina->observaciones = $registro->observaciones;
+				$nomina->legajo = $registro->legajo;
 				$nomina->estado = strtolower($registro->estado)=='activo' ? 1 : 0;
 				$nomina->fecha_baja = strtolower($registro->estado)=='activo' ? null : Carbon::now();
 				$nomina->save();
@@ -693,23 +737,32 @@ class EmpleadosNominasController extends Controller
 		endforeach; // end registros
 
 
-		$nomina_actual = Nomina::all();
+		//dd($nomina_actual->count());
+
+		// ojo con esto!
+		//$nomina_actual = Nomina::where('id_cliente','!=',auth()->user()->id_cliente_actual)->get();
 
 
-		foreach ($nomina_actual as $ke=>$empleado){
-			//$empleado->refresh();
-			foreach($registros as $kr=>$registro){
-				if($empleado->dni==$registro->dni && $empleado->email==$registro->email && $empleado->id_cliente==auth()->user()->id_cliente_actual){
-					$empleados_borrables[] = $empleado->id;
-					break;
+		if($request->borrar==='1'){
+
+			foreach ($nomina_actual_cliente as $ke=>$empleado){
+				//$empleado->refresh();
+				foreach($registros as $kr=>$registro){
+					if($empleado->dni==$registro->dni && $empleado->email==$registro->email){
+						continue 2;
+					}
 				}
+
+				$empleados_borrables[] = $empleado->id;
 			}
+
+			//dd($empleados_borrables);
+
+			// Antes se borrada el registro. Ahora se actualiza el estado a Inactivo
+			// Nomina::whereIn('id',$empleados_borrables)->delete();
+			Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 		}
 
-
-		// Antes se borrada el registro. Ahora se actualiza el estado a Inactivo
-		// Nomina::whereIn('id',$empleados_borrables)->delete();
-		if($request->borrar==='1') Nomina::whereIn('id', $empleados_borrables)->update(['estado' => 0]);
 
 
 
@@ -838,61 +891,50 @@ class EmpleadosNominasController extends Controller
 		return view('empleados.nominas.movimientos',compact('clientes'));
 	}
 	public function movimientos_search(Request $request){
-
-
-		$nominas_clientes = Nomina::select('*')
-			->withCount('movimientos_cliente')
-			->having('movimientos_cliente_count','>',1)
-			->pluck('id');
 		$cliente_ids = $this->getClientesIds();
-
-		//DB::raw('COUNT(*) as cantidad')
-		$query = NominaClienteHistorial::select('*')
-			->with(['trabajador','cliente','usuario'])
-			->whereIn('nomina_id',$nominas_clientes)
-			->whereIn('cliente_id',$cliente_ids)
-
-			->orderBy('created_at','desc');
-
-		$total = $query->count();
-
-		if($request->cliente_id){
-			$query->where('cliente_id',$request->cliente_id);
-		}
-
-		if(isset($request->search)){
-			$search = '%'.$request->search.'%';
-			$query->where(function($query) use($search){
-				$query
-					->whereHas('trabajador',function($query) use($search){
-						$query->where('nombre','like',$search);
-					})
-					->orWhereHas('cliente',function($query) use($search){
-						$query->where('nombre','like',$search);
-					})
-					->orWhereHas('usuario',function($query) use($search){
-						$query->where('nombre','like',$search);
-					});
-			});
-		}
-
-		if($request->order){
-			//$sort = $request->columns[$request->order[0]['column']]['name'];
-			//$dir  = $request->order[0]['dir'];
-			//$query->orderBy($sort,$dir);
-		}
-
-		$total_filtered = $query->count();
-
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'request'=>$request->all()
-		];
+		return $this->movimientosListado($cliente_ids,$request);
 	}
 
+	/**
+	 * Obtener la última carátula
+	 */
+	public function getUltimaCaratula()
+	{
+		// Opción 1: Última carátula general
+		$ultimaCaratula = Caratula::latest('id')->first();
+		
+		// Opción 2: Última carátula con relaciones
+		// $ultimaCaratula = Caratula::with(['nomina', 'patologias', 'cliente'])->latest()->first();
+		
+		// Opción 3: Última carátula del cliente actual
+		// $ultimaCaratula = Caratula::where('id_cliente', auth()->user()->id_cliente_actual)->latest()->first();
+		
+		// Opción 4: Última carátula de un trabajador específico
+		// $ultimaCaratula = Caratula::where('id_nomina', $idNomina)->latest()->first();
+		
+		return $ultimaCaratula;
+	}
+
+	/**
+	 * Obtener la última carátula de un trabajador específico
+	 */
+	public function getUltimaCaratulaTrabajador($idNomina)
+	{
+		return Caratula::where('id_nomina', $idNomina)
+			->with(['nomina', 'patologias'])
+			->latest()
+			->first();
+	}
+
+	/**
+	 * Obtener la última carátula del cliente actual
+	 */
+	public function getUltimaCaratulaCliente()
+	{
+		return Caratula::where('id_cliente', auth()->user()->id_cliente_actual)
+			->with(['nomina', 'cliente'])
+			->latest()
+			->first();
+	}
 
 }

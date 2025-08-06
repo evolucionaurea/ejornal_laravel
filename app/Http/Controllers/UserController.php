@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Configuracion;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,11 @@ class UserController extends Controller
 
 			$user = Auth::user();
 
+			$mantenimiento = $this->validarMantenimiento();
+			if ($user->id_rol != 1 && !$mantenimiento) {
+				Auth::logout();
+				return view('mantenimiento');
+			}
 			// Verificar si el usuario ya tiene una sesión activa
 			$existingSession = Sesion::where('id_user', $user->id)->first();
 
@@ -180,5 +186,16 @@ class UserController extends Controller
 			$user->delete();
 			return back()->with('success', 'Usuario eliminado con éxito');
 
+		}
+
+
+		private function validarMantenimiento()
+		{
+			$data = Configuracion::first();
+			if (gettype($data) == 'object' && $data->online == 1) {
+				return true;
+			}else {
+				return false;
+			}
 		}
 }

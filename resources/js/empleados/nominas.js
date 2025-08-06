@@ -45,9 +45,24 @@ $(()=>{
 					name:'telefono',
 					className:'align-middle border-left',
 					render:v=>{
-						console.log(v.telefono);
-
 						return v.telefono==null ? '<span class="text-muted font-italic">[no cargado]</span>' : `<a class="text-dark" href="tel:${v.telefono}">${v.telefono}</a>`
+					}
+				},
+				{
+					data:row=>row,
+					name:'legajo',
+					className:'align-middle border-left',
+					render:v=>{
+						return v.legajo==null ? '<span class="text-muted font-italic">[no cargado]</span>' : v.legajo
+					}
+				},
+				{
+					data:row=>row,
+					name:'ultima_caratula',
+					className:'align-middle border-left text-center',
+					orderable:false,
+					render:v=>{
+						return v.ultima_caratula ? '<span class="badge badge-success">si</span>' : '<span class="badge badge-danger">no</span>'
 					}
 				},
 				{
@@ -70,7 +85,7 @@ $(()=>{
 				{
 					data:'estado',
 					name:'estado',
-					className:'align-middle border-left',
+					className:'align-middle border-left text-center',
 					render:v=>{
 						return `<span class="badge badge-${v==1 ? 'success' : 'danger'}">${v==1 ? 'activo' : 'inactivo'}</span>`
 					}
@@ -90,35 +105,14 @@ $(()=>{
 
 						let label = ''
 						let nombre = ''
-						const ahora = new Date
-
-
 						if(v.ausentismos.length==0) return ''
 
 						let ausente = false
-
 						v.ausentismos.map(ausentismo=>{
-
 							if(ausentismo.ausente_hoy){
 								ausente = true
 								nombre = `<div class="small text-muted font-italic">${ausentismo.tipo.nombre}</div>`
 							}
-							/*if(ausentismo.fecha_final==null) {
-								ausente = true
-							}else{
-								const fecha_arr = ausentismo.fecha_final.split('/')
-								const fecha_final = new Date(parseInt(fecha_arr[2]),parseInt(fecha_arr[1])-1,parseInt(fecha_arr[0]),23,59,59)
-
-								if(v.id==5098){
-									console.log(ausentismo)
-								}
-
-								if(fecha_final>=ahora){
-									ausente = true
-									nombre = `<div class="small text-muted font-italic">${ausentismo.tipo.nombre}</div>`
-								}
-							}*/
-
 						})
 
 						if(ausente){

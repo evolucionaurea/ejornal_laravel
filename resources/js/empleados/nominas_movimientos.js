@@ -21,7 +21,10 @@ $(()=>{
 					name:'trabajador',
 					render:v=>{
 						if(v==null) return ''
-						return v.nombre
+						return `
+							<div>${v.nombre}</div>
+							<div class="small">DNI: ${v.dni}</div>
+						`
 					}
 				},
 				{

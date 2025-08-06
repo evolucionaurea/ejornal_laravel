@@ -27,15 +27,14 @@ $(()=>{
 					className:'align-middle',
 					name:'nombre',
 					data:'trabajador',
-					render:v=>{
+					render:v=>{						
 						if(v==null) return '<span class="text-muted font-italic">[trabajador no encontrado]</span>'
 						return `
 							<div>${v.nombre}</div>
 							<div class="small">DNI: ${v.dni}</div>
 							`
 					}
-				},
-
+				},				
 				{
 					className:'align-middle',
 					name:'estado',
@@ -48,6 +47,17 @@ $(()=>{
 
 				{
 					className:'align-middle',
+					name:'legajo',
+					data:'trabajador',
+					render:v=>{		
+						if(v.legajo==null) return '<span class="text-muted font-italic">[Legajo no encontrado]</span>'
+						return `
+							<div>${v.legajo}</div>
+							`
+					}
+				},
+				{
+					className:'align-middle',
 					name:'fecha',
 					data:'fecha'
 				},
@@ -55,13 +65,22 @@ $(()=>{
 				{
 					className:'align-middle',
 					name:'derivacion_consulta',
-					data:'derivacion_consulta'
+					data:row=>row,
+					render:(v)=>{
+						if(v.derivacion_consulta == null) return 'N/A';
+						return v.derivacion_consulta
+					}
 				},
 
 				{
 					className:'align-middle',
 					name:'user',
-					data:'user'
+					// data:'user'
+					data:row=>row,
+					render:(v)=>{						
+						if(v.user == null) return '[No registrado]';
+						return v.user
+					}
 				},
 
 				{
@@ -69,10 +88,13 @@ $(()=>{
 					name:'acciones',
 					data:row=>row,
 					render:(v,type,row,meta)=>{
-						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return ''
+						console.log(v);
+						
+						if(meta.settings.json.fichada_user!=1 && meta.settings.json.fichar_user) return '';
+						let tipoRuta = v.tipo === 'Médica' ? 'medicas' : (v.tipo === 'Nutricional' ? 'nutricionales' : 'enfermeria');
 						return `
 						<div class="acciones_tabla">
-							<a title="Ver" href="${(v.tipo == 'Médica') ? 'medicas' : 'enfermeria'}/${v.id}">
+							<a title="Ver" href="${tipoRuta}/${v.id}">
 								<i class="fas fa-eye"></i>
 							</a>
 						</div>`

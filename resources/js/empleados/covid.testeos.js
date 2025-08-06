@@ -12,7 +12,7 @@ $(()=>{
 		delete_message:'¿Seguro deseas borrar este testeo?',
 		render_row:testeo=>{
 			return $(`
-				<tr>
+			<tr data-id="${testeo.id}">
 				<td>${testeo.nombre}</td>
 				<td>${testeo.tipo}</td>
 				<td>${testeo.fecha}</td>

@@ -50,84 +50,44 @@
 
 			{{-- HEADER --}}
 			<div class="row">
+				<div class="col-lg-3 text-center">
 
-				<div class="col-lg-4 col-md-3 col-sm-12 text-center">
 					@if ($ausencia->trabajador->foto)
-					<div class="foto-perfil" style="background-image: url({{ $ausencia->trabajador->photo_url }})"></div>
+					<div class="foto-perfil" style="background-image: url({{ $ausencia->trabajador->photo_url }})">
+					</div>
 					@else
 					<i class="fas fa-user fa-10x"></i>
 					@endif
-					<br>
-					<br>
-					<h5>
-						<a href="{{url('empleados/nominas/'.$ausencia->trabajador->id)}}" class="text-info" title="Ver Historial">{{$ausencia->trabajador->nombre}}</a>
-					</h5>
-
-					@if( $ausencia->id_cliente != $ausencia->trabajador->id_cliente)
-					<span class="badge badge-dark">transferido</span>
-					@endif
 
 				</div>
+				<div class="col-lg-4">
+					<div class="font-weight-bold">{{ $ausencia->trabajador->nombre }}</div>
+					<ul class="list-group">
+						<li class="list-group-item p-2 small">DNI: {!! $ausencia->trabajador->dni ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
+						<li class="list-group-item p-2 small">CUIL: {!! $ausencia->trabajador->email ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
+						<li class="list-group-item p-2 small">Teléfono: {!! $ausencia->trabajador->telefono ?? '<i class="text-muted">[no cargado]</i>' !!}</li>
+						<li class="list-group-item p-2 small">
+							Estado:
+							@if( $ausencia->id_cliente != $ausencia->trabajador->id_cliente)
+							<span class="badge badge-dark">transferido</span>
+							@else
+							<span class="badge badge-{{ $ausencia->trabajador->estado ? 'success' : 'danger' }}">{{ $ausencia->trabajador->estado ? 'activo' : 'inactivo' }}</span>
+							@endif
+						</li>
+						<li class="list-group-item p-2 small">Sector: {{ $ausencia->trabajador->sector }}</li>
+						<li class="list-group-item p-2 small">Fecha Alta: {{ $ausencia->trabajador->created_at->format('d/m/Y') }}</li>
+					</ul>
+				</div>
 
-				<div class="col-lg-8 col-md-9 col-sm-12">
-					<h4 class="mb-1">Datos del Ausentismo</h4>
-					<hr class="hr-line-dashed">
-
-					<div class="row">
-						<div class="col-lg-6">
-
-							<ul class="list-group list-group-flush">
-								<li class="list-group-item">
-									<b>Tipo: </b> {{$ausencia->tipo->nombre}}
-								</li>
-								<li class="list-group-item">
-									<b>Fecha inicio: </b> {{ (!empty($ausencia->fecha_inicio)) ?
-									date('d/m/Y',strtotime($ausencia->fecha_inicio)) : "" }}
-								</li>
-								<li class="list-group-item">
-									<b>Fecha final: </b> {{ (!empty($ausencia->fecha_final)) ?
-									date('d/m/Y',strtotime($ausencia->fecha_final)) : "" }}
-								</li>
-								<li class="list-group-item">
-									<b>Fecha en que regresó: </b> {{ (!empty($ausencia->fecha_regreso_trabajar)) ?
-									date('d/m/Y',strtotime($ausencia->fecha_regreso_trabajar)) : "" }}
-								</li>
-								<li class="list-group-item">
-									<b>Usuario que lo cargó:</b> {{ $ausencia->user }}
-								</li>
-							</ul>
-						</div>
-
-						<div class="col-lg-6">
-							<ul class="list-group list-group-flush">
-								<li class="list-group-item">
-									<b>Email: </b> {{$ausencia->trabajador->email}}
-								</li>
-								<li class="list-group-item"><b>Estado: </b>
-									@if ($ausencia->estado == 1)
-									Activo
-									@else
-									Inactivo
-									@endif
-								</li>
-								<li class="list-group-item">
-									<b>Telefono: </b> {{$ausencia->trabajador->telefono}}
-								</li>
-								<li class="list-group-item">
-									<b>Archivo adjunto: </b>
-									@if ($ausencia->archivo == null)
-									No se adjuntó un archivo
-									@else
-									<a target="_blank" class="btn btn-info btn-tiny"
-										href="{{route('ausentismos.archivo', $ausencia->id)}}">
-										<i class="fa fa-file fa-fw"></i> {{$ausencia->archivo}}
-									</a>
-									@endif
-								</li>
-							</ul>
-
-						</div>
-					</div>
+				<div class="col-lg-4 border-left">
+					<div class="font-weight-bold">Datos del Ausentismo</div>
+					<ul class="list-group">
+						<li class="list-group-item p-2 small">Tipo: {{ $ausencia->tipo->nombre }}</li>
+						<li class="list-group-item p-2 small">Fecha Inicio: {{ $ausencia->fecha_inicio->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2 small">Fecha Final: {{ $ausencia->fecha_final->format('d/m/Y') }}</li>
+						<li class="list-group-item p-2 small">Total días: {{ $ausencia->total_days }}</li>
+						<li class="list-group-item p-2 small">Usuario que registró: {{ $ausencia->user }}</li>
+					</ul>
 				</div>
 
 			</div>

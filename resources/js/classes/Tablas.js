@@ -106,13 +106,11 @@ export default class Tablas {
 			tbody.append(tr)
 		})
 
-
 		this.table.append(tbody)
 		if(!$.fn.dataTable.isDataTable(this.table)){
 			this.first_render = false
 			this.datatable_instance = this.table.DataTable(window.datatable_options);
 		}
-
 
 	}
 
@@ -125,25 +123,25 @@ export default class Tablas {
 			this.table.attr('id',rand_id)
 		}
 		this.table_id = this.table.attr('id')
-		console.log(this.table_id)
 
 
 		/*Borrar*/
-		this.table.on('click','[data-toggle="delete"]',btn=>{
-			const id = $(btn.currentTarget).attr('data-id')
+		this.table.on('click','[data-toggle="delete"]',async btn=>{
+			let tr = $(btn.currentTarget).closest('tr')
+			if(tr.hasClass('child')){
+				let tr_prev = $(btn.currentTarget).closest('tr').prev()
+				if(tr_prev.hasClass('parent')) tr = tr_prev
+			}
+			const id = tr.attr('data-id')
 
-			SwalWarning.fire({
+			const swal_warn = await SwalWarning.fire({
 				title:'delete_message' in this ? this.delete_message : '¿Seguro deseas borrar este item?'
 			})
-			.then(async swal=>{
-				if(swal.value){
-					const response = await this.delete(id)
-					//console.log(response)
-					//let data = await this.get()
-					//this.render_table(data)
-					window.location.reload()
-				}
-			})
+			if(!swal_warn.value) return false
+
+			const response = await this.delete(id)
+			window.location.reload()
+
 		})
 		$.extend(window.datatable_options,this.datatable_options)
 
@@ -175,7 +173,8 @@ export default class Tablas {
 
 			/*Mostrar Todo*/
 			this.modulo_busqueda.find('[data-toggle="clear"]').click(btn=>{
-				this.modulo_busqueda.find('[name]').val('')
+				btn.preventDefault()
+				this.modulo_busqueda.find('[name]').not('[data-toggle="no-reset"]').val('')
 				this.modulo_busqueda.find('[data-toggle="search"]').trigger('click')
 			})
 

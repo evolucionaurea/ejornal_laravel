@@ -21,7 +21,6 @@ class ClientesAusentismosController extends Controller
 		->first();
 
 		$tipos = AusentismoTipo::get();
-
 		return view('clientes.ausentismos', compact('cliente','tipos'));
 	}
 

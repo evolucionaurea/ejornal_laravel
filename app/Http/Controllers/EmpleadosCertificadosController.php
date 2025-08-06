@@ -34,7 +34,7 @@ class EmpleadosCertificadosController extends Controller
 				$query
 					->select('id','fecha_inicio','fecha_final','fecha_regreso_trabajar','id_trabajador','id_tipo')
 					->with(['trabajador'=>function($query){
-						$query->select('id','nombre');
+						$query->select('id','nombre','dni');
 					}])
 					->with(['tipo'=>function($query){
 						$query->select('id','nombre');
@@ -71,7 +71,10 @@ class EmpleadosCertificadosController extends Controller
 				$query
 					->whereHas('ausentismo',function($query) use($filtro){
 						$query->whereHas('trabajador',function($query) use($filtro){
-							$query->where('nombre','LIKE',$filtro);
+							$query
+								->where('nombre','LIKE',$filtro)
+								->orWhere('dni','LIKE',$filtro)
+								->orWhere('email','LIKE',$filtro);
 						});
 					})
 					->orWhere('institucion','LIKE',$filtro)

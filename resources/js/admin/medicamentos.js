@@ -14,7 +14,7 @@ $(()=>{
 		render_row:medicamento=>{
 
 			return $(`
-				<tr>
+			<tr data-id="${medicamento.id}" >
 				<td>${medicamento.nombre}</td>
 				<td class="text-center">${medicamento.stock_total==0 ? '[sin stock]' : medicamento.stock_total}</td>
 				<td class="text-center">${medicamento.suministrados_total}</td>

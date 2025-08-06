@@ -4,10 +4,8 @@
 Route::get('/', 'webOficialController@index')->name('web_oficial');
 Route::post('login', 'UserController@login');
 
-
-
 // Rutas protegidas por autenticacion
-Route::group(['middleware' => ['autenticacion']], function () {
+Route::group(['middleware' => ['autenticacion', 'log.hits']], function () {
 
 	// Admin
 	require 'web_admin.php';
@@ -43,4 +41,8 @@ Route::group(['middleware' => ['autenticacion']], function () {
 // Ruta Error 404. Si no machea con ninguna ruta creada va a ésta
 Route::fallback(function(){
 	return view('errors.404');
+});
+Route::get('/migrar', function () {
+	Artisan::call('migrate');
+	return "Migraciones ejecutadas.";
 });

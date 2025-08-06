@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Traits\Clientes;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
+use App\ConsultaNutricional;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -42,12 +43,14 @@ class EmpleadoConsultasTodasController extends Controller
 	}
 
 
-	public function busqueda(Request $request)
+	public function busqueda(Request $request,$extended=false)
 	{
 
 		// Médicas
 		$medicas = ConsultaMedica::select(
 			'nominas.nombre',
+			'nominas.estado',
+			'nominas.legajo',
 			'consultas_medicas.id',
 			'consultas_medicas.id_nomina',
 			'consultas_medicas.id_diagnostico_consulta',
@@ -62,9 +65,26 @@ class EmpleadoConsultasTodasController extends Controller
 		->join('diagnostico_consulta', 'consultas_medicas.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_medicas.id_cliente', auth()->user()->id_cliente_actual);
 
+		if($extended){
+			$medicas->addSelect(
+				'consultas_medicas.amerita_salida',
+				'consultas_medicas.tratamiento',
+				'consultas_medicas.observaciones',
+				'consultas_medicas.peso',
+				'consultas_medicas.altura',
+				'consultas_medicas.imc',
+				'consultas_medicas.glucemia',
+				'consultas_medicas.saturacion_oxigeno',
+				'consultas_medicas.tension_arterial',
+				'consultas_medicas.frec_cardiaca'
+			);
+		}
+
 		// Enfermerías
 		$enfermerias = ConsultaEnfermeria::select(
 			'nominas.nombre',
+			'nominas.estado',
+			'nominas.legajo',
 			'consultas_enfermerias.id',
 			'consultas_enfermerias.id_nomina',
 			'consultas_enfermerias.id_diagnostico_consulta',
@@ -79,40 +99,106 @@ class EmpleadoConsultasTodasController extends Controller
 		->join('diagnostico_consulta', 'consultas_enfermerias.id_diagnostico_consulta', 'diagnostico_consulta.id')
 		->where('consultas_enfermerias.id_cliente', auth()->user()->id_cliente_actual);
 
+		if($extended){
+			$enfermerias->addSelect(
+				'consultas_enfermerias.amerita_salida',
+				DB::raw('NULL as tratamiento'),
+				'consultas_enfermerias.observaciones',
+				'consultas_enfermerias.peso',
+				'consultas_enfermerias.altura',
+				'consultas_enfermerias.imc',
+				'consultas_enfermerias.glucemia',
+				'consultas_enfermerias.saturacion_oxigeno',
+				'consultas_enfermerias.tension_arterial',
+				'consultas_enfermerias.frec_cardiaca'
+			);
+		}
+
+		// Nutricional
+		$nutricionales = ConsultaNutricional::select(
+			'nominas.nombre',
+			'nominas.estado',
+			'nominas.legajo',
+			'consultas_nutricionales.id',
+			'consultas_nutricionales.id_nomina',
+			DB::raw('NULL as id_diagnostico_consulta'), // Ajuste para que coincida con otras consultas
+			'consultas_nutricionales.fecha_atencion as fecha',
+			DB::raw('NULL as derivacion_consulta'),
+			'consultas_nutricionales.user', // Asegúrate de incluir el campo 'user' aquí
+			DB::raw('NULL as diagnostico'),
+			DB::raw('"Nutricional" as tipo')
+		)
+		->with('trabajador')
+		->join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
+		->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
+		
+		if ($extended) {
+			$nutricionales->addSelect(
+				DB::raw('NULL as amerita_salida'),
+				DB::raw('NULL as tratamiento'),
+				DB::raw('NULL as observaciones'),
+				DB::raw('NULL as peso'),
+				DB::raw('NULL as altura'),
+				DB::raw('NULL as imc'),
+				DB::raw('NULL as glucemia'),
+				DB::raw('NULL as saturacion_oxigeno'),
+				DB::raw('NULL as tension_arterial'),
+				DB::raw('NULL as frec_cardiaca')
+			);
+		}
+		
+
+
 
 		if ($request->search) {
 			$filtro = '%' . $request->search . '%';
 
 			$medicas->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhere('nominas.dni', 'like', $filtro)
+					->orWhere('nominas.legajo', 'like', $filtro)
 					->orWhere('consultas_medicas.derivacion_consulta', 'like', $filtro)
 					->orWhere('consultas_medicas.tratamiento', 'like', $filtro)
 					->orWhere('consultas_medicas.observaciones', 'like', $filtro)
+					->orWhereRaw("'Médica' LIKE ?", [$filtro])
 					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
 			});
 
 			$enfermerias->where(function ($query) use ($filtro) {
 				$query->where('nominas.nombre', 'like', $filtro)
 					->orWhere('consultas_enfermerias.derivacion_consulta', 'like', $filtro)
+					->orWhereRaw("'Enfermería' LIKE ?", [$filtro])
 					->orWhere('diagnostico_consulta.nombre', 'like', $filtro);
 			});
+
+			$nutricionales->where(function ($query) use ($filtro) {
+				$query->where('nominas.nombre', 'like', $filtro)
+					->orWhereRaw("'Nutricional' LIKE ?", [$filtro]);
+			});
+
 		}
 
 		if ($request->from) {
 			$medicas->whereDate('consultas_medicas.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 			$enfermerias->whereDate('consultas_enfermerias.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$nutricionales->whereDate('consultas_nutricionales.fecha_atencion', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 
 		if ($request->to) {
 			$medicas->whereDate('consultas_medicas.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 			$enfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$nutricionales->whereDate('consultas_nutricionales.fecha_atencion', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
+
 
 		if($request->estado!=''){
 			$medicas->whereHas('trabajador',function($query) use ($request){
 				$query->where('estado',$request->estado);
 			});
 			$enfermerias->whereHas('trabajador',function($query) use ($request){
+				$query->where('estado',$request->estado);
+			});
+			$nutricionales->whereHas('trabajador',function($query) use ($request){
 				$query->where('estado',$request->estado);
 			});
 		}
@@ -123,9 +209,12 @@ class EmpleadoConsultasTodasController extends Controller
 			$enfermerias->whereHas('trabajador',function($query) use ($request){
 				$query->where('dni',$request->dni);
 			});
+			$nutricionales->whereHas('trabajador',function($query) use ($request){
+				$query->where('dni',$request->dni);
+			});
 		}
 
-		$query = $medicas->union($enfermerias);
+		$query = $medicas->union($enfermerias)->union($nutricionales);
 		$total = $query->count();
 
 		if($request->order){
@@ -173,6 +262,7 @@ class EmpleadoConsultasTodasController extends Controller
 
 		//$data = $dataMedicas->concat($dataEnfermerias);
 
+
 		return [
 			'draw' => $request->draw,
 			'recordsTotal' => $total,
@@ -190,7 +280,19 @@ class EmpleadoConsultasTodasController extends Controller
 			return back()->with('error', 'Debes trabajar para algun cliente para utilizar esta funcionalidad');
 		}
 
-		$queryMedicas = ConsultaMedica::select(
+		$request->draw = 1;
+		$request->start = 0;
+		$request->length = 5000;
+		$request->merge([
+			'draw' => 1,
+			'start' => 0,
+			'length' => 5000
+		]);
+
+
+		$response = $this->busqueda($request,true);
+
+		/*$queryMedicas = ConsultaMedica::select(
 				'nominas.nombre',
 				'nominas.email',
 				'consultas_medicas.id',
@@ -253,21 +355,17 @@ class EmpleadoConsultasTodasController extends Controller
 			$queryEnfermerias->whereDate('consultas_enfermerias.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
-		//$consultasMedicas = $queryMedicas->get();
-		//$consultasEnfermerias = $queryEnfermerias->get();
-
-
 		$query = $queryMedicas->union($queryEnfermerias);
 		$total = $query->count();
-		if( !$total ) {
-			return back()->with('error', 'No se encontraron consultas');
-		}
 
 		$query->orderBy('fecha','desc');
 
-		$consultas = $query->get();
+		$consultas = $query->get();*/
+		if( !$response['data'] ) {
+			return back()->with('error', 'No se encontraron consultas');
+		}
 
-		//dd($consultas->toArray());
+		//dd($response['data'][0]);
 
 		$hoy = Carbon::now();
 		$file_name = 'consultas-' . $hoy->format('YmdHis') . '.csv';
@@ -277,10 +375,12 @@ class EmpleadoConsultasTodasController extends Controller
 		fputcsv($fp, [
 			'Tipo',
 			'Trabajador',
+			'Legajo',
 			'CUIL',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
+
 			'Amerita Salida',
 			'Tratamiento',
 			'Observaciones',
@@ -293,19 +393,21 @@ class EmpleadoConsultasTodasController extends Controller
 			'Frec. Cardíaca',
 		], ';');
 
-		foreach ($consultas as $consulta) {
+		foreach ($response['data'] as $consulta) {
 
 			//$fecha = Carbon::createFromFormat('d/m/Y',$consulta->fecha);
 
 			fputcsv($fp, [
 				$consulta->tipo,
 				$consulta->nombre,
-				$consulta->email,
+				$consulta->trabajador->legajo,
+				$consulta->trabajador->email,
 				$consulta->fecha->format('d/m/Y'),
-				$consulta->diagnostico->nombre,
+				$consulta->diagnostico,
 				$consulta->derivacion_consulta,
+
 				($consulta->amerita_salida ? 'Si' : 'No'),
-				str_replace(["\r", "\n"],' ',$consulta->tratamiento),
+				str_replace(["\r", "\n"],' ',$consulta->tratamiento), //X
 				str_replace(["\r", "\n"],' ',$consulta->observaciones),
 				$consulta->peso,
 				$consulta->altura,
@@ -313,7 +415,8 @@ class EmpleadoConsultasTodasController extends Controller
 				$consulta->glucemia,
 				$consulta->saturacion_oxigeno,
 				$consulta->tension_arterial,
-				$consulta->frec_cardiaca,
+				$consulta->frec_cardiaca
+
 			], ';');
 		}
 

@@ -9,14 +9,15 @@ $(() => {
 
 		controller: '/admin/reportes',
 		get_path: '/fichadas_ajax',
+		delete_path:'/fichadas/destroy',
 		table: $('[data-table="fichadas"]'),
 		modulo_busqueda: $('[data-toggle="busqueda-fecha"]'),
 		server_side: true,
-
 		datatable_options: {
 			order: [[4, 'desc']],
 			columns: [
 				{
+					className:'align-middle',
 					data:'user',
 					name:'users.nombre',
 					render:v=>{
@@ -24,11 +25,13 @@ $(() => {
 					}
 				},
 				{
+					className:'align-middle',
 					data: 'user',
 					name: 'users.estado',
 					render: v => v.estado == 1 ? 'Activo' : 'Inactivo'
 				},
 				{
+					className:'align-middle',
 					data: 'user',
 					name: 'especialidades.nombre',
 					render:v=>{
@@ -37,6 +40,7 @@ $(() => {
 					}
 				},
 				{
+					className:'align-middle',
 					data: 'cliente',
 					name: 'clientes.nombre',
 					render:v=>{
@@ -46,6 +50,7 @@ $(() => {
 				},
 
 				{
+					className:'align-middle has-floating-btn',
 					data:null,
 					name:'ingreso',
 					orderable:false,
@@ -53,11 +58,11 @@ $(() => {
 
 						//console.log(meta.settings.json.user.permiso_edicion_fichada);
 
-						if (meta.settings.json.user.permiso_edicion_fichada == 1 && v.ultimo_registro_user) {
+						if (meta.settings.json.user.permiso_edicion_fichada == 1 ) {
 							return `
-								<span>${v.ingreso_formatted}</span>
-								<a href="#" data-toggle="editar-fichada" data-action="ingreso" data-fecha="${v.ingreso_carbon}">
-									<i class="fas fa-edit"></i>
+								<div>${v.ingreso_formatted}</div>
+								<a href="#" class="floating-btn" title="Editar Fecha/Hora" data-toggle="editar-fichada" data-action="ingreso" data-fecha="${v.ingreso_carbon}">
+									<i class="fa fa-pencil"></i>
 								</a>`
 						}
 						return v.ingreso_formatted
@@ -65,15 +70,16 @@ $(() => {
 				},
 
 				{
+					className:'align-middle has-floating-btn',
 					data:null,
 					name:'egreso',
 					render:(v,type,row,meta)=>{
 						if(v.egreso==null) return '<i class="text-muted">[aún trabajando]</i>'
-						if (meta.settings.json.user.permiso_edicion_fichada == 1 && v.ultimo_registro_user) {
+						if (meta.settings.json.user.permiso_edicion_fichada == 1 ) {
 							return `
-								<span>${v.egreso_formatted}</span>
-								<a href="#" data-toggle="editar-fichada" data-action="egreso" data-fecha="${v.egreso_carbon}">
-									<i class="fas fa-edit"></i>
+								<div>${v.egreso_formatted}</div>
+								<a href="#" class="floating-btn" title="Editar Fecha/Hora" data-toggle="editar-fichada" data-action="egreso" data-fecha="${v.egreso_carbon}">
+									<i class="fa fa-pencil fa-fw"></i>
 								</a>`;
 						}
 						return v.egreso_formatted
@@ -81,13 +87,15 @@ $(() => {
 				},
 
 				{
+					className:'align-middle',
 					data: null,
 					name: 'tiempo_dedicado',
 					orderable: false,
-					render: v => v.egreso == null ? '<i class="text-muted">[aún trabajando]</i>' : `${v.horas_minutos_trabajado} hs.`
+					render: v => v.egreso == null ? '<i class="text-muted">[aún trabajando]</i>' : `${v.horas_minutos_trabajado}`
 				},
 
 				{
+					className:'align-middle',
 					data:null,
 					name:'dispositivo',
 					render:v=>{
@@ -99,8 +107,22 @@ $(() => {
 					}
 				},
 				{
+					className:'align-middle',
 					data: 'ip',
 					name: 'ip'
+				},
+				{
+					data:null,
+					className:'align-middle',
+					name:'actions',
+					render:v=>{
+						return `
+						<div class="acciones_tabla">
+							<button data-toggle="delete" title="Eliminar" class="">
+								<i class="fa fa-trash"></i>
+							</button>
+						</div>`
+					}
 				}
 			]
 		}
@@ -226,11 +248,11 @@ $(() => {
 			///console.log(response)
 			toastr.success(response.data.message)
 
-			$('[data-table="fichadas"]').find(`[data-id="${response.data.last_record.id}"]`)
+			///$('[data-table="fichadas"]').find(`[data-id="${response.data.last_record.id}"]`)
 			Swal.close()
 
-			$('.dataTables_filter input').val(response.data.last_record.user.nombre).trigger('keyup').effect('highlight').effect('pulsate')
-			//table.datatable_instance.ajax.reload()
+			//$('.dataTables_filter input').val(response.data.last_record.user.nombre).trigger('keyup').effect('highlight').effect('pulsate')
+			table.datatable_instance.ajax.reload()
 
 		}catch(error){
 			toastr.error(error.response.data.message)

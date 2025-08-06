@@ -23,6 +23,12 @@
 				<span>Mi cuenta</span>
 			</a>
 		</li>
+		<li class="{{ setActive('/admin/monitoreo') }} menu_sin_sub_menu">
+			<a href="{{url('/admin/monitoreo')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-desktop"></i>
+				<span>Monitoreo</span>
+			</a>
+		</li>
 
 		<li class="{{ setActive('/admin/users') }} dropdownMenu">
 			<div class="dropdownButton">
@@ -115,10 +121,16 @@
 			</div>
 			<div class="dropdownContent">
 				<ul>
+
 					<ol data-route="/admin/reportes_fichadas_nuevas"
 						class="{{ setActiveSub('/admin/reportes_fichadas_nuevas') }}">
 						<a href="{{url('/admin/reportes_fichadas_nuevas')}}">Fichadas</a>
 					</ol>
+					<ol data-route="/admin/reportes/ediciones_fichadas"
+						class="{{ setActiveSub('/admin/reportes/ediciones_fichadas') }}">
+						<a href="{{url('/admin/reportes/ediciones_fichadas')}}">Ediciones Fichadas</a>
+					</ol>
+
 					<ol data-route="reportes_ausentismos" class="{{ setActiveSub('reportes_ausentismos') }}">
 						<a href="{{url('/admin/reportes_ausentismos')}}">Ausentismos</a>
 					</ol>
@@ -131,14 +143,20 @@
 					<ol data-route="reportes_comunicaciones" class="{{ setActiveSub('reportes_comunicaciones') }}">
 						<a href="{{url('/admin/reportes_comunicaciones')}}">Comunicaciones</a>
 					</ol>
+
+					<ol data-route="reportes_preocupacionales" class="{{ setActiveSub('reportes_preocupacionales') }}">
+						<a href="{{url('/admin/reportes_preocupacionales')}}">Est. Médicos Complementarios</a>
+					</ol>
+
+					<ol data-route="reportes_tareas_adecuadas" class="{{ setActiveSub('reportes_tareas_adecuadas') }}">
+						<a href="{{url('/admin/reportes_tareas_adecuadas')}}">Tareas Adecuadas</a>
+					</ol>
+
 					<ol data-route="/admin/reportes/actividad_usuarios"
 						class="{{ setActiveSub('/admin/reportes/actividad_usuarios') }}">
 						<a href="{{url('/admin/reportes/actividad_usuarios')}}">Actividad Usuarios</a>
 					</ol>
-					<ol data-route="/admin/reportes/ediciones_fichadas"
-						class="{{ setActiveSub('/admin/reportes/ediciones_fichadas') }}">
-						<a href="{{url('/admin/reportes/ediciones_fichadas')}}">Ediciones Fichadas</a>
-					</ol>
+
 				</ul>
 			</div>
 		</li>
@@ -150,5 +168,17 @@
 			</a>
 		</li>
 		@endif
+		<li class="{{ setActive('/admin/errores') }} menu_sin_sub_menu">
+			<a href="{{url('/admin/errores')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-exclamation-triangle"></i>
+				<span>Errores</span>
+			</a>
+		</li>
+		<li class="{{ setActive('/admin/configuraciones') }} menu_sin_sub_menu">
+			<a href="{{url('/admin/configuraciones')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-tools"></i>
+				<span>Configuraciones</span>
+			</a>
+		</li>
 	</div>
 </div>

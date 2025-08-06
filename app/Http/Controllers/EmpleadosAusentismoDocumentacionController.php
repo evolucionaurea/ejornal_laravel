@@ -47,6 +47,7 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 	public function store(Request $request)
 	{
 
+
 		$validatedData = $request->validate([
 			'institucion' => 'required',
 			'medico' => 'required',
@@ -161,7 +162,9 @@ class EmpleadosAusentismoDocumentacionController extends Controller
 			return back()->with('error', 'Debes adjuntar un archivo');
 		}*/
 
-		return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
+		return redirect('empleados/ausentismo/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
+
+		//return redirect('empleados/documentaciones/'.$request->id_ausentismo)->with('success', 'Guardado con éxito');
 
 	}
 

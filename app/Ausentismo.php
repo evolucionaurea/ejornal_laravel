@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 //use OwenIt\Auditing\Contracts\Auditable;
+use Carbon\CarbonImmutable;
 use App\AusentismoTipo;
 use App\Nomina;
 use App\Cliente;
@@ -30,7 +31,7 @@ class Ausentismo extends Model
 		'fecha_regreso_trabajar'=>'date:d/m/Y'
 	];
 
-	protected $appends = ['created_at_formatted','trabajador_perfil_url'];
+	protected $appends = ['created_at_formatted','trabajador_perfil_url','comentario_shortened'];
 
 	public function tipo(){
 		return $this->belongsTo(AusentismoTipo::class,'id_tipo');
@@ -66,6 +67,17 @@ class Ausentismo extends Model
 	public function getTrabajadorPerfilUrlAttribute()
 	{
 		return url('/empleados/nominas/'.$this->id_trabajador);
+	}
+
+	public function getTotalDaysAttribute()
+	{
+		$fin = $this->fecha_final ?? CarbonImmutable::now();
+		$diff = date_diff($this->fecha_inicio,$fin);
+
+		return $diff->days;
+	}
+	public function getComentarioShortenedAttribute(){
+		return \Str::words($this->comentario,25);
 	}
 
 }

@@ -5,3 +5,4 @@ Route::get('templates/tr-certificado-ausentismo-readonly', 'TemplatesController@
 Route::get('templates/form-certificado', 'TemplatesController@form_certificado');
 Route::get('templates/form-cambiar-fichada', 'TemplatesController@form_cambiar_fichada');
 Route::get('templates/agendar-evento', 'TemplatesController@form_agendar_evento');
+Route::get('templates/form-completar-preocupacional', 'TemplatesController@form_completar_preocupacional');

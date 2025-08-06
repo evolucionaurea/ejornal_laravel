@@ -24,4 +24,8 @@ class TemplatesController extends Controller
 		return view('templates.form-agendar-evento');
 	}
 
+	public function form_completar_preocupacional(){
+		return view('templates.form-completar-preocupacional');
+	}
+
 }

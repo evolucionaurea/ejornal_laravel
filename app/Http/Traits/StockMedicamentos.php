@@ -152,10 +152,10 @@ trait StockMedicamentos {
 		}
 
 		if ($request->from) {
-			$query->whereDate('fecha_ingreso', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$query->whereDate('stock_medicamentos_historial.created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 		if ($request->to) {
-			$query->whereDate('fecha_ingreso', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$query->whereDate('stock_medicamentos_historial.created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 
 

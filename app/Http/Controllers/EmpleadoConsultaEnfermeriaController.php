@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Caratula;
 use Illuminate\Http\Request;
 use App\ConsultaEnfermeria;
 use App\DiagnosticoConsulta;
@@ -49,6 +50,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 	{
 		$query = ConsultaEnfermeria::select(
 			'nominas.nombre',
+			'nominas.legajo',
 			'consultas_enfermerias.*',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
@@ -70,6 +72,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 				$query->where('nominas.nombre','like',$filtro)
 					->orWhere('consultas_enfermerias.derivacion_consulta','like',$filtro)
 					->orWhere('consultas_enfermerias.observaciones','like',$filtro)
+					->orWhere('nominas.legajo','like',$filtro)
 					->orWhere('diagnostico_consulta.nombre','like',$filtro);
 			});
 		}
@@ -83,6 +86,11 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			$query->whereHas('trabajador',function($query) use ($request){
 				$query->where('dni',$request->dni);
 			});
+		}
+
+		if($request->filtro=='mes'){
+			$query->whereMonth('consultas_enfermerias.fecha', Carbon::now()->month);
+			$query->whereYear('consultas_enfermerias.fecha', Carbon::now()->year);
 		}
 
 
@@ -319,6 +327,51 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			]);
 		}
 
+
+		/// check si tiene carátula y crear un nuevo registro con el nuevo peso
+		$caratula = Caratula::with('patologias')
+			->where('id_nomina',$request->nomina)
+			->latest()
+			->first();	
+				
+		if($caratula){
+			$patologias_ids = $caratula->patologias->pluck('id');
+
+			$caratula_new = new Caratula();
+			$caratula_new->id_nomina = $request->nomina;
+			$caratula_new->id_cliente = auth()->user()->id_cliente_actual;
+			$caratula_new->medicacion_habitual = $caratula->medicacion_habitual;
+			$caratula_new->antecedentes = $caratula->antecedentes;
+			$caratula_new->alergias = $caratula->alergias;
+			$caratula_new->peso = $request->peso;
+			$caratula_new->altura = $request->altura;
+			$alturaMetros = $request->altura / 100;
+			$caratula_new->imc = round($request->peso / ($alturaMetros * $alturaMetros), 2);
+			$caratula_new->user = auth()->user()->nombre;
+			$caratula_new->save();
+			
+			// Guardar la relación en la tabla intermedia
+			if( !empty($patologias_ids) ){
+				$caratula_new->patologias()->sync($patologias_ids);
+			}
+		}
+		/// end carátula
+
+		/* // Obtener la última carátula
+		$ultimaCaratula = Caratula::where('id_nomina', $request->id_nomina)
+			->where('id_cliente', auth()->user()->id_cliente_actual)
+			->latest()
+			->first();
+
+		// Actualizar solo si se encontró una carátula y los valores de peso y altura están presentes
+		if ($ultimaCaratula && isset($request->peso) && !empty($request->peso) && isset($request->altura) && !empty($request->altura)) {
+			$ultimaCaratula->update([
+				'peso' => $request->peso,
+				'altura' => $request->altura,
+				'imc' => $request->imc
+			]);
+		} */
+
 		return redirect('empleados/consultas/enfermeria')->with('success', 'Consulta de enfermería guardada con éxito.');
 
 
@@ -436,10 +489,16 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			return back()->with('error', 'Debes fichar para utilizar esta funcionalidad.');
 		}
 
-		$query = ConsultaEnfermeria::select(
+		$request->draw = 1;
+		$request->start = 0;
+		$request->length = 10000;
+		$consultas = $this->busqueda($request)['data'];
+
+		/* $query = ConsultaEnfermeria::select(
 			'consultas_enfermerias.*',
 			'nominas.nombre',
 			'nominas.email',
+			'nominas.legajo as legajo',
 			'diagnostico_consulta.nombre as diagnostico'
 		)
 			->join('nominas','nominas.id','consultas_enfermerias.id_nomina')
@@ -449,7 +508,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		if($request->from) $query->whereDate('consultas_enfermerias.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		if($request->to) $query->whereDate('consultas_enfermerias.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 
-		$consultas = $query->get();
+		$consultas = $query->get();*/
 
 		if (!$consultas) {
 			return back()->with('error', 'No se han encontrado consultas.');
@@ -465,6 +524,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		fputcsv($fp,[
 			'Trabajador',
 			'CUIL',
+			'legajo',
 			'Fecha',
 			'Diagnóstico',
 			'Derivación',
@@ -486,6 +546,7 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 			fputcsv($fp,[
 				$consulta->nombre,
 				$consulta->email,
+				$consulta->legajo,
 				$consulta->fecha->format('d/m/Y'),
 				$consulta->diagnostico,
 				$consulta->derivacion_consulta,
@@ -510,7 +571,6 @@ class EmpleadoConsultaEnfermeriaController extends Controller
 		return;
 
 	}
-
 
 
 }

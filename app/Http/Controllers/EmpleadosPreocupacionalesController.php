@@ -7,17 +7,19 @@ use App\Preocupacional;
 ///use App\Cliente;
 ///use App\ClienteUser;
 use App\Http\Traits\Clientes;
+use App\Http\Traits\Preocupacionales;
 use App\Nomina;
 use App\PreocupacionalTipoEstudio;
 use App\PreocupacionalArchivo;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class EmpleadosPreocupacionalesController extends Controller
 {
 
-	use Clientes;
+	use Clientes,Preocupacionales;
 
 	public function index()
 	{
@@ -31,99 +33,10 @@ class EmpleadosPreocupacionalesController extends Controller
 	}
 	public function busqueda(Request $request)
 	{
-		/*$query = Preocupacional::select(
-			'nominas.nombre', 'nominas.email', 'nominas.telefono',
-			'preocupacionales.fecha', 'preocupacionales.archivo', 'preocupacionales.id'
-		)
-		->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-		->where('nominas.id_cliente', auth()->user()->id_cliente_actual);*/
 
-		$now = CarbonImmutable::now();
+		$request->cliente_id = auth()->user()->id_cliente_actual;
 
-		$query = Preocupacional::with(['trabajador','tipo'])
-			->select(
-				'preocupacionales.*',
-				'nominas.id_cliente as trabajador_cliente'
-			)
-			->join('nominas', 'preocupacionales.id_nomina', 'nominas.id')
-			->join('preocupacionales_tipos_estudio', 'preocupacionales_tipos_estudio.id', 'preocupacionales.tipo_estudio_id')
-			->with('archivos')
-			->where('preocupacionales.id_cliente',auth()->user()->id_cliente_actual);
-			/*->whereHas('trabajador',function($query){
-				$query->select('id')->where('id_cliente',auth()->user()->id_cliente_actual);
-			});*/
-
-		$total = $query->count();
-
-		// FILTROS
-		if($request->from){
-			$query->whereDate('preocupacionales.fecha','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		}
-		if($request->to){
-			$query->whereDate('preocupacionales.fecha','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		}
-		/*if($request->vencimiento_from){
-			$query
-				->whereDate('fecha_vencimiento','<=',$now->addMonth())
-				->where('completado',0);
-		}*/
-		if($request->tipo){
-			$query->where('tipo_estudio_id','=',$request->tipo);
-		}
-		if(!is_null($request->vencimiento)){
-			if($request->vencimiento==='1'){
-				$query->whereNotNull('fecha_vencimiento');
-			}
-			if($request->vencimiento==='0'){
-				$query->whereNull('fecha_vencimiento');
-			}
-		}
-		if(!is_null($request->vencimiento_estado)){
-			if($request->vencimiento_estado==='1'){
-				$query->whereDate('fecha_vencimiento','<',$now);
-			}
-			if($request->vencimiento_estado==='0'){
-				$query->whereDate('fecha_vencimiento','>=',$now);
-			}
-		}
-		if(!is_null($request->completado)){
-			$query->where('completado','=',$request->completado);
-		}
-
-
-
-		// BUSQUEDA
-		if(isset($request->search)){
-			$query->where(function($query) use($request) {
-				$filtro = '%'.$request->search['value'].'%';
-				$query->where('nominas.nombre','like',$filtro)
-					->orWhere('nominas.email','like',$filtro)
-					->orWhere('nominas.dni','like',$filtro)
-					->orWhere('nominas.telefono','like',$filtro)
-					->orWhere('preocupacionales_tipos_estudio.name','like',$filtro);
-			});
-		}
-
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-
-
-		$total_filtered = $query->count();
-
-
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'fichar_user'=>auth()->user()->fichar,
-			'request'=>$request->all()
-		];
+		return $this->preocupacionalesAjax($request);
 	}
 
 	/**
@@ -131,15 +44,33 @@ class EmpleadosPreocupacionalesController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create()
+	public function create(Request $request)
 	{
 		$trabajadores = Nomina::where('id_cliente', auth()->user()->id_cliente_actual)
 			->where('estado', '=', 1)
 			->orderBy('nombre', 'asc')
 			->get();
 		$clientes = $this->getClientesUser();
-
 		$tipos = PreocupacionalTipoEstudio::all();
+
+		if($request->renovar){
+			$preocupacional = Preocupacional::findOrFail($request->id);
+			//dd($preocupacional->observaciones);
+			/*$preocupacional->id_nomina = $request->trabajador;
+			$preocupacional->id_cliente = auth()->user()->id_cliente_actual;
+			$preocupacional->fecha = $fecha;
+			*/
+
+			session()->flash('trabajador',$preocupacional->id_nomina);
+			session()->flash('fecha',$preocupacional->fecha->format('d/m/Y'));
+			session()->flash('tipo_estudio_id',$preocupacional->tipo_estudio_id);
+			session()->flash('resultado',$preocupacional->resultado);
+			session()->flash('observaciones',$preocupacional->observaciones);
+
+			session()->flash('tiene_vencimiento',!is_null($preocupacional->fecha_vencimiento) ? '1' : '');
+			session()->flash('fecha_vencimiento',$preocupacional->fecha_vencimiento->format('d/m/Y'));
+		}
+
 
 		return view('empleados.preocupacionales.create', compact(
 			'clientes',
@@ -187,9 +118,13 @@ class EmpleadosPreocupacionalesController extends Controller
 		///$preocupacional->archivo = $nombre;
 
 		if($request->tiene_vencimiento){
+			$validatedData = $request->validate([
+				'fecha_vencimiento' => 'required'
+			]);
+
 			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
-			$preocupacional->completado = $request->completado;
-			$preocupacional->completado_comentarios  = $request->completado_comentarios;
+			//$preocupacional->completado = 0;
+			///$preocupacional->completado_comentarios  = $request->completado_comentarios;
 		}
 		///$preocupacional->save();
 		// Completar en base el hash del archivo guardado
@@ -251,7 +186,7 @@ class EmpleadosPreocupacionalesController extends Controller
 		$preocupacional->observaciones = $request->observaciones;
 		if($request->tiene_vencimiento){
 			$preocupacional->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento);
-			$preocupacional->completado = $request->completado;
+			//$preocupacional->completado = $request->completado;
 		}
 		$preocupacional->save();
 
@@ -270,11 +205,25 @@ class EmpleadosPreocupacionalesController extends Controller
 		$preocupacional = Preocupacional::find($id);
 		$ruta = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}");
 		$ruta_archivo = storage_path("app/preocupacionales/trabajador/{$preocupacional->id}/{$preocupacional->hash_archivo}");
-		unlink($ruta_archivo);
-		rmdir($ruta);
+
+		if(file_exists($ruta_archivo)) unlink($ruta_archivo);
+		if(is_dir($ruta)) rmdir($ruta);
+
 		$preocupacional->delete();
 		return back()->with('success', 'Preocupacional eliminado correctamente');
 
+	}
+
+	public function show($id)
+	{
+
+		$preocupacional = Preocupacional::with(['trabajador','tipo','archivos'])->where('id',$id)->first();
+		$clientes = $this->getClientesUser();
+
+		return view('empleados.preocupacionales.show',compact(
+			'clientes',
+			'preocupacional'
+		));
 	}
 
 
@@ -295,14 +244,20 @@ class EmpleadosPreocupacionalesController extends Controller
 			return false;
 		}
 
+		//dd($request->json());
+
 		$preocupacional->completado = 1;
 		$preocupacional->completado_comentarios = $request->comentarios;
 		$preocupacional->save();
 
 		return [
-			'message'=>'El estudio se ha marcado como <b>Completado </b>correctamente.',
+			'message'=>'El estudio se ha marcado como <b>Completado</b> correctamente.',
 			'status'=>'ok'
 		];
+	}
+
+	public function find($id){
+		return Preocupacional::find($id);
 	}
 
 

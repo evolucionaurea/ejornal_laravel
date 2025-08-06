@@ -24,4 +24,9 @@ class ClienteUser extends Model
   	return $this->belongsTo(User::class, 'id_user');
   }
 
+  public function nominas()
+  {
+      return $this->hasMany(Nomina::class, 'id_cliente');
+  }
+
 }

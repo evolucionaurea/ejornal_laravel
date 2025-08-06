@@ -15,14 +15,13 @@ $(()=>{
 
 		datatable_options:{
 			order:[[ 1, "desc" ]],
+			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 			columns:[
 				{
 					data:null,
 					className:'align-middle',
 					name:'nominas.nombre',
 					render:v=>{
-						//console.log('objeto v', v);
-
 						if(v==null) return '<span class="text-muted">[No Ingresado]</span>'
 
 						return `
@@ -32,6 +31,17 @@ $(()=>{
 							${v.id_cliente != v.trabajador_cliente ? '<span class="badge badge-dark">transferido</span>' : ''}
 						`;
 
+					}
+				},
+				{
+					data:null,
+					name:'nominas.legajo',
+					className:'align-middle',
+					render:v=>{
+						if(v.trabajador_legajo==null) return `<span class="text-muted font-style-italic">[sin cargar]</span>`
+						return `
+							<div>${v.trabajador_legajo}</div>
+						`
 					}
 				},
 				{
@@ -50,10 +60,13 @@ $(()=>{
 					className:'align-middle',
 					render:v=>{
 						if(v.fecha_vencimiento==null) return `<span class="text-muted font-style-italic">[sin vencimiento]</span>`
-						return v.fecha_vencimiento
+						return `
+							<div>${v.fecha_vencimiento}</div>
+							${v.estado_vencimiento_label}
+						`
 					}
 				},
-				{
+				/*{
 					data:'vencimiento_label',
 					name:'vencimiento_label',
 					className:'align-middle',
@@ -63,7 +76,7 @@ $(()=>{
 					data:'completado_label',
 					className:'align-middle',
 					name:'completado'
-				},
+				},*/
 				{
 					data:'archivos',
 					name:'file_path',
@@ -99,6 +112,11 @@ $(()=>{
 
 						return `
 						<div class="acciones_tabla justify-content-end">
+
+							<a title="Ver" href="preocupacionales/${v.id}/" >
+								<i class="fas fa-eye"></i>
+							</a>
+
 							<a title="Editar" href="preocupacionales/${v.id}/edit" >
 								<i class="fas fa-pen"></i>
 							</a>

@@ -12,11 +12,12 @@
 		@foreach ($preocupacionales as $preocupacional)
 		<tr>
 			<td>{{ (!empty($preocupacional->fecha)) ? date('d/m/Y',strtotime($preocupacional->fecha)) : "" }}</td>
-			<td>{{ $preocupacional->tipo->name }}</td>
+			<td>{{ $preocupacional->tipo->name ?? 'No aplica' }}</td>
 			<td>{{ $preocupacional->observaciones }}</td>
 			<td>
 				@if ($preocupacional->archivo)
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{route('preocupacionales.archivo', $preocupacional->id)}}">
+				<a class="btn-ejornal btn-ejornal-gris-claro"
+					href="{{route('preocupacionales.archivo', $preocupacional->id)}}">
 					<i class="fa fa-file"></i>{{$preocupacional->archivo}}
 				</a>
 				@else

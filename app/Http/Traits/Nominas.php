@@ -4,12 +4,15 @@ namespace App\Http\Traits;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use App\Nomina;
+use App\NominaClienteHistorial;
 use App\Cliente;
 use App\CovidTesteo;
 use App\CovidVacuna;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\Ausentismo;
+use App\Caratula;
+use App\ConsultaNutricional;
 use App\TareaLiviana;
 use App\Preocupacional;
 use Illuminate\Support\Str;
@@ -53,6 +56,7 @@ trait Nominas
 				$filtro = '%'.$request->search.'%';
 				$query->where('nombre','like',$filtro)
 					->orWhere('email','like',$filtro)
+					->orWhere('legajo','like',$filtro)
 					->orWhere('dni','like',$filtro)
 					->orWhere('telefono','like',$filtro);
 			});
@@ -106,6 +110,14 @@ trait Nominas
 
 		}
 
+		if(!is_null($request->caratula_cargada)){
+			if($request->caratula_cargada=='1'){
+				$query->whereHas('caratulas');
+			}else{
+				$query->whereDoesntHave('caratulas');
+			}
+		}
+
 		//$query->onlyTrashed();
 		$records_filtered = $query->count();
 		$nominas = $query->skip($request->start)->take($request->length)->get();
@@ -152,6 +164,8 @@ trait Nominas
 			'Email',
 			'Estado',
 			'Sector',
+			'Legajo',
+			'Carátula Cargada',
 			'Teléfono',
 			'DNI',
 			'Fecha de Nacimiento',
@@ -171,6 +185,8 @@ trait Nominas
 				$nomina->email,
 				$estado,
 				$nomina->sector,
+				$nomina->legajo,
+				$nomina->ultima_caratula ? 'si' : 'no',
 				$nomina->telefono,
 				$nomina->dni,
 				$nomina->fecha_final,
@@ -196,6 +212,8 @@ trait Nominas
 	{
 		$clientes = $this->getClientesUser();
 
+		$caratula = Caratula::where('id_nomina', $id)->latest()->first();
+
 		$trabajador = Nomina::findOrFail($id);
 
 
@@ -218,6 +236,11 @@ trait Nominas
 			->with(['diagnostico','cliente'])
 			->orderBy('fecha','desc')
 			->get();
+
+		$consultas_nutricionales = ConsultaNutricional::where('id_nomina',$id)
+		->with(['nomina','cliente'])
+		->orderBy('fecha_atencion','desc')
+		->get();
 
 		$ausentismos = Ausentismo::where('id_trabajador', $id)
 			->with([
@@ -274,10 +297,20 @@ trait Nominas
 				'cliente'=>$medica->cliente
 			];
 		}
+		foreach($consultas_nutricionales as $nutricional){
+			$resumen_historial[$nutricional->fecha_atencion->format('Ymd')] = (object) [
+				'fecha'=>$nutricional->fecha_atencion,
+				'tipo'=>$nutricional->tipo,
+				'evento'=>'Consulta Nutricional',
+				'Objetivos'=>$nutricional->objetivos,
+				'usuario'=>$nutricional->user,
+				'cliente'=>$nutricional->cliente
+			];
+		}
 		foreach($preocupacionales as $preocupacional){
 			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
 				'fecha'=>$preocupacional->fecha,
-				'tipo'=>$preocupacional->tipo->name,
+				'tipo' => isset($preocupacional->tipo) ? $preocupacional->tipo->nombre : 'Sin especificar',
 				'evento'=>'Exámen Médico Complementario',
 				'observaciones'=>$preocupacional->observaciones,
 				'usuario'=>'',
@@ -285,12 +318,13 @@ trait Nominas
 			];
 		}
 		krsort($resumen_historial);
-
-
+		
 		return compact(
+			'caratula',
 			'trabajador',
 			'consultas_medicas',
 			'consultas_enfermeria',
+			'consultas_nutricionales',
 			'ausentismos',
 			'clientes',
 			'vacunas',
@@ -329,6 +363,67 @@ trait Nominas
 
 
 		return false;
+	}
+
+
+	public function movimientosListado($cliente_ids=[],Request $request){
+
+		$nominas_clientes = Nomina::select('*')
+			->withCount('movimientos_cliente')
+			->having('movimientos_cliente_count','>',1)
+			->pluck('id');
+
+
+		//DB::raw('COUNT(*) as cantidad')
+		$query = NominaClienteHistorial::select('*')
+			->with(['trabajador','cliente','usuario'])
+			->whereIn('nomina_id',$nominas_clientes)
+			->whereIn('cliente_id',$cliente_ids)
+
+			->orderBy('created_at','desc');
+
+		$total = $query->count();
+
+		if($request->cliente_id){
+			$query->where('cliente_id',$request->cliente_id);
+		}
+
+		if(isset($request->search)){
+			$search = '%'.$request->search.'%';
+			$query->where(function($query) use($search){
+				$query
+					->whereHas('trabajador',function($query) use($search){
+						$query
+							->where('nombre','like',$search)
+							->orWhere('dni','like',$search);
+					})
+					->orWhereHas('cliente',function($query) use($search){
+						$query->where('nombre','like',$search);
+					})
+					->orWhereHas('usuario',function($query) use($search){
+						$query->where('nombre','like',$search);
+					});
+			});
+		}
+
+		if($request->order){
+			//$sort = $request->columns[$request->order[0]['column']]['name'];
+			//$dir  = $request->order[0]['dir'];
+			//$query->orderBy($sort,$dir);
+		}
+
+		$total_filtered = $query->count();
+
+
+		return [
+			'draw'=>$request->draw,
+			'recordsTotal'=>$total,
+			'recordsFiltered'=>$total_filtered,
+			'data'=>$query->skip($request->start)->take($request->length)->get(),
+			'request'=>$request->all()
+		];
+
+
 	}
 
 

@@ -48,6 +48,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// AUSENTISMOS
+	Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show')->name('ausentismo');
 	Route::get('empleados/ausentismos/exportar','EmpleadosAusentismosController@exportar');
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
 		'names' => [
@@ -169,6 +170,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::delete('empleados/preocupacionales/destroy/{id}','EmpleadosPreocupacionalesController@destroy');
 	Route::post('empleados/preocupacionales/busqueda','EmpleadosPreocupacionalesController@busqueda');
 	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
+	Route::get('empleados/preocupacionales/find/{id}', 'EmpleadosPreocupacionalesController@find');
 
 
 	//Tipo Preocupacionales
@@ -261,6 +263,43 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/consultas/enfermeria/busqueda','EmpleadoConsultaEnfermeriaController@busqueda');
 	Route::post('empleados/consultas/enfermeria/tipo', 'EmpleadoConsultaEnfermeriaController@tipo')->name('/empleados/consultas/enfermeria/tipo');
 	Route::delete('empleados/consultas/enfermeria/tipo_delete/{id_tipo}', 'EmpleadoConsultaEnfermeriaController@tipo_destroy')->name('consultas.enfermeria.tipo_delete');
+
+
+	// CONSULTAS Nutricionales
+	Route::get('empleados.consultas.nutricionales/exportar', 'EmpleadosConsultaNutricionalController@exportar');
+	Route::resource('empleados/consultas/nutricionales', 'EmpleadosConsultaNutricionalController', [
+		'names' => [
+			'index' => 'empleados.consultas.nutricionales',      // Listado de recursos
+			'create' => 'empleados.consultas.nutricionales.create',    // Formulario de creación
+			'store' => 'empleados.consultas.nutricionales.store',      // Guardar nuevo recurso
+			'show' => 'empleados.consultas.nutricionales.show',        // Mostrar un recurso específico
+			'edit' => 'empleados.consultas.nutricionales.edit',        // Formulario de edición
+			'update' => 'empleados.consultas.nutricionales.update',    // Actualizar un recurso específico
+			'destroy' => 'empleados.consultas.nutricionales.destroy',  // Eliminar un recurso específico
+		],
+	]);
+	Route::post('empleados/consultas/nutricionales/busqueda', 'EmpleadosConsultaNutricionalController@busqueda');
+
+
+	Route::resource('empleados/consultas/patologias', 'EmpleadosPatologiasController', [
+		'names' => [
+			'index' => 'empleados.consultas.patologias'
+		]
+	]);
+
+
+	// CARATULAS
+	Route::get('empleados/caratulas/exportar', 'EmpleadosCaratulaController@exportar');
+	Route::get('empleados/nominas/caratulas/{id}/exportar', 'EmpleadosCaratulaController@exportar_trabajador')->name('empleados.nominas.caratulas.exportar');
+	Route::get('empleados/caratulas', 'EmpleadosCaratulaController@index')->name('empleados.caratulas');
+	Route::post('empleados/caratulas/busqueda', 'EmpleadosCaratulaController@busqueda');
+	Route::post('empleados/caratulas/busqueda_trabajador', 'EmpleadosCaratulaController@busqueda_trabajador');
+	Route::get('empleados/nominas/caratulas/create/{id_nomina?}', 'EmpleadosCaratulaController@create')->name('empleados.nominas.caratulas.create');
+	Route::post('empleados/nominas/caratulas', 'EmpleadosCaratulaController@store')->name('empleados.nominas.caratulas.store');
+	Route::get('empleados/nominas/caratulas/{id}', 'EmpleadosCaratulaController@show')->name('empleados.nominas.caratulas.show');
+	Route::get('empleados/nominas/caratulas/{id}/edit', 'EmpleadosCaratulaController@edit')->name('empleados.nominas.caratulas.edit');
+	Route::put('empleados/nominas/caratulas/{id}', 'EmpleadosCaratulaController@update')->name('empleados.nominas.caratulas.update');
+	Route::delete('empleados/caratulas/destroy/{id}', 'EmpleadosCaratulaController@destroy');
 
 
 

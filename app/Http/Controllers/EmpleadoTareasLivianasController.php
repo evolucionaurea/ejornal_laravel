@@ -36,9 +36,15 @@ class EmpleadoTareasLivianasController extends Controller
 
 	public function busqueda(Request $request)
 	{
+
+		$request->merge(['idcliente' => auth()->user()->id_cliente_actual]);
+		return $this->searchTareasLivianas($request);
+
+
 		$query = TareaLiviana::select(
 			'tareas_livianas.*',
 			'nominas.nombre',
+			'nominas.legajo',
 			'nominas.id_cliente as trabajador_cliente',
 			'nominas.email',
 			'nominas.telefono',
@@ -53,11 +59,13 @@ class EmpleadoTareasLivianasController extends Controller
 		->with('trabajador');
 
 		$query->where(function($query) use ($request) {
-			$filtro = '%'.$request->search['value'].'%';
+			$filtro = '%'.$request->search.'%';
 			$query->where('nominas.nombre','like',$filtro)
+				->orWhere('nominas.legajo','like',$filtro)
 				->orWhere('nominas.email','like',$filtro)
 				->orWhere('nominas.dni','like',$filtro)
-				->orWhere('nominas.telefono','like',$filtro);
+				->orWhere('nominas.telefono','like',$filtro)
+				->orWhere('nominas.sector','like',$filtro);
 		});
 
 		if($request->from) $query->whereDate('tareas_livianas.fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
@@ -413,8 +421,7 @@ class EmpleadoTareasLivianasController extends Controller
 
 	public function exportar(Request $request)
 	{
-		//Traits > Tareas Livianas
-		return $this->exportTareasLivianas(auth()->user()->id_cliente_actual,$request);
+		return $this->exportTareasLivianas($request);
 	}
 
 

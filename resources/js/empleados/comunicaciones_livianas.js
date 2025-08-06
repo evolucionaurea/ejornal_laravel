@@ -27,7 +27,7 @@ $(()=>{
 				status = ''
 			}
 			return $(`
-			<tr>
+			<tr data-id="${trabajador.id}">
 				<td>
 					${trabajador}
 				</td>

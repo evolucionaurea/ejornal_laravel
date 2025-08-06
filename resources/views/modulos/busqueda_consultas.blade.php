@@ -1,13 +1,16 @@
 {{-- SEARCH --}}
 <div data-toggle="busqueda-fecha" class="row">
 
+	<input type="hidden" name="filtro" value="{{ Request::get('filtro') }}">
+
 
 	<div class="col-md-6 d-flex flex-wrap align-items-center">
 
 		<div class="row">
 
 			<div class="col-lg-8">
-				<input placeholder="Filtrar por Nombre, Consulta, Derivación..." name="search" type="text" class="form-control form-control-sm" value="">
+				<input placeholder="Filtrar por Nombre, Tipo, Legajo..." name="search" type="text"
+					class="form-control form-control-sm" value="">
 			</div>
 
 
@@ -16,15 +19,15 @@
 			</div>
 
 			<div class="col-lg-4">
-				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="">
+				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="" readonly>
 			</div>
 			<div class="col-lg-4">
-				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="">
+				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="" readonly>
 			</div>
 
 			<div class="col-lg-4">
 				<select id="estado" name="estado" class="form-control form-control-sm">
-					<option value="" >-Activos/Inactivos-</option>
+					<option value="">-Activos/Inactivos-</option>
 					<option value="1">Activos</option>
 					<option value="0">Inactivos</option>
 				</select>
@@ -42,7 +45,8 @@
 		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!">
 			<i class="fas fa-list"></i> <span>Mostrar todo</span>
 		</button>
-		<button data-toggle="export" data-href="{{ url(Route::currentRouteName().'/exportar') }}" type="button" class="btn-ejornal btn-info mb-2">
+		<button data-toggle="export" data-href="{{ url(Route::currentRouteName().'/exportar') }}" type="button"
+			class="btn-ejornal btn-info mb-2">
 			<i class="fas fa-file-excel"></i> <span>Exportar</span>
 		</button>
 	</div>

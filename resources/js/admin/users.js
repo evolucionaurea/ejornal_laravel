@@ -35,7 +35,7 @@ $(()=>{
 			if(user.grupo!=null) grupo = user.grupo.nombre
 
 			return $(`
-				<tr>
+			<tr data-id="${user.id}">
 				<td>${user.nombre}</td>
 				<td>${user.email}</td>
 				<td>${user.especialidad!=null?user.especialidad:''}</td>
@@ -44,7 +44,7 @@ $(()=>{
 					<span class="badge badge-${(user.fichar==1)?'success':'danger'}">${(user.fichar==1) ? 'Si' : 'No'}</span>
 				</td>
 				<td style="width:420px">
-					<div><b>${user.rol.capitalize()}</b></div>
+					<div><b>${user.rol.nombre.capitalize()}</b></div>
 					<div class="small text-muted font-italic" style="line-height:1.15">${clientes.join(', ')}</div>
 					<div class="small text-muted font-italic">${grupo}</div>
 				</td>

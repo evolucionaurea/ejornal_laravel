@@ -226,13 +226,28 @@ class EmpleadosStockMedicamentoController extends Controller
 
 		$cliente = Cliente::findOrFail(auth()->user()->id_cliente_actual);
 
+		$request->start = 0;
+		$request->length = 15000;
+		$request->draw = 1;
 
-		///$request->length = 10;
+		$request->columns = [
+			[
+				'name'=>'motivo'
+			]
+		];
+		$request->order = [
+			[
+				'column'=>0,
+				'dir'=>'desc'
+			]
+		];
+
 		$response = $this->searchHistorial($request);
 		//dd($response['data']->toArray());
 
-
 		$historial = $response['data'];
+
+		//dd($historial[0]);
 
 
 		$hoy = Carbon::now();
@@ -255,21 +270,21 @@ class EmpleadosStockMedicamentoController extends Controller
 
 		foreach($historial as $history){
 			///$estado = $nomina->estado ? 'activo' : 'inactivo';
-			$tipo = '';
+			$tipo = '[Ingreso/Egreso]';
 			if($history->id_consulta_enfermeria) $tipo = 'Enfermería';
 			if($history->id_consulta_medica) $tipo = 'Médica';
 
 			fputcsv($fp,[
-				$history->medicamento,
+				$history->stock_medicamento->medicamento->nombre,
 				$tipo,
-				$history->user,
-				$history->cliente,
-				($history->trabajador ?? ''),
+				$history->user ?? $history->stock_medicamento->user->nombre,
+				$history->stock_medicamento->cliente->nombre,
+				($history->trabajador ?? '[no aplica]'),
 				(is_null($history->ingreso) || $history->ingreso==0 ? '' : $history->ingreso),
 				(is_null($history->suministrados) || $history->suministrados==0 ? '' : $history->suministrados),
 				(is_null($history->egreso) || $history->egreso==0 ? '' : $history->egreso),
 				$history->motivo,
-				$history->fecha_ingreso
+				$history->created_at
 			],';');
 		}
 		fseek($fp, 0);

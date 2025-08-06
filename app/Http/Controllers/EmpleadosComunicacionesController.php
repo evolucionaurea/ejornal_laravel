@@ -33,6 +33,7 @@ class EmpleadosComunicacionesController extends Controller
 	{
 		// Se modifica la consulta para evitar duplicados y agrupar los archivos
 		$query = Comunicacion::select(
+			'comunicaciones.id_ausentismo',
 			'comunicaciones.id',
 			'comunicaciones.descripcion',
 			'comunicaciones.created_at',
@@ -49,7 +50,7 @@ class EmpleadosComunicacionesController extends Controller
 		->join('tipo_comunicacion', 'comunicaciones.id_tipo', '=', 'tipo_comunicacion.id')
 		->leftJoin('comunicaciones_archivos', 'comunicaciones.id', '=', 'comunicaciones_archivos.id_comunicacion') // Unimos los archivos
 		->where('ausentismos.id_cliente', auth()->user()->id_cliente_actual)
-		->with('archivos');
+		->with(['archivos','ausentismo.trabajador']);
 		///->groupBy('comunicaciones.id');
 
 		$total = $query->count();
@@ -69,10 +70,11 @@ class EmpleadosComunicacionesController extends Controller
 		}
 
 		if ($request->search) {
-			$filtro = '%' . $request->search['value'] . '%';
+			$filtro = '%' . $request->search . '%';
 			$query->where(function ($query) use ($filtro) {
 				$query
 					->where('nominas.nombre', 'LIKE', $filtro)
+					->orWhere('nominas.dni', 'LIKE', $filtro)
 					->orWhere('tipo_comunicacion.nombre', 'LIKE', $filtro)
 					->orWhere('ausentismos.user', 'LIKE', $filtro)
 					->orWhere('comunicaciones.user', 'LIKE', $filtro)
@@ -160,7 +162,8 @@ class EmpleadosComunicacionesController extends Controller
 			}
 		}
 
-		return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+		return redirect('empleados/ausentismo/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
+		//return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
 	}
 
 

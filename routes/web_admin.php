@@ -3,6 +3,9 @@
 
 Route::group(['middleware' => 'autenticacion_admin'], function () {
 
+	Route::get('admin/monitoreo', 'AdminMonitoreoController@index')->name('/admin/monitoreo');
+	Route::get('admin/monitoreo/metrics/{metric}', 'AdminMonitoreoController@metric')->name('admin.monitoreo.metric');
+
 	Route::get('admin/resumen', 'AdminResumenController@index')->name('/admin/resumen');
 	Route::post('admin/get_medicamentos', 'AdminResumenController@getMedicamentos');
 
@@ -84,6 +87,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	/// REPORTES
 
 	// Fichadas
+	Route::delete('admin/reportes/fichadas/destroy/{id}','AdminFichadasNuevasController@destroy');
 	Route::get('admin/reportes/fichada_nueva/{id}','AdminReporteController@find_fichada');
 	Route::get('admin/reportes_fichadas_nuevas/exportar','AdminReporteController@exportar_fichadas');
 	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('/admin/reportes_fichadas_nuevas');
@@ -113,6 +117,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::get('admin/reportes_consultas', 'AdminReporteController@reportes_consultas')->name('reportes_consultas');
 	Route::post('admin/reportes/consultas_medicas', 'AdminReporteController@consultas_medicas');
 	Route::post('admin/reportes/consultas_enfermeria', 'AdminReporteController@consultas_enfermeria');
+	Route::post('admin/reportes/consultas_nutricionales', 'AdminReporteController@consultas_nutricionales');
 
 	//Route::post('admin/reportes/filtrar_consultas_medicas', 'AdminReporteController@filtrarConsultasMedicas')->name('reportes.filtrar_consultas_medicas');
 	//Route::post('admin/reportes/filtrar_consultas_enfermeria', 'AdminReporteController@filtrarConsultasEnfermeria')->name('reportes.filtrar_consultas_enfermeria');
@@ -121,6 +126,15 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::get('admin/reportes_comunicaciones', 'AdminReporteController@reportes_comunicaciones')->name('reportes_comunicaciones');
 	Route::post('admin/reportes/comunicaciones', 'AdminReporteController@comunicaciones')->name('reportes.comunicaciones');
 
+	// Preocupacionales
+	Route::get('admin/reportes_preocupacionales', 'AdminReporteController@reportes_preocupacionales')->name('reportes_preocupacionales');
+	Route::post('admin/reportes/preocupacionales/busqueda','AdminReporteController@preocupacionales');
+	Route::get('admin/preocupacionales/archivo/{id}','AdminReporteController@descargar_archivo_preocupacionales');
+
+	// Tareas Adecuadas
+	Route::get('admin/reportes_tareas_adecuadas', 'AdminReporteController@reportes_tareas_adecuadas')->name('reportes_tareas_adecuadas');
+	Route::post('admin/reportes/tareas-adecuadas/busqueda','AdminReporteController@tareas_adecuadas');
+	Route::get('admin/tareas_livianas/archivo/{id}','AdminReporteController@descargar_archivo_tarea_liviana');
 
 	// Actividad Usuarios
 	Route::get('admin/reportes/actividad_usuarios', 'AdminReporteController@actividad_usuarios')->name('/admin/reportes/actividad_usuarios');
@@ -133,5 +147,17 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 
 	Route::get('admin/reportes/ediciones_fichadas', 'AdminEdicionFichadaController@index')->name('/admin/reportes/ediciones_fichadas');
+
+
+	Route::get('admin/errores', 'ErrorController@index')->name('/admin/errores');
+	Route::post('admin/errores', 'ErrorController@limpiar')->name('admin.limpiar_errores');
+
+
+	Route::resource('admin/configuraciones', 'AdminConfiguracionController', [
+		'names' => [
+				'index' => '/admin/configuraciones'
+		]
+	]);
+
 
 });

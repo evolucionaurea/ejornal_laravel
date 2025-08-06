@@ -30,7 +30,6 @@ body {
   border-radius: 1.5rem;
   border: 1px solid #e6e6e6;
   padding: 20px;
-  overflow: hidden;
 }
 
 .tarjeta h4 {
@@ -38,24 +37,6 @@ body {
   font-size: 21px;
   color: #404040;
   margin-bottom: 20px;
-}
-
-.tarjeta .tarjeta-header {
-  border-bottom: 1px solid #f0f0f0;
-  margin: 0 -20px;
-  padding: 0 20px;
-}
-
-.tarjeta .tarjeta-body {
-  margin: 0 -20px;
-  padding: 20px;
-}
-
-.tarjeta .tarjeta-footer {
-  border-top: 1px solid #f0f0f0;
-  background-color: #fafafa;
-  margin: 0 -20px -20px -20px;
-  padding: 10px 20px;
 }
 
 .contenedor_gral {
@@ -178,14 +159,8 @@ hr.hr-line-dashed {
   border-top: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
-.form-control::-moz-placeholder {
-  color: #8c8c8c;
-  font-style: italic;
-}
-
-.form-control::placeholder {
-  color: #8c8c8c;
-  font-style: italic;
+.lh-sm {
+  line-height: 1.15;
 }
 
 .btn-ejornal {
@@ -507,6 +482,34 @@ table.table {
   width: 100%;
 }
 
+table.table .has-floating-btn {
+  position: relative;
+}
+
+table.table .has-floating-btn .floating-btn {
+  position: absolute;
+  background-color: #dfdfdf;
+  color: black;
+  bottom: 0;
+  right: 0;
+  height: 20px;
+  width: 26px;
+  border-top-left-radius: 4pt;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+table.table .has-floating-btn .floating-btn i {
+  font-size: 8pt;
+}
+
+table.table .has-floating-btn .floating-btn:hover {
+  background-color: black;
+  color: white;
+  text-decoration: none;
+}
+
 @media screen and (max-width: 991px) {
   table.table th {
     font-size: 9pt;
@@ -587,8 +590,9 @@ table.table {
 }
 
 .select2-container--default .select2-selection--multiple {
-  border: 1px solid #ced4da;
+  border: 1px solid #ced4da !important;
   border-radius: 1.5rem;
+  min-height: 38px !important;
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
@@ -617,72 +621,8 @@ table.table {
   }
 }
 
-.select2-dropdown {
-  z-index: 1080 !important;
-}
-
 .select2-container--default.select2-container--focus .select2-selection--multiple {
   border: 1px solid #376d7a;
-}
-
-.timeline .timeline-card {
-  border-left: 1px solid #3490dc;
-  padding-left: 1rem;
-  padding-top: 0;
-  padding-bottom: 2rem;
-  position: relative;
-  display: flex;
-}
-
-.timeline .timeline-card:before {
-  content: '';
-  border-radius: 50%;
-  background-color: #3490dc;
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  left: -5px;
-  top: 8px;
-}
-
-.timeline .timeline-card:hover {
-  background-color: #f0f0f0;
-}
-
-.timeline .timeline-card .content {
-  width: 100%;
-}
-
-.timeline .timeline-card .content .datetime {
-  font-size: 14pt;
-  color: #3490dc;
-  margin-bottom: .5rem;
-}
-
-.timeline .timeline-card .content .title {
-  font-size: 12pt;
-  color: black;
-}
-
-.timeline .timeline-card .content .remaining {
-  font-size: 10pt;
-}
-
-.timeline .timeline-card .content .comments {
-  padding-top: .25rem;
-  font-size: 11pt;
-}
-
-.timeline .timeline-card .actions {
-  min-width: 80px;
-  text-align: right;
-}
-
-.timeline .timeline-card .actions .btn {
-  padding: .25rem;
-  line-height: 1;
-  font-size: 8pt;
-  margin: .25rem;
 }
 
 #sidebar-wrapper {
@@ -703,18 +643,6 @@ table.table {
 #sidebar-wrapper .list-group {
   width: 16rem;
   max-width: 16rem;
-}
-
-#sidebar-wrapper .list-group .new {
-  background-color: #61d6f2;
-  color: #2f4050;
-  border-top-left-radius: 2pt;
-  border-bottom-left-radius: 2pt;
-  padding: .05rem .25rem;
-  font-size: 9pt;
-  position: absolute;
-  right: 0;
-  line-height: 1;
 }
 
 #page-content-wrapper {
@@ -1002,20 +930,6 @@ table.table {
 
 .img_onedrive:hover {
   background-color: #f2f2f2;
-}
-
-.calendar-event {
-  background-color: #2f4050;
-  color: white !important;
-  font-size: 8pt;
-}
-
-.calendar-event .fc-daygrid-event-dot {
-  border-color: #6cb2eb;
-}
-
-.calendar-event .fc-event-title {
-  font-weight: 300;
 }
 
 .bloque_codigo pre {

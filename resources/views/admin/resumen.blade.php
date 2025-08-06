@@ -114,7 +114,7 @@
 							</div>
 							<hr>
 
-							<table data-table="medicamentos" class="table table-striped">
+							<table data-table="medicamentos" class="table table-striped table-sm">
 								<thead>
 									<tr>
 										<th scope="col">Medicamento</th>
