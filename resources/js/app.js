@@ -21,6 +21,7 @@ require('./nav_sup.js');
 //ADMIN
 if(route=='/admin/clientes') require('./admin/clientes')
 if(route=='admin.clientes.show') require('./admin/admin_tablas')
+if(route=='admin.clientes.show') require('./admin/clientes/agendas')
 if(route=='/admin/medicamentos') require('./admin/medicamentos')
 
 if(route=='/admin/movimiento_medicamentos') require('./admin/medicamentos/movimientos')
@@ -43,6 +44,7 @@ if(route=='/admin/reportes/actividad_usuarios') require('./admin/reportes/activi
 if(route=='reportes_preocupacionales') require('./admin/reportes/preocupacionales')
 if(route=='reportes_tareas_adecuadas') require('./admin/reportes/tareas_livianas')
 
+if(route=='/admin/agendas') require('./admin/agendas')
 
 //EMPLEADOS
 if(route=='/empleados/resumen') require('./empleados/resumen')

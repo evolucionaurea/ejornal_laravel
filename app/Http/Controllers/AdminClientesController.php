@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Agenda;
 use Illuminate\Http\Request;
 use App\Cliente;
 use App\Nomina;
@@ -80,7 +81,7 @@ class AdminClientesController extends Controller
   {
 
     $cliente = Cliente::findOrFail($id);
-    $trabajadores = Nomina::where('id_cliente', $id)->get();
+    $trabajadores = Nomina::where('id_cliente', $id)->paginate(10);
     $cliente_user = ClienteUser::where('id_cliente', $id)->get();
     $cliente_grupo = ClienteGrupo::where('id_cliente', $id)->first();
 
@@ -288,6 +289,37 @@ class AdminClientesController extends Controller
 
     return back()->with('success', 'Token eliminado exitosamente. El cliente ya no tendrá acceso a utilizar la API');
   }
+
+
+  public function getAgendas($id)
+  {
+      try {
+          // Obtengo todas las agendas relacionadas al cliente
+          $agendas = Agenda::where('cliente_id', $id)
+              ->with(['user', 'trabajador']) // relaciones opcionales
+              ->get();
+
+          // Mapeo al formato de FullCalendar
+          $eventos = $agendas->map(function ($agenda) {
+              return [
+                  'id'    => $agenda->id,
+                  'title' => $agenda->titulo ?? ($agenda->trabajador->nombre ?? 'Sin título'),
+                  'start' => $agenda->fecha_inicio, // formato Y-m-d H:i:s
+                  'end'   => $agenda->fecha_fin,    // formato Y-m-d H:i:s
+                  'extendedProps' => [
+                      'usuario'     => $agenda->user->nombre ?? '—',
+                      'trabajador'  => $agenda->trabajador->nombre ?? '—',
+                      'comentarios' => $agenda->comentarios ?? '',
+                  ]
+              ];
+          });
+
+          return response()->json($eventos);
+      } catch (\Exception $e) {
+          return response()->json(['error' => $e->getMessage()], 500);
+      }
+  }
+
 
 
 }

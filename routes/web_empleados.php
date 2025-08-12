@@ -309,5 +309,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/agenda/buscar_turnos', 'EmpleadosAgendaController@search');
 	Route::post('empleados/agenda/turno/{id}', 'EmpleadosAgendaController@find');
 
+	// Agenda Endpoints
+	Route::get('empleados/agenda_motivos', 'EmpleadosAgendaController@getMotivosAgenda');
+	Route::get('empleados/horarios_bloqueados/{id_cliente?}/{id_user?}', 'EmpleadosAgendaController@getHorariosBloqueados');
 
 });

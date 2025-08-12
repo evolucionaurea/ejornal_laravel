@@ -20,6 +20,11 @@ class Agenda extends Model
 		'fecha_final'=>'datetime'
 	];
 
+
+	public function user()
+	{
+		return $this->belongsTo(User::class,'user_id');
+	}
 	public function estado()
 	{
 		return $this->belongsTo(AgendaEstado::class,'estado_id');

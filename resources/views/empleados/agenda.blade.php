@@ -35,9 +35,11 @@
 									<div class="datetime">{{ $turno->fecha_inicio_formatted }}</div>
 									<div class="title">{{ $turno->trabajador->nombre }}</div>
 									<div class="remaining">Faltan 1 día</div>
-									<div class="comments">{!! $turno->comentarios ?? '<span class="text-muted font-italic">[sin comentarios]</span>' !!}</div>
+									<div class="comments">{!! $turno->comentarios ?? '<span
+											class="text-muted font-italic">[sin comentarios]</span>' !!}</div>
 								</div>
-								@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1 )
+								@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) &&
+								auth()->user()->id_especialidad == 1 )
 								<div class="actions">
 									<button class="btn btn-primary">
 										<i class="fa fa-pencil"></i>
@@ -54,8 +56,9 @@
 					</div>
 					<div class="tarjeta-footer">
 
-						@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1 )
-						<button data-toggle="add-event" class="btn-ejornal btn-ejornal-base" >
+						@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) &&
+						auth()->user()->id_especialidad == 1 )
+						<button data-toggle="add-event" class="btn-ejornal btn-ejornal-base">
 							<i class="fas fa-plus-circle"></i> <span>Nuevo Turno</span>
 						</button>
 						@else

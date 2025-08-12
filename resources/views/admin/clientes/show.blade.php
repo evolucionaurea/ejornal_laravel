@@ -35,9 +35,10 @@
 		@endforeach
 		@endif
 
+
 		<div class="tarjeta">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-12 m-0">
 					<div class="row">
 						<div class="col-lg-4 col-sm-12">
 							<div class="d-flex flex-column align-items-cente text-center">
@@ -111,40 +112,58 @@
 					</div>
 				</div>
 			</div>
+		</div>
 
-			<div class="tarjeta">
-				<h4>Nómina</h4>
-				<table data-table="clientes" class="table table-striped table-hover table-sm tabla">
-					<thead>
-						<tr>
-							<th>Nombre</th>
-							<th>CUIT</th>
-							<th>Tel.</th>
-							<th>DNI</th>
-							<th>Estado</th>
-							<th>Fecha Alta</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach ($trabajadores as $trabajador)
-						<tr>
-							<td>{{$trabajador->nombre}}</td>
-							<td>{{$trabajador->email}}</td>
-							<td>{{$trabajador->telefono}}</td>
-							<td>{{$trabajador->dni}}</td>
-							<td>
-								@if ($trabajador->estado == '1')
-								<span class="badge badge-success">Activo</span>
-								@else
-								<span class="badge badge-danger">Inactivo</span>
-								@endif
-							</td>
-							<td>{{ (!empty($trabajador->created_at)) ? date('d/m/Y',strtotime($trabajador->created_at))
-								: "" }}</td>
-						</tr>
-						@endforeach
-					</tbody>
-				</table>
+
+		<div class="row">
+
+			<div class="col-md-6 m-0">
+				<div class="tarjeta">
+					<h4>Nómina</h4>
+					<table data-table="clientes" class="table table-striped table-hover table-sm tabla">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>CUIT</th>
+								<th>Tel.</th>
+								<th>DNI</th>
+								<th>Estado</th>
+								<th>Fecha Alta</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach ($trabajadores as $trabajador)
+							<tr>
+								<td>{{$trabajador->nombre}}</td>
+								<td>{{$trabajador->email}}</td>
+								<td>{{$trabajador->telefono}}</td>
+								<td>{{$trabajador->dni}}</td>
+								<td>
+									@if ($trabajador->estado == '1')
+									<span class="badge badge-success">Activo</span>
+									@else
+									<span class="badge badge-danger">Inactivo</span>
+									@endif
+								</td>
+								<td>{{ (!empty($trabajador->created_at)) ?
+									date('d/m/Y',strtotime($trabajador->created_at))
+									: "" }}</td>
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
+					<div class="mt-3">
+						{{ $trabajadores->links() }}
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="tarjeta mt-4">
+					<h4>Agenda del Cliente</h4>
+					<div id="cliente-agenda"></div>
+				</div>
 			</div>
 
 		</div>

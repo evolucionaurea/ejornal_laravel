@@ -9,7 +9,8 @@ use App\Http\Traits\Clientes;
 use App\User;
 use App\Agenda;
 use App\AgendaEstado;
-
+use App\AgendaMotivo;
+use App\HorarioBloqueo;
 use Carbon\CarbonImmutable;
 
 class EmpleadosAgendaController extends Controller
@@ -160,5 +161,53 @@ class EmpleadosAgendaController extends Controller
 			'data' => $turno
 		]);
 	}
+
+
+	public function getMotivosAgenda()
+	{
+		try {
+			$motivos = AgendaMotivo::select('id', 'nombre')
+				->orderBy('nombre', 'asc')
+				->get();
+			return response()->json([
+					'estado' => true,
+					'data' => $motivos
+				]);
+		} catch (\Throwable $th) {
+			return response()->json([
+				'estado' => false,
+				'data' => $th->getMessage()
+			]);
+		}
+
+	}
+
+	public function getHorariosBloqueados($id_cliente = null, $id_user = null)
+    {
+        // Validar que al menos uno esté presente
+        if (empty($id_cliente) && empty($id_user)) {
+            return response()->json([
+				'estado' => false,
+                'data' => 'Debe enviar al menos un ID de cliente o de usuario.'
+            ], 400);
+        }
+
+        $query = HorarioBloqueo::query();
+
+        if (!empty($id_cliente)) {
+            $query->where('cliente_id', $id_cliente);
+        }
+
+        if (!empty($id_user)) {
+            $query->where('user_id', $id_user);
+        }
+
+        $resultados = $query->with(['user', 'cliente'])->get();
+
+        return response()->json([
+            'estado' => true,
+            'data' => $resultados
+        ]);
+    }
 
 }

@@ -23,6 +23,28 @@
 				<span>Mi cuenta</span>
 			</a>
 		</li>
+
+		<li class="{{ setActive('/admin/agendas') }} dropdownMenu">
+			<div class="dropdownButton">
+				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
+					<i class="fas fa-calendar"></i>
+					<span>Agendas</span>
+				</a>
+				<i class="fal fa-chevron-circle-down flecha_sub_menu"></i>
+			</div>
+			<div class="dropdownContent">
+				<ul>
+					<ol data-route="/admin/agendas" class="{{ setActiveSub('/admin/agendas') }}">
+						<a href="{{url('/admin/agendas')}}">Calendario</a>
+					</ol>
+					<ol data-route="/admin/agenda_motivos" class="{{ setActiveSub('/admin/agenda_motivos') }}">
+						<a href="{{url('/admin/agenda_motivos')}}">Motivos</a>
+					</ol>
+				</ul>
+			</div>
+		</li>
+
+
 		<li class="{{ setActive('/admin/monitoreo') }} menu_sin_sub_menu">
 			<a href="{{url('/admin/monitoreo')}}" class="list-group-item list-group-item-action sidebar_item">
 				<i class="fas fa-desktop"></i>

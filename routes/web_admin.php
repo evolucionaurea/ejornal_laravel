@@ -46,6 +46,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::post('admin/clientes/cargar_excel', 'AdminClientesController@cargar_excel')->name('/admin/clientes/cargar_excel');
 	Route::post('admin/generar_token', 'AdminClientesController@generarToken')->name('/admin/generar_token');
 	Route::post('admin/clientes/restaurar', 'AdminClientesController@restaurarCliente')->name('admin/clientes/restaurar');
+	Route::get('admin/clientes/{id}/get_agendas', 'AdminClientesController@getAgendas')->name('/admin/get/agendas');
 
 	// GRUPOS
 	Route::resource('admin/grupos', 'AdminGruposController', [
@@ -160,4 +161,24 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	]);
 
 
+	Route::get('admin/agendas', 'AdminAgendaController@index')->name('/admin/agendas');
+	Route::get('admin/agendas/bloqueos', 'AdminAgendaController@getBloqueos')->name('/admin/agendas/bloqueos');
+	Route::post('admin/agendas/bloqueos', 'AdminAgendaController@storeBloqueos')->name('admin.agendas.bloqueos.store');
+	Route::delete('admin/agendas/bloqueos/{id}', 'AdminAgendaController@destroyBloqueos')->name('/admin/agendas/bloqueos.destroy');
+
+	Route::resource('admin/agenda_motivos', 'AdminAgendaMotivoController', [
+		'names' => [
+			'index' => '/admin/agenda_motivos',
+			'create' => 'admin.agenda_motivos.create',
+			'store' => 'admin.agenda_motivos.store',
+			'show' => 'admin.agenda_motivos.show',
+			'edit' => 'admin.agenda_motivos.edit',
+			'update' => 'admin.agenda_motivos.update',
+			'destroy' => 'admin.agenda_motivos.destroy'
+		]
+	]);
+
+	Route::get('admin/agenda/events', 'AdminAgendaController@getAgendaEvents');
+	// Route::get('admin/agenda_motivos', 'EndpointsController@getMotivosAgenda');
+	
 });
