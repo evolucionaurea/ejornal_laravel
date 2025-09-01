@@ -56,8 +56,7 @@
 					</div>
 					<div class="tarjeta-footer">
 
-						@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) &&
-						auth()->user()->id_especialidad == 1 )
+						@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar))
 						<button data-toggle="add-event" class="btn-ejornal btn-ejornal-base">
 							<i class="fas fa-plus-circle"></i> <span>Nuevo Turno</span>
 						</button>
@@ -76,6 +75,8 @@
 					</div>
 					<div class="tarjeta-body">
 						<div id="calendar"></div>
+
+						<div class="text-muted font-italic small">Click en el turno para editarlo. Puedes arrastrar el turno hacia otro casillero para cambiar el día.</div>
 					</div>
 				</div>
 			</div>

@@ -86,7 +86,7 @@ class Calendar{
 			.blur()
 
 		form.find('[name="nomina_id"]').select2({
-			placeholder:'Select',
+			placeholder:'Buscar Trabajador...',
 			allowClear:true,
 			ajax:{
 				url:`/empleados/nominas/busqueda`,
@@ -108,6 +108,35 @@ class Calendar{
 							return {
 								id: obj.id,
 								text: obj.nombre
+							}
+						})
+					}
+				}
+			}
+		})
+		form.find('[name="user_id"]').select2({
+			placeholder:'Buscar Usuario...',
+			allowClear:true,
+			ajax:{
+				url:`/empleados/usuarios/search`,
+				dateType:'json',
+				method:'POST',
+				data: params=> {
+					return {
+						search: params.term,
+						type: 'public',
+						_token:csfr,
+						start:0,
+						length:25
+					};
+				},
+				processResults:response=>{
+					return {
+						results: response.result.map(obj=>{
+							return {
+								id: obj.id,
+								text: `${obj.nombre} (${obj.especialidad.nombre})`,
+								selected: obj.id==response.user.id
 							}
 						})
 					}
@@ -196,10 +225,11 @@ class Calendar{
 			form.preventDefault()
 			const post = get_form(form.currentTarget)
 
+			
 			try{
 				const response = await axios.post('/empleados/agenda/agregar_turno',post)
 				toastr.success(response.data.message)
-
+				
 				//Swal.close()
 				window.location.reload()
 

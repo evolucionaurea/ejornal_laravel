@@ -45,7 +45,9 @@ class EmpleadosAgendaController extends Controller
 			], 400);
 		}
 
-		$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->hora.':'.$request->minutos);
+		//dd($request->json());
+
+		$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
 		$fecha_final = $fecha_inicio->addMinutes($request->duracion);
 
 		//chequear si se superpone con otro turno del mismo usuario
@@ -123,7 +125,8 @@ class EmpleadosAgendaController extends Controller
 		})
 		->whereHas('estado',function($query){
 			$query->where('referencia','=','confirmed');
-		});
+		})
+		->where('cliente_id',auth()->user()->id_cliente_actual);
 
 		if($mode=='user'){
 			$query->where('user_id',auth()->user()->id);
@@ -145,6 +148,7 @@ class EmpleadosAgendaController extends Controller
 		$query = Agenda::with(['cliente','trabajador'])
 			->where('fecha_inicio','>=',$from)
 			->where('fecha_inicio','<=',$to)
+			->where('cliente_id',auth()->user()->id_cliente_actual)
 			->get();
 
 		return response()->json([

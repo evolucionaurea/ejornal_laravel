@@ -47,7 +47,7 @@ class User extends Authenticatable
 	 *
 	 * @var array
 	 */
-	protected $with = ['rol'];
+	protected $with = ['rol','especialidad'];
 
 	/**
 	 * Accessor para obtener el rol del usuario
