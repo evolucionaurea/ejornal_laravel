@@ -55,21 +55,38 @@ window.dom = (el,classes='',id='') => {
 window.random = (min, max) => {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
-window.get_template = template => {
-	window.loading()
-	return new Promise((resolve,reject)=>{
-		axios.get(template)
-			.then(response=>{
-				resolve(response.data);
-			})
-			.finally(response=>{
-				window.loading({show:false})
-			})
-			.catch(error=>{
-				reject(error);
-			});
-	});
-}
+window.get_template = (template) => {
+  // Mostrar loader
+  window.loading();
+
+  // Tomar el token del <meta>
+  var tokenEl = document.querySelector('meta[name="csrf-token"]');
+  var CSRF = tokenEl ? tokenEl.getAttribute('content') : '';
+
+  return new Promise((resolve, reject) => {
+    axios.get(template, {
+      headers: {
+        'Accept': 'text/html, application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        ...(CSRF ? { 'X-CSRF-TOKEN': CSRF } : {})
+      },
+      withCredentials: true,     // envía cookies de sesión
+      responseType: 'text'       // esperamos HTML
+    })
+    .then(response => {
+      resolve(response.data);
+    })
+    .catch(error => {
+      // Útil para ver si es 419 (CSRF) o 403 (permiso)
+      console.error('GET ' + template, error?.response?.status, error?.response?.data || error);
+      reject(error);
+    })
+    .finally(() => {
+      window.loading({ show: false });
+    });
+  });
+};
+
 String.prototype.capitalize = function(){
   const lower = this.toLowerCase();
   return this.charAt(0).toUpperCase() + lower.slice(1);

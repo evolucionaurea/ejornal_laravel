@@ -28,8 +28,8 @@ class EmpleadoTareasLivianasController extends Controller
 	{
 		//$fecha_actual = Carbon::now();
 		$clientes = $this->getClientesUser();
-		$tipos = TareaLivianaTipo::get();
-		$tipos_comunicacion = TipoComunicacionLiviana::get();
+		$tipos = TareaLivianaTipo::orderBy('nombre', 'asc')->get();
+		$tipos_comunicacion = TipoComunicacionLiviana::orderBy('nombre', 'asc')->get();
 		return view('empleados.tareas_livianas', compact('clientes','tipos', 'tipos_comunicacion'));
 	}
 

@@ -14,7 +14,7 @@ class AdminResumenController extends Controller
 
 	public function index()
 	{
-		$clientes = Cliente::all();
+		$clientes = Cliente::orderBy('nombre')->get();
 		$enfermeros = User::where('id_especialidad', 2)->where('estado', 1)->count();
 		$medicos = User::where('id_especialidad', 1)->where('estado', 1)->count();
 

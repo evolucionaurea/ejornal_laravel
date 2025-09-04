@@ -24,7 +24,7 @@
 			</a>
 		</li>
 
-		<li class="{{ setActive('/admin/agendas') }} dropdownMenu">
+		{{-- <li class="{{ setActive('/admin/agendas') }} dropdownMenu">
 			<div class="dropdownButton">
 				<a href="#!" class="list-group-item list-group-item-action sidebar_item">
 					<i class="fas fa-calendar"></i>
@@ -42,7 +42,7 @@
 					</ol>
 				</ul>
 			</div>
-		</li>
+		</li> --}}
 
 
 		<li class="{{ setActive('/admin/monitoreo') }} menu_sin_sub_menu">

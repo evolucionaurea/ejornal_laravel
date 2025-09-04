@@ -29,7 +29,7 @@ class EmpleadosUsuariosController extends Controller
 
 		return response()->json([
 			'user'=>auth()->user(),
-			'result'=>$q_users->get()
+			'result'=>$q_users->orderBy('nombre', 'asc')->get()
 		]);
 	}
 

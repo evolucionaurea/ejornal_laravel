@@ -350,442 +350,392 @@ trait Ausentismos {
 
 	}
 
-	public function ausentismosAjax($id_cliente=null)
-	{
+	
+	public function ausentismosAjax($id_cliente = null)
+{
+    setlocale(LC_TIME, 'Spanish');
+    $today = CarbonImmutable::now();
 
-		$newLocale = setlocale(LC_TIME, 'Spanish');
+    // --- NOMINAS (mes actual) ----------------------------------------------
+    $q_nomina = NominaHistorial::where('year_month', $today->format('Ym'))
+        ->where('cliente_id', $id_cliente)
+        ->first();
 
-		$today = CarbonImmutable::now();
+    if (!$q_nomina) {
+        \Artisan::call('db:seed', [
+            '--class' => 'NominaHistorialSeeder',
+            '--force' => true
+        ]);
 
-		/// NOMINAS
-		$q_nomina = NominaHistorial::select('*')
-			->where('year_month',$today->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first();
-		if(!$q_nomina){
-			\Artisan::call('db:seed', [
-				'--class' => 'NominaHistorialSeeder',
-				'--force'=> true
-			]);
-			$q_nomina = NominaHistorial::select('*')
-				->where('year_month',$today->format('Ym'))
-				->where('cliente_id',$id_cliente)
-				->first();
-		}
-		$nomina_actual = $q_nomina->cantidad;
+        $q_nomina = NominaHistorial::where('year_month', $today->format('Ym'))
+            ->where('cliente_id', $id_cliente)
+            ->first();
+    }
 
-		$nomina_mes_anterior = NominaHistorial::select('*')
-			->where('year_month',$today->firstOfMonth()->subMonth()->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
-		$nomina_mes_anio_anterior = NominaHistorial::select('*')
-			->where('year_month',$today->firstOfMonth()->subYear()->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
-		$nomina_promedio_actual = NominaHistorial::selectRaw("CEIL(AVG(cantidad)) as cantidad")
-			->whereBetween('year_month',[$today->startOfYear()->format('Ym'),$today->format('Ym')])
-			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
+    // Evitar nulls en PHP 7.4
+    $nomina_actual = (int) (optional($q_nomina)->cantidad ?? 0);
 
+    $nomina_mes_anterior = (int) (
+        optional(
+            NominaHistorial::where('year_month', $today->firstOfMonth()->subMonth()->format('Ym'))
+                ->where('cliente_id', $id_cliente)
+                ->first()
+        )->cantidad ?? $nomina_actual
+    );
 
+    $nomina_mes_anio_anterior = (int) (
+        optional(
+            NominaHistorial::where('year_month', $today->firstOfMonth()->subYear()->format('Ym'))
+                ->where('cliente_id', $id_cliente)
+                ->first()
+        )->cantidad ?? $nomina_actual
+    );
 
-		/// ausentismos mes a mes
-		$months_current_year = CarbonPeriod::create($today->startOfYear(),'1 month', $today);
-		$indices_mes_a_mes = [];
-		foreach($months_current_year as $date){
+    // Promedio del año actual (usar avg() evita alias y nulos)
+    $avg_nomina = NominaHistorial::whereBetween('year_month', [
+            $today->startOfYear()->format('Ym'),
+            $today->format('Ym')
+        ])
+        ->where('cliente_id', $id_cliente)
+        ->avg('cantidad');
 
-			//$month = $date->format('Y-m-d');
-			$date_immutable = CarbonImmutable::create($date->format('Y'),$date->format('m'),1);
-			///$date_immutable = $date;
-			$inicio_mes = $date_immutable->firstOfMonth();
-			$inicio_mes_formatted = $inicio_mes->format('Y-m-d');
-			$fin_mes = $today->format('Ym')==$date->format('Ym') ? $today : $date_immutable->lastOfMonth();
-			$fin_mes_formatted = $fin_mes->format('Y-m-d');
-			//exit;
-			$nomina = NominaHistorial::select('cantidad','year_month')
-				->where('year_month',$date->format('Ym'))
-				->where('cliente_id',$id_cliente)
-				->first()
-				->cantidad;
+    $nomina_promedio_actual = (int) ceil($avg_nomina ?? 0);
 
 
-			//DB::enableQueryLog();
-			$ausentismos = Ausentismo::selectRaw("
-				SUM(
-					ABS(DATEDIFF(
-						IF(
-							IFNULL(
-								fecha_final,
-								'{$fin_mes_formatted}'
-							) >= '{$fin_mes_formatted}',
-							'{$fin_mes_formatted}',
-							fecha_final
-						),
+    // --- AUSENTISMOS MES A MES (año actual) --------------------------------
+    $months_current_year = CarbonPeriod::create($today->startOfYear(), '1 month', $today);
+    $indices_mes_a_mes = [];
 
-						IF(
-							fecha_inicio>='{$inicio_mes_formatted}',
-							fecha_inicio,
-							'{$inicio_mes_formatted}'
-						)
-					))+1
-				) dias
-			")
-				->where(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
-					$query
-						->whereBetween('fecha_inicio',[$inicio_mes,$fin_mes])
-						->orWhere(function($query) use ($inicio_mes,$fin_mes,$date_immutable){
-							$query->where('fecha_inicio','<',$inicio_mes)
-								->where(function($query) use ($fin_mes,$inicio_mes,$date_immutable){
-									$query->where('fecha_final','>=',$inicio_mes)
-										->orWhere('fecha_final',null);
-								});
-						});
-				})
-				->whereIn('id_trabajador',function($query) use ($id_cliente){
-					$query->select('id')
-						->from('nominas')
-						->where('deleted_at',null)
-						->where('estado',1);
-						//->where('id_cliente',$id_cliente);
-				})
-				->whereHas('tipo',function($query){
-					$query
-						->where('incluir_indice',1)
-						->where('nombre','NOT LIKE','%incidente%')
-						->where(function($query){
-							$query
-								->where('agrupamiento','!=','ART')
-								->orWhere('agrupamiento',null);
-						});
-				})
-				->where('ausentismos.id_cliente',$id_cliente)
-				->first();
+    foreach ($months_current_year as $date) {
+        $date_immutable = CarbonImmutable::create($date->format('Y'), $date->format('m'), 1);
 
+        $inicio_mes = $date_immutable->firstOfMonth();
+        $fin_mes   = ($today->format('Ym') === $date->format('Ym')) ? $today : $date_immutable->lastOfMonth();
 
-			$indices_mes_a_mes[] = [
-				//'ausentismos'=>$ausentismos->total,
-				'dias'=>$ausentismos->dias,
-				'month'=>Str::ucfirst($date->formatLocalized('%B')),
-				///'indice'=>$nomina ? ($ausentismos->dias/($nomina*( $fin_mes->format('d') ))*100) : 0,
-				'indice'=>$nomina ? ($ausentismos->dias/($nomina*$fin_mes->format('d'))*100) : 0,
-				'nomina'=>$nomina,
-				'inicio_mes'=>$inicio_mes_formatted,
-				'fin_mes'=>$fin_mes_formatted,
-				//'sql'=>DB::getQueryLog()[0]
-				///'dia'=>$today->format('Ym')==$date->format('Ym') ? $today->format('d') : $date->endOfMonth()->format('d')
-			];
+        $inicio_mes_formatted = $inicio_mes->format('Y-m-d');
+        $fin_mes_formatted    = $fin_mes->format('Y-m-d');
 
-			////$indices_mes_a_mes[$date->format('Ym')]['month'] = Str::ucfirst($date->formatLocalized('%B'));
-		}
-		////dd(123);
+        // Nómina del mes iterado (fallback a 0 si no existe)
+        $nomina_mes = (int) (
+            optional(
+                NominaHistorial::select('cantidad', 'year_month')
+                    ->where('year_month', $date->format('Ym'))
+                    ->where('cliente_id', $id_cliente)
+                    ->first()
+            )->cantidad ?? 0
+        );
 
+        // Cálculo de días del mes (defensivo ante null)
+        $ausentismos = Ausentismo::selectRaw("
+                SUM(
+                    ABS(DATEDIFF(
+                        IF(
+                            IFNULL(fecha_final, '{$fin_mes_formatted}') >= '{$fin_mes_formatted}',
+                            '{$fin_mes_formatted}',
+                            fecha_final
+                        ),
+                        IF(
+                            fecha_inicio >= '{$inicio_mes_formatted}',
+                            fecha_inicio,
+                            '{$inicio_mes_formatted}'
+                        )
+                    )) + 1
+                ) AS dias
+            ")
+            ->where(function ($query) use ($inicio_mes, $fin_mes) {
+                $query->whereBetween('fecha_inicio', [$inicio_mes, $fin_mes])
+                      ->orWhere(function ($query) use ($inicio_mes) {
+                          $query->where('fecha_inicio', '<', $inicio_mes)
+                                ->where(function ($query) use ($inicio_mes) {
+                                    $query->where('fecha_final', '>=', $inicio_mes)
+                                          ->orWhereNull('fecha_final');
+                                });
+                      });
+            })
+            ->whereIn('id_trabajador', function ($query) {
+                $query->select('id')
+                    ->from('nominas')
+                    ->whereNull('deleted_at')
+                    ->where('estado', 1);
+            })
+            ->whereHas('tipo', function ($query) {
+                $query->where('incluir_indice', 1)
+                      ->where('nombre', 'NOT LIKE', '%incidente%')
+                      ->where(function ($query) {
+                          $query->where('agrupamiento', '!=', 'ART')
+                                ->orWhereNull('agrupamiento');
+                      });
+            })
+            ->where('ausentismos.id_cliente', $id_cliente)
+            ->first();
 
+        $dias_mes = (int) (optional($ausentismos)->dias ?? 0);
+        $dias_en_mes = (int) $fin_mes->format('d');
 
-
-		//DB::enableQueryLog();
-		/// MES ACTUAL
-		$inicio_mes = $today->startOfMonth()->format('Y-m-d');
-		$today_formatted = $today->format('Y-m-d');
-		$ausentismos_mes = Ausentismo::selectRaw("
-			SUM(
-				ABS(DATEDIFF(
-
-					IF(
-						IFNULL(
-							fecha_final,
-							DATE(NOW())
-						) >= DATE(NOW()),
-						DATE(NOW()),
-						fecha_final
-					),
-
-					IF(
-						fecha_inicio>='{$inicio_mes}',
-						fecha_inicio,
-						'{$inicio_mes}'
-					)
-				))+1
-			) dias,
-
-			count(*) as total,
-			id_tipo
-		")
-			->with(['tipo'=>function($query){
-				$query
-					->select('id','nombre','color');
-			}])
-			->where(function($query) use ($today){
-				$query->where(function($query) use ($today){
-					$query
-						->whereBetween('fecha_inicio',[$today->startOfMonth(),$today]);
-				})
-				->orWhere(function($query) use ($today){
-					// los que siguen ausentes fuera del mes actual
-					$query
-						->where('fecha_inicio','<',$today->startOfMonth())
-						->where(function($query) use($today){
-							$query
-								->where('fecha_final','>=',$today->startOfMonth())
-								->orWhere('fecha_final',null);
-						});
-				});
-			})
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
-				$query->select('id')
-					->from('nominas')
-					->where('estado',1)
-					->where('deleted_at',null);
-					//->where('id_cliente',$id_cliente);
-			})
-			->whereHas('tipo',function($query){
-				$query
-					->where('incluir_indice',1)
-					->where('nombre','NOT LIKE','%incidente%')
-					->where(function($query){
-						$query
-							->where('agrupamiento','!=','ART')
-							->orWhere('agrupamiento',null);
-					});
-			})
-			->where('ausentismos.id_cliente',$id_cliente)
-			->groupBy('id_tipo')
-			->orderBy('dias','desc')
-			->get();
-		//$query = DB::getQueryLog();
-		//dd($query);
+        $indices_mes_a_mes[] = [
+            'dias'       => $dias_mes,
+            'month'      => Str::ucfirst($date->formatLocalized('%B')),
+            'indice'     => $nomina_mes > 0 ? ($dias_mes / ($nomina_mes * $dias_en_mes) * 100) : 0,
+            'nomina'     => $nomina_mes,
+            'inicio_mes' => $inicio_mes_formatted,
+            'fin_mes'    => $fin_mes_formatted,
+        ];
+    }
 
 
+    // --- MES ACTUAL ---------------------------------------------------------
+    $inicio_mes = $today->startOfMonth()->format('Y-m-d');
+
+    $ausentismos_mes = Ausentismo::selectRaw("
+            SUM(
+                ABS(DATEDIFF(
+                    IF(
+                        IFNULL(fecha_final, DATE(NOW())) >= DATE(NOW()),
+                        DATE(NOW()),
+                        fecha_final
+                    ),
+                    IF(
+                        fecha_inicio >= '{$inicio_mes}',
+                        fecha_inicio,
+                        '{$inicio_mes}'
+                    )
+                )) + 1
+            ) AS dias,
+            COUNT(*) AS total,
+            id_tipo
+        ")
+        ->with(['tipo' => function ($query) {
+            $query->select('id', 'nombre', 'color');
+        }])
+        ->where(function ($query) use ($today) {
+            $query->whereBetween('fecha_inicio', [$today->startOfMonth(), $today])
+                ->orWhere(function ($query) use ($today) {
+                    $query->where('fecha_inicio', '<', $today->startOfMonth())
+                          ->where(function ($query) use ($today) {
+                              $query->where('fecha_final', '>=', $today->startOfMonth())
+                                    ->orWhereNull('fecha_final');
+                          });
+                });
+        })
+        ->whereIn('id_trabajador', function ($query) {
+            $query->select('id')
+                ->from('nominas')
+                ->where('estado', 1)
+                ->whereNull('deleted_at');
+        })
+        ->whereHas('tipo', function ($query) {
+            $query->where('incluir_indice', 1)
+                  ->where('nombre', 'NOT LIKE', '%incidente%')
+                  ->where(function ($query) {
+                      $query->where('agrupamiento', '!=', 'ART')
+                            ->orWhereNull('agrupamiento');
+                  });
+        })
+        ->where('ausentismos.id_cliente', $id_cliente)
+        ->groupBy('id_tipo')
+        ->orderBy('dias', 'desc')
+        ->get();
 
 
-		/// MES PASADO
-		$inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
-		$fin_mes_pasado = $today->subMonth()->endOfMonth()->format('Y-m-d');
-		$ausentismos_mes_anterior = Ausentismo::selectRaw("
-			SUM(
-				ABS(DATEDIFF(
-					IF(
-						fecha_final<'{$fin_mes_pasado}',
-						fecha_final,
-						'{$fin_mes_pasado}'
-					),
-					IF(
-						fecha_inicio<'{$inicio_mes_pasado}',
-						'{$inicio_mes_pasado}',
-						fecha_inicio
-					)
-				))+1
-			) dias,
-			count(*) as total,
-			id_tipo
-		")
-			->with(['tipo'=>function($query){
-				$query->select('id','nombre','color');
-			}])
-			->where(function($query) use ($today){
-				$query->whereBetween('fecha_inicio',[$today->startOfMonth()->subMonth(),$today->startOfMonth()->subMonth()->endOfMonth()])
-				/*$query->where(function($query) use ($today){
-					$query
-						->whereBetween('fecha_inicio',[$today->subMonth()->startOfMonth(),$today->subMonth()->endOfMonth()])
-						->where(function($query) use ($today){
-							$query->where('fecha_final','<=',$today->subMonth()->endOfMonth())
-								->orWhere('fecha_final',null);
-						});
-				})*/
-				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
-				->orWhere(function($query) use ($today){
-					$query->where('fecha_inicio','<',$today->startOfMonth()->subMonth())
-						->where(function($query) use ($today){
-							$query->where('fecha_final','>=',$today->startOfMonth()->subMonth())
-								->orWhere('fecha_final',null);
-						});
-				});
-			})
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
-				$query->select('id')
-					->from('nominas')
-					->where('estado',1)
-					->where('deleted_at',null);
-					//->where('id_cliente',$id_cliente);
-			})
-			->whereHas('tipo',function($query){
-				$query
-					->where('incluir_indice',1)
-					->where('nombre','NOT LIKE','%incidente%')
-					->where(function($query){
-						$query
-							->where('agrupamiento','!=','ART')
-							->orWhere('agrupamiento',null);
-					});
-			})
-			->where('ausentismos.id_cliente',$id_cliente)
-			->groupBy('id_tipo')
-			->get();
+    // --- MES PASADO ---------------------------------------------------------
+    $inicio_mes_pasado = $today->subMonth()->startOfMonth()->format('Y-m-d');
+    $fin_mes_pasado    = $today->subMonth()->endOfMonth()->format('Y-m-d');
 
-		///dd($ausentismos_mes_anterior->toArray());
+    $ausentismos_mes_anterior = Ausentismo::selectRaw("
+            SUM(
+                ABS(DATEDIFF(
+                    IF(
+                        fecha_final < '{$fin_mes_pasado}',
+                        fecha_final,
+                        '{$fin_mes_pasado}'
+                    ),
+                    IF(
+                        fecha_inicio < '{$inicio_mes_pasado}',
+                        '{$inicio_mes_pasado}',
+                        fecha_inicio
+                    )
+                )) + 1
+            ) AS dias,
+            COUNT(*) AS total,
+            id_tipo
+        ")
+        ->with(['tipo' => function ($query) {
+            $query->select('id', 'nombre', 'color');
+        }])
+        ->where(function ($query) use ($today) {
+            $query->whereBetween('fecha_inicio', [$today->startOfMonth()->subMonth(), $today->startOfMonth()->subMonth()->endOfMonth()])
+                  ->orWhere(function ($query) use ($today) {
+                      $query->where('fecha_inicio', '<', $today->startOfMonth()->subMonth())
+                            ->where(function ($query) use ($today) {
+                                $query->where('fecha_final', '>=', $today->startOfMonth()->subMonth())
+                                      ->orWhereNull('fecha_final');
+                            });
+                  });
+        })
+        ->whereIn('id_trabajador', function ($query) {
+            $query->select('id')
+                ->from('nominas')
+                ->where('estado', 1)
+                ->whereNull('deleted_at');
+        })
+        ->whereHas('tipo', function ($query) {
+            $query->where('incluir_indice', 1)
+                  ->where('nombre', 'NOT LIKE', '%incidente%')
+                  ->where(function ($query) {
+                      $query->where('agrupamiento', '!=', 'ART')
+                            ->orWhereNull('agrupamiento');
+                  });
+        })
+        ->where('ausentismos.id_cliente', $id_cliente)
+        ->groupBy('id_tipo')
+        ->get();
 
 
-		/// MES AÑO ANTERIOR
-		$inicio_mes_anio_anterior = $today->subYear()->startOfMonth()->format('Y-m-d');
-		$fin_mes_anio_anterior = $today->subYear()->endOfMonth()->format('Y-m-d');
-		$ausentismos_mes_anio_anterior = Ausentismo::selectRaw("
-			SUM(
-				ABS(DATEDIFF(
-					IF(
-						fecha_final<'{$fin_mes_anio_anterior}',
-						fecha_final,
-						'{$fin_mes_anio_anterior}'
-					),
-					IF(
-						fecha_inicio<'{$inicio_mes_anio_anterior}',
-						'{$inicio_mes_anio_anterior}',
-						fecha_inicio
-					)
-				))+1
-			) dias,
-			count(*) as total,
-			id_tipo"
-		)
-			->with(['tipo'=>function($query){
-				$query->select('id','nombre','color');
-			}])
-			->where(function($query) use ($today){
-				$query->where(function($query) use ($today){
-					$query
-						->whereBetween('fecha_inicio',[$today->startOfMonth()->subYear(),$today->startOfMonth()->subYear()->endOfMonth()])
-						->where(function($query) use ($today){
-							$query
-								->where('fecha_final','<=',$today->startOfMonth()->subMonth()->endOfMonth())
-								->orWhere('fecha_final',null);
-						});
-				})
-				// los que estuvieron ausentes durante el curso de ese mes pero iniciaron ausentismo antes de ese mes y volvieron dsp
-				->orWhere(function($query) use ($today){
-					$query->where('fecha_inicio','<',$today->startOfMonth()->subYear())
-						->where(function($query) use ($today){
-							$query
-								->where('fecha_final','>=',$today->startOfMonth()->subYear())
-								->orWhere('fecha_final',null);
-						});
-				});
-			})
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
-				$query->select('id')
-					->from('nominas')
-					->where('estado',1)
-					->where('deleted_at',null);
-					//->where('id_cliente',$id_cliente);
-			})
-			->whereHas('tipo',function($query){
-				$query
-					->where('incluir_indice',1)
-					->where('nombre','NOT LIKE','%incidente%')
-					->where(function($query){
-						$query
-							->where('agrupamiento','!=','ART')
-							->orWhere('agrupamiento',null);
-					});
-			})
-			->where('ausentismos.id_cliente',$id_cliente)
-			->groupBy('id_tipo')
-			->get();
+    // --- MES AÑO ANTERIOR ---------------------------------------------------
+    $inicio_mes_anio_anterior = $today->subYear()->startOfMonth()->format('Y-m-d');
+    $fin_mes_anio_anterior    = $today->subYear()->endOfMonth()->format('Y-m-d');
+
+    $ausentismos_mes_anio_anterior = Ausentismo::selectRaw("
+            SUM(
+                ABS(DATEDIFF(
+                    IF(
+                        fecha_final < '{$fin_mes_anio_anterior}',
+                        fecha_final,
+                        '{$fin_mes_anio_anterior}'
+                    ),
+                    IF(
+                        fecha_inicio < '{$inicio_mes_anio_anterior}',
+                        '{$inicio_mes_anio_anterior}',
+                        fecha_inicio
+                    )
+                )) + 1
+            ) AS dias,
+            COUNT(*) AS total,
+            id_tipo
+        ")
+        ->with(['tipo' => function ($query) {
+            $query->select('id', 'nombre', 'color');
+        }])
+        ->where(function ($query) use ($today) {
+            $query->where(function ($query) use ($today) {
+                    $query->whereBetween('fecha_inicio', [$today->startOfMonth()->subYear(), $today->startOfMonth()->subYear()->endOfMonth()])
+                          ->where(function ($query) use ($today) {
+                              $query->where('fecha_final', '<=', $today->startOfMonth()->subMonth()->endOfMonth())
+                                    ->orWhereNull('fecha_final');
+                          });
+                })
+                ->orWhere(function ($query) use ($today) {
+                    $query->where('fecha_inicio', '<', $today->startOfMonth()->subYear())
+                          ->where(function ($query) use ($today) {
+                              $query->where('fecha_final', '>=', $today->startOfMonth()->subYear())
+                                    ->orWhereNull('fecha_final');
+                          });
+                });
+        })
+        ->whereIn('id_trabajador', function ($query) {
+            $query->select('id')
+                ->from('nominas')
+                ->where('estado', 1)
+                ->whereNull('deleted_at');
+        })
+        ->whereHas('tipo', function ($query) {
+            $query->where('incluir_indice', 1)
+                  ->where('nombre', 'NOT LIKE', '%incidente%')
+                  ->where(function ($query) {
+                      $query->where('agrupamiento', '!=', 'ART')
+                            ->orWhereNull('agrupamiento');
+                  });
+        })
+        ->where('ausentismos.id_cliente', $id_cliente)
+        ->groupBy('id_tipo')
+        ->get();
 
 
-		/// AÑO ACTUAL
-		$inicio_anio = $today->format('Y-01-01');
-		$ausentismos_anual = Ausentismo::selectRaw("
-			SUM(
-				ABS(DATEDIFF(
+    // --- AÑO ACTUAL (acumulado) --------------------------------------------
+    $inicio_anio = $today->format('Y-01-01');
 
-					IF(
-						IFNULL(
-							fecha_final,
-							DATE(NOW())
-						) < DATE(NOW()),
-						fecha_final,
-						DATE(NOW())
-					),
+    $ausentismos_anual = Ausentismo::selectRaw("
+            SUM(
+                ABS(DATEDIFF(
+                    IF(
+                        IFNULL(fecha_final, DATE(NOW())) < DATE(NOW()),
+                        fecha_final,
+                        DATE(NOW())
+                    ),
+                    IF(
+                        fecha_inicio < '{$inicio_anio}',
+                        '{$inicio_anio}',
+                        fecha_inicio
+                    )
+                )) + 1
+            ) AS dias,
+            COUNT(*) AS total,
+            id_tipo
+        ")
+        ->with(['tipo' => function ($query) {
+            $query->select('id', 'nombre', 'color');
+        }])
+        ->where(function ($query) use ($today) {
+            $query->whereDate('fecha_inicio', '>=', $today->startOfYear())
+                  ->orWhere(function ($query) use ($today) {
+                      $query->where('fecha_inicio', '<', $today->startOfYear())
+                            ->where(function ($query) use ($today) {
+                                $query->where('fecha_final', '>=', $today->startOfYear())
+                                      ->orWhereNull('fecha_final');
+                            });
+                  });
+        })
+        ->whereIn('id_trabajador', function ($query) {
+            $query->select('id')
+                ->from('nominas')
+                ->where('estado', 1)
+                ->whereNull('deleted_at');
+        })
+        ->whereHas('tipo', function ($query) {
+            $query->where('incluir_indice', 1)
+                  ->where('nombre', 'NOT LIKE', '%incidente%')
+                  ->where(function ($query) {
+                      $query->where('agrupamiento', '!=', 'ART')
+                            ->orWhereNull('agrupamiento');
+                  });
+        })
+        ->where('ausentismos.id_cliente', $id_cliente)
+        ->groupBy('id_tipo')
+        ->orderBy('dias', 'desc')
+        ->get();
 
-					IF(
-						fecha_inicio<'{$inicio_anio}',
-						'{$inicio_anio}',
-						fecha_inicio
-					)
-				))+1
-			) dias,
-			count(*) as total,
-			id_tipo
-		")
-			->with(['tipo'=>function($query){
-				$query->select('id','nombre','color');
-			}])
-			->where(function($query) use ($today){
-				$query->whereDate('fecha_inicio','>=',$today->startOfYear())
-				// los que estuvieron ausentes durante el curso del año pero iniciaron ausentismo antes de este año y volvieron dsp
-				->orWhere(function($query) use ($today){
-					$query
-						->where('fecha_inicio','<',$today->startOfYear())
-						->where(function($query) use ($today){
-							$query
-								->where('fecha_final','>=',$today->startOfYear())
-								->orWhere('fecha_final',null);
-						});
-				});
-			})
-			->whereIn('id_trabajador',function($query) use ($id_cliente){
-				$query->select('id')
-					->from('nominas')
-					->where('estado',1)
-					->where('deleted_at',null);
-					//->where('id_cliente',$id_cliente);
-			})
-			->whereHas('tipo',function($query){
-				$query
-					->where('incluir_indice',1)
-					->where('nombre','NOT LIKE','%incidente%')
-					->where(function($query){
-						$query
-							->where('agrupamiento','!=','ART')
-							->orWhere('agrupamiento',null);
-					});
-			})
-			->where('ausentismos.id_cliente',$id_cliente)
-			->groupBy('id_tipo')
-			->orderBy('dias','desc')
-			->get();
 
-		$status = 'ok';
+    // --- Extras de retorno --------------------------------------------------
+    $status = 'ok';
+    $cant_dias_mes              = (int) $today->format('d');
+    $cant_dias_mes_anterior     = (int) $today->firstOfMonth()->subMonth()->endOfMonth()->format('d');
+    $cant_dias_mes_anio_anterior= (int) $today->firstOfMonth()->subYear()->endOfMonth()->format('d');
+    $cant_dias_anio             = (int) $today->dayOfYear();
 
-		$cant_dias_mes = (int) $today->format('d');
-		$cant_dias_mes_anterior = (int) $today->firstOfMonth()->subMonth()->endOfMonth()->format('d');
-		$cant_dias_mes_anio_anterior = (int) $today->firstOfMonth()->subYear()->endOfMonth()->format('d');
-		$cant_dias_anio = (int) $today->dayOfYear();
+    return compact(
+        'indices_mes_a_mes',
 
-		return compact(
-			'indices_mes_a_mes',
+        'ausentismos_mes',
+        'ausentismos_mes_anterior',
+        'ausentismos_mes_anio_anterior',
+        'ausentismos_anual',
 
-			'ausentismos_mes',
-			'ausentismos_mes_anterior',
-			'ausentismos_mes_anio_anterior',
-			'ausentismos_anual',
+        'nomina_actual',
+        'nomina_mes_anterior',
+        'nomina_mes_anio_anterior',
+        'nomina_promedio_actual',
 
-			'nomina_actual',
-			'nomina_mes_anterior',
-			'nomina_mes_anio_anterior',
-			'nomina_promedio_actual',
+        'cant_dias_mes',
+        'cant_dias_mes_anterior',
+        'cant_dias_mes_anio_anterior',
+        'cant_dias_anio',
 
-			'cant_dias_mes',
-			'cant_dias_mes_anterior',
-			'cant_dias_mes_anio_anterior',
-			'cant_dias_anio',
+        'months_current_year',
 
-			'months_current_year',
+        'status'
+    );
+}
 
-			'status'
-		);
-	}
 
 
 }

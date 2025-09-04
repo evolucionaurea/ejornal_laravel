@@ -64,24 +64,33 @@ trait Clientes {
 			->where('cliente_id',$id_cliente)
 			->first();
 		}
-		$nomina_actual = $q_nomina->cantidad;
+		$nomina_actual = (int) (optional($q_nomina)->cantidad ?? 0);
 
 
-		$nomina_mes_anterior = NominaHistorial::select('*')
-			->where('year_month',$today->firstOfMonth()->subMonth()->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
-		$nomina_mes_anio_anterior = NominaHistorial::select('*')
-			->where('year_month',$today->firstOfMonth()->subYear()->format('Ym'))
-			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
-		$nomina_promedio_actual = NominaHistorial::selectRaw("CEIL(AVG(cantidad)) as cantidad")
-			->whereBetween('year_month',[$today->startOfYear()->format('Ym'),$today->format('Ym')])
-			->where('cliente_id',$id_cliente)
-			->first()
-			->cantidad;
+
+$nomina_mes_anterior = (int) (
+    optional(
+        NominaHistorial::where('year_month', $today->firstOfMonth()->subMonth()->format('Ym'))
+            ->where('cliente_id', $id_cliente)
+            ->first()
+    )->cantidad ?? $nomina_actual
+);
+
+$nomina_mes_anio_anterior = (int) (
+    optional(
+        NominaHistorial::where('year_month', $today->firstOfMonth()->subYear()->format('Ym'))
+            ->where('cliente_id', $id_cliente)
+            ->first()
+    )->cantidad ?? $nomina_actual
+);
+$nomina_promedio_actual = (int) ceil(
+    NominaHistorial::whereBetween('year_month', [
+            $today->startOfYear()->format('Ym'),
+            $today->format('Ym'),
+        ])
+        ->where('cliente_id', $id_cliente)
+        ->avg('cantidad') ?? 0
+);
 
 
 
@@ -146,7 +155,7 @@ trait Clientes {
 						->orWhere('agrupamiento',null);
 				});
 		});
-		$dias_mes_actual = $mes_actual->first()->dias;
+		$dias_mes_actual         = (int) (optional($mes_actual->first())->dias ?? 0);
 		$ausentismos_mes_actual_indice = $nomina_actual ? ($dias_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
 		//$ausentismos_mes_actual = number_format($ausentismos_mes_actual,2,',','.');
 		///dump($q_ausentismos_mes_actual->first()->dias);
@@ -212,7 +221,7 @@ trait Clientes {
 						->orWhere('agrupamiento',null);
 				});
 		});
-		$dias_mes_pasado = $mes_pasado->first()->dias;
+		$dias_mes_pasado         = (int) (optional($mes_pasado->first())->dias ?? 0);
 		$ausentismos_mes_pasado_indice = $nomina_mes_anterior ? ($dias_mes_pasado/($nomina_mes_anterior*$today->startOfMonth()->subMonth()->endOfMonth()->format('d'))*100) : 0;
 		//$ausentismos_mes_pasado = number_format($ausentismos_mes_pasado,2,',','.');
 
@@ -276,7 +285,7 @@ trait Clientes {
 						->orWhere('agrupamiento',null);
 				});
 		});
-		$dias_mes_anio_anterior = $mes_anio_anterior->first()->dias;
+		$dias_mes_anio_anterior  = (int) (optional($mes_anio_anterior->first())->dias ?? 0);
 		$ausentismos_mes_anio_anterior_indice = $nomina_mes_anio_anterior ? ($dias_mes_anio_anterior/($nomina_mes_anio_anterior*$today->startOfMonth()->subYear()->endOfMonth()->format('d'))*100) : 0;
 		//$ausentismos_mes_anio_anterior = number_format($ausentismos_mes_anio_anterior,2,',','.');
 
@@ -348,104 +357,120 @@ trait Clientes {
 						->orWhere('agrupamiento',null);
 				});
 		});
-		$dias_anio_actual = $anio_actual->first()->dias;
-		$ausentismos_anio_actual_indice = $nomina_promedio_actual ? ($dias_anio_actual/($nomina_promedio_actual*$today->dayOfYear())*100) : 0;
-		//$ausentismos_anio_actual = number_format($ausentismos_anio_actual,2,',','.');
+		
 
 
-		/// ACCIDENTES
-		/// MES ACTUAL
-		///DB::enableQueryLog();
-		$q_accidentes_mes_actual = clone $q_ausentismos_mes_actual;
-		$q_accidentes_mes_actual->whereHas('tipo',function($query){
-			$query
-				->where('agrupamiento','=','ART')
-				->where('nombre','NOT LIKE','%incidente%')
-				->where('incluir_indice','=',1);
-		});
-		$dias_accidentes_mes_actual = (int) $q_accidentes_mes_actual->first()->dias;
-		$accidentes_mes_actual_indice = $nomina_actual ? ($dias_accidentes_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
-		//$accidentes_mes_actual_indice = number_format($accidentes_mes_actual_indice,2,',','.');
-		//dd(DB::getQueryLog());
-
-		/// MES PASADO
-		$q_accidentes_mes_pasado = clone $q_ausentismos_mes_pasado;
-		$q_accidentes_mes_pasado->whereHas('tipo',function($query){
-			$query
-				->where('agrupamiento','=','ART')
-				->where('nombre','NOT LIKE','%incidente%')
-				->where('incluir_indice','=',1);
-		});
-		$dias_accidentes_mes_pasado = (int) $q_accidentes_mes_pasado->first()->dias;
-		$accidentes_mes_pasado_indice = $nomina_mes_anterior ? ($dias_accidentes_mes_pasado/($nomina_mes_anterior*$today->startOfMonth()->subMonth()->endOfMonth()->format('d'))*100) : 0;
-		//$accidentes_mes_pasado_indice = number_format($accidentes_mes_pasado_indice,2,',','.');
-
-		/// MES AÑO ANTERIOR
-		$q_accidentes_mes_anio_anterior = clone $q_ausentismos_mes_anio_anterior;
-		$q_accidentes_mes_anio_anterior->whereHas('tipo',function($query){
-			$query
-				->where('agrupamiento','=','ART')
-				->where('nombre','NOT LIKE','%incidente%')
-				->where('incluir_indice','=',1);
-		});
-		$dias_accidentes_mes_anio_anterior = (int) $q_accidentes_mes_anio_anterior->first()->dias;
-		$accidentes_mes_anio_anterior_indice = $nomina_mes_anio_anterior ? ($dias_accidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$today->startOfMonth()->subYear()->endOfMonth()->format('d'))*100) : 0;
-		//$accidentes_mes_anio_anterior_indice = number_format($accidentes_mes_anio_anterior_indice,2,',','.');
-
-		/// AÑO ACTUAL
-		$q_accidentes_anio_actual = clone $q_ausentismos_anio_actual;
-		$q_accidentes_anio_actual->whereHas('tipo',function($query){
-			$query
-				->where('agrupamiento','=','ART')
-				->where('nombre','NOT LIKE','%incidente%')
-				->where('incluir_indice','=',1);
-		});
-		$dias_accidentes_anio_actual = (int) $q_accidentes_anio_actual->first()->dias;
-		$accidentes_anio_actual_indice = $nomina_promedio_actual ? ($dias_accidentes_anio_actual/($nomina_promedio_actual*$today->dayOfYear())*100) : 0;
-		//$accidentes_anio_actual_indice = number_format($accidentes_anio_actual_indice,2,',','.');
+		// --- AÑO ACTUAL (AUSENTISMOS)
+$dias_anio_actual = (int) (optional($anio_actual->first())->dias ?? 0);
+$ausentismos_anio_actual_indice = $nomina_promedio_actual
+    ? ($dias_anio_actual / ($nomina_promedio_actual * (int)$today->dayOfYear()) * 100)
+    : 0;
+// $ausentismos_anio_actual = number_format($ausentismos_anio_actual, 2, ',', '.');
 
 
+// --- ACCIDENTES
+// MES ACTUAL
+$q_accidentes_mes_actual = clone $q_ausentismos_mes_actual;
+$q_accidentes_mes_actual->whereHas('tipo', function ($query) {
+    $query->where('agrupamiento', '=', 'ART')
+          ->where('nombre', 'NOT LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_accidentes_mes_actual = (int) (optional($q_accidentes_mes_actual->first())->dias ?? 0);
+$accidentes_mes_actual_indice = $nomina_actual
+    ? ($dias_accidentes_mes_actual / ($nomina_actual * (int)$today->format('d')) * 100)
+    : 0;
+// $accidentes_mes_actual_indice = number_format($accidentes_mes_actual_indice, 2, ',', '.');
+
+// MES PASADO
+$q_accidentes_mes_pasado = clone $q_ausentismos_mes_pasado;
+$q_accidentes_mes_pasado->whereHas('tipo', function ($query) {
+    $query->where('agrupamiento', '=', 'ART')
+          ->where('nombre', 'NOT LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_accidentes_mes_pasado = (int) (optional($q_accidentes_mes_pasado->first())->dias ?? 0);
+$accidentes_mes_pasado_indice = $nomina_mes_anterior
+    ? ($dias_accidentes_mes_pasado / ($nomina_mes_anterior * (int)$today->startOfMonth()->subMonth()->endOfMonth()->format('d')) * 100)
+    : 0;
+// $accidentes_mes_pasado_indice = number_format($accidentes_mes_pasado_indice, 2, ',', '.');
+
+// MES AÑO ANTERIOR
+$q_accidentes_mes_anio_anterior = clone $q_ausentismos_mes_anio_anterior;
+$q_accidentes_mes_anio_anterior->whereHas('tipo', function ($query) {
+    $query->where('agrupamiento', '=', 'ART')
+          ->where('nombre', 'NOT LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_accidentes_mes_anio_anterior = (int) (optional($q_accidentes_mes_anio_anterior->first())->dias ?? 0);
+$accidentes_mes_anio_anterior_indice = $nomina_mes_anio_anterior
+    ? ($dias_accidentes_mes_anio_anterior / ($nomina_mes_anio_anterior * (int)$today->startOfMonth()->subYear()->endOfMonth()->format('d')) * 100)
+    : 0;
+// $accidentes_mes_anio_anterior_indice = number_format($accidentes_mes_anio_anterior_indice, 2, ',', '.');
+
+// AÑO ACTUAL
+$q_accidentes_anio_actual = clone $q_ausentismos_anio_actual;
+$q_accidentes_anio_actual->whereHas('tipo', function ($query) {
+    $query->where('agrupamiento', '=', 'ART')
+          ->where('nombre', 'NOT LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_accidentes_anio_actual = (int) (optional($q_accidentes_anio_actual->first())->dias ?? 0);
+$accidentes_anio_actual_indice = $nomina_promedio_actual
+    ? ($dias_accidentes_anio_actual / ($nomina_promedio_actual * (int)$today->dayOfYear()) * 100)
+    : 0;
+// $accidentes_anio_actual_indice = number_format($accidentes_anio_actual_indice, 2, ',', '.');
 
 
+// --- INCIDENTES
+// MES ACTUAL
+$q_incidentes_mes_actual = clone $q_ausentismos_mes_actual; // no reutilizar la misma instancia
+$q_incidentes_mes_actual->whereHas('tipo', function ($query) {
+    $query->where('nombre', 'LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_incidentes_mes_actual = (int) (optional($q_incidentes_mes_actual->first())->dias ?? 0);
+$incidentes_mes_actual_indice = $nomina_actual
+    ? ($dias_incidentes_mes_actual / ($nomina_actual * (int)$today->format('d')) * 100)
+    : 0;
+// $incidentes_mes_actual_indice = number_format($incidentes_mes_actual_indice, 2, ',', '.');
 
-		/// INCIDENTES
-		/// MES ACTUAL
-		$q_incidentes_mes_actual = $q_ausentismos_mes_actual;
-		$q_incidentes_mes_actual->without('whereHas:tipo');
-		$q_incidentes_mes_actual->whereHas('tipo',function($query){
-			$query->where('nombre','LIKE','%incidente%')->where('incluir_indice','=',1);
-		});
-		$dias_incidentes_mes_actual = (int) $q_incidentes_mes_actual->first()->dias;
-		$incidentes_mes_actual_indice = $nomina_actual ? ($dias_incidentes_mes_actual/($nomina_actual*$today->format('d'))*100) : 0;
-		//$incidentes_mes_actual_indice = number_format($incidentes_mes_actual_indice,2,',','.');
+// MES PASADO
+$q_incidentes_mes_pasado = clone $q_ausentismos_mes_pasado;
+$q_incidentes_mes_pasado->whereHas('tipo', function ($query) {
+    $query->where('nombre', 'LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_incidentes_mes_pasado = (int) (optional($q_incidentes_mes_pasado->first())->dias ?? 0);
+$incidentes_mes_pasado_indice = $nomina_mes_anterior
+    ? ($dias_incidentes_mes_pasado / ($nomina_mes_anterior * (int)$today->startOfMonth()->subMonth()->endOfMonth()->format('d')) * 100)
+    : 0;
+// $incidentes_mes_pasado_indice = number_format($incidentes_mes_pasado_indice, 2, ',', '.');
 
-		/// MES PASADO
-		$q_incidentes_mes_pasado = clone $q_ausentismos_mes_pasado;
-		$q_incidentes_mes_pasado->whereHas('tipo',function($query){
-			$query->where('nombre','LIKE','%incidente%')->where('incluir_indice','=',1);
-		});
-		$dias_incidentes_mes_pasado = (int) $q_incidentes_mes_pasado->first()->dias;
-		$incidentes_mes_pasado_indice = $nomina_mes_anterior ? ($dias_incidentes_mes_pasado/($nomina_mes_anterior*$today->startOfMonth()->subMonth()->endOfMonth()->format('d'))*100) : 0;
-		//$incidentes_mes_pasado_indice = number_format($incidentes_mes_pasado_indice,2,',','.');
+// MES AÑO ANTERIOR
+$q_incidentes_mes_anio_anterior = clone $q_ausentismos_mes_anio_anterior;
+$q_incidentes_mes_anio_anterior->whereHas('tipo', function ($query) {
+    $query->where('nombre', 'LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_incidentes_mes_anio_anterior = (int) (optional($q_incidentes_mes_anio_anterior->first())->dias ?? 0);
+$incidentes_mes_anio_anterior_indice = $nomina_mes_anio_anterior
+    ? ($dias_incidentes_mes_anio_anterior / ($nomina_mes_anio_anterior * (int)$today->startOfMonth()->subYear()->endOfMonth()->format('d')) * 100)
+    : 0;
+// $incidentes_mes_anio_anterior_indice = number_format($incidentes_mes_anio_anterior_indice, 2, ',', '.');
 
+// AÑO ACTUAL
+$q_incidentes_anio_actual = clone $q_ausentismos_anio_actual;
+$q_incidentes_anio_actual->whereHas('tipo', function ($query) {
+    $query->where('nombre', 'LIKE', '%incidente%')
+          ->where('incluir_indice', '=', 1);
+});
+$dias_incidentes_anio_actual = (int) (optional($q_incidentes_anio_actual->first())->dias ?? 0);
+$incidentes_anio_actual_indice = $nomina_promedio_actual
+    ? ($dias_incidentes_anio_actual / ($nomina_promedio_actual * (int)$today->dayOfYear()) * 100)
+    : 0;
+// $incidentes_anio_actual_indice = number_format($incidentes_anio_actual_indice, 2, ',', '.');
 
-		/// MES AÑO ANTERIOR
-		$q_incidentes_mes_anio_anterior = clone $q_ausentismos_mes_anio_anterior;
-		$q_incidentes_mes_anio_anterior->whereHas('tipo',function($query){
-			$query->where('nombre','LIKE','%incidente%')->where('incluir_indice','=',1);
-		});
-		$dias_incidentes_mes_anio_anterior = (int) $q_incidentes_mes_anio_anterior->first()->dias;
-		$incidentes_mes_anio_anterior_indice = $nomina_mes_anio_anterior ? ($dias_incidentes_mes_anio_anterior/($nomina_mes_anio_anterior*$today->startOfMonth()->subYear()->endOfMonth()->format('d'))*100) : 0;
-		//$incidentes_mes_anio_anterior_indice = number_format($incidentes_mes_anio_anterior_indice,2,',','.');
-
-		/// AÑO ACTUAL
-		$q_incidentes_anio_actual = clone $q_ausentismos_anio_actual;
-		$q_incidentes_anio_actual->whereHas('tipo',function($query){
-			$query->where('nombre','LIKE','%incidente%')->where('incluir_indice','=',1);
-		});
-		$dias_incidentes_anio_actual = (int) $q_incidentes_anio_actual->first()->dias;
-		$incidentes_anio_actual_indice = $nomina_promedio_actual ? ($dias_incidentes_anio_actual/($nomina_promedio_actual*$today->dayOfYear())*100) : 0;
-		//$incidentes_anio_actual_indice = number_format($incidentes_anio_actual_indice,2,',','.');
 
 
 

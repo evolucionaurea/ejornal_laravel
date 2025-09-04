@@ -120,7 +120,7 @@ trait Nominas
 
 		//$query->onlyTrashed();
 		$records_filtered = $query->count();
-		$nominas = $query->skip($request->start)->take($request->length)->get();
+		$nominas = $query->skip($request->start)->take($request->length)->orderBy('nombre', 'asc')->get();
 		foreach($nominas as $k=>$nomina){
 			$nominas[$k]->photo_url = $nomina->photo_url;
 			$nominas[$k]->thumb_url = $nomina->thumbnail_url;

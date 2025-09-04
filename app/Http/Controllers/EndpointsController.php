@@ -241,41 +241,81 @@ class EndpointsController extends Controller
 		*****************/
 		public function actualizarCaratula(Request $request)
 		{
-
-			///dd(auth()->user());
-
 			try {
-				$caratula = new Caratula();
-				$caratula->id_nomina = $request->trabajador_id_edit_caratula;
-				$caratula->id_cliente = $request->cliente_id_edit_caratula;
-				$caratula->medicacion_habitual = $request->medicacion_habitual_edit_caratula;
-				$caratula->antecedentes = $request->antecedentes_edit_caratula;
-				$caratula->alergias = $request->alergias_edit_caratula;
-				$caratula->peso = $request->peso_edit_caratula;
-				$caratula->altura = $request->altura_edit_caratula;
-				$caratula->imc = $request->imc_edit_caratula;
-				
-				///$caratula->user = auth()->user()->nombre;
+				// Claves de la carátula
+				$idNomina  = $request->input('trabajador_id_edit_caratula');
+				$idCliente = $request->input('cliente_id_edit_caratula');
 
+				// Buscar existente o crear uno nuevo (sin mass-assignment)
+				$caratula = Caratula::firstOrNew([
+					'id_nomina'  => $idNomina,
+					'id_cliente' => $idCliente,
+				]);
+
+				// Normalizar números (coma a punto)
+				$pesoRaw   = (string) $request->input('peso_edit_caratula', '');
+				$alturaRaw = (string) $request->input('altura_edit_caratula', '');
+				$peso      = $pesoRaw   !== '' ? (float) str_replace(',', '.', $pesoRaw)   : null;
+				$altura    = $alturaRaw !== '' ? (float) str_replace(',', '.', $alturaRaw) : null;
+
+				// Set de campos
+				$caratula->medicacion_habitual = $request->input('medicacion_habitual_edit_caratula');
+				$caratula->antecedentes        = $request->input('antecedentes_edit_caratula');
+				$caratula->alergias            = $request->input('alergias_edit_caratula');
+				$caratula->peso                = $peso;
+				$caratula->altura              = $altura;
+
+				// IMC: usar el enviado o calcular si hay datos
+				$imc = $request->input('imc_edit_caratula');
+				if ($imc === null && $peso && $altura) {
+					$imc = round($peso / pow($altura / 100, 2), 2);
+				}
+				$caratula->imc = $imc;
+
+				// (opcional) auditoría
+				if (auth()->check()) {
+					$caratula->user = auth()->user()->nombre ?? auth()->user()->name ?? null;
+				}
 
 				$caratula->save();
-		
-				// Sincronizar las patologías
-				if ($request->has('patologia_id_edit_caratula')) {
-					$caratula->patologias()->sync($request->patologia_id_edit_caratula);  // Sincronizar con la tabla intermedia
+
+				// ---- Patologías: aceptar ambos nombres y sincronizar SIEMPRE ----
+				// Puede venir como 'patologia_edit_caratula[]' (array) o 'patologia_id_edit_caratula' (string/array)
+				$patologias = $request->input('patologia_edit_caratula[]');
+				if ($patologias === null) {
+					$patologias = $request->input('patologia_edit_caratula'); // por si en algún lugar no usan []
 				}
-		
+				if ($patologias === null) {
+					$patologias = $request->input('patologia_id_edit_caratula');
+				}
+				if ($patologias === null) {
+					$patologias = [];
+				}
+				if (!is_array($patologias)) {
+					$patologias = [$patologias];
+				}
+				// Limpiar/convertir a enteros y quitar vacíos
+				$patologias = collect($patologias)
+					->map(function ($v) { return (int) $v; })
+					->filter() // quita 0/null
+					->values()
+					->all();
+
+				// sync SIEMPRE (incluso vacío para remover relaciones)
+				$caratula->patologias()->sync($patologias);
+
 				return response()->json([
-					'estado' => true,
-					'message' => 'Caratula actualizada correctamente'
+					'estado'  => true,
+					'message' => 'Carátula actualizada correctamente',
 				]);
 			} catch (\Throwable $th) {
 				return response()->json([
-					'estado' => false,
-					'message' => $th->getMessage()
-				]);
+					'estado'  => false,
+					'message' => $th->getMessage(),
+				], 500);
 			}
 		}
+
 
 		public function getPatologias()
 		{

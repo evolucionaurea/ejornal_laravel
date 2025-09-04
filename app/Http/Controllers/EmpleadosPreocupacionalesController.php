@@ -51,7 +51,7 @@ class EmpleadosPreocupacionalesController extends Controller
 			->orderBy('nombre', 'asc')
 			->get();
 		$clientes = $this->getClientesUser();
-		$tipos = PreocupacionalTipoEstudio::all();
+		$tipos = PreocupacionalTipoEstudio::orderBy('name', 'asc')->get();
 
 		if($request->renovar){
 			$preocupacional = Preocupacional::findOrFail($request->id);

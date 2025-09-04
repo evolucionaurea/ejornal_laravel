@@ -274,41 +274,87 @@ class EmpleadosCaratulaController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$caratula_old = Caratula::where('id', $id)
-			->with(['nomina','patologias'])
-			->latest()
-			->first();
-		///$caratula->update($request->all());
+		$isAjax = $request->ajax() || $request->wantsJson();
 
-		$validatedData = $request->validate([
-			'peso' => 'required',
-			'altura' => 'required',
-			'imc' => 'required',
-			'id_patologia' => 'nullable|array', // Permitir múltiples patologías
-			'id_patologia.*' => 'exists:patologias,id' // Validar que existen en la DB
-		]);
+		try {
+			$caratula_old = Caratula::where('id', $id)
+				->with(['nomina','patologias'])
+				->latest()
+				->first();
 
-		$caratula = new Caratula();		
+			// Ajuste: imc nullable; numéricos para peso/altura
+			$validatedData = $request->validate([
+				'peso'           => 'required|numeric',
+				'altura'         => 'required|numeric',
+				'imc'            => 'nullable|numeric',
+				'id_patologia'   => 'nullable|array',
+				'id_patologia.*' => 'exists:patologias,id',
+			]);
 
-		$caratula->id_nomina = $request->id_nomina;
-		$caratula->id_cliente = auth()->user()->id_cliente_actual;
-		$caratula->medicacion_habitual = $request->medicacion_habitual;
-		$caratula->antecedentes = $request->antecedentes;
-		$caratula->alergias = $request->alergias;
-		$caratula->peso = $request->peso;
-		$caratula->altura = $request->altura;
-		$caratula->imc = $request->imc;
-		$caratula->user = auth()->user()->nombre;
-		$caratula->save();
+			$caratula = new Caratula();
+			$caratula->id_nomina           = $request->id_nomina;
+			$caratula->id_cliente          = auth()->user()->id_cliente_actual;
+			$caratula->medicacion_habitual = $request->medicacion_habitual;
+			$caratula->antecedentes        = $request->antecedentes;
+			$caratula->alergias            = $request->alergias;
+			$caratula->peso                = $request->peso;
+			$caratula->altura              = $request->altura;
 
-		// Guardar la relación en la tabla intermedia
-		if ($request->has('id_patologia')) {
-			$caratula->patologias()->sync($request->id_patologia);
+			// Si imc viene vacío, lo calculamos con peso/altura
+			$imc = $request->input('imc');
+			if ($imc === null || $imc === '') {
+				$peso   = (float) str_replace(',', '.', $request->input('peso'));
+				$altura = (float) str_replace(',', '.', $request->input('altura'));
+				if ($peso > 0 && $altura > 0) {
+					$imc = round($peso / pow($altura / 100, 2), 2);
+				} else {
+					$imc = null;
+				}
+			}
+			$caratula->imc  = $imc;
+
+			$caratula->user = auth()->user()->nombre;
+			$caratula->save();
+
+			if ($request->has('id_patologia')) {
+				$caratula->patologias()->sync($request->id_patologia);
+			}
+
+			if ($isAjax) {
+				return response()->json([
+					'estado'      => true,
+					'message'     => 'Carátula actualizada con éxito',
+					'caratula_id' => $caratula->id,
+					'id_nomina'   => $caratula->id_nomina,
+				]);
+			}
+
+			return redirect()
+				->route('nominas.show', $request->id_nomina)
+				->with('success', 'Carátula actualizada con éxito');
+
+		} catch (\Illuminate\Validation\ValidationException $ve) {
+			// En AJAX devolvemos el detalle de errores
+			if ($isAjax) {
+				return response()->json([
+					'estado'  => false,
+					'message' => 'Validación fallida',
+					'errors'  => $ve->errors(),
+				], 422);
+			}
+			throw $ve;
+		} catch (\Throwable $th) {
+			if ($isAjax) {
+				return response()->json([
+					'estado'  => false,
+					'message' => $th->getMessage(),
+				], 500);
+			}
+			return back()->with('error', $th->getMessage());
 		}
-
-
-		return redirect()->route('nominas.show',$request->id_nomina)->with('success', 'Carátula actualizada con éxito');
 	}
+
+
 
 	/**
 	 * Remove the specified resource from storage.
