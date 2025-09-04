@@ -24,10 +24,10 @@ class EmpleadosAgendaController extends Controller
 
 		$now = CarbonImmutable::now();
 
-		$turnos = Agenda::where('user_id',auth()->user()->id)
-			->where('cliente_id',auth()->user()->id_cliente_actual)
+		$turnos = Agenda::where('cliente_id',auth()->user()->id_cliente_actual)
+			//->where('user_id',auth()->user()->id)
 			->where('fecha_inicio','>=',$now)
-			->with('trabajador')
+			->with(['trabajador','user','user_registra','estado'])
 			->orderBy('fecha_inicio','asc')
 			->take(5)->get();
 
@@ -45,7 +45,9 @@ class EmpleadosAgendaController extends Controller
 			], 400);
 		}
 
-		$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->hora.':'.$request->minutos);
+		//dd($request->json());
+
+		$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
 		$fecha_final = $fecha_inicio->addMinutes($request->duracion);
 
 		//chequear si se superpone con otro turno del mismo usuario
@@ -82,7 +84,9 @@ class EmpleadosAgendaController extends Controller
 
 		$agenda = new Agenda;
 		$agenda->estado_id = $agenda_estado->id;
-		$agenda->user_id = auth()->user()->id;
+		$agenda->registra_user_id = auth()->user()->id;
+		$agenda->user_id = $request->user_id;
+
 		$agenda->cliente_id = auth()->user()->id_cliente_actual;
 		$agenda->nomina_id = $request->nomina_id;
 		$agenda->fecha_inicio = $fecha_inicio;
@@ -94,6 +98,29 @@ class EmpleadosAgendaController extends Controller
 		return response()->json([
 			'success' => true,
 			'message'=>'Turno agendado correctamente'
+		]);
+
+	}
+	public function update(Request $request, $id){
+
+		$turno = Agenda::findOrFail($id);
+		
+
+		if($request->mode=='cancel'){
+
+			if(!$agenda_estado = AgendaEstado::where('referencia','cancelled')->first()){
+				return response()->json([
+					'success' => false,
+					'message' => 'Estado cancelado no encontrado'
+				], 400);
+			}
+		}
+
+		$turno->estado_id = $agenda_estado->id;
+		$turno->save();
+
+		return response()->json([
+			'success'=>true
 		]);
 
 	}
@@ -123,7 +150,8 @@ class EmpleadosAgendaController extends Controller
 		})
 		->whereHas('estado',function($query){
 			$query->where('referencia','=','confirmed');
-		});
+		})
+		->where('cliente_id',auth()->user()->id_cliente_actual);
 
 		if($mode=='user'){
 			$query->where('user_id',auth()->user()->id);
@@ -142,9 +170,10 @@ class EmpleadosAgendaController extends Controller
 		$from = CarbonImmutable::createFromTimeString($request->from);
 		$to = CarbonImmutable::createFromTimeString($request->to);
 
-		$query = Agenda::with(['cliente','trabajador'])
+		$query = Agenda::with(['cliente','trabajador','estado','user','user_registra'])
 			->where('fecha_inicio','>=',$from)
 			->where('fecha_inicio','<=',$to)
+			->where('cliente_id',auth()->user()->id_cliente_actual)
 			->get();
 
 		return response()->json([
@@ -158,7 +187,8 @@ class EmpleadosAgendaController extends Controller
 
 		$turno = Agenda::with(['trabajador','cliente','estado'])->find($id);
 		return response()->json([
-			'data' => $turno
+			'turno' => $turno,
+			'user' => auth()->user()
 		]);
 	}
 

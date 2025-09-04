@@ -2,10 +2,8 @@
 
 	@csrf
 
-
 	<h4 data-content="form-title"></h4>
 	<div data-content="form-caption" class="text-muted font-italic small mb-3"></div>
-
 
 	<div class="mb-3">
 
@@ -17,22 +15,9 @@
 			</div>
 
 			<div class="col-lg-4">
-				<label for="">Horario</label>
-				<select name="hora" class="form-control" required>
-					@for($i=0; $i<=23; $i++)
-					<option {{ $i==\Carbon\CarbonImmutable::now()->addHour(1)->format('H')?'selected':'' }} value="{{ $i<10?'0'.$i:$i }}">{{ $i<10?'0'.$i:$i }} hs.</option>
-					@endfor
-				</select>
-			</div>
-			<div class="col-lg-4">
-				<label for="">&nbsp;</label>
-				<select name="minutos" class="form-control" required>
-					<option value="00">00 min.</option>
-					<option value="15">15 min.</option>
-					<option value="30">30 min.</option>
-					<option value="45">45 min.</option>
-				</select>
-			</div>
+				<label for="">Horario</label>	
+				<input type="time" name="horario" class="form-control" required value="{{ \Carbon\CarbonImmutable::now()->format('H').':'.\Carbon\CarbonImmutable::now()->format('i') }}">
+			</div>			
 
 			<div class="col-lg-4">
 				<label for="">Duración</label>
@@ -45,7 +30,15 @@
 				</select>
 			</div>
 
-			<div class="col-lg-8">
+			<div class="col-lg-6">
+				<label for="">Usuario</label>
+				<select name="user_id" class="form-control" required>
+					<option value="">--Seleccionar--</option>
+					<option value="{{ auth()->user()->id }}" selected>{{ auth()->user()->nombre }} ({{auth()->user()->especialidad->nombre}})</option>
+				</select>
+			</div>
+
+			<div class="col-lg-6">
 				<label for="">Trabajador</label>
 				<select name="nomina_id" class="form-control" required>
 					<option value="">--Seleccionar--</option>

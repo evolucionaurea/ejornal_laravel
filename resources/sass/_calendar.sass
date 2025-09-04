@@ -2,7 +2,34 @@
 	background-color: $blue_dark
 	color: white !important
 	font-size: 8pt
+	align-items: flex-start
+	padding: .425rem
+	&:hover 
+		opacity: .75
 	.fc-daygrid-event-dot
-		border-color: #6cb2eb
+		display: none
+	.fc-event-time 
+		font-weight: 700
+		line-height: 1.12
 	.fc-event-title
+		margin-left: .725rem
 		font-weight: 300
+		white-space: wrap
+		line-height: 1.12
+	@media screen and (max-width: 991px)
+		flex-wrap: wrap
+		.fc-event-title 
+			width: 100%
+			margin-left: 0
+.calendar-event.confirmed
+	background-color: #32a88b
+.calendar-event.unconfirmed
+	background-color: #969035
+.calendar-event.cancelled
+	background-color: #8a2c2c
+.calendar-event.attended
+	background-color: #376d7a
+.calendar-event.absent
+	background-color: #9561e2
+.calendar-event.absent
+	background-color: #6574cd

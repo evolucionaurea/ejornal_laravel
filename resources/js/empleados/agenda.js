@@ -23,54 +23,7 @@ class Calendar{
 
 	modal_turno(data=false){
 
-
-		/*const swal = await Swal.fire({
-			title: 'Agregar Turno',
-			html:form,
-			showCancelButton: true,
-			showConfirmButton: false,
-			width:720,
-			cancelButtonText: 'Cancelar',
-			didOpen:()=>{
-
-				$('.swal2-popup [name="fecha_inicio"]')
-					.datepicker({
-						dateFormat:'dd/mm/yy'
-					})
-					.blur()
-
-				$('.swal2-popup [name="nomina_id"]').select2({
-					placeholder:'Select',
-					allowClear:true,
-					ajax:{
-						url:`/empleados/nominas/busqueda`,
-						dateType:'json',
-						method:'POST',
-						data: params=> {
-							return {
-								search: params.term,
-								type: 'public',
-								_token:csfr,
-								start:0,
-								length:25,
-								draw:1
-							};
-						},
-						processResults:response=>{
-							return {
-								results: $.map(response.data, obj=>{
-									return {
-										id: obj.id,
-										text: obj.nombre
-									}
-								})
-							}
-						}
-					}
-				})
-
-			}
-		})*/
+		console.log(data)
 
 		const form = $(this.form_event)
 		form.find('[data-content="form-title"]').text(data==false ? 'Agendar Turno' : 'Editar Turno')
@@ -86,7 +39,7 @@ class Calendar{
 			.blur()
 
 		form.find('[name="nomina_id"]').select2({
-			placeholder:'Select',
+			placeholder:'Buscar Trabajador...',
 			allowClear:true,
 			ajax:{
 				url:`/empleados/nominas/busqueda`,
@@ -108,6 +61,35 @@ class Calendar{
 							return {
 								id: obj.id,
 								text: obj.nombre
+							}
+						})
+					}
+				}
+			}
+		})
+		form.find('[name="user_id"]').select2({
+			placeholder:'Buscar Usuario...',
+			allowClear:true,
+			ajax:{
+				url:`/empleados/usuarios/search`,
+				dateType:'json',
+				method:'POST',
+				data: params=> {
+					return {
+						search: params.term,
+						type: 'public',
+						_token:csfr,
+						start:0,
+						length:25
+					};
+				},
+				processResults:response=>{
+					return {
+						results: response.result.map(obj=>{
+							return {
+								id: obj.id,
+								text: `${obj.nombre} (${obj.especialidad.nombre})`,
+								selected: obj.id==response.user.id
 							}
 						})
 					}
@@ -165,7 +147,7 @@ class Calendar{
 						title:event.trabajador.nombre,
 						start:event.fecha_inicio,
 						end:event.fecha_final,
-						classNames:['calendar-event']
+						classNames:['calendar-event',event.estado.referencia],						
 					})
 				})
 
@@ -174,9 +156,7 @@ class Calendar{
 			},
 			eventClick: async (info)=>{
 
-
 				const response = await axios.post(`/empleados/agenda/turno/${info.event.id}`)
-				console.log(response.data)
 				this.modal_turno(response.data)
 
 			},
@@ -196,16 +176,60 @@ class Calendar{
 			form.preventDefault()
 			const post = get_form(form.currentTarget)
 
+			
 			try{
 				const response = await axios.post('/empleados/agenda/agregar_turno',post)
 				toastr.success(response.data.message)
-
+				
 				//Swal.close()
 				window.location.reload()
 
 			}catch(error){
 				toastr.error(error.response.data.message)
 			}
+
+		})
+
+
+		$('[data-toggle="cancelar-turno"]').click(async btn=>{
+
+			const card = $(btn.currentTarget).closest('.timeline-card')
+			const id = card.attr('data-id')
+			
+			const response = await axios.post(`/empleados/agenda/turno/${id}`)
+			if(response.status!=200){
+				toastr.error('El turno no fue encontrado')
+				return false
+			}
+			
+			const data = response.data
+			const turno = data.turno
+			const user = data.user
+			
+			// Chequeo si el turno fue creado por el mismo usuario o está asignado a su usuario
+			if((turno.registra_user_id != null && turno.registra_user_id != user.id) || turno.user_id != user.id){
+				Swal.fire({
+					icon:'error',
+					title:'No tienes permiso para cancelar este turno',
+					html:'El turno fue creado por otra persona o está asignado a otro usuario.'
+				})
+				return false 
+			}
+
+			const swal = await SwalWarning.fire({
+				title:'¿Seguro deseas cancelar este turno?'
+			})
+			if(!swal.value) return false 
+
+			const response_edit = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
+				mode:'cancel'
+			})
+
+			if(response.status!=200){
+				toastr.error(response.data.message)
+				return false
+			}
+			window.location.reload()
 
 		})
 	}

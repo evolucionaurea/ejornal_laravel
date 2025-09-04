@@ -25,6 +25,10 @@ class Agenda extends Model
 	{
 		return $this->belongsTo(User::class,'user_id');
 	}
+	public function user_registra()
+	{
+		return $this->belongsTo(User::class,'registra_user_id');
+	}
 	public function estado()
 	{
 		return $this->belongsTo(AgendaEstado::class,'estado_id');

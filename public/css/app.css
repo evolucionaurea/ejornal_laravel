@@ -689,7 +689,19 @@ table.table .has-floating-btn .floating-btn:hover {
 .timeline .timeline-card .content .datetime {
   font-size: 14pt;
   color: #3490dc;
+}
+
+.timeline .timeline-card .content .remaining {
+  font-size: 10pt;
+  color: #6cb2eb;
   margin-bottom: .5rem;
+  font-style: italic;
+}
+
+.timeline .timeline-card .content .author {
+  color: #6e6e6e;
+  font-size: 9pt;
+  margin-bottom: .625rem;
 }
 
 .timeline .timeline-card .content .title {
@@ -697,13 +709,10 @@ table.table .has-floating-btn .floating-btn:hover {
   color: black;
 }
 
-.timeline .timeline-card .content .remaining {
-  font-size: 10pt;
-}
-
 .timeline .timeline-card .content .comments {
   padding-top: .25rem;
-  font-size: 11pt;
+  font-size: 10pt;
+  line-height: 1.25;
 }
 
 .timeline .timeline-card .actions {
@@ -1041,14 +1050,63 @@ table.table .has-floating-btn .floating-btn:hover {
   background-color: #2f4050;
   color: white !important;
   font-size: 8pt;
+  align-items: flex-start;
+  padding: .425rem;
+}
+
+.calendar-event:hover {
+  opacity: .75;
 }
 
 .calendar-event .fc-daygrid-event-dot {
-  border-color: #6cb2eb;
+  display: none;
+}
+
+.calendar-event .fc-event-time {
+  font-weight: 700;
+  line-height: 1.12;
 }
 
 .calendar-event .fc-event-title {
+  margin-left: .725rem;
   font-weight: 300;
+  white-space: wrap;
+  line-height: 1.12;
+}
+
+@media screen and (max-width: 991px) {
+  .calendar-event {
+    flex-wrap: wrap;
+  }
+
+  .calendar-event .fc-event-title {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.calendar-event.confirmed {
+  background-color: #32a88b;
+}
+
+.calendar-event.unconfirmed {
+  background-color: #969035;
+}
+
+.calendar-event.cancelled {
+  background-color: #8a2c2c;
+}
+
+.calendar-event.attended {
+  background-color: #376d7a;
+}
+
+.calendar-event.absent {
+  background-color: #9561e2;
+}
+
+.calendar-event.absent {
+  background-color: #6574cd;
 }
 
 .bloque_codigo pre {
