@@ -308,6 +308,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/agenda/agregar_turno', 'EmpleadosAgendaController@store');
 	Route::post('empleados/agenda/buscar_turnos', 'EmpleadosAgendaController@search');
 	Route::post('empleados/agenda/turno/{id}', 'EmpleadosAgendaController@find');
+	Route::post('empleados/agenda/editar-turno/{id}', 'EmpleadosAgendaController@update');
 
 	// USERS
 	Route::post('empleados/usuarios/search','EmpleadosUsuariosController@search');

@@ -106,7 +106,7 @@
 
 				<th>Hoy</th>
 
-				<th>Acciones</th>
+				<th>{{ auth()->user()->rol->nombre=='empleado' ? 'Acciones' : '' }}</th>
 
 
 			</tr>

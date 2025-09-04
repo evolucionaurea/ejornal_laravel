@@ -25,7 +25,7 @@ $(()=>{
 					render:v=>{
 						let output = `<div><b>${v.trabajador_nombre}</b></div>`
 
-						output += `<div class="small">DNI: ${v.trabajador_dni ?? '[no cargado]'}</div>`
+						output += `<div class="small">DNI: ${v.trabajador_dni ?? '<span class="small text-muted font-italic">[no cargado]</span>'}</div>`
 
 						if(v.id_cliente != v.trabajador_cliente){
 							output += `<span class="badge badge-dark">transferido</span>`
@@ -36,18 +36,19 @@ $(()=>{
 						return output
 					}
 				},
-				/*{
+				{
 					data:row=>row,
-					name:'nominas.dni',
+					name:'nominas.legajo',
+					className:'align-middle',
 					render:v=>{
-						return v.trabajador_dni==null ? '[no cargado]' : v.trabajador_dni
+						return v.trabajador_legajo==null ? '<span class="small text-muted font-italic">[no cargado]</span>' : v.trabajador_legajo
 					}
-				},*/
+				},
 				{
 					data:row=>row,
 					name:'nominas.sector',
 					render:v=>{
-						return v.trabajador_sector==null ? '[no cargado]' : v.trabajador_sector
+						return v.trabajador_sector==null ? '<span class="small text-muted font-italic">[no cargado]</span>' : v.trabajador_sector
 					}
 				},
 				{
