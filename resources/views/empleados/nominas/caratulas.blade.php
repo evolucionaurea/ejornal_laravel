@@ -13,7 +13,7 @@
 			<h2>Listado de carátulas</h2>
 			<p>Aquí puede ver el listado de las últimas carátulas de los trabajadores de la empresa.</p>
 			
-			@if (auth()->user()->fichar && auth()->user()->fichada)
+			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
 				<a href="{{ route('empleados.nominas.caratulas.create') }}" class="btn btn-primary">
 					<i class="fal fa-plus"></i>

@@ -14,13 +14,19 @@
 		<div class="cabecera">
 			<h2>Nutricionales</h2>
 			<p>Aquí puede ver el listado de consultas nutricionales de la empresa.</p>
-			@if ((auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1)
+			@if ((auth()->user()->fichada == 1 || !auth()->user()->fichar))
+
+			@if(auth()->user()->id_especialidad == 1)
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('empleados.consultas.nutricionales.create')}}">
 					<i class="fas fa-plus-circle"></i>
 					Nuevo
 				</a>
 			</div>
+			@else 
+			<div class="small text-muted"><i>Tu usuario no tiene permiso para crear consultas nutricionales</i></div> 
+			@endif 
+
 			@else
 			<div class="small text-muted"><i>[Debe fichar para crear una nueva consulta nutricional]</i></div>
 			@endif
