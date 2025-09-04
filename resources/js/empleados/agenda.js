@@ -209,7 +209,7 @@ class Calendar{
 			// Chequeo si el turno fue creado por el mismo usuario o está asignado a su usuario
 			if((turno.registra_user_id != null && turno.registra_user_id != user.id) || turno.user_id != user.id){
 				Swal.fire({
-					icon:'warning',
+					icon:'error',
 					title:'No tienes permiso para cancelar este turno',
 					html:'El turno fue creado por otra persona o está asignado a otro usuario.'
 				})

@@ -22,7 +22,7 @@
 		<div class="d-flex flex-wrap">
 
 			{{-- Turnos Recientes --}}
-			<div class="col-lg-4">
+			<div class="col-md-12 col-lg-4">
 				<div class="tarjeta m-0">
 					<div class="tarjeta-header">
 						<h4 class="mb-1">Próximos Turnos</h4>
@@ -76,7 +76,7 @@
 			</div>
 
 			{{-- Calendario --}}
-			<div class="col-lg-8">
+			<div class="col-md-12 col-lg-8">
 				<div class="tarjeta m-0">
 					<div class="tarjeta-header">
 						<h4 class="mb-1">Calendario</h4>

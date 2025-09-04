@@ -1074,6 +1074,17 @@ table.table .has-floating-btn .floating-btn:hover {
   line-height: 1.12;
 }
 
+@media screen and (max-width: 991px) {
+  .calendar-event {
+    flex-wrap: wrap;
+  }
+
+  .calendar-event .fc-event-title {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
 .calendar-event.confirmed {
   background-color: #32a88b;
 }
