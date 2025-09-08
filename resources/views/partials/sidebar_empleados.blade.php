@@ -57,13 +57,13 @@
 
 	<ul class="list-group list-group-flush sidebar_menu">
 
-		{{-- <li class="{{ setActive('empleados/agenda') }} menu_sin_sub_menu">
+		<li class="{{ setActive('empleados/agenda') }} menu_sin_sub_menu">
 			<a href="{{ url('empleados/agenda') }}" class="list-group-item list-group-item-action sidebar_item">
 				<i class="fas fa-calendar"></i>
 				<span>Agenda</span>
 				<span class="new">nuevo</span>
 			</a>
-		</li> --}}
+		</li>
 
 
 		<li class="{{ setActive('/empleados/nominas') }} dropdownMenu">

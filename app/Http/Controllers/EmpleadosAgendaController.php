@@ -37,6 +37,15 @@ class EmpleadosAgendaController extends Controller
 
 	public function store(Request $request){
 
+		$validatedData = $request->validate([
+			'fecha_inicio' => 'required',
+			'horario' => 'required',
+			'duracion' => 'required',
+			'user_id' => 'required',
+			'nomina_id' => 'required'
+		]);
+
+
 		//chequear si tiene cliente asignado
 		if( !auth()->user()->id_cliente_actual ){
 			return response()->json([
@@ -45,23 +54,38 @@ class EmpleadosAgendaController extends Controller
 			], 400);
 		}
 
-		//dd($request->json());
-
+		
 		$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
 		$fecha_final = $fecha_inicio->addMinutes($request->duracion);
-
-		//chequear si se superpone con otro turno del mismo usuario
-		$turnos_existentes_user = $this->chequear_superposicion($fecha_inicio,$fecha_final,'user',$request);
+		
+		if(!$agenda_estado = AgendaEstado::where('referencia','confirmed')->first()){
+			return response()->json([
+				'success' => false,
+				'message' => 'Estado predeterminado no encontrado'
+			], 400);
+		}
+		
+		
+		
+		if($request->id){
+			$agenda = Agenda::find($request->id);
+		}else{
+			$agenda = new Agenda;
+		}
+		//dd($agenda->toJson());
+		
+		//chequear si se superpone con otro turno del mismo usuario y cliente
+		$turnos_existentes_user = $this->chequearSuperposicion($fecha_inicio,$fecha_final,'user',$request);
 		if($turnos_existentes_user->count()){
 			return response()->json([
 				'success' => false,
-				'message' => 'La fecha y horario seleccionado se superpone con otro turno ya registrado.',
+				'message' => 'La fecha y horario seleccionado se superpone con otro turno ya registrado para el usuario seleccionado.',
 				'turnos'=>$turnos_existentes_user
 			], 400);
 		}
 
 		//chequear si se superpone con otro turno del mismo trabajdor
-		$turnos_existentes_trabajador = $this->chequear_superposicion($fecha_inicio,$fecha_final,'trabajdor',$request);
+		$turnos_existentes_trabajador = $this->chequearSuperposicion($fecha_inicio,$fecha_final,'trabajador',$request);
 		if($turnos_existentes_trabajador->count()){
 			return response()->json([
 				'success' => false,
@@ -71,18 +95,7 @@ class EmpleadosAgendaController extends Controller
 		}
 
 
-
-
-		if(!$agenda_estado = AgendaEstado::where('referencia','confirmed')->first()){
-			return response()->json([
-				'success' => false,
-				'message' => 'Estado predeterminado no encontrado'
-			], 400);
-		}
-
-
-
-		$agenda = new Agenda;
+		//$agenda = new Agenda;
 		$agenda->estado_id = $agenda_estado->id;
 		$agenda->registra_user_id = auth()->user()->id;
 		$agenda->user_id = $request->user_id;
@@ -103,20 +116,26 @@ class EmpleadosAgendaController extends Controller
 	}
 	public function update(Request $request, $id){
 
-		$turno = Agenda::findOrFail($id);
-		
+		$turno = Agenda::findOrFail($id);		
 
 		if($request->mode=='cancel'){
-
 			if(!$agenda_estado = AgendaEstado::where('referencia','cancelled')->first()){
 				return response()->json([
 					'success' => false,
 					'message' => 'Estado cancelado no encontrado'
 				], 400);
 			}
+			$turno->estado_id = $agenda_estado->id;
 		}
 
-		$turno->estado_id = $agenda_estado->id;
+		if($request->mode == 'mover'){
+			//$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
+			$nueva_fecha = CarbonImmutable::parse($request->nueva_fecha)->setTimezone('America/Argentina/Buenos_Aires');
+			$fecha_final = $nueva_fecha->addMinutes($turno->duracion);
+			$turno->fecha_inicio = $nueva_fecha;
+			$turno->fecha_final = $fecha_final;
+		}
+
 		$turno->save();
 
 		return response()->json([
@@ -125,8 +144,7 @@ class EmpleadosAgendaController extends Controller
 
 	}
 
-
-	public function chequear_superposicion($fecha_inicio,$fecha_final,$mode='user',Request $request){
+	public function chequearSuperposicion($fecha_inicio,$fecha_final,$mode='user',Request $request){
 
 		$query = Agenda::where(function($query) use ($fecha_inicio,$fecha_final){
 			$query
@@ -153,8 +171,12 @@ class EmpleadosAgendaController extends Controller
 		})
 		->where('cliente_id',auth()->user()->id_cliente_actual);
 
+		if($request->id){
+			$query->where('id','!=',$request->id);
+		}
+
 		if($mode=='user'){
-			$query->where('user_id',auth()->user()->id);
+			$query->where('user_id',$request->user_id);
 		}
 		if($mode=='trabajador'){
 			$query->where('nomina_id',$request->nomina_id);
@@ -185,7 +207,7 @@ class EmpleadosAgendaController extends Controller
 	}
 	public function find($id){
 
-		$turno = Agenda::with(['trabajador','cliente','estado'])->find($id);
+		$turno = Agenda::with(['trabajador','cliente','estado','user'])->find($id);
 		return response()->json([
 			'turno' => $turno,
 			'user' => auth()->user()

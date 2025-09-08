@@ -9,27 +9,29 @@ import esLocale from '@fullcalendar/core/locales/es'
 class Calendar{
 
 	constructor(){
-
-		Promise.all([
-			get_template('/templates/agendar-evento')
-		])
-			.then(promise=>{
-
-				this.form_event = promise[0]
-				this.init()
-			})
-
+		this.init()		
 	}
 
-	modal_turno(data=false){
+	async modal_turno(data=false){
 
-		console.log(data)
+		//console.log(data)
+		const template = await get_template('/templates/agendar-evento')
+		const form = $(template)
 
-		const form = $(this.form_event)
 		form.find('[data-content="form-title"]').text(data==false ? 'Agendar Turno' : 'Editar Turno')
 
 		if(data){
 			form.find('[data-content="form-caption"]').text('Al cambiar de fecha/horario un turno no debe superponerse con otro turno ya agendado.')
+
+			form.find(`[name="user_id"] option[value="${data.user.id}"]`).remove()
+			form.find('[name="user_id"]').append(`<option value="${data.turno.user_id}" selected>${data.turno.user.nombre} (${data.turno.user.especialidad.nombre})</option>`)
+			form.find('[name="nomina_id"]').append(`<option value="${data.turno.nomina_id}" selected>${data.turno.trabajador.nombre}</option>`)
+			form.find('[name="comentarios"]').val(data.turno.comentarios)
+			form.find('[name="horario"]').val(data.turno.horario)
+			form.find('[name="duracion"]').val(data.turno.duracion)
+			form.find('[name="fecha_inicio"]').val(data.turno.fecha_inicio_date)
+
+			form.find('[name="id"]').val(data.turno.id)
 		}
 
 		form.find('[name="fecha_inicio"]')
@@ -144,9 +146,9 @@ class Calendar{
 				response.data.results.map(event=>{
 					events.push({
 						id:event.id,
-						title:event.trabajador.nombre,
+						title:`${event.trabajador.nombre}`,
 						start:event.fecha_inicio,
-						end:event.fecha_final,
+						end:event.fecha_final,						
 						classNames:['calendar-event',event.estado.referencia],						
 					})
 				})
@@ -157,12 +159,31 @@ class Calendar{
 			eventClick: async (info)=>{
 
 				const response = await axios.post(`/empleados/agenda/turno/${info.event.id}`)
+				if(response.data.turno.estado.referencia == 'cancelled'){
+					toastr.error('El turno ha sido cancelado')
+					return false
+				}				
 				this.modal_turno(response.data)
 
 			},
 			eventDrop: async (info)=>{
-				console.log(info.event.start)
-			}
+				console.log(info.event.start.toISOString())
+				const id = info.event.id
+
+				const response = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
+					id:id,
+					nueva_fecha:info.event.start,
+					mode:'mover'
+				})
+
+				toastr.success('El turno fue actualizado correctamente!')
+			},
+			/* eventContent:(arg)=>{		
+				console.log(arg.event)						
+				return {
+					html:arg.event.title
+				}
+			} */
 		})
 		calendar.render()
 
@@ -175,16 +196,21 @@ class Calendar{
 
 			form.preventDefault()
 			const post = get_form(form.currentTarget)
-
 			
 			try{
-				const response = await axios.post('/empleados/agenda/agregar_turno',post)
-				toastr.success(response.data.message)
+				const response = await axios.post('/empleados/agenda/guardar_turno',post)
+				
+				if(!('success' in response.data) && !response.data.success){
+					toastr.error('Hubo un error al guardar el turno')
+					return false
+				}
 				
 				//Swal.close()
+				toastr.success(response.data.message)
 				window.location.reload()
 
 			}catch(error){
+				console.log(error)
 				toastr.error(error.response.data.message)
 			}
 
@@ -231,6 +257,12 @@ class Calendar{
 			}
 			window.location.reload()
 
+		})
+		$('[data-toggle="editar-turno"]').click(async btn=>{
+			const card = $(btn.currentTarget).closest('.timeline-card')
+			const id = card.attr('data-id')
+			const response = await axios.post(`/empleados/agenda/turno/${id}`)
+			this.modal_turno(response.data)
 		})
 	}
 

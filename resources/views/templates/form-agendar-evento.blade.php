@@ -1,8 +1,11 @@
 <form data-form="agregar-turno" class="text-left">
 
+
+	<input type="hidden" name="id" >
+
 	@csrf
 
-	<h4 data-content="form-title"></h4>
+	<h4 data-content="form-title">Title</h4>
 	<div data-content="form-caption" class="text-muted font-italic small mb-3"></div>
 
 	<div class="mb-3">

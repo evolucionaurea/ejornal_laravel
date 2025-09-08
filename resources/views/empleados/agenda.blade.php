@@ -21,20 +21,34 @@
 
 		<div class="d-flex flex-wrap">
 
-			{{-- Turnos Recientes --}}
+			{{-- Próximos Turnos --}}
 			<div class="col-md-12 col-lg-4">
 				<div class="tarjeta m-0">
+
+					<div class="tarjeta-header">						
+						@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar))
+						<button data-toggle="add-event" class="btn-ejornal btn-ejornal-base mb-2">
+							<i class="fas fa-plus-circle"></i> <span>Nuevo Turno</span>
+						</button>
+						@else
+						<div class="text-muted font-italic small mb-2">Debes fichar para registrar un nuevo turno</div>
+						@endif
+					</div>					
+						
 					<div class="tarjeta-header">
-						<h4 class="mb-1">Próximos Turnos</h4>
-					</div>
+					</div>					
+
 					<div class="tarjeta-body">
+						<h4 class="my-2">Próximos Turnos</h4>
+						<hr>
+
 						@if($turnos)
 						<div class="timeline">
 							@foreach($turnos as $turno)
 							<div data-id="{{ $turno->id }}" class="timeline-card">
 								<div class="content">
 									<div class="datetime">{{ $turno->fecha_inicio_formatted }}</div>
-									<div class="remaining">Faltan 1 día</div>
+									<div class="remaining">{{ $turno->tiempo_faltante }}</div>
 
 									<div class="title">{{ $turno->trabajador->nombre }}</div>
 									<div class="author">Asignado a {{ $turno->user ? $turno->user->nombre : '[desconocido]' }} | Cargado por: {{ $turno->registra_user ? $turno->registra_user->nombre : '[desconocido]' }}</div>
@@ -61,17 +75,11 @@
 						</div>
 						@endif
 					</div>
+
 					<div class="tarjeta-footer">
-
-						@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar))
-						<button data-toggle="add-event" class="btn-ejornal btn-ejornal-base">
-							<i class="fas fa-plus-circle"></i> <span>Nuevo Turno</span>
-						</button>
-						@else
-						<div class="text-muted font-italic small">Debes fichar para registrar un nuevo turno</div>
-						@endif
-
+						<i class="small text-muted">Se mostrarán los próximos 5 turnos a partir de la hora actual.</i>
 					</div>
+					
 				</div>
 			</div>
 
