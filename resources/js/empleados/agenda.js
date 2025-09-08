@@ -170,13 +170,21 @@ class Calendar{
 				console.log(info.event.start.toISOString())
 				const id = info.event.id
 
-				const response = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
-					id:id,
-					nueva_fecha:info.event.start,
-					mode:'mover'
-				})
+				try {
+					const response = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
+						id:id,
+						nueva_fecha:info.event.start,
+						mode:'mover'
+					})
+	
+					toastr.success('El turno fue actualizado correctamente!')
+					return true
+				}catch(error){
+					toastr.error(error.response.data.message)
+					calendar.refetchEvents()
+				}
+				
 
-				toastr.success('El turno fue actualizado correctamente!')
 			},
 			/* eventContent:(arg)=>{		
 				console.log(arg.event)						

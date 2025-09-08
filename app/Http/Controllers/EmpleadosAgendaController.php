@@ -116,7 +116,7 @@ class EmpleadosAgendaController extends Controller
 	}
 	public function update(Request $request, $id){
 
-		$turno = Agenda::findOrFail($id);		
+		$turno = Agenda::findOrFail($id);
 
 		if($request->mode=='cancel'){
 			if(!$agenda_estado = AgendaEstado::where('referencia','cancelled')->first()){
@@ -130,6 +130,12 @@ class EmpleadosAgendaController extends Controller
 
 		if($request->mode == 'mover'){
 			//$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
+			if($turno->estado->referencia=='cancelled'){
+				return response()->json([
+					'success' => false,
+					'message' => 'El turno ha sido cancelado y no se puede mover'
+				], 400);
+			}
 			$nueva_fecha = CarbonImmutable::parse($request->nueva_fecha)->setTimezone('America/Argentina/Buenos_Aires');
 			$fecha_final = $nueva_fecha->addMinutes($turno->duracion);
 			$turno->fecha_inicio = $nueva_fecha;
