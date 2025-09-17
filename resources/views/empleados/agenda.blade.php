@@ -51,7 +51,8 @@
 									<div class="remaining">{{ $turno->tiempo_faltante }}</div>
 
 									<div class="title">{{ $turno->trabajador->nombre }}</div>
-									<div class="author">Asignado a {{ $turno->user ? $turno->user->nombre : '[desconocido]' }} | Cargado por: {{ $turno->registra_user ? $turno->registra_user->nombre : '[desconocido]' }}</div>
+									<div class="small">Motivo: {!! $turno->motivo ? $turno->motivo->nombre : '<span class="text-muted font-italic">[sin definir]</span>' !!}</div>
+									<div class="author">Asignado a {{ $turno->user ? $turno->user->nombre : '[desconocido]' }} | Cargado por: {{ $turno->user_registra ? $turno->user_registra->nombre : '[desconocido]' }}</div>
 
 									<div class="comments">{!! $turno->comentarios ?? '<span class="text-muted font-italic">[sin comentarios]</span>' !!}</div>
 								</div>
@@ -92,7 +93,7 @@
 					<div class="tarjeta-body">
 						<div id="calendar"></div>
 
-						<div class="text-muted font-italic small">Click en el turno para editarlo. Puedes arrastrar el turno hacia otro casillero para cambiar el día.</div>
+						<div class="text-muted font-italic small">Click en el turno para verlo. Puedes arrastrar el turno hacia otro casillero para cambiar el día.</div>
 					</div>
 				</div>
 			</div>

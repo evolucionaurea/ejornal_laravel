@@ -48,6 +48,13 @@
 				</select>
 			</div>
 
+			<div class="col-lg-6">
+				<label for="">Motivo</label>
+				<select name="motivo_id" class="form-control" required>
+					<option value="">--Seleccionar--</option>
+				</select>
+			</div>
+
 		</div>
 
 	</div>

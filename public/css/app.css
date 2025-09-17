@@ -663,8 +663,10 @@ table.table .has-floating-btn .floating-btn:hover {
   padding-left: 1rem;
   padding-top: 0;
   padding-bottom: 2rem;
+  padding: 1rem;
   position: relative;
   display: flex;
+  border-bottom: 1px dashed #e6e6e6;
 }
 
 .timeline .timeline-card:before {
@@ -674,8 +676,8 @@ table.table .has-floating-btn .floating-btn:hover {
   position: absolute;
   width: 10px;
   height: 10px;
-  left: -5px;
-  top: 8px;
+  left: -6px;
+  top: -6px;
 }
 
 .timeline .timeline-card:hover {

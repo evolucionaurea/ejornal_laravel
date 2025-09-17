@@ -308,7 +308,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/agenda/guardar_turno', 'EmpleadosAgendaController@store');
 	Route::post('empleados/agenda/buscar_turnos', 'EmpleadosAgendaController@search');
 	Route::post('empleados/agenda/turno/{id}', 'EmpleadosAgendaController@find');
-	Route::post('empleados/agenda/editar-turno/{id}', 'EmpleadosAgendaController@update');
+	Route::post('empleados/agenda/editar-turno/{id}', 'EmpleadosAgendaController@update');	
+	Route::get('empleados/agenda/ver-turno/{id}', 'EmpleadosAgendaController@show');
 
 	// USERS
 	Route::post('empleados/usuarios/search','EmpleadosUsuariosController@search');

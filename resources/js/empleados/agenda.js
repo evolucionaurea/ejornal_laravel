@@ -15,10 +15,22 @@ class Calendar{
 	async modal_turno(data=false){
 
 		//console.log(data)
-		const template = await get_template('/templates/agendar-evento')
-		const form = $(template)
+		const promise = await Promise.all([
+			get_template('/templates/agendar-evento'),
+			axios.get('/empleados/agenda_motivos')
+		])
+		const form = $(promise[0])
+		const motivos = promise[1].data.data
 
 		form.find('[data-content="form-title"]').text(data==false ? 'Agendar Turno' : 'Editar Turno')
+
+		if(motivos){
+			motivos.map(motivo=>{
+				const option = window.dom('option')
+				option.val(motivo.id).text(motivo.nombre)
+				form.find('[name="motivo_id"]').append(option)
+			})
+		}
 
 		if(data){
 			form.find('[data-content="form-caption"]').text('Al cambiar de fecha/horario un turno no debe superponerse con otro turno ya agendado.')
@@ -32,6 +44,7 @@ class Calendar{
 			form.find('[name="fecha_inicio"]').val(data.turno.fecha_inicio_date)
 
 			form.find('[name="id"]').val(data.turno.id)
+			form.find('[name="motivo_id"]').val(data.turno.motivo_id)
 		}
 
 		form.find('[name="fecha_inicio"]')
@@ -53,7 +66,7 @@ class Calendar{
 						type: 'public',
 						_token:csfr,
 						start:0,
-						length:25,
+						length:250,
 						draw:1
 					};
 				},
@@ -82,7 +95,7 @@ class Calendar{
 						type: 'public',
 						_token:csfr,
 						start:0,
-						length:25
+						length:250
 					};
 				},
 				processResults:response=>{
@@ -101,6 +114,15 @@ class Calendar{
 
 
 		$('#modals .modal-body').html(form)
+
+		$('#modals .modal-dialog').addClass('modal-lg')
+		$('#modals').modal('show')
+
+	}
+	async ver_turno(id){
+
+		const template = await axios.get(`/empleados/agenda/ver-turno/${id}`)
+		$('#modals .modal-body').html(template.data)
 
 		$('#modals .modal-dialog').addClass('modal-lg')
 		$('#modals').modal('show')
@@ -158,12 +180,12 @@ class Calendar{
 			},
 			eventClick: async (info)=>{
 
-				const response = await axios.post(`/empleados/agenda/turno/${info.event.id}`)
+				/* const response = await axios.post(`/empleados/agenda/turno/${info.event.id}`)
 				if(response.data.turno.estado.referencia == 'cancelled'){
 					toastr.error('El turno ha sido cancelado')
 					return false
-				}				
-				this.modal_turno(response.data)
+				}		 */		
+				this.ver_turno(info.event.id)
 
 			},
 			eventDrop: async (info)=>{
@@ -225,7 +247,7 @@ class Calendar{
 		})
 
 
-		$('[data-toggle="cancelar-turno"]').click(async btn=>{
+		$('body').on('click','[data-toggle="cancelar-turno"]',async btn=>{
 
 			const card = $(btn.currentTarget).closest('.timeline-card')
 			const id = card.attr('data-id')
@@ -266,7 +288,7 @@ class Calendar{
 			window.location.reload()
 
 		})
-		$('[data-toggle="editar-turno"]').click(async btn=>{
+		$('body').on('click','[data-toggle="editar-turno"]',async btn=>{
 			const card = $(btn.currentTarget).closest('.timeline-card')
 			const id = card.attr('data-id')
 			const response = await axios.post(`/empleados/agenda/turno/${id}`)

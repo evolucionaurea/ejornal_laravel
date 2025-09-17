@@ -27,10 +27,9 @@ class EmpleadosAgendaController extends Controller
 		$turnos = Agenda::where('cliente_id',auth()->user()->id_cliente_actual)
 			//->where('user_id',auth()->user()->id)
 			->where('fecha_inicio','>=',$now)
-			->with(['trabajador','user','user_registra','estado'])
+			->with(['trabajador','user','user_registra','estado','motivo'])
 			->orderBy('fecha_inicio','asc')
 			->take(5)->get();
-
 
 		return view('empleados.agenda',compact('clientes','turnos'));
 	}
@@ -102,6 +101,7 @@ class EmpleadosAgendaController extends Controller
 
 		$agenda->cliente_id = auth()->user()->id_cliente_actual;
 		$agenda->nomina_id = $request->nomina_id;
+		$agenda->motivo_id = $request->motivo_id;
 		$agenda->fecha_inicio = $fecha_inicio;
 		$agenda->fecha_final = $fecha_final;
 		$agenda->comentarios = $request->comentarios;
@@ -114,6 +114,8 @@ class EmpleadosAgendaController extends Controller
 		]);
 
 	}
+
+	// Solamente actualiza el cambio de fecha
 	public function update(Request $request, $id){
 
 		$turno = Agenda::findOrFail($id);
@@ -218,6 +220,11 @@ class EmpleadosAgendaController extends Controller
 			'turno' => $turno,
 			'user' => auth()->user()
 		]);
+	}
+	public function show($id){
+
+		$turno = Agenda::with(['trabajador','cliente','estado','user','motivo','user_registra'])->find($id);
+		return view('empleados.agenda_turno_module',compact('turno'));
 	}
 
 

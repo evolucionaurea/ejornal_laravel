@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\CarbonImmutable;
 
 use App\AgendaEstado;
+use App\AgendaMotivo;
 use App\Nomina;
 use App\Cliente;
 
@@ -44,6 +45,10 @@ class Agenda extends Model
 	public function cliente()
 	{
 		return $this->belongsTo(Cliente::class,'cliente_id');
+	}
+	public function motivo()
+	{
+		return $this->belongsTo(AgendaMotivo::class,'motivo_id');
 	}
 
 	public function getFechaInicioDateAttribute()
