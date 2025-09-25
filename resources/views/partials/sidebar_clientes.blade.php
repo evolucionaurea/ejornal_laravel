@@ -32,6 +32,12 @@
 				<span>Ausentismos</span>
 			</a>
 		</li>
+		<li class="{{ setActive('/clientes/preocupacionales') }} menu_sin_sub_menu">
+			<a href="{{url('/clientes/preocupacionales')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-book-medical"></i>
+				<span>Est. Méd. Complement</span>
+			</a>
+		</li>
 		<li class="{{ setActive('/clientes/api') }} menu_sin_sub_menu">
 			<a href="{{url('/clientes/api')}}" class="list-group-item list-group-item-action sidebar_item">
 				<i class="far fa-network-wired"></i>

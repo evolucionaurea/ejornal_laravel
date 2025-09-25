@@ -45,7 +45,7 @@ class ConsultaNutricional extends Model
     // Alias para la relación nomina
     public function trabajador()
     {
-        return $this->nomina();
+        return $this->belongsTo(Nomina::class, 'id_nomina')->withTrashed();
     }
 
     public function cliente()

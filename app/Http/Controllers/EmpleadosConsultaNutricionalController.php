@@ -42,64 +42,78 @@ class EmpleadosConsultaNutricionalController extends Controller
 
 		return view('empleados.consultas.nutricionales', compact('clientes'));
 	}
+	
+
+
 	public function busqueda(Request $request)
-	{
+{
+    $search = is_array($request->search) ? ($request->search['value'] ?? null) : $request->search;
 
-		$query = ConsultaNutricional::select('consultas_nutricionales.*')
-		->with(['trabajador','cliente'])
-		->join('nominas', 'consultas_nutricionales.id_nomina', 'nominas.id')
-		->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
+    $q = ConsultaNutricional::select('consultas_nutricionales.*')
+        ->with([
+            'trabajador',
+            'cliente'
+        ])
+        ->leftJoin('nominas','consultas_nutricionales.id_nomina','=','nominas.id')
+        ->where('consultas_nutricionales.id_cliente', auth()->user()->id_cliente_actual);
 
-		$total = $query->count();
-		
-		if($request->from) $query->whereDate('consultas_nutricionales.fecha_atencion','>=',Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
-		if($request->to) $query->whereDate('consultas_nutricionales.fecha_atencion','<=',Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
-		
-		if($request->filtro=='mes'){
-			$query->whereMonth('consultas_nutricionales.fecha_atencion', Carbon::now()->month);
-			$query->whereYear('consultas_nutricionales.fecha_atencion', Carbon::now()->year);
-		}
-		
-		//dd($request->search['value']);
-		
-		if($request->search){
-			$query->where(function($query) use($request){
-				$filtro = '%'.$request->search.'%';
-				$query->where('nominas.nombre','like',$filtro)
-				->orWhere('consultas_nutricionales.tipo','like',$filtro)										
-				->orWhere('nominas.legajo','like',$filtro);
-			});
-		}
-		
-		if($request->estado!=''){
-			$query->whereHas('trabajador',function($query) use ($request){
-				$query->where('estado',$request->estado);
-			});
-		}
-		if($request->dni){
-			$query->whereHas('trabajador',function($query) use ($request){
-				$query->where('dni',$request->dni);
-			});
-		}
-		
-		
-		if($request->order){
-			$sort = $request->columns[$request->order[0]['column']]['name'];
-			$dir  = $request->order[0]['dir'];
-			$query->orderBy($sort,$dir);
-		}
-		$total_filtered = $query->count();
+    $total = (clone $q)->distinct('consultas_nutricionales.id')->count('consultas_nutricionales.id');
 
-		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'fichada_user'=>auth()->user()->fichada,
-			'fichar_user'=>auth()->user()->fichar,
-			'request'=>$request->all()
-		];
-	}
+    if ($request->from) {
+        $desde = Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d');
+        $q->whereDate('consultas_nutricionales.fecha_atencion','>=',$desde);
+    }
+    if ($request->to) {
+        $hasta = Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d');
+        $q->whereDate('consultas_nutricionales.fecha_atencion','<=',$hasta);
+    }
+    if ($request->filtro === 'mes') {
+        $q->whereMonth('consultas_nutricionales.fecha_atencion', now()->month)
+          ->whereYear('consultas_nutricionales.fecha_atencion', now()->year);
+    }
+    if (!empty($search)) {
+        $f = "%{$search}%";
+        $q->where(function ($qq) use ($f) {
+            $qq->where('nominas.nombre', 'like', $f)
+               ->orWhere('consultas_nutricionales.tipo', 'like', $f)
+               ->orWhere('nominas.legajo', 'like', $f);
+        });
+    }
+    if ($request->filled('estado')) {
+        $q->whereHas('trabajador', function ($qq) use ($request) {
+            $qq->where('estado', $request->estado);
+        });
+    }
+    if ($request->filled('dni')) {
+        $q->whereHas('trabajador', function ($qq) use ($request) {
+            $qq->where('dni', $request->dni);
+        });
+    }
+
+    if ($request->order) {
+        $sort = $request->columns[$request->order[0]['column']]['name'] ?? 'consultas_nutricionales.id';
+        $dir  = $request->order[0]['dir'] ?? 'desc';
+        $allowed = ['id','tipo','fecha_atencion'];
+        if (!in_array($sort, $allowed, true)) $sort = 'consultas_nutricionales.id';
+        $q->orderBy($sort, $dir);
+    } else {
+        $q->orderBy('consultas_nutricionales.id','desc');
+    }
+
+    $filtered = (clone $q)->distinct('consultas_nutricionales.id')->count('consultas_nutricionales.id');
+
+    return [
+        'draw' => (int) $request->draw,
+        'recordsTotal' => $total,
+        'recordsFiltered' => $filtered,
+        'data' => $q->skip((int)$request->start)->take((int)$request->length)->get(),
+        'fichada_user' => auth()->user()->fichada,
+        'fichar_user'  => auth()->user()->fichar,
+        'request' => $request->all(),
+    ];
+}
+
+
 
 	/**
 	 * Show the form for creating a new resource.

@@ -20,28 +20,45 @@ $(()=>{
 					data:'id'
 				},
 				{
-					className:'align-middle',
-					name:'nombre',
-					data:'trabajador',
-					render:v=>{
-						if(v==null) return '<span class="text-muted font-italic">[trabajador no encontrado]</span>'
-						return `
-							<div>${v.nombre}</div>
-							<div class="small">DNI: ${v.dni}</div>
-							`
+				className:'align-middle',
+				name:'nombre',
+				data:'trabajador',
+				render:v=>{
+					if(!v) {
+					return '<span class="text-muted font-italic">[trabajador no encontrado]</span>';
 					}
+
+					const eliminado = v.deleted_at !== null && v.deleted_at !== undefined;
+					const badge = eliminado
+					? '<span class="badge badge-danger ml-2">Eliminado</span>'
+					: '';
+					const nombre = v.nombre;
+
+					return `
+					<div>${nombre} ${badge}</div>
+					<div class="small">DNI: ${v.dni ?? '-'}</div>
+					`;
+				}
 				},
 				{
-					className:'align-middle',
-					name:'legajo',
-					data:'trabajador',
-					render:v=>{
-						if(v.legajo==null) return '<span class="text-muted font-italic">[Legajo no encontrado]</span>'
-						return `
-							<div>${v.legajo}</div>
-							`
-					}
+				className:'align-middle',
+				name:'legajo',
+				data:'trabajador',
+				render:v=>{
+					if(!v) return '<span class="text-muted font-italic">[Legajo no encontrado]</span>';
+
+					const eliminado = v.deleted_at !== null && v.deleted_at !== undefined;
+					const legajoTxt = (v.legajo == null) ? '<span class="text-muted font-italic">[Sin legajo]</span>' : v.legajo;
+
+					return `
+					<div>
+						${legajoTxt}
+						${eliminado ? '<span class="badge badge-danger ml-2">Eliminado</span>' : ''}
+					</div>
+					`;
+				}
 				},
+
 				{
 					className:'align-middle',
 					name:'tipo',
