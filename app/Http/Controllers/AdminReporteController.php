@@ -1026,6 +1026,22 @@ class AdminReporteController extends Controller
 			->leftJoin('users','users.nombre','consultas_enfermerias.user');
 
 
+		$nutricionales = ConsultaNutricional::select(
+		'consultas_nutricionales.id_cliente',
+		'consultas_nutricionales.id_nomina',
+		'consultas_nutricionales.user',
+		'consultas_nutricionales.created_at',
+		DB::raw('"Consulta Nutricional" as actividad'),
+		DB::raw('clientes.nombre as cliente_nombre'),
+		DB::raw('nominas.nombre as trabajador_nombre'),
+		'users.estado'
+	)
+		->join('clientes','clientes.id','consultas_nutricionales.id_cliente')
+		->join('nominas','nominas.id','consultas_nutricionales.id_nomina')
+		->leftJoin('users','users.nombre','consultas_nutricionales.user');
+
+
+
 		$ausentismos = Ausentismo::select(
 			'ausentismos.id_cliente',
 			'ausentismos.id_trabajador as id_nomina',
@@ -1151,7 +1167,8 @@ class AdminReporteController extends Controller
 				$preocupacionales,
 				$tareas_livianas,
 				$comunicaciones_tareas_livianas,
-				$documentaciones_tareas_livianas
+				$documentaciones_tareas_livianas,
+				$nutricionales
 			){
 
 				$query->select('*')
@@ -1163,7 +1180,8 @@ class AdminReporteController extends Controller
 					->union($preocupacionales)
 					->union($tareas_livianas)
 					->union($comunicaciones_tareas_livianas)
-					->union($documentaciones_tareas_livianas);
+					->union($documentaciones_tareas_livianas)
+					->union($nutricionales);
 
 			},'uniones');
 
