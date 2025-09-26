@@ -33,12 +33,14 @@ $(()=>{
 			}*/
 
 			if(user.grupo!=null) grupo = user.grupo.nombre
+			console.log(user);
+			
 
 			return $(`
 			<tr data-id="${user.id}">
 				<td>${user.nombre}</td>
 				<td>${user.email}</td>
-				<td>${user.especialidad!=null?user.especialidad:''}</td>
+				<td>${user.especialidad!=null?user.especialidad.nombre:''}</td>
 				<td><span class="badge badge-${user.estado==1?'success':'danger'}">${user.estado==1?'Activo':'Inactivo'}</span></td>
 				<td>
 					<span class="badge badge-${(user.fichar==1)?'success':'danger'}">${(user.fichar==1) ? 'Si' : 'No'}</span>

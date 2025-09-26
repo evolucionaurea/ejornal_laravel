@@ -120,6 +120,7 @@ if(route=='/clientes/nominas') require('./clientes/nominas')
 if(route=='/clientes/nominas/historial') require('./clientes/nominas_historial')
 if(route=='/clientes/nominas/movimientos') require('./clientes/nominas_movimientos')
 if(route=='/clientes/ausentismos') require('./clientes/ausentismos')
+if(route=='clientes.preocupacionales') require('./clientes/preocupacionales')
 
 
 //GRUPOS

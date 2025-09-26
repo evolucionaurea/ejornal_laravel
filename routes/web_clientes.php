@@ -38,4 +38,10 @@ Route::group(['middleware' => 'autenticacion_clientes'], function () {
 
 	Route::get('clientes/api', 'ClientesApiController@index')->name('/clientes/api');
 
+	Route::get('clientes/preocupacionales', 'ClientesPreocupacionalesController@index')->name('clientes.preocupacionales');
+	Route::post('clientes/preocupacionales/busqueda','ClientesPreocupacionalesController@busqueda');
+	Route::get('clientes/preocupacionales/archivo/{id}', 'ClientesPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
+	Route::get('clientes/preocupacionales/find/{id}', 'ClientesPreocupacionalesController@find');
+	Route::get('clientes/preocupacionales/{id}', 'ClientesPreocupacionalesController@show');
+
 });

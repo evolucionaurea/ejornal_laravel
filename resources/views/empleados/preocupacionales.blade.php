@@ -42,11 +42,11 @@
 
 						<div class="col-md-6">
 							<input placeholder="Fecha Desde" name="from" type="text"
-								class="form-control form-control-sm" value="">
+								class="form-control form-control-sm" value="" readonly>
 						</div>
 						<div class="col-md-6">
 							<input placeholder="Fecha Hasta" name="to" type="text" class="form-control form-control-sm"
-								value="">
+								value="" readonly>
 						</div>
 						<div class="col-md-6">
 							<select name="tipo" class="form-control form-control-sm">
