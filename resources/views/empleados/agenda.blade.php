@@ -56,8 +56,7 @@
 
 									<div class="comments">{!! $turno->comentarios ?? '<span class="text-muted font-italic">[sin comentarios]</span>' !!}</div>
 								</div>
-								@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) &&
-								auth()->user()->id_especialidad == 1 )
+								@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) )
 								<div class="actions">
 									@if($turno->estado->referencia!='cancelled')
 									<button data-toggle="editar-turno" title="Editar Turno" class="btn btn-primary">
