@@ -43,12 +43,12 @@ class AgendaEstadosSeeder extends Seeder
       	'color'=>'#9561e2',
       	'referencia'=>'absent'
       ]);
-      AgendaEstado::create([
+      /* AgendaEstado::create([
       	'nombre'=>'Reprogramado',
       	'descripcion'=>'El turno ha sido reprogramado para otra fecha/horario.',
       	'color'=>'#6574cd',
       	'referencia'=>'rescheduled'
-      ]);
+      ]); */
 
     }
 }

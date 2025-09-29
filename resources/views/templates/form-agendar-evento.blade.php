@@ -43,15 +43,22 @@
 
 			<div class="col-lg-6">
 				<label for="">Trabajador</label>
-				<select name="nomina_id" class="form-control" required>
-					<option value="">--Seleccionar--</option>
-				</select>
+				<select name="nomina_id" class="form-control" required></select>
+				<div class="small-comment">Tipear parte del nombre para realizar la búsqueda. Sólo se mostrarán trabajadores activos.</div>
 			</div>
 
 			<div class="col-lg-6">
 				<label for="">Motivo</label>
-				<select name="motivo_id" class="form-control" required>
+				<select name="motivo_id" class="form-control" required></select>
+			</div>
+
+			<div data-toggle="estados" class="col-lg-6 d-none">
+				<label for="">Estado</label>
+				<select name="estado_id" class="form-control" >
 					<option value="">--Seleccionar--</option>
+					@if($estados) @foreach($estados as $estado)
+					<option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+					@endforeach @endif
 				</select>
 			</div>
 

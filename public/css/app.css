@@ -188,6 +188,14 @@ hr.hr-line-dashed {
   font-style: italic;
 }
 
+.small-comment {
+  font-size: 10pt;
+  font-style: italic;
+  color: #8c8c8c;
+  line-height: 1.15;
+  margin-top: .225rem;
+}
+
 .btn-ejornal {
   color: white !important;
   cursor: pointer;
@@ -660,10 +668,7 @@ table.table .has-floating-btn .floating-btn:hover {
 
 .timeline .timeline-card {
   border-left: 1px solid #3490dc;
-  padding-left: 1rem;
-  padding-top: 0;
-  padding-bottom: 2rem;
-  padding: 1rem;
+  padding: 0 1rem 1rem 1rem;
   position: relative;
   display: flex;
   border-bottom: 1px dashed #e6e6e6;
@@ -703,6 +708,7 @@ table.table .has-floating-btn .floating-btn:hover {
 .timeline .timeline-card .content .author {
   color: #6e6e6e;
   font-size: 9pt;
+  font-style: italic;
   margin-bottom: .625rem;
 }
 
@@ -720,13 +726,14 @@ table.table .has-floating-btn .floating-btn:hover {
 .timeline .timeline-card .actions {
   min-width: 80px;
   text-align: right;
+  padding-top: 1rem;
 }
 
 .timeline .timeline-card .actions .btn {
   padding: .25rem;
   line-height: 1;
   font-size: 8pt;
-  margin: .25rem;
+  margin: .625rem .25rem;
 }
 
 #sidebar-wrapper {

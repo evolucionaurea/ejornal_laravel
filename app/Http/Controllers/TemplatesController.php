@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\AgendaEstado;
+use App\Agenda;
+use Carbon\CarbonImmutable;
 
 class TemplatesController extends Controller
 {
@@ -20,9 +23,7 @@ class TemplatesController extends Controller
 	public function form_cambiar_fichada(){
 		return view('templates.form-cambiar-fichada');
 	}
-	public function form_agendar_evento(){
-		return view('templates.form-agendar-evento');
-	}
+	
 
 	public function form_completar_preocupacional(){
 		return view('templates.form-completar-preocupacional');

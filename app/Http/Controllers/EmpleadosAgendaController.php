@@ -21,17 +21,12 @@ class EmpleadosAgendaController extends Controller
 	public function index(){
 
 		$clientes = $this->getClientesUser();
+		$estados = AgendaEstado::all();	
+		$usuarios = User::with(['especialidad','rol','cliente_actual'])
+			->where('id_cliente_actual',auth()->user()->id_cliente_actual)
+			->get();
 
-		$now = CarbonImmutable::now();
-
-		$turnos = Agenda::where('cliente_id',auth()->user()->id_cliente_actual)
-			//->where('user_id',auth()->user()->id)
-			->where('fecha_inicio','>=',$now)
-			->with(['trabajador','user','user_registra','estado','motivo'])
-			->orderBy('fecha_inicio','asc')
-			->take(5)->get();
-
-		return view('empleados.agenda',compact('clientes','turnos'));
+		return view('empleados.agenda',compact('clientes','estados','usuarios'));
 	}
 
 	public function store(Request $request){
@@ -56,13 +51,22 @@ class EmpleadosAgendaController extends Controller
 		
 		$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
 		$fecha_final = $fecha_inicio->addMinutes($request->duracion);
-		
-		if(!$agenda_estado = AgendaEstado::where('referencia','confirmed')->first()){
-			return response()->json([
-				'success' => false,
-				'message' => 'Estado predeterminado no encontrado'
-			], 400);
+
+		if($request->estado_id){
+
+			$agenda_estado = AgendaEstado::where('id',$request->estado_id)->first();
+
+		}else{
+
+			// Estado predeterminado confirmado		
+			if(!$agenda_estado = AgendaEstado::where('referencia','confirmed')->first()){
+				return response()->json([
+					'success' => false,
+					'message' => 'Estado predeterminado no encontrado'
+				], 400);
+			}
 		}
+
 		
 		
 		
@@ -200,16 +204,20 @@ class EmpleadosAgendaController extends Controller
 		$from = CarbonImmutable::createFromTimeString($request->from);
 		$to = CarbonImmutable::createFromTimeString($request->to);
 
+		
 		$query = Agenda::with(['cliente','trabajador','estado','user','user_registra'])
 			->where('fecha_inicio','>=',$from)
 			->where('fecha_inicio','<=',$to)
-			->where('cliente_id',auth()->user()->id_cliente_actual)
-			->get();
+			->where('cliente_id',auth()->user()->id_cliente_actual);
+		
+		if(!is_null($request->user)){
+			$query->where('user_id',$request->user);
+		}
 
 		return response()->json([
 			'from' => $from,
 			'to' => $to,
-			'results' => $query
+			'results' => $query->get()
 		]);
 
 	}
@@ -225,6 +233,26 @@ class EmpleadosAgendaController extends Controller
 
 		$turno = Agenda::with(['trabajador','cliente','estado','user','motivo','user_registra'])->find($id);
 		return view('empleados.agenda_turno_module',compact('turno'));
+	}
+
+	public function form_agendar_evento(){
+		$estados = AgendaEstado::all();
+		return view('templates.form-agendar-evento',compact('estados'));
+	}
+	public function agenda_proximos_turnos(Request $request){
+		$now = CarbonImmutable::now();
+
+		$qTurnos = Agenda::where('cliente_id',auth()->user()->id_cliente_actual)
+			->where('fecha_inicio','>=',$now)
+			->with(['trabajador','user','user_registra','estado','motivo']);
+
+		if(!is_null($request->user)){
+			$qTurnos->where('user_id',$request->user);
+		}
+		
+		$turnos = $qTurnos->orderBy('fecha_inicio','asc')->take(5)->get();
+		
+		return view('templates.agenda-timeline',compact('turnos'));
 	}
 
 

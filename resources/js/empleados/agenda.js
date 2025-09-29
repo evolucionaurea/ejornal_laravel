@@ -9,6 +9,10 @@ import esLocale from '@fullcalendar/core/locales/es'
 class Calendar{
 
 	constructor(){
+
+		this.delay_interval = 60*3	
+		this.calendar = null
+
 		this.init()		
 	}
 
@@ -45,6 +49,11 @@ class Calendar{
 
 			form.find('[name="id"]').val(data.turno.id)
 			form.find('[name="motivo_id"]').val(data.turno.motivo_id)
+			
+			form.find('[data-toggle="estados"]').removeClass('d-none')
+			form.find('[name="estado_id"]').prop({
+				required:true
+			}).val(data.turno.estado_id)
 		}
 
 		form.find('[name="fecha_inicio"]')
@@ -56,13 +65,16 @@ class Calendar{
 		form.find('[name="nomina_id"]').select2({
 			placeholder:'Buscar Trabajador...',
 			allowClear:true,
+			width:'100%',
+			dropdownParent: $('#modals'),
 			ajax:{
 				url:`/empleados/nominas/busqueda`,
-				dateType:'json',
+        dataType:'json',
 				method:'POST',
 				data: params=> {
 					return {
 						search: params.term,
+						estado:1,
 						type: 'public',
 						_token:csfr,
 						start:0,
@@ -85,9 +97,11 @@ class Calendar{
 		form.find('[name="user_id"]').select2({
 			placeholder:'Buscar Usuario...',
 			allowClear:true,
+			width:'100%',
+			dropdownParent: $('#modals'),
 			ajax:{
 				url:`/empleados/usuarios/search`,
-				dateType:'json',
+ 				dataType:'json',
 				method:'POST',
 				data: params=> {
 					return {
@@ -129,13 +143,23 @@ class Calendar{
 
 	}
 
+	async cargar_turnos(){
+
+		//$('[data-content="next-events"]').html('Actualizando...')
+		//const template = await get_template('/templates/proximos-turnos')
+		const turnos = await axios.post('/templates/proximos-turnos',{
+			user:$('[name="usuarios"]').val()
+		})
+		$('[data-content="next-events"]').html(turnos.data)
+	}
+
 
 	init(){
 
 		console.log('calendar')
 
 		let calendarEl = document.getElementById('calendar')
-		let calendar = new fullCalendar(calendarEl, {
+		this.calendar = new fullCalendar(calendarEl, {
 			plugins: [ dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin ],
 			initialView: 'dayGridMonth',
 			headerToolbar: {
@@ -152,16 +176,10 @@ class Calendar{
 				let s = new Date(view.start.valueOf()+(3*60*60000))
 				let e = new Date(view.end.valueOf()+(3*59*60000))
 
-
-				const from_month = s.getMonth() + 1
-				const to_month = e.getMonth() + 1
-
-				const from_day = s.getDate()
-				const to_day = e.getDate()
-
 				const response = await axios.post('/empleados/agenda/buscar_turnos',{
 					from:s,
-					to:e
+					to:e,
+					user:$('[name="usuarios"]').val()
 				})
 
 				let events = []
@@ -203,7 +221,7 @@ class Calendar{
 					return true
 				}catch(error){
 					toastr.error(error.response.data.message)
-					calendar.refetchEvents()
+					this.calendar.refetchEvents()
 				}
 				
 
@@ -215,7 +233,7 @@ class Calendar{
 				}
 			} */
 		})
-		calendar.render()
+		this.calendar.render()
 
 
 		//////////////////
@@ -294,6 +312,21 @@ class Calendar{
 			const response = await axios.post(`/empleados/agenda/turno/${id}`)
 			this.modal_turno(response.data)
 		})
+
+		$('[name="usuarios"]').change(select=>{
+			clearInterval(this.sync_event)
+			this.cargar_turnos()
+			
+			// Refresh calendar to show events for selected user
+			if(this.calendar){
+				this.calendar.refetchEvents()
+			}
+
+			this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
+		})
+		
+		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
+		this.cargar_turnos()
 	}
 
 
