@@ -39,10 +39,11 @@
 					<div class="row border-right">
 
 						<div class="col-lg-6">
-							<input name="search" class="form-control form-control-sm" placeholder="Filtrar..." value="{{ Request::get('search') }}">
+							<input name="search" class="form-control form-control-sm" placeholder="Filtrar..."
+								value="{{ Request::get('search') }}">
 						</div>
 						<div class="col-lg-6">
-							<select name="tipo" class="form-control form-control-sm" >
+							<select name="tipo" class="form-control form-control-sm">
 								<option value="">--Tipo de Consulta--</option>
 								<option value="enfermeria">Enfermería</option>
 								<option value="medica">Médica</option>
@@ -74,9 +75,13 @@
 				</div>
 
 				<div class="col-lg-6 form-group">
-					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-1" ><i class="fas fa-search"></i> Buscar</button>
-					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-1" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
-					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}" target="_blank" class="btn-ejornal btn-info mb-1" ><i class="fas fa-file-excel"></i> Exportar</button>
+					<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-1"><i
+							class="fas fa-search"></i> Buscar</button>
+					<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-1" href="#!"><i
+							class="fas fa-list"></i> Mostrar todo</button>
+					<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}"
+						target="_blank" class="btn-ejornal btn-info mb-1"><i class="fas fa-file-excel"></i>
+						Exportar</button>
 				</div>
 
 
@@ -91,7 +96,7 @@
 						<th>Medicamento</th>
 						<th>Tipo Consulta</th>
 						<th>Cargado por</th>
-						<th>Para</th>
+						<th class="col-para">Para</th>
 						<th>Suministrados</th>
 						<th>Ingreso</th>
 						<th>Egreso</th>

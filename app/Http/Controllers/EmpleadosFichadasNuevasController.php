@@ -57,17 +57,10 @@ class EmpleadosFichadasNuevasController extends Controller
 			$fichada->browser = $agent->browser();
 
 			// Determinar el tipo de dispositivo
-			$fichada->dispositivo = $agent->deviceType();
-	       /* if ($agent->isMobile()) {
-	            $fichada->dispositivo = 'Móvil';
-	        } elseif ($agent->isTablet()) {
-	            $fichada->dispositivo = 'Tablet';
-	        } elseif ($agent->isDesktop()) {
-	            $fichada->dispositivo = 'Escritorio';
-	        } else {
-	            $fichada->dispositivo = 'Desconocido';
-	        }*/
-
+			// Se quita nuevamente deviceType() porque puede devolver null o unknown. 
+			// Hay registros guardados como "desconocido" y se pidió que no existiera esa opción.
+			// Se deja el mismo criterio que en el modelo de Fichada porque venia de ahi el "Desconocido"
+			$fichada->dispositivo = $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'phone' : 'desktop');
 			$fichada->save();
 
 	  }else {
@@ -95,16 +88,10 @@ class EmpleadosFichadasNuevasController extends Controller
 			$fichada->browser = $agent->browser();
 
 			// Determinar el tipo de dispositivo
-			$fichada->dispositivo = $agent->deviceType();
-	        /*if ($agent->isMobile()) {
-	            $fichada->dispositivo = 'Móvil';
-	        } elseif ($agent->isTablet()) {
-	            $fichada->dispositivo = 'Tablet';
-	        } elseif ($agent->isDesktop()) {
-	            $fichada->dispositivo = 'Escritorio';
-	        } else {
-	            $fichada->dispositivo = 'Desconocido';
-	        }*/
+			// Se quita nuevamente deviceType() porque puede devolver null o unknown. 
+			// Hay registros guardados como "desconocido" y se pidió que no existiera esa opción.
+			// Se deja el mismo criterio que en el modelo de Fichada porque venia de ahi el "Desconocido"
+			$fichada->dispositivo = $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'phone' : 'desktop');
 
 			$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
 			$fichada->tiempo_dedicado = $tiempo_dedicado;

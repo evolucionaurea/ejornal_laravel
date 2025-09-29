@@ -15,6 +15,11 @@ $(()=>{
 
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 
+			autoWidth: false,
+			columnDefs: [
+			{ targets: 3, width: '150px' } // ajustá el porcentaje/píxeles a gusto
+			],
+
 			columns:[
 
 				{
@@ -53,7 +58,7 @@ $(()=>{
 				{
 					data:null,
 					name:'trabajador',
-					className:'align-middle border-left',
+					className:'align-middle border-left col-para',
 					sortable:false,
 					render:v=>{
 						if(v.id_consulta_enfermeria != null) return v.consulta_enfermeria.trabajador.nombre

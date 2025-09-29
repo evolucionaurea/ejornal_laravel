@@ -28,36 +28,36 @@ class FichadaNueva extends Model
 		'egreso' => 'datetime:d/m/Y - H:i:s'
 	];
 
-	public function getDispositivoAttribute()
-	{
 
-		switch ($this->attributes['dispositivo']) {
+    public function setDispositivoAttribute($value)
+    {
+        $v = strtolower(trim((string)$value));
+        // Mapear variantes comunes
+        if (in_array($v, ['desktop','escritorio','pc','computer'], true)) $v = 'desktop';
+        elseif (in_array($v, ['mobile','móvil','movil','phone','teléfono','telefono'], true)) $v = 'phone';
+        elseif (in_array($v, ['tablet','ipad','galaxy tab'], true)) $v = 'tablet';
+        elseif (in_array($v, ['bot','crawler','spider','robot'], true)) $v = 'robot';
+        elseif ($v === 'other' || $v === 'otro') $v = 'other';
+        else {
+            // Cualquier cosa no reconocida o null -> escritorio (evita “desconocido” como solicitó Javier)
+            $v = 'desktop';
+        }
+        $this->attributes['dispositivo'] = $v;
+    }
 
-			case 'desktop':
-				$device = 'Escritorio';
-				break;
-			case 'phone':
-				$device = 'Móvil';
-				break;
-			case 'tablet':
-				$device = 'Tablet';
-				break;
-			case 'robot':
-				$device = 'Robot';
-				break;
 
-			case 'other':
-				$device = 'Otro';
-				break;
-
-			default:
-				$device = 'Desconocido';
-				break;
-		}
-
-		return $device;
-
-	}
+    public function getDispositivoAttribute()
+    {
+        $raw = $this->attributes['dispositivo'] ?? 'desktop';
+        switch ($raw) {
+            case 'desktop': return 'Escritorio';
+            case 'phone':   return 'Móvil';
+            case 'tablet':  return 'Tablet';
+            case 'robot':   return 'Robot';
+            case 'other':   return 'Otro';
+            default:        return 'Escritorio'; // nunca “Desconocido” (solicitado por Javier)
+        }
+    }
 
 
 	public function user(){
