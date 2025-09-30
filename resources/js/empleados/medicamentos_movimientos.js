@@ -58,7 +58,7 @@ $(()=>{
 				{
 					data:null,
 					name:'trabajador',
-					className:'align-middle border-left col-para',
+					className:'align-middle border-left',
 					sortable:false,
 					render:v=>{
 						if(v.id_consulta_enfermeria != null) return v.consulta_enfermeria.trabajador.nombre
@@ -95,8 +95,8 @@ $(()=>{
 				{
 					data:null,
 					name:'motivo',
-					className:'align-middle border-left',
-
+					className:'align-middle border-left small',
+					width:240,
 					render:v=>{
 						if(v.motivo==null){
 							if(v.id_consulta_enfermeria!=null) return `<span class="text-muted font-italic">Suministrado en Enfermería</span>`

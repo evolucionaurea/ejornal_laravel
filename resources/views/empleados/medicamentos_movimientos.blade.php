@@ -96,7 +96,7 @@
 						<th>Medicamento</th>
 						<th>Tipo Consulta</th>
 						<th>Cargado por</th>
-						<th class="col-para">Para</th>
+						<th>Para</th>
 						<th>Suministrados</th>
 						<th>Ingreso</th>
 						<th>Egreso</th>
