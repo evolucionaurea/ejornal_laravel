@@ -124,7 +124,7 @@ class EmpleadosAgendaController extends Controller
 
 		$turno = Agenda::findOrFail($id);
 
-		if($request->mode=='cancel'){
+		/* if($request->mode=='cancel'){
 			if(!$agenda_estado = AgendaEstado::where('referencia','cancelled')->first()){
 				return response()->json([
 					'success' => false,
@@ -132,7 +132,17 @@ class EmpleadosAgendaController extends Controller
 				], 400);
 			}
 			$turno->estado_id = $agenda_estado->id;
+		} */
+		if($request->mode=='status'){
+			if(!$agenda_estado = AgendaEstado::where('referencia',$request->status)->first()){
+				return response()->json([
+					'success' => false,
+					'message' => 'Estado cancelado no encontrado'
+				], 400);
+			}
+			$turno->estado_id = $agenda_estado->id;
 		}
+		
 
 		if($request->mode == 'mover'){
 			//$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
@@ -243,7 +253,7 @@ class EmpleadosAgendaController extends Controller
 		$now = CarbonImmutable::now();
 
 		$qTurnos = Agenda::where('cliente_id',auth()->user()->id_cliente_actual)
-			->where('fecha_inicio','>=',$now)
+			->where('fecha_final','>=',$now)
 			->with(['trabajador','user','user_registra','estado','motivo']);
 
 		if(!is_null($request->user)){

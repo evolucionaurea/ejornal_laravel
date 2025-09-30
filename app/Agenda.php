@@ -67,8 +67,10 @@ class Agenda extends Model
 	{
 		$ahora = CarbonImmutable::now();
 		$fechaInicio = CarbonImmutable::parse($this->fecha_inicio);
+		$fechaFinal = CarbonImmutable::parse($this->fecha_final);
 		
-		if ($ahora >= $fechaInicio) return '[Ya pasó]';
+		if ($ahora >= $fechaFinal) return 'Ya pasó';
+		if ($ahora >= $fechaInicio && $ahora <= $fechaFinal) return 'En curso';
 		
 		if ($ahora->isSameDay($fechaInicio)) {
         $horas = $ahora->diffInHours($fechaInicio);

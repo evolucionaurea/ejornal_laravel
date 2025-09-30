@@ -153,6 +153,13 @@ class Calendar{
 		$('[data-content="next-events"]').html(turnos.data)
 	}
 
+	reload_calendar(){
+		clearInterval(this.sync_event)
+		this.cargar_turnos()
+		if(this.calendar) this.calendar.refetchEvents()
+		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
+	}
+
 
 	init(){
 
@@ -207,7 +214,7 @@ class Calendar{
 
 			},
 			eventDrop: async (info)=>{
-				console.log(info.event.start.toISOString())
+				//console.log(info.event.start.toISOString())
 				const id = info.event.id
 
 				try {
@@ -255,10 +262,11 @@ class Calendar{
 				
 				//Swal.close()
 				toastr.success(response.data.message)
-				window.location.reload()
+				$('#modals').modal('hide')
+				this.reload_calendar()
 
 			}catch(error){
-				console.log(error)
+				//console.log(error)
 				toastr.error(error.response.data.message)
 			}
 
@@ -296,14 +304,18 @@ class Calendar{
 			if(!swal.value) return false 
 
 			const response_edit = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
-				mode:'cancel'
+				mode:'status',
+				status:'cancelled'
 			})
 
-			if(response.status!=200){
-				toastr.error(response.data.message)
+			if(response_edit.status!=200){
+				toastr.error(response_edit.data.message)
 				return false
 			}
-			window.location.reload()
+
+			toastr.success('Actualizado correctamente!')
+			$('#modals').modal('hide')
+			this.reload_calendar()
 
 		})
 		$('body').on('click','[data-toggle="editar-turno"]',async btn=>{
@@ -312,17 +324,28 @@ class Calendar{
 			const response = await axios.post(`/empleados/agenda/turno/${id}`)
 			this.modal_turno(response.data)
 		})
+		$('body').on('click','[data-toggle="change-status"]',async btn=>{
+			const status = $(btn.currentTarget).attr('data-value')
+			const card = $(btn.currentTarget).closest('.timeline-card')
+			const id = card.attr('data-id')		
+			
+			const response = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
+				mode:'status',
+				status:status
+			})
+
+			if(response.status!=200){
+				toastr.error(response.data.message)
+				return false
+			}
+			toastr.success('Actualizado correctamente!')
+			$('#modals').modal('hide')			
+			this.reload_calendar()
+
+		})
 
 		$('[name="usuarios"]').change(select=>{
-			clearInterval(this.sync_event)
-			this.cargar_turnos()
-			
-			// Refresh calendar to show events for selected user
-			if(this.calendar){
-				this.calendar.refetchEvents()
-			}
-
-			this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
+			this.reload_calendar()
 		})
 		
 		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)

@@ -719,14 +719,16 @@ table.table .has-floating-btn .floating-btn:hover {
 
 .timeline .timeline-card .content .comments {
   padding-top: .25rem;
+  padding-right: .725rem;
   font-size: 10pt;
   line-height: 1.25;
 }
 
 .timeline .timeline-card .actions {
-  min-width: 80px;
-  text-align: right;
-  padding-top: 1rem;
+  border-left: 1px dashed rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  text-align: center;
+  padding: 1rem;
 }
 
 .timeline .timeline-card .actions .btn {
@@ -1114,8 +1116,8 @@ table.table .has-floating-btn .floating-btn:hover {
   background-color: #9561e2;
 }
 
-.calendar-event.absent {
-  background-color: #6574cd;
+.calendar-event.rescheduled {
+  background-color: #4c537a;
 }
 
 .bloque_codigo pre {

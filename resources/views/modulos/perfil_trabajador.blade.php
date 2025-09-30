@@ -64,7 +64,7 @@
 					<div class="col-4"><b>Altura:</b><br>{{ $caratula->altura }}</div>
 					<div class="col-4"><b>IMC:</b><br>{{ $caratula->imc }}</div>
 					<div class="col-4"><b>Última actualización:</b><br>{{ $caratula->created_at_formatted }} hs.</div>
-				</ul>
+				</div>
 				@else
 				<div class="p-4 alert alert-info">Sin contenido cargado aún</div>
 				<a href="{{ route('empleados.nominas.caratulas.create', $trabajador->id) }}" class="btn btn-primary">
