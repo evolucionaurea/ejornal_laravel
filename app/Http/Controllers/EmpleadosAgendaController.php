@@ -114,7 +114,8 @@ class EmpleadosAgendaController extends Controller
 
 		return response()->json([
 			'success' => true,
-			'message'=>'Turno agendado correctamente'
+			'message'=>'Turno agendado correctamente',
+			'turno'=>$agenda
 		]);
 
 	}
@@ -161,7 +162,8 @@ class EmpleadosAgendaController extends Controller
 		$turno->save();
 
 		return response()->json([
-			'success'=>true
+			'success'=>true,
+			'turno'=>$turno
 		]);
 
 	}

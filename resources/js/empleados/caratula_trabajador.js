@@ -14,6 +14,9 @@ $(() => {
     const template = await window.get_template(`/api/get_caratula_nomina/${idNomina}`);
     $('#caratula').html(template);
   });
+  if( $('#id_nomina').val() != ''){
+    $('#id_nomina').trigger('change')
+  }
 
   $('body').on('click', '[data-toggle="editar-caratula"]', async btn => {
     btn.preventDefault();

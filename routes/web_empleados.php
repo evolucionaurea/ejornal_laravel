@@ -318,6 +318,10 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	// USERS
 	Route::post('empleados/usuarios/search','EmpleadosUsuariosController@search');
 
+	Route::get('user/me',function(){
+		return auth()->user()->toJson();
+	});
+
 	// Agenda Endpoints
 	Route::get('empleados/agenda_motivos', 'EmpleadosAgendaController@getMotivosAgenda');
 	Route::get('empleados/horarios_bloqueados/{id_cliente?}/{id_user?}', 'EmpleadosAgendaController@getHorariosBloqueados');

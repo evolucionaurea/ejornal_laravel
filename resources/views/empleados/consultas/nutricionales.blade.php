@@ -20,7 +20,7 @@
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-base" href="{{route('empleados.consultas.nutricionales.create')}}">
 					<i class="fas fa-plus-circle"></i>
-					Nuevo
+					Nueva Consulta Nutricional
 				</a>
 			</div>
 			@else 

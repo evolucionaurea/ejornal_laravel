@@ -143,21 +143,99 @@ class Calendar{
 
 	}
 
-	async cargar_turnos(){
-
-		//$('[data-content="next-events"]').html('Actualizando...')
-		//const template = await get_template('/templates/proximos-turnos')
+	async proximos_turnos(){
 		const turnos = await axios.post('/templates/proximos-turnos',{
 			user:$('[name="usuarios"]').val()
 		})
 		$('[data-content="next-events"]').html(turnos.data)
 	}
 
+	async modal_turno_confirmado(turno){
+
+		const user = await axios.get('/user/me')
+		///return console.log(turno)
+
+		const consult_text = user.data.especialidad.nombre=='médico' ? 'Médica/Nutricional' : 'de Enfermería'
+		
+		const swal = await Swal.fire({
+			icon:'question',
+			title:`¿Deseas cargar una Comunicación o Consulta ${consult_text}?`,
+			html:`<div class="small-comment">Si seleccionas cargar una comunicación, el trabajador deberá tener un ausentismo vigente.</div>`,
+
+			input:'select',
+			inputOptions:{
+				'consulta':`Consulta ${consult_text}`,
+				'comunicacion':'Comunicación'
+			},
+			inputPlaceholder:'--Seleccionar--',
+			inputValidator:value=>{
+				return new Promise((resolve,reject)=>{
+					if(value===''){
+						resolve('Debes seleccionar una opción')
+					}else{
+						resolve()
+					}
+				})
+			},
+
+			showCancelButton:true,
+			reverseButtons:true,
+			cancelButtonText:'Cancelar',
+			confirmButtonText:'Continuar'
+		})		
+		if(swal.isDenied) return false 		
+
+		//Comunicación
+		if(swal.value=='comunicacion'){
+			console.log('comunicación')			
+		}
+
+		//Consulta
+		if(swal.value=='consulta'){
+
+			if(user.data.especialidad.nombre=='médico') {
+
+				/// preguntar consulta medica o nutricional
+				const swal_consulta = await Swal.fire({
+					icon:'question',
+					title:'¿Deseas cargar una Consulta Médica o Nutricional?',
+					input:'select',
+					inputOptions:{
+						'medicas':'Consulta Médica',
+						'nutricionales':'Consulta Nutricional'
+					},
+					inputPlaceholder:'--Seleccionar--',
+					inputValidator:value=>{
+						return new Promise((resolve,reject)=>{
+							if(value===''){
+								resolve('Debes seleccionar una opción')
+							}else{
+								resolve()
+							}
+						})
+					},
+
+					showCancelButton:true,
+					reverseButtons:true,
+					cancelButtonText:'Cancelar',
+					confirmButtonText:'Continuar'
+				})
+
+				if(swal_consulta.isDenied) return false
+				return window.location.href = `/empleados/consultas/${swal_consulta.value}/create?id_nomina=${turno.nomina_id}`
+			}
+			if(user.data.especialidad.nombre=='enfermero'){ 
+				/// consulta enfermería
+				return window.location.href = `/empleados/consultas/enfermeria/create?id_nomina=${turno.nomina_id}`
+			}
+		}
+	}
+
 	reload_calendar(){
 		clearInterval(this.sync_event)
-		this.cargar_turnos()
+		this.proximos_turnos()
 		if(this.calendar) this.calendar.refetchEvents()
-		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
+		this.sync_event = setInterval(this.proximos_turnos,this.delay_interval*1000)
 	}
 
 
@@ -254,6 +332,7 @@ class Calendar{
 			
 			try{
 				const response = await axios.post('/empleados/agenda/guardar_turno',post)
+				post.id = response.data.id
 				
 				if(!('success' in response.data) && !response.data.success){
 					toastr.error('Hubo un error al guardar el turno')
@@ -264,6 +343,11 @@ class Calendar{
 				toastr.success(response.data.message)
 				$('#modals').modal('hide')
 				this.reload_calendar()
+
+				/// Si fue atendido pregunto si desea cargar consulta o comunicación
+				if($(form.currentTarget).find('[name="estado_id"] option:selected').attr('data-reference')=='attended'){
+					this.modal_turno_confirmado(response.data.turno)
+				}
 
 			}catch(error){
 				//console.log(error)
@@ -327,7 +411,9 @@ class Calendar{
 		$('body').on('click','[data-toggle="change-status"]',async btn=>{
 			const status = $(btn.currentTarget).attr('data-value')
 			const card = $(btn.currentTarget).closest('.timeline-card')
-			const id = card.attr('data-id')		
+			const id = card.attr('data-id')
+
+			//return console.log(status)
 			
 			const response = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
 				mode:'status',
@@ -342,14 +428,19 @@ class Calendar{
 			$('#modals').modal('hide')			
 			this.reload_calendar()
 
+			/// Si fue atendido pregunto si desea cargar consulta o comunicación
+			if(status=='attended'){
+				this.modal_turno_confirmado(response.data.turno)
+			}
+
 		})
 
 		$('[name="usuarios"]').change(select=>{
 			this.reload_calendar()
 		})
 		
-		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
-		this.cargar_turnos()
+		this.sync_event = setInterval(this.proximos_turnos,this.delay_interval*1000)
+		this.proximos_turnos()
 	}
 
 
