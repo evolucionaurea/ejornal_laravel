@@ -150,21 +150,49 @@ class Calendar{
 		$('[data-content="next-events"]').html(turnos.data)
 	}
 
+	async modal_comunicacion(data){
+
+		///console.log(data)
+
+		const ausentismo = data.nomina.ausentismos[0]
+
+		const template = await get_template('/templates/form-comunicacion')
+		const form = $(template)
+		form.find('[name="id_ausentismo"]').val(ausentismo.id)
+		
+		form.find('[data-content="ausentismo_tipo"]').text(ausentismo.tipo.nombre)
+		form.find('[data-content="fecha_inicio"]').text(ausentismo.fecha_inicio)
+		form.find('[data-content="fecha_final"]').text(ausentismo.fecha_final)
+		form.find('[data-content="total_dias"]').text(ausentismo.total_dias)
+		form.find('[data-content="user"]').text(ausentismo.user)
+
+		data.tipo_comunicaciones.map(tipo=>{
+			const option = dom('option')
+			option.val(tipo.id).text(tipo.nombre)
+			form.find('[name="id_tipo"]').append(option)
+		})
+
+		$('#popups .modal-body').html(form)
+		$('#popups').modal('show')
+
+	}
+
 	async modal_turno_confirmado(turno){
 
 		const user = await axios.get('/user/me')
 		///return console.log(turno)
 
-		const consult_text = user.data.especialidad.nombre=='médico' ? 'Médica/Nutricional' : 'de Enfermería'
+		const consulta_title = user.data.especialidad.nombre=='médico' ? 'Médica/Nutricional' : 'de Enfermería'
 		
 		const swal = await Swal.fire({
 			icon:'question',
-			title:`¿Deseas cargar una Comunicación o Consulta ${consult_text}?`,
+			allowOutsideClick:false,
+			title:`¿Deseas cargar una Comunicación o Consulta ${consulta_title}?`,
 			html:`<div class="small-comment">Si seleccionas cargar una comunicación, el trabajador deberá tener un ausentismo vigente.</div>`,
 
 			input:'select',
 			inputOptions:{
-				'consulta':`Consulta ${consult_text}`,
+				'consulta':`Consulta ${consulta_title}`,
 				'comunicacion':'Comunicación'
 			},
 			inputPlaceholder:'--Seleccionar--',
@@ -187,7 +215,21 @@ class Calendar{
 
 		//Comunicación
 		if(swal.value=='comunicacion'){
-			console.log('comunicación')			
+
+			// Verfico que tenga un ausentismo vigente
+			const response_ausentismo = await axios.get(`/empleados/check-ausentismo/${turno.nomina_id}`)
+
+			if(response_ausentismo.data.nomina.ausentismos.length==0){
+				const swal_sin_ausentismos = await Swal.fire({
+					icon:'error',
+					title:'El trabajador seleccionado no posee un ausentismo vigente'
+				})
+				return false
+			}
+
+			// abrir pop carga comunicación
+			return this.modal_comunicacion(response_ausentismo.data)
+			//console.log('comunicación')
 		}
 
 		//Consulta

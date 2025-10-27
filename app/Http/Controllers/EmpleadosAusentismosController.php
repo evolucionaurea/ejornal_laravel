@@ -289,7 +289,7 @@ class EmpleadosAusentismosController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show($id)
+	public function show($id, Request $request)
 	{
 
 		$ausentismo = Ausentismo::findOrFail($id);
@@ -301,6 +301,33 @@ class EmpleadosAusentismosController extends Controller
 
 		return view('empleados.ausentismos.show',compact('ausentismo','clientes','tipo_comunicaciones'));
 
+	}
+
+	public function checkAusentismo($nomina_id)
+	{
+		$nomina = Nomina::where('id',$nomina_id)
+		->with(['ausentismos'=>function($query){
+			$query
+				->selectRaw("
+					*,
+					(
+						DATEDIFF(
+							IFNULL(
+								fecha_final,
+								DATE(NOW())
+							),
+							fecha_inicio
+						)
+					)+1 as total_dias"
+				)
+				->whereRaw("fecha_final >= DATE(NOW())")
+				->orWhereNull('fecha_final')
+				->with('tipo');
+		}])
+		->first();
+		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
+
+		return compact('nomina','tipo_comunicaciones');
 	}
 
 

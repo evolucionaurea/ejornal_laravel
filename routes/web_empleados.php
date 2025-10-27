@@ -48,7 +48,9 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// AUSENTISMOS
-	Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show')->name('ausentismo');
+	//Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show')->name('ausentismo');
+	Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show');
+	Route::get('empleados/check-ausentismo/{nomina_id}','EmpleadosAusentismosController@checkAusentismo');
 	Route::get('empleados/ausentismos/exportar','EmpleadosAusentismosController@exportar');
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
 		'names' => [
