@@ -236,7 +236,7 @@ class EmpleadosConsultaNutricionalController extends Controller
 			$caratula_new->peso = $request->peso;
 			$caratula_new->altura = $request->altura;
 			$alturaMetros = $request->altura / 100;
-			$caratula_new->imc = round($request->peso / ($alturaMetros * $alturaMetros), 2);
+			$caratula_new->imc = $alturaMetros ? round($request->peso / ($alturaMetros * $alturaMetros), 2) : 0;
 			$caratula_new->user = auth()->user()->nombre;
 			$caratula_new->save();
 			

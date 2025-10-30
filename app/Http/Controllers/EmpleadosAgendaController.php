@@ -120,21 +120,12 @@ class EmpleadosAgendaController extends Controller
 
 	}
 
-	// Solamente actualiza el cambio de fecha
+	// Solamente actualiza el estado o cambio de fecha
 	public function update(Request $request, $id){
 
 		$turno = Agenda::findOrFail($id);
-
-		/* if($request->mode=='cancel'){
-			if(!$agenda_estado = AgendaEstado::where('referencia','cancelled')->first()){
-				return response()->json([
-					'success' => false,
-					'message' => 'Estado cancelado no encontrado'
-				], 400);
-			}
-			$turno->estado_id = $agenda_estado->id;
-		} */
-		if($request->mode=='status'){
+		
+		if($request->mode == 'status'){
 			if(!$agenda_estado = AgendaEstado::where('referencia',$request->status)->first()){
 				return response()->json([
 					'success' => false,
@@ -142,8 +133,7 @@ class EmpleadosAgendaController extends Controller
 				], 400);
 			}
 			$turno->estado_id = $agenda_estado->id;
-		}
-		
+		}		
 
 		if($request->mode == 'mover'){
 			//$fecha_inicio = CarbonImmutable::createFromFormat('d/m/Y H:i', $request->fecha_inicio.' '.$request->horario);
@@ -157,6 +147,14 @@ class EmpleadosAgendaController extends Controller
 			$fecha_final = $nueva_fecha->addMinutes($turno->duracion);
 			$turno->fecha_inicio = $nueva_fecha;
 			$turno->fecha_final = $fecha_final;
+		}
+
+		if($request->mode == 'comentarios'){
+			if($turno->comentarios){
+				$turno->comentarios .= '<br><br> ------- <br><br>'. $request->comentarios;
+			}else{				
+				$turno->comentarios = $request->comentarios;
+			}
 		}
 
 		$turno->save();

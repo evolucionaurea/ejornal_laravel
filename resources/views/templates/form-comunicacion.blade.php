@@ -48,7 +48,7 @@
 				</div>
 				<div class="form-group col-md-12">
 					<label>Archivos</label>
-					<input type="file" multiple name="archivos[]" id="">
+					<input type="file" multiple name="archivos[]" id="" accept=".jpeg,.png,.jpg,.gif,.pdf,.doc,.docx,.xls,.xlsx">
 				</div>
 			</div>
 			<button class="btn-ejornal btn-ejornal-success" type="submit" name="button">Crear comunicación</button>

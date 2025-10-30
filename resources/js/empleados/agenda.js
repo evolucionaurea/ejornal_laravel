@@ -177,7 +177,7 @@ class Calendar{
 
 	}
 
-	async modal_turno_confirmado(turno){
+	async modal_turno_atendido(turno){
 
 		const user = await axios.get('/user/me')
 		///return console.log(turno)
@@ -210,8 +210,8 @@ class Calendar{
 			reverseButtons:true,
 			cancelButtonText:'Cancelar',
 			confirmButtonText:'Continuar'
-		})		
-		if(swal.isDenied) return false 		
+		})
+		if(swal.isDismissed) return false
 
 		//Comunicación
 		if(swal.value=='comunicacion'){
@@ -271,6 +271,49 @@ class Calendar{
 				return window.location.href = `/empleados/consultas/enfermeria/create?id_nomina=${turno.nomina_id}`
 			}
 		}
+	}
+	async modal_turno_sin_atender(turno){
+
+		const swal = await Swal.fire({
+			icon:'question',
+			allowOutsideClick:false,
+			title:`¿Deseas cargar un comentario u observación?`,
+			html:`<div class="small-comment">Puedes describir los detalles del por qué no fue atendido este trabajador.</div>`,
+
+			input:'textarea',			
+			inputPlaceholder:'Comentarios...',		
+			inputValidator:value=>{
+				return new Promise((resolve,reject)=>{
+					if(value===''){
+						resolve('Debes agregar algún comentario')
+					}else{
+						resolve()
+					}
+				})
+			},	
+
+			showCancelButton:true,
+			reverseButtons:true,
+			cancelButtonText:'No deseo dejar comentarios',
+			confirmButtonText:'Guardar Comentarios'
+		})		
+		if(swal.isDismissed) return false
+
+		console.log(swal)
+
+		const response = await axios.post(`/empleados/agenda/editar-turno/${turno.id}`,{
+			mode:'comentarios',
+			comentarios:swal.value
+		})
+
+		if(response.status!=200){
+			toastr.error(response.data.message)
+			return false
+		}
+		toastr.success('Comentarios agregados correctamente!')
+		Swal.close()
+		this.reload_calendar()
+
 	}
 
 	reload_calendar(){
@@ -371,6 +414,7 @@ class Calendar{
 
 			form.preventDefault()
 			const post = get_form(form.currentTarget)
+			const status = $(form.currentTarget).find('[name="estado_id"] option:selected').attr('data-reference')
 			
 			try{
 				const response = await axios.post('/empleados/agenda/guardar_turno',post)
@@ -387,8 +431,8 @@ class Calendar{
 				this.reload_calendar()
 
 				/// Si fue atendido pregunto si desea cargar consulta o comunicación
-				if($(form.currentTarget).find('[name="estado_id"] option:selected').attr('data-reference')=='attended'){
-					this.modal_turno_confirmado(response.data.turno)
+				if(status=='attended'){
+					this.modal_turno_atendido(response.data.turno)
 				}
 
 			}catch(error){
@@ -472,7 +516,12 @@ class Calendar{
 
 			/// Si fue atendido pregunto si desea cargar consulta o comunicación
 			if(status=='attended'){
-				this.modal_turno_confirmado(response.data.turno)
+				this.modal_turno_atendido(response.data.turno)
+			}
+
+			/// Si no fue atendido pregunto si desea cargar un comentario
+			if(status=='absent'){
+				this.modal_turno_sin_atender(response.data.turno)
 			}
 
 		})
