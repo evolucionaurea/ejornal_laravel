@@ -1,4 +1,8 @@
 {
     "/js/app.js": "/js/app.js?id=01d78ea00d49bd59fbc5",
-    "/css/app.css": "/css/app.css?id=d93f56321d6a7a204dfe"
+    "/css/app.css": "/css/app.css?id=d93f56321d6a7a204dfe",
+    "/js/empleados/cuenta.js": "/js/empleados/cuenta.js?id=2b94632dd4705d082cff",
+    "/js/empleados/liquidacion.js": "/js/empleados/liquidacion.js?id=e1d4a46fbd1e84845cc8",
+    "/js/empleados/cuenta.min.js": "/js/empleados/cuenta.min.js?id=2b94632dd4705d082cff",
+    "/js/empleados/liquidacion.min.js": "/js/empleados/liquidacion.min.js?id=e1d4a46fbd1e84845cc8"
 }

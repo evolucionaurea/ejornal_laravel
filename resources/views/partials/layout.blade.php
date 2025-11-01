@@ -58,7 +58,7 @@
 
 	{{-- <script defer type="text/javascript" src="{{asset('js/lib/chart.min.js')}}"></script> --}}
 	{{-- Graficos con Chart JS --}}
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" ></script>
 	{{-- Graficos con Chart JS --}}
 	<script type="text/javascript" src="{{ asset('js/lib/jquery-3.3.1.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/lib/jquery-ui.js') }}"></script>
@@ -80,52 +80,11 @@
 		@yield('content')
 	</div>
 
-
-	{{-- <script type="application/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script> --}}
-
-	{{-- <script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> --}}
-
-	{{-- <script type="application/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js">
-	</script> --}}
-	<!-- Data Table para que funcione Admin - Reportes -->
-
-
-
-
-	{{-- Este es el JS de MDB (Material Design Bootstrap). Funciona solo si se carga desde aquí, luego compilar todo el
-	Mix de JS --}}
-	{{-- <script defer type="text/javascript"
-		src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.18.0/js/mdb.min.js"></script> --}}
-	{{-- Este es el JS de MDB (Material Design Bootstrap). Funciona solo si se carga desde aquí, luego compilar todo el
-	Mix de JS --}}
-
-
-	{{-- Data Tables --}}
-	{{-- <script defer type="text/javascript"
-		src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-	<script defer type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js">
-	</script>
-	<script defer type="text/javascript"
-		src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/b-1.6.2/b-flash-1.6.2/b-html5-1.6.2/b-print-1.6.2/r-2.2.5/sc-2.0.2/datatables.min.js">
-	</script> --}}
-	{{-- Data Tables --}}
-
-
-	{{-- Select 2 --}}
-	{{-- <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
-	{{-- Select 2 --}}
-
-
-
 	<footer class="footer">
 		<div class="container">
 			Jornal Salud. Copyright &copy; {{ date('Y') }} - Todos los derechos reservados.
 		</div>
 	</footer>
-
-
-
-
 
 	<script>
 		var route = '{{ Route::currentRouteName() }}';
@@ -133,6 +92,16 @@
 	</script>
 
 	<script src="{{ mix('js/app.js') }}"></script>
+
+
+	@php
+		$routeName = Route::currentRouteName();
+		$routeJsBase = 'js' . str_replace('.', '/', $routeName);
+	@endphp
+	<div>{{$routeJsBase}}</div>
+	@if (file_exists(public_path($routeJsBase . '.min.js')))
+	<script defer src="{{ mix($routeJsBase . '.min.js') }}"></script>
+	@endif
 
 
 
@@ -161,7 +130,6 @@
 			<p class="text">trabajando....</p>
 		</div>
 	</div>
-
 
 
 </body>
