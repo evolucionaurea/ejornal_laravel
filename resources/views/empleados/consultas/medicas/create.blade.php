@@ -5,10 +5,12 @@
 @section('content')
 
 <div class="d-flex" id="wrapper">
+	
 	@include('partials.sidebar_empleados')
-	<div id="page-content-wrapper">
-		@include('partials.nav_sup')
 
+	<div id="page-content-wrapper">
+	
+		@include('partials.nav_sup')
 
 		{{-- Contenido de la pagina --}}
 
@@ -30,7 +32,7 @@
 		@endif
 
 		<div class="tarjeta" id="caratula">
-			<p class="alert alert-info">Seleccione un trabajador de la nómina</p>
+			<p class="alert alert-info">Selecciona un trabajador de la nómina para ver su carátula.</p>
 			{{-- Se completa por JS --}}
 		</div>
 
@@ -46,7 +48,7 @@
 						<select id="id_nomina" name="nomina" class="form-control select_2" required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($nominas as $nomina)
-							<option value="{{$nomina->id}}" {{ old('nomina')==$nomina->id ? 'selected' : '' }}
+							<option value="{{$nomina->id}}" {{ old('id_nomina')==$nomina->id || Request::get('id_nomina')==$nomina->id ? 'selected' : '' }}
 								>{{$nomina->nombre}}</option>
 							@endforeach
 						</select>

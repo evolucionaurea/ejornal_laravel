@@ -14,7 +14,7 @@ class EspecialidadesSeeder extends Seeder
     {
 
       Especialidad::create([
-        'nombre' => 'medico',
+        'nombre' => 'médico',
         'created_at' => date('Y-m-d H:m:s'),
         'updated_at' => date('Y-m-d H:m:s')
       ]);

@@ -143,21 +143,184 @@ class Calendar{
 
 	}
 
-	async cargar_turnos(){
-
-		//$('[data-content="next-events"]').html('Actualizando...')
-		//const template = await get_template('/templates/proximos-turnos')
+	async proximos_turnos(){
 		const turnos = await axios.post('/templates/proximos-turnos',{
 			user:$('[name="usuarios"]').val()
 		})
 		$('[data-content="next-events"]').html(turnos.data)
 	}
 
+	async modal_comunicacion(data){
+
+		///console.log(data)
+
+		const ausentismo = data.nomina.ausentismos[0]
+
+		const template = await get_template('/templates/form-comunicacion')
+		const form = $(template)
+		form.find('[name="id_ausentismo"]').val(ausentismo.id)
+		
+		form.find('[data-content="ausentismo_tipo"]').text(ausentismo.tipo.nombre)
+		form.find('[data-content="fecha_inicio"]').text(ausentismo.fecha_inicio)
+		form.find('[data-content="fecha_final"]').text(ausentismo.fecha_final)
+		form.find('[data-content="total_dias"]').text(ausentismo.total_dias)
+		form.find('[data-content="user"]').text(ausentismo.user)
+
+		data.tipo_comunicaciones.map(tipo=>{
+			const option = dom('option')
+			option.val(tipo.id).text(tipo.nombre)
+			form.find('[name="id_tipo"]').append(option)
+		})
+
+		$('#popups .modal-body').html(form)
+		$('#popups').modal('show')
+
+	}
+
+	async modal_turno_atendido(turno){
+
+		const user = await axios.get('/user/me')
+		///return console.log(turno)
+
+		const consulta_title = user.data.especialidad.nombre=='médico' ? 'Médica/Nutricional' : 'de Enfermería'
+		
+		const swal = await Swal.fire({
+			icon:'question',
+			allowOutsideClick:false,
+			title:`¿Deseas cargar una Comunicación o Consulta ${consulta_title}?`,
+			html:`<div class="small-comment">Si seleccionas cargar una comunicación, el trabajador deberá tener un ausentismo vigente.</div>`,
+
+			input:'select',
+			inputOptions:{
+				'consulta':`Consulta ${consulta_title}`,
+				'comunicacion':'Comunicación'
+			},
+			inputPlaceholder:'--Seleccionar--',
+			inputValidator:value=>{
+				return new Promise((resolve,reject)=>{
+					if(value===''){
+						resolve('Debes seleccionar una opción')
+					}else{
+						resolve()
+					}
+				})
+			},
+
+			showCancelButton:true,
+			reverseButtons:true,
+			cancelButtonText:'Cancelar',
+			confirmButtonText:'Continuar'
+		})
+		if(swal.isDismissed) return false
+
+		//Comunicación
+		if(swal.value=='comunicacion'){
+
+			// Verfico que tenga un ausentismo vigente
+			const response_ausentismo = await axios.get(`/empleados/check-ausentismo/${turno.nomina_id}`)
+
+			if(response_ausentismo.data.nomina.ausentismos.length==0){
+				const swal_sin_ausentismos = await Swal.fire({
+					icon:'error',
+					title:'El trabajador seleccionado no posee un ausentismo vigente'
+				})
+				return false
+			}
+
+			// abrir pop carga comunicación
+			return this.modal_comunicacion(response_ausentismo.data)
+			//console.log('comunicación')
+		}
+
+		//Consulta
+		if(swal.value=='consulta'){
+
+			if(user.data.especialidad.nombre=='médico') {
+
+				/// preguntar consulta medica o nutricional
+				const swal_consulta = await Swal.fire({
+					icon:'question',
+					title:'¿Deseas cargar una Consulta Médica o Nutricional?',
+					input:'select',
+					inputOptions:{
+						'medicas':'Consulta Médica',
+						'nutricionales':'Consulta Nutricional'
+					},
+					inputPlaceholder:'--Seleccionar--',
+					inputValidator:value=>{
+						return new Promise((resolve,reject)=>{
+							if(value===''){
+								resolve('Debes seleccionar una opción')
+							}else{
+								resolve()
+							}
+						})
+					},
+
+					showCancelButton:true,
+					reverseButtons:true,
+					cancelButtonText:'Cancelar',
+					confirmButtonText:'Continuar'
+				})
+
+				if(swal_consulta.isDenied) return false
+				return window.location.href = `/empleados/consultas/${swal_consulta.value}/create?id_nomina=${turno.nomina_id}`
+			}
+			if(user.data.especialidad.nombre=='enfermero'){ 
+				/// consulta enfermería
+				return window.location.href = `/empleados/consultas/enfermeria/create?id_nomina=${turno.nomina_id}`
+			}
+		}
+	}
+	async modal_turno_sin_atender(turno){
+
+		const swal = await Swal.fire({
+			icon:'question',
+			allowOutsideClick:false,
+			title:`¿Deseas cargar un comentario u observación?`,
+			html:`<div class="small-comment">Puedes describir los detalles del por qué no fue atendido este trabajador.</div>`,
+
+			input:'textarea',			
+			inputPlaceholder:'Comentarios...',		
+			inputValidator:value=>{
+				return new Promise((resolve,reject)=>{
+					if(value===''){
+						resolve('Debes agregar algún comentario')
+					}else{
+						resolve()
+					}
+				})
+			},	
+
+			showCancelButton:true,
+			reverseButtons:true,
+			cancelButtonText:'No deseo dejar comentarios',
+			confirmButtonText:'Guardar Comentarios'
+		})		
+		if(swal.isDismissed) return false
+
+		console.log(swal)
+
+		const response = await axios.post(`/empleados/agenda/editar-turno/${turno.id}`,{
+			mode:'comentarios',
+			comentarios:swal.value
+		})
+
+		if(response.status!=200){
+			toastr.error(response.data.message)
+			return false
+		}
+		toastr.success('Comentarios agregados correctamente!')
+		Swal.close()
+		this.reload_calendar()
+
+	}
+
 	reload_calendar(){
 		clearInterval(this.sync_event)
-		this.cargar_turnos()
+		this.proximos_turnos()
 		if(this.calendar) this.calendar.refetchEvents()
-		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
+		this.sync_event = setInterval(this.proximos_turnos,this.delay_interval*1000)
 	}
 
 
@@ -251,9 +414,11 @@ class Calendar{
 
 			form.preventDefault()
 			const post = get_form(form.currentTarget)
+			const status = $(form.currentTarget).find('[name="estado_id"] option:selected').attr('data-reference')
 			
 			try{
 				const response = await axios.post('/empleados/agenda/guardar_turno',post)
+				post.id = response.data.id
 				
 				if(!('success' in response.data) && !response.data.success){
 					toastr.error('Hubo un error al guardar el turno')
@@ -264,6 +429,11 @@ class Calendar{
 				toastr.success(response.data.message)
 				$('#modals').modal('hide')
 				this.reload_calendar()
+
+				/// Si fue atendido pregunto si desea cargar consulta o comunicación
+				if(status=='attended'){
+					this.modal_turno_atendido(response.data.turno)
+				}
 
 			}catch(error){
 				//console.log(error)
@@ -327,7 +497,9 @@ class Calendar{
 		$('body').on('click','[data-toggle="change-status"]',async btn=>{
 			const status = $(btn.currentTarget).attr('data-value')
 			const card = $(btn.currentTarget).closest('.timeline-card')
-			const id = card.attr('data-id')		
+			const id = card.attr('data-id')
+
+			//return console.log(status)
 			
 			const response = await axios.post(`/empleados/agenda/editar-turno/${id}`,{
 				mode:'status',
@@ -342,14 +514,24 @@ class Calendar{
 			$('#modals').modal('hide')			
 			this.reload_calendar()
 
+			/// Si fue atendido pregunto si desea cargar consulta o comunicación
+			if(status=='attended'){
+				this.modal_turno_atendido(response.data.turno)
+			}
+
+			/// Si no fue atendido pregunto si desea cargar un comentario
+			if(status=='absent'){
+				this.modal_turno_sin_atender(response.data.turno)
+			}
+
 		})
 
 		$('[name="usuarios"]').change(select=>{
 			this.reload_calendar()
 		})
 		
-		this.sync_event = setInterval(this.cargar_turnos,this.delay_interval*1000)
-		this.cargar_turnos()
+		this.sync_event = setInterval(this.proximos_turnos,this.delay_interval*1000)
+		this.proximos_turnos()
 	}
 
 

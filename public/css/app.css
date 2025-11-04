@@ -587,6 +587,14 @@ table.table .has-floating-btn .floating-btn:hover {
   color: #376d7a;
 }
 
+.swal2-container .swal2-html-container {
+  overflow: visible;
+}
+
+.swal2-container .swal2-select {
+  border: 1px solid #c8c8c8;
+}
+
 .swal2-container .swal2-popup .swal2-title {
   font-size: 1.675rem;
 }

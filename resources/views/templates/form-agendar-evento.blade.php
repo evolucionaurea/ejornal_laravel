@@ -57,7 +57,7 @@
 				<select name="estado_id" class="form-control" >
 					<option value="">--Seleccionar--</option>
 					@if($estados) @foreach($estados as $estado)
-					<option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+					<option value="{{ $estado->id }}" data-reference="{{$estado->referencia}}" >{{ $estado->nombre }}</option>
 					@endforeach @endif
 				</select>
 			</div>

@@ -35,7 +35,7 @@
 		@endif
 
 		<div class="tarjeta" id="caratula">
-			<p class="alert alert-info">Seleccione un trabajador de la nómina</p>
+			<p class="alert alert-info">Selecciona un trabajador de la nómina para ver su carátula.</p>
 			{{-- Se completa por JS --}}
 		</div>
 
@@ -51,7 +51,7 @@
 						<select required id="id_nomina" name="id_nomina" class="form-control select_2">
 							<option value="">--Seleccionar--</option>
 							@foreach ($nominas as $nomina)
-							<option value="{{ $nomina->id }}">{{ $nomina->nombre }}</option>
+							<option value="{{ $nomina->id }}" {{ old('id_nomina')==$nomina->id || Request::get('id_nomina')==$nomina->id ? 'selected' : '' }} >{{ $nomina->nombre }}</option>
 							@endforeach
 						</select>
 					</div>

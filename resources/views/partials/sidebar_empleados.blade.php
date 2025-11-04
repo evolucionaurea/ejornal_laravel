@@ -61,7 +61,6 @@
 			<a href="{{ url('empleados/agenda') }}" class="list-group-item list-group-item-action sidebar_item">
 				<i class="fas fa-calendar"></i>
 				<span>Agenda</span>
-				<span class="new">nuevo</span>
 			</a>
 		</li>
 
