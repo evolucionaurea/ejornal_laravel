@@ -182,12 +182,12 @@
 			</div>
 		</li>
 
-		{{-- <li class="{{ setActive('/empleados/recetas') }} menu_sin_sub_menu">
+		<li class="{{ setActive('/empleados/recetas') }} menu_sin_sub_menu">
 			<a href="{{url('/empleados/recetas')}}" class="list-group-item list-group-item-action sidebar_item">
 				<i class="fas fa-file-medical"></i>
 				<span>Recetas</span>
 			</a>
-		</li> --}}
+		</li>
 
 		<li class="{{ setActive('/empleados/medicamentos') }} dropdownMenu">
 			<div class="dropdownButton">
