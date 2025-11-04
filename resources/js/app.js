@@ -112,6 +112,7 @@ if(route=='enfermeria.create') {
 
 if(route=='empleados/agenda') require('./empleados/agenda')
 
+if(route=='empleados.recetas.create') require('./empleados/recetas/create')
 
 
 //CLIENTES

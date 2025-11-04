@@ -133,6 +133,14 @@
 				</ul>
 			</div>
 		</li>
+
+		{{-- <li class="{{ setActive('/admin/recetas') }} menu_sin_sub_menu">
+			<a href="{{url('/admin/recetas')}}" class="list-group-item list-group-item-action sidebar_item">
+				<i class="fas fa-file-medical"></i>
+				<span>Recetas</span>
+			</a>
+		</li> --}}
+
 		<li class="{{ setActive('/admin/reportes') }} dropdownMenu">
 			<div class="dropdownButton">
 				<a href="#!" class="list-group-item list-group-item-action sidebar_item">

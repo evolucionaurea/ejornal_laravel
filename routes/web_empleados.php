@@ -322,4 +322,17 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/agenda_motivos', 'EmpleadosAgendaController@getMotivosAgenda');
 	Route::get('empleados/horarios_bloqueados/{id_cliente?}/{id_user?}', 'EmpleadosAgendaController@getHorariosBloqueados');
 
+	// Recetas Digitales
+	Route::get('empleados/recetas/get-financiadores', 'EmpleadosRecetasController@getFinanciadores')->name('empleados.recetas.get_financiadores');
+	Route::get('empleados/recetas/get-diagnosticos', 'EmpleadosRecetasController@getDiagnosticos')->name('empleados.recetas.get_diagnosticos');
+	Route::get('empleados/recetas/get-medicamentos', 'EmpleadosRecetasController@getMedicamentos')->name('empleados.recetas.get_medicamentos');
+	Route::get('empleados/recetas/get-practicas', 'EmpleadosRecetasController@getPracticas')->name('empleados.recetas.get_practicas');
+
+	Route::get('empleados/recetas','EmpleadosRecetasController@index')->name('empleados.recetas');
+	Route::get('empleados/recetas/create','EmpleadosRecetasController@create')->name('empleados.recetas.create');
+	Route::post('empleados/recetas','EmpleadosRecetasController@store')->name('empleados.recetas.store');
+	Route::get('empleados/recetas/{id}','EmpleadosRecetasController@show')->where('id','\d+')->name('empleados.recetas.show');
+	Route::put('empleados/recetas/{id}','EmpleadosRecetasController@update')->where('id','\d+')->name('empleados.recetas.update');
+	Route::delete('empleados/recetas/{id}','EmpleadosRecetasController@destroy')->where('id','\d+')->name('empleados.recetas.destroy');
+
 });

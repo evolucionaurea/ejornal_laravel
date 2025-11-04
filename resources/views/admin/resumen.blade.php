@@ -111,6 +111,14 @@
 										@endforeach
 									</select>
 								</div>
+								<div class="col-lg-3 form-group">
+									<select name="disponibilidad" class="form-control form-control-sm">
+										<option value="">--Con y Sin Disponibilidad--</option>
+										<option value="con">Con stock</option>
+										<option value="sin">Sin stock</option>
+									</select>
+								</div>
+
 							</div>
 							<hr>
 

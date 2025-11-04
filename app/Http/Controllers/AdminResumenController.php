@@ -33,7 +33,6 @@ class AdminResumenController extends Controller
 					->groupBy('stock_medicamentos.id_medicamento')
 					->orderByDesc('suministrados')
 					->first();
-		//dd($mas_sumunistrado);
 
 		$medicamentos = Medicamento::orderBy('nombre')->get();
 
@@ -86,48 +85,62 @@ class AdminResumenController extends Controller
 
 	public function getMedicamentos(Request $request)
 	{
-		/*$stocks = StockMedicamento::join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
-			->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id')
-			->select('medicamentos.nombre', DB::raw('clientes.nombre cliente'), 'stock_medicamentos.stock')
-			->get();
+		$base = StockMedicamento::select('stock_medicamentos.*')
+			->with([
+				'medicamento',
+				// incluir clientes eliminados
+				'cliente' => function ($q) {
+					$q->withTrashed();
+				},
+			])
+			// Uso LEFT JOIN para no descartar filas si falta la contraparte
+			->leftJoin('medicamentos', 'stock_medicamentos.id_medicamento', '=', 'medicamentos.id')
+			->leftJoin('clientes', 'stock_medicamentos.id_cliente', '=', 'clientes.id');
 
-		return response()->json($stocks);*/
-
-		$query = StockMedicamento::select('stock_medicamentos.*')
-			->with(['medicamento','cliente'])
-			->join('medicamentos', 'stock_medicamentos.id_medicamento', 'medicamentos.id')
-			->join('clientes', 'stock_medicamentos.id_cliente', 'clientes.id');
-		$total = $query->count();
-
+		// total sin filtros de búsqueda
+		$total = (clone $base)->count();
 
 		// FILTROS
-		if($request->medicamento){
-			$query->where('stock_medicamentos.id_medicamento','=',$request->medicamento);
+		if ($request->filled('medicamento')) {
+			$base->where('stock_medicamentos.id_medicamento', $request->medicamento);
 		}
-		if($request->cliente){
-			$query->where('stock_medicamentos.id_cliente','=',$request->cliente);
+		if ($request->filled('cliente')) {
+			$base->where('stock_medicamentos.id_cliente', $request->cliente);
 		}
 
+		if ($request->filled('disponibilidad')) {
+			if ($request->disponibilidad === 'con') {
+				$base->where('stock_medicamentos.stock', '>', 0);
+			} elseif ($request->disponibilidad === 'sin') {
+				$base->where('stock_medicamentos.stock', '<=', 0);
+			}
+    	}
 
-		// BUSQUEDA
-		if(isset($request->search)){
-			$query->where(function($query) use($request) {
-				$filtro = '%'.$request->search['value'].'%';
-				$query->where('clientes.nombre','like',$filtro)
-					->orWhere('medicamentos.nombre','like',$filtro);
+		// BUSQUEDA (en nombre de cliente o de medicamento)
+		if (isset($request->search)) {
+			$filtro = '%' . $request->search['value'] . '%';
+			$base->where(function ($q) use ($filtro) {
+				$q->where('clientes.nombre', 'like', $filtro)
+				->orWhere('medicamentos.nombre', 'like', $filtro);
 			});
 		}
 
-		$total_filtered = $query->count();
+		$total_filtered = (clone $base)->count();
+
+		$data = $base
+			->skip((int) $request->start)
+			->take((int) $request->length)
+			->get();
 
 		return [
-			'draw'=>$request->draw,
-			'recordsTotal'=>$total,
-			'recordsFiltered'=>$total_filtered,
-			'data'=>$query->skip($request->start)->take($request->length)->get(),
-			'request'=>$request->all()
+			'draw' => (int) $request->draw,
+			'recordsTotal' => $total,
+			'recordsFiltered' => $total_filtered,
+			'data' => $data,
+			'request' => $request->all(),
 		];
 	}
+
 
 
 }

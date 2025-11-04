@@ -2,7 +2,7 @@ import Tablas from '../classes/Tablas.js';
 
 
 $(()=>{
-
+	
 	const table = new Tablas({
 		controller:'/admin',
 		get_path:'/get_medicamentos',
@@ -39,7 +39,7 @@ $(()=>{
 		}
 	})
 
-	$('[name="medicamento"],[name="cliente"]').on('change',select=>{
+	$('[name="medicamento"],[name="cliente"], [name="disponibilidad"]').on('change',select=>{
 		table.datatable_instance.ajax.reload()
 	})
 
