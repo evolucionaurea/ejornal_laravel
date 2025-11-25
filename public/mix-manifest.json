@@ -1,4 +1,7 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/js/app.js": "/js/app.js?id=99d88bb28a5b71356c2f",
+    "/css/app.css": "/css/app.css?id=6a17106f5c2c3c3bf372",
+    "/js/app.optimized.js": "/js/app.optimized.js?id=55ca2cba975c7f49d435",
+    "/js/empleados/cuenta.js": "/js/empleados/cuenta.js?id=7efcdedd6aff14b44d96",
+    "/js/empleados/liquidacion.js": "/js/empleados/liquidacion.js?id=2828780670d93bd63ea0"
 }

@@ -98,9 +98,8 @@
 		$routeName = Route::currentRouteName();
 		$routeJsBase = 'js' . str_replace('.', '/', $routeName);
 	@endphp
-	<div>{{$routeJsBase}}</div>
-	@if (file_exists(public_path($routeJsBase . '.min.js')))
-	<script defer src="{{ mix($routeJsBase . '.min.js') }}"></script>
+	@if (file_exists(public_path($routeJsBase . '.js')))
+	<script defer src="{{ mix($routeJsBase . '.js') }}"></script>
 	@endif
 
 

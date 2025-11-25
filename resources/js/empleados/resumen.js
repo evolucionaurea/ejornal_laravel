@@ -1,5 +1,4 @@
 import Tablas from '../classes/Tablas.js';
-import toastr from 'toastr';
 
 $(()=>{
 

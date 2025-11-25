@@ -20,7 +20,7 @@
 
 			<hr class="hr-line-dashed">
 			<div class="row">
-				<div class="col-lg-3">
+				<div class="col-lg-3 form-group">
 					<label for="">Filtrar turnos por usuario</label>
 					<select name="usuarios" class="form-control form-control-sm">
 						<option value="">--Todos los usuarios--</option>
@@ -31,6 +31,17 @@
 									@continue
 								@endif
 								<option value="<?= $usuario->id ?>">{{ $usuario->nombre }}</option>
+							@endforeach 
+						@endif
+					</select>
+				</div>
+				<div class="col-lg-3 form-group">
+					<label for="">Filtrar turnos por trabajador</label>
+					<select name="trabajadores" class="form-control form-control-sm">
+						<option value="">--Todos los trabajadores--</option>
+						@if($trabajadores) 
+							@foreach($trabajadores as $trabajador)								
+								<option value="<?= $trabajador->id ?>">{{ $trabajador->nombre }}</option>
 							@endforeach 
 						@endif
 					</select>
