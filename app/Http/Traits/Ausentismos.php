@@ -312,7 +312,7 @@ trait Ausentismos {
 			'Tipo',
 			'Fecha Inicio',
 			'Fecha Final',
-			'Fecha en que Regresó',
+			//'Fecha en que Regresó',
 			'Comentario',
 			'Hoy ('.$now->format('d/m/Y').')'
 		],';');
@@ -336,7 +336,7 @@ trait Ausentismos {
 				$ausentismo->ausentismo_tipo,
 				$ausentismo->fecha_inicio->format('d/m/Y'),
 				$ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]',
-				$ausentismo->fecha_regreso ?? ($ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]'),
+				//$ausentismo->fecha_regreso ?? ($ausentismo->fecha_final ? $ausentismo->fecha_final->format('d/m/Y') : '[no cargada]'),
 				str_replace(["\n", "\r"], " ", $ausentismo->comentario),
 				$hoy
 			],';');
