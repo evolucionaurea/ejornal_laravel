@@ -16,8 +16,10 @@
 			<h2>Creación de trabajadores</h2>
 			<p>Aquí puedes cargar a los trabajadores que formarán parte de la nómina de la empresa</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}"><i
-						class="fas fa-arrow-circle-left"></i>Volver</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}">
+					<i class="fas fa-arrow-circle-left fa-fw"></i> 
+					Volver
+				</a>
 			</div>
 		</div>
 
@@ -116,10 +118,9 @@
 
 					<div class="form-group col-md-3">
 						<label>Subir foto</label>
-						<div class="input-group">
+						<div class="input-group input-group-sm">
 							<div class="custom-file">
-								<input name="foto" id="input_file" type="file" class="custom-file-input"
-									accept="image/*">
+								<input name="foto" id="input_file" type="file" class="custom-file-input" accept="image/*">
 								<label for="input_file" class="custom-file-label">Subir Imagen</label>
 							</div>
 						</div>

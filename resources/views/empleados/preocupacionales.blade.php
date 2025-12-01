@@ -16,7 +16,7 @@
 			<p>Aquí puede ver el listado de estudios médicos complementarios de la empresa.</p>
 			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('preocupacionales.create')}}">
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('empleados/preocupacionales/create')}}">
 					<i class="fas fa-plus-circle"></i>
 					Nuevo estudio médico complementario
 				</a>

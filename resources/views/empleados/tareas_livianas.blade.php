@@ -16,7 +16,7 @@
 			<p>Aquí puede ver el listado de tareas adecuadas de la empresa</p>
 			@if (auth()->user()->fichada == 1 || auth()->user()->fichar == 0)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('tareas_livianas.create')}}"><i
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('empleados/tareas_livianas/create')}}"><i
 						class="fas fa-plus-circle"></i> Nueva tarea adecuada</a>
 			</div>
 			@else

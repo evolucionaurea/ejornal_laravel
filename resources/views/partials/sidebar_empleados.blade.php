@@ -80,8 +80,8 @@
 						<a href="{{url('/empleados/nominas')}}">Listado</a>
 					</ol>
 					@if(auth()->user()->fichada == 1 || !auth()->user()->fichar)
-					<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}">
-						<a href="{{route('nominas.create')}}">Crear Trabajador</a>
+					<ol data-route="/empleados/nominas/create" class="{{ setActiveSub('/empleados/nominas/create') }}">
+						<a href="{{url('/empleados/nominas/create')}}">Crear Trabajador</a>
 					</ol>
 					@endif
 

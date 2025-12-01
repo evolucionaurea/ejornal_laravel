@@ -126,9 +126,9 @@
 					<ol data-route="/admin/medicamentos" class="{{ setActiveSub('/admin/medicamentos') }}">
 						<a href="{{url('/admin/medicamentos')}}">Listado</a>
 					</ol>
-					<ol data-route="/admin/movimiento_medicamentos"
-						class="{{ setActiveSub('/admin/movimiento_medicamentos') }}">
-						<a href="{{url('/admin/movimiento_medicamentos')}}">Movimientos</a>
+					<ol data-route="/admin/medicamentos_movimientos"
+						class="{{ setActiveSub('/admin/medicamentos_movimientos') }}">
+						<a href="{{url('/admin/medicamentos_movimientos')}}">Movimientos</a>
 					</ol>
 				</ul>
 			</div>
@@ -182,9 +182,9 @@
 						<a href="{{url('/admin/reportes_tareas_adecuadas')}}">Tareas Adecuadas</a>
 					</ol>
 
-					<ol data-route="/admin/reportes/actividad_usuarios"
-						class="{{ setActiveSub('/admin/reportes/actividad_usuarios') }}">
-						<a href="{{url('/admin/reportes/actividad_usuarios')}}">Actividad Usuarios</a>
+					<ol data-route="/admin/reportes_actividad_usuarios"
+						class="{{ setActiveSub('/admin/reportes_actividad_usuarios') }}">
+						<a href="{{url('/admin/reportes_actividad_usuarios')}}">Actividad Usuarios</a>
 					</ol>
 
 				</ul>

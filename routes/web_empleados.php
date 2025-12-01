@@ -23,7 +23,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// NOMINAS (Trabajadores)
-	Route::get('empleados/nominas/exportar','EmpleadosNominasController@exportar');
+	Route::get('empleados/nominas/exportar', 'EmpleadosNominasController@exportar');
 
 
 	Route::get('empleados/nominas/historial', 'EmpleadosNominasController@historial')->name('/empleados/nominas/historial');
@@ -34,14 +34,17 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 	Route::resource('empleados/nominas', 'EmpleadosNominasController', [
 		'names' => [
-			'index' => '/empleados/nominas'
+			'index' => '/empleados/nominas',
+			'show' => 'empleados/nominas/show',
+			'create' => 'empleados/nominas/create',
+			'edit' => 'empleados/nominas/edit'
 		]
 	]);
 	Route::post('empleados/nominas/cargar_excel', 'EmpleadosNominasController@cargar_excel')->name('/empleados/nominas/cargar_excel');
 	//Route::post('empleados/listado', 'EmpleadosNominasController@listado')->name('empleados.listado');
 	//Route::get('empleados/buscar', 'EmpleadosNominasController@buscar')->name('empleados.buscar');
-	Route::delete('empleados/nominas/destroy/{id}','EmpleadosNominasController@destroy');
-	Route::post('empleados/nominas/busqueda','EmpleadosNominasController@busqueda');
+	Route::delete('empleados/nominas/destroy/{id}', 'EmpleadosNominasController@destroy');
+	Route::post('empleados/nominas/busqueda', 'EmpleadosNominasController@busqueda');
 
 
 
@@ -49,42 +52,49 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 	// AUSENTISMOS
 	//Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show')->name('ausentismo');
-	Route::get('empleados/ausentismo/{id}','EmpleadosAusentismosController@show');
-	Route::get('empleados/check-ausentismo/{nomina_id}','EmpleadosAusentismosController@checkAusentismo');
-	Route::get('empleados/ausentismos/exportar','EmpleadosAusentismosController@exportar');
+	Route::get('empleados/ausentismo/{id}', 'EmpleadosAusentismosController@show');
+	Route::get('empleados/check-ausentismo/{nomina_id}', 'EmpleadosAusentismosController@checkAusentismo');
+	Route::get('empleados/ausentismos/exportar', 'EmpleadosAusentismosController@exportar');
 	Route::resource('empleados/ausentismos', 'EmpleadosAusentismosController', [
 		'names' => [
-			'index' => '/empleados/ausentismos'
+			'index' => '/empleados/ausentismos',
+			'show' => 'empleados/ausentismos/show',
+			'create' => 'empleados/ausentismos/create',
+			'edit' => 'empleados/ausentismos/edit'
 		]
 	]);
-	Route::delete('empleados/ausentismos/destroy/{id}','EmpleadosAusentismosController@destroy');
-	Route::post('empleados/ausentismos/busqueda','EmpleadosAusentismosController@busqueda');
+	Route::delete('empleados/ausentismos/destroy/{id}', 'EmpleadosAusentismosController@destroy');
+	Route::post('empleados/ausentismos/busqueda', 'EmpleadosAusentismosController@busqueda');
 	//Route::get('empleados/getAusentismos', 'EmpleadosAusentismosController@getAusentismos')->name('ausentismos.get_ausentismos');
 	Route::post('empleados/ausentismos/editar_tipo/', 'EmpleadosAusentismosController@editarTipo')->name('/empleados/ausentismos/tipo/edit');
 	Route::post('empleados/ausentismos/tipo', 'EmpleadosAusentismosController@tipo')->name('/empleados/ausentismos/tipo');
 	Route::delete('empleados/ausentismos/tipo_delete/{id_tipo}', 'EmpleadosAusentismosController@tipo_destroy')->name('ausentismos.tipo_delete');
 	Route::get('empleados/ausentismos/archivo/{id}', 'EmpleadosAusentismosController@descargar_archivo')->name('ausentismos.archivo');
-	Route::post('empleados/ausentismos/extension_comunicacion','EmpleadosAusentismosController@extensionComunicacion');
+	Route::post('empleados/ausentismos/extension_comunicacion', 'EmpleadosAusentismosController@extensionComunicacion');
 
 
 	// TAREAS LIVIANAS
-	Route::get('empleados/tareas_livianas/exportar','EmpleadoTareasLivianasController@exportar');
+	Route::get('empleados/tareas_livianas/exportar', 'EmpleadoTareasLivianasController@exportar');
 	Route::resource('empleados/tareas_livianas', 'EmpleadoTareasLivianasController', [
 		'names' => [
-			'index' => '/empleados/tareas_livianas'
+			'index' => '/empleados/tareas_livianas',
+			'show' => 'empleados/tareas_livianas/show',
+			'create' => 'empleados/tareas_livianas/create',
+			'edit' => 'empleados/tareas_livianas/edit'
 		]
 	]);
-	Route::delete('empleados/tareas_livianas/destroy/{id}','EmpleadoTareasLivianasController@destroy');
-	Route::post('empleados/tareas_livianas/busqueda','EmpleadoTareasLivianasController@busqueda');
+	Route::delete('empleados/tareas_livianas/destroy/{id}', 'EmpleadoTareasLivianasController@destroy');
+	Route::post('empleados/tareas_livianas/busqueda', 'EmpleadoTareasLivianasController@busqueda');
 	Route::post('empleados/tareas_livianas/tipo', 'EmpleadoTareasLivianasController@tipo')->name('/empleados/tareas_livianas/tipo');
 	Route::delete('empleados/tareas_livianas/tipo_delete/{id_tipo}', 'EmpleadoTareasLivianasController@tipo_destroy')->name('tareas_livianas.tipo_delete');
 	Route::get('empleados/tareas_livianas/archivo/{id}', 'EmpleadoTareasLivianasController@descargar_archivo')->name('tareas_livianas.archivo');
-	Route::post('empleados/tareas_livianas/extension_comunicacion','EmpleadoTareasLivianasController@extensionComunicacion');
+	Route::post('empleados/tareas_livianas/extension_comunicacion', 'EmpleadoTareasLivianasController@extensionComunicacion');
 
 	// DOCUMENTACIONES LIVIANAS
 	Route::resource('empleados/documentaciones_livianas', 'EmpleadosTareasLivianasDocumentacion', [
 		'names' => [
-			'index' => 'empleados.documentaciones_livianas'
+			'index' => 'empleados.documentaciones_livianas',
+			'show' => 'empleados/documentaciones_livianas/show'
 		]
 	]);
 	Route::get('empleados/documentacion_liviana/archivo/{id}', 'EmpleadosTareasLivianasDocumentacion@descargar_archivo')->name('documentacion_liviana.archivo');
@@ -123,14 +133,14 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// COMUNICACIONES
-	Route::get('empleados/comunicaciones/exportar','EmpleadosComunicacionesController@exportar');
+	Route::get('empleados/comunicaciones/exportar', 'EmpleadosComunicacionesController@exportar');
 	Route::resource('empleados/comunicaciones', 'EmpleadosComunicacionesController', [
 		'names' => [
 			'index' => '/empleados/comunicaciones'
 		]
 	]);
-	Route::delete('empleados/comunicaciones/destroy/{id}','EmpleadosComunicacionesController@destroy');
-	Route::post('empleados/comunicaciones/busqueda','EmpleadosComunicacionesController@busqueda');
+	Route::delete('empleados/comunicaciones/destroy/{id}', 'EmpleadosComunicacionesController@destroy');
+	Route::post('empleados/comunicaciones/busqueda', 'EmpleadosComunicacionesController@busqueda');
 	Route::post('empleados/comunicaciones/tipo', 'EmpleadosComunicacionesController@tipo')->name('/empleados/comunicaciones/tipo');
 	Route::delete('empleados/comunicaciones/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesController@tipo_destroy')->name('comunicaciones.tipo_delete');
 	Route::get('empleados/comunicaciones/getComunicacion/{id}', 'EmpleadosComunicacionesController@getComunicacion')->name('comunicaciones.getComunicacion');
@@ -144,8 +154,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 			'index' => '/empleados/comunicaciones_livianas'
 		]
 	]);
-	Route::delete('empleados/comunicaciones_livianas/destroy/{id}','EmpleadosComunicacionesLivianas@destroy');
-	Route::post('empleados/comunicaciones_livianas/busqueda','EmpleadosComunicacionesLivianas@busqueda');
+	Route::delete('empleados/comunicaciones_livianas/destroy/{id}', 'EmpleadosComunicacionesLivianas@destroy');
+	Route::post('empleados/comunicaciones_livianas/busqueda', 'EmpleadosComunicacionesLivianas@busqueda');
 	Route::post('empleados/comunicaciones_livianas/tipo', 'EmpleadosComunicacionesLivianas@tipo')->name('/empleados/comunicaciones_livianas/tipo');
 	Route::delete('empleados/comunicaciones_livianas/tipo_delete/{id_tipo}', 'EmpleadosComunicacionesLivianas@tipo_destroy')->name('comunicaciones_livianas.tipo_delete');
 	Route::get('empleados/comunicaciones_livianas/getComunicacionLiviana/{id}', 'EmpleadosComunicacionesLivianas@getComunicacionLiviana')->name('comunicaciones_livianas.getComunicacionLiviana');
@@ -155,41 +165,43 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	// CERTIFICADOS
 	Route::get('empleados/certificados', 'EmpleadosCertificadosController@listado')->name('/empleados/certificados');
 	Route::get('empleados/certificados/exportar', 'EmpleadosCertificadosController@exportar');
-	Route::post('empleados/certificados/busqueda','EmpleadosCertificadosController@busqueda');
+	Route::post('empleados/certificados/busqueda', 'EmpleadosCertificadosController@busqueda');
 
 
 	// CERTIFICADOS LIVIANOS
 	Route::get('empleados/certificados_livianos', 'EmpleadosCertificadosLivianosController@listado')->name('/empleados/certificados_livianos');
-	Route::post('empleados/certificados_livianos/busqueda','EmpleadosCertificadosLivianosController@busqueda');
+	Route::post('empleados/certificados_livianos/busqueda', 'EmpleadosCertificadosLivianosController@busqueda');
 
 	// PREOCUPACIONALES
-	Route::post('empleados/preocupacionales/completar','EmpleadosPreocupacionalesController@completar');
+	Route::post('empleados/preocupacionales/completar', 'EmpleadosPreocupacionalesController@completar');
 	Route::resource('empleados/preocupacionales', 'EmpleadosPreocupacionalesController', [
 		'names' => [
-			'index' => '/empleados/preocupacionales'
+			'index' => '/empleados/preocupacionales',
+			'create' => '/empleados/preocupacionales/create',
+			'edit' => '/empleados/preocupacionales/edit',
 		]
 	]);
-	Route::delete('empleados/preocupacionales/destroy/{id}','EmpleadosPreocupacionalesController@destroy');
-	Route::post('empleados/preocupacionales/busqueda','EmpleadosPreocupacionalesController@busqueda');
+	Route::delete('empleados/preocupacionales/destroy/{id}', 'EmpleadosPreocupacionalesController@destroy');
+	Route::post('empleados/preocupacionales/busqueda', 'EmpleadosPreocupacionalesController@busqueda');
 	Route::get('empleados/preocupacionales/archivo/{id}', 'EmpleadosPreocupacionalesController@descargar_archivo')->name('preocupacionales.archivo');
 	Route::get('empleados/preocupacionales/find/{id}', 'EmpleadosPreocupacionalesController@find');
 
 
 	//Tipo Preocupacionales
-	Route::delete('empleados/preocupacionales_tipos/{id}','EmpleadosPreocupacionalesTipoController@destroy')->name('preocupacionales_tipos.delete');
-	Route::post('empleados/preocupacionales_tipos','EmpleadosPreocupacionalesTipoController@store');
+	Route::delete('empleados/preocupacionales_tipos/{id}', 'EmpleadosPreocupacionalesTipoController@destroy')->name('preocupacionales_tipos.delete');
+	Route::post('empleados/preocupacionales_tipos', 'EmpleadosPreocupacionalesTipoController@store');
 
 
 	// MEDICAMENTOS
-	Route::get('empleados/medicamentos/exportar','EmpleadosStockMedicamentoController@exportar');
-	Route::get('empleados/medicamentos_movimientos/exportar','EmpleadosStockMedicamentoController@exportarHistorial');
+	Route::get('empleados/medicamentos/exportar', 'EmpleadosStockMedicamentoController@exportar');
+	Route::get('empleados/medicamentos_movimientos/exportar', 'EmpleadosStockMedicamentoController@exportarHistorial');
 	Route::resource('empleados/medicamentos', 'EmpleadosStockMedicamentoController', [
 		'names' => [
 			'index' => '/empleados/medicamentos'
 		]
 	]);
-	Route::post('empleados/medicamentos/busqueda','EmpleadosStockMedicamentoController@busqueda');
-	Route::post('empleados/medicamentos_movimientos/busqueda','EmpleadosStockMedicamentoController@busquedaMovimientos');
+	Route::post('empleados/medicamentos/busqueda', 'EmpleadosStockMedicamentoController@busqueda');
+	Route::post('empleados/medicamentos_movimientos/busqueda', 'EmpleadosStockMedicamentoController@busquedaMovimientos');
 	Route::get('empleados/medicamentos_movimientos', 'EmpleadosStockMedicamentoController@movimientos')->name('/empleados/medicamentos_movimientos');
 	Route::get('empleados/medicamentos/stock_actual/{id}', 'EmpleadosStockMedicamentoController@stock_actual');
 
@@ -201,7 +213,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 	Route::resource('empleados/documentaciones', 'EmpleadosAusentismoDocumentacionController', [
 		'names' => [
-			'index' => 'empleados.documentaciones'
+			'index' => 'empleados.documentaciones',
+			'show'=>'empleados/documentaciones/show'
 		]
 	]);
 
@@ -218,8 +231,8 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 			'index' => 'empleados.covid.testeos'
 		]
 	]);
-	Route::delete('empleados/covid/testeos/destroy/{id}','EmpleadosCovidTesteoController@destroy');
-	Route::post('empleados/covid/testeos/busqueda','EmpleadosCovidTesteoController@busqueda');
+	Route::delete('empleados/covid/testeos/destroy/{id}', 'EmpleadosCovidTesteoController@destroy');
+	Route::post('empleados/covid/testeos/busqueda', 'EmpleadosCovidTesteoController@busqueda');
 	Route::post('empleados/covid/testeos/tipo', 'EmpleadosCovidTesteoController@tipo')->name('/empleados/covid/testeos/tipo');
 	Route::delete('empleados/covid/testeos/tipo_delete/{id_tipo}', 'EmpleadosCovidTesteoController@tipo_destroy')->name('covid.testeos.tipo_delete');
 
@@ -230,39 +243,43 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 			'index' => 'empleados.covid.vacunas'
 		]
 	]);
-	Route::delete('empleados/covid/vacunas/destroy/{id}','EmpleadosCovidVacunasController@destroy');
-	Route::post('empleados/covid/vacunas/busqueda','EmpleadosCovidVacunasController@busqueda');
+	Route::delete('empleados/covid/vacunas/destroy/{id}', 'EmpleadosCovidVacunasController@destroy');
+	Route::post('empleados/covid/vacunas/busqueda', 'EmpleadosCovidVacunasController@busqueda');
 	Route::post('empleados/covid/vacunas/tipo', 'EmpleadosCovidVacunasController@tipo')->name('/empleados/covid/vacunas/tipo');
 	Route::delete('empleados/covid/vacunas/tipo_delete/{id_tipo}', 'EmpleadosCovidVacunasController@tipo_destroy')->name('covid.vacunas.tipo_delete');
 
 
 	// CONSULTAS TODAS
-	Route::get('empleados/consultas/todas','EmpleadoConsultasTodasController@index')->name('empleados.consultas.todas');
-	Route::post('empleados/consultas/todas/busqueda','EmpleadoConsultasTodasController@busqueda');
-	Route::get('empleados.consultas.todas/exportar','EmpleadoConsultasTodasController@exportar');
+	Route::get('empleados/consultas/todas', 'EmpleadoConsultasTodasController@index')->name('empleados.consultas.todas');
+	Route::post('empleados/consultas/todas/busqueda', 'EmpleadoConsultasTodasController@busqueda');
+	Route::get('empleados.consultas.todas/exportar', 'EmpleadoConsultasTodasController@exportar');
 
 
 	// CONSULTAS MEDICAS
-	Route::get('empleados.consultas.medicas/exportar','EmpleadoConsultaMedicaController@exportar');
+	Route::get('empleados.consultas.medicas/exportar', 'EmpleadoConsultaMedicaController@exportar');
 	Route::resource('empleados/consultas/medicas', 'EmpleadoConsultaMedicaController', [
 		'names' => [
-			'index' => 'empleados.consultas.medicas'
+			'index' => 'empleados.consultas.medicas',
+			'show' => 'empleados/consultas/medicas/show',
+			'create' => 'empleados/consultas/medicas/create',
+			'edit' => 'empleados/consultas/medicas/edit'
 		]
 	]);
-	Route::post('empleados/consultas/medicas/busqueda','EmpleadoConsultaMedicaController@busqueda');
+	Route::post('empleados/consultas/medicas/busqueda', 'EmpleadoConsultaMedicaController@busqueda');
 	Route::post('empleados/consultas/medicas/tipo', 'EmpleadoConsultaMedicaController@tipo')->name('/empleados/consultas/medicas/tipo');
 	Route::delete('empleados/consultas/medicas/tipo_delete/{id_tipo}', 'EmpleadoConsultaMedicaController@tipo_destroy')->name('consultas.medicas.tipo_delete');
 
 
 
 	// CONSULTAS ENFERMERIA
-	Route::get('empleados.consultas.enfermeria/exportar','EmpleadoConsultaEnfermeriaController@exportar');
+	Route::get('empleados.consultas.enfermeria/exportar', 'EmpleadoConsultaEnfermeriaController@exportar');
 	Route::resource('empleados/consultas/enfermeria', 'EmpleadoConsultaEnfermeriaController', [
 		'names' => [
-			'index' => 'empleados.consultas.enfermeria'
+			'index' => 'empleados.consultas.enfermeria',
+			'create'=>'empleados/consultas/enfermeria/create',
 		]
 	]);
-	Route::post('empleados/consultas/enfermeria/busqueda','EmpleadoConsultaEnfermeriaController@busqueda');
+	Route::post('empleados/consultas/enfermeria/busqueda', 'EmpleadoConsultaEnfermeriaController@busqueda');
 	Route::post('empleados/consultas/enfermeria/tipo', 'EmpleadoConsultaEnfermeriaController@tipo')->name('/empleados/consultas/enfermeria/tipo');
 	Route::delete('empleados/consultas/enfermeria/tipo_delete/{id_tipo}', 'EmpleadoConsultaEnfermeriaController@tipo_destroy')->name('consultas.enfermeria.tipo_delete');
 
@@ -292,25 +309,25 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 	// CARATULAS
 	Route::get('empleados/caratulas/exportar', 'EmpleadosCaratulaController@exportar');
-	Route::get('empleados/nominas/caratulas/{id}/exportar', 'EmpleadosCaratulaController@exportar_trabajador')->name('empleados.nominas.caratulas.exportar');
+	Route::get('empleados/caratulas/{id}/exportar', 'EmpleadosCaratulaController@exportar_trabajador')->name('empleados.caratulas.exportar');
 	Route::get('empleados/caratulas', 'EmpleadosCaratulaController@index')->name('empleados.caratulas');
 	Route::post('empleados/caratulas/busqueda', 'EmpleadosCaratulaController@busqueda');
 	Route::post('empleados/caratulas/busqueda_trabajador', 'EmpleadosCaratulaController@busqueda_trabajador');
-	Route::get('empleados/nominas/caratulas/create/{id_nomina?}', 'EmpleadosCaratulaController@create')->name('empleados.nominas.caratulas.create');
-	Route::post('empleados/nominas/caratulas', 'EmpleadosCaratulaController@store')->name('empleados.nominas.caratulas.store');
-	Route::get('empleados/nominas/caratulas/{id}', 'EmpleadosCaratulaController@show')->name('empleados.nominas.caratulas.show');
-	Route::get('empleados/nominas/caratulas/{id}/edit', 'EmpleadosCaratulaController@edit')->name('empleados.nominas.caratulas.edit');
-	Route::put('empleados/nominas/caratulas/{id}', 'EmpleadosCaratulaController@update')->name('empleados.nominas.caratulas.update');
+	Route::get('empleados/caratulas/create/{id_nomina?}', 'EmpleadosCaratulaController@create')->name('empleados.caratulas.create');
+	Route::post('empleados/caratulas', 'EmpleadosCaratulaController@store')->name('empleados.caratulas.store');
+	Route::get('empleados/caratulas/{id}', 'EmpleadosCaratulaController@show')->name('empleados.caratulas.show');
+	Route::get('empleados/caratulas/edit/{id}', 'EmpleadosCaratulaController@edit')->name('empleados.caratulas.edit');
+	Route::put('empleados/caratulas/{id}', 'EmpleadosCaratulaController@update')->name('empleados.caratulas.update');
 	Route::delete('empleados/caratulas/destroy/{id}', 'EmpleadosCaratulaController@destroy');
 
 
 
 	// AGENDA
-	Route::get('empleados/agenda','EmpleadosAgendaController@index')->name('empleados/agenda');
+	Route::get('empleados/agenda', 'EmpleadosAgendaController@index')->name('empleados/agenda');
 	Route::post('empleados/agenda/guardar_turno', 'EmpleadosAgendaController@store');
 	Route::post('empleados/agenda/buscar_turnos', 'EmpleadosAgendaController@search');
 	Route::post('empleados/agenda/turno/{id}', 'EmpleadosAgendaController@find');
-	Route::post('empleados/agenda/editar-turno/{id}', 'EmpleadosAgendaController@update');	
+	Route::post('empleados/agenda/editar-turno/{id}', 'EmpleadosAgendaController@update');
 	Route::get('empleados/agenda/ver-turno/{id}', 'EmpleadosAgendaController@show');
 
 	Route::get('templates/agendar-evento', 'EmpleadosAgendaController@form_agendar_evento');
@@ -318,9 +335,9 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 
 
 	// USERS
-	Route::post('empleados/usuarios/search','EmpleadosUsuariosController@search');
+	Route::post('empleados/usuarios/search', 'EmpleadosUsuariosController@search');
 
-	Route::get('user/me',function(){
+	Route::get('user/me', function () {
 		return auth()->user()->toJson();
 	});
 
@@ -334,11 +351,10 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/recetas/get-medicamentos', 'EmpleadosRecetasController@getMedicamentos')->name('empleados.recetas.get_medicamentos');
 	Route::get('empleados/recetas/get-practicas', 'EmpleadosRecetasController@getPracticas')->name('empleados.recetas.get_practicas');
 
-	Route::get('empleados/recetas','EmpleadosRecetasController@index')->name('empleados.recetas');
-	Route::get('empleados/recetas/create','EmpleadosRecetasController@create')->name('empleados.recetas.create');
-	Route::post('empleados/recetas','EmpleadosRecetasController@store')->name('empleados.recetas.store');
-	Route::get('empleados/recetas/{id}','EmpleadosRecetasController@show')->where('id','\d+')->name('empleados.recetas.show');
-	Route::put('empleados/recetas/{id}','EmpleadosRecetasController@update')->where('id','\d+')->name('empleados.recetas.update');
-	Route::delete('empleados/recetas/{id}','EmpleadosRecetasController@destroy')->where('id','\d+')->name('empleados.recetas.destroy');
-
+	Route::get('empleados/recetas', 'EmpleadosRecetasController@index')->name('empleados.recetas');
+	Route::get('empleados/recetas/create', 'EmpleadosRecetasController@create')->name('empleados.recetas.create');
+	Route::post('empleados/recetas', 'EmpleadosRecetasController@store')->name('empleados.recetas.store');
+	Route::get('empleados/recetas/{id}', 'EmpleadosRecetasController@show')->where('id', '\d+')->name('empleados.recetas.show');
+	Route::put('empleados/recetas/{id}', 'EmpleadosRecetasController@update')->where('id', '\d+')->name('empleados.recetas.update');
+	Route::delete('empleados/recetas/{id}', 'EmpleadosRecetasController@destroy')->where('id', '\d+')->name('empleados.recetas.destroy');
 });

@@ -1,25 +1,32 @@
-.swal2-container{
+.swal2-container {
 
-	.swal2-html-container{
-		overflow:visible;
+	.swal2-html-container {
+		overflow: visible;
 	}
 
-	.swal2-select{
-		border:1px solid rgb(200,200,200)
+	.swal2-select {
+		border: 1px solid rgb(200, 200, 200)
 	}
 
-	.swal2-popup{
+	.swal2-popup {
 
-		.swal2-title{
+		.swal2-title {
 			font-size: 1.675rem;
 		}
 
 	}
-}
-[data-swal]{
-	cursor:pointer;
+
+	.swal2-actions {
+		.swal2-cancel {
+			color: white !important;
+		}
+	}
 }
 
-.swal2-confirm{
+[data-swal] {
+	cursor: pointer;
+}
+
+.swal2-confirm {
 	color: white !important;
 }

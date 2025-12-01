@@ -1,0 +1,1 @@
+require('./tareas_livianas.create')

@@ -2,7 +2,7 @@
 window.datatable_options = {
 	//scrollY: 780,
 	dom: 'Bfrtip',
-	pageLength:25,
+	pageLength: 25,
 	buttons: [
 		{
 			extend: 'copy',

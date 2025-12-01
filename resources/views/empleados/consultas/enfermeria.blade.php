@@ -16,7 +16,7 @@
 			<p>Aquí puede ver el listado de consultas de enfermería de la empresa</p>
 			@if ( (auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 2)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('enfermeria.create')}}">
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('empleados/consultas/enfermeria/create')}}">
 					<i class="fas fa-plus-circle"></i> Nueva consulta de enfermería
 				</a>
 			</div>

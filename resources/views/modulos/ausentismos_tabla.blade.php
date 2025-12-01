@@ -84,7 +84,7 @@
 
 <div class="table-responsivexx">
 
-	<table data-table="ausentismos" class="table table-striped table-hover table-sm tabla_ausentismos">
+	<table data-table="ausentismos" class="table table-striped table-hover table-bordered table-sm tabla_ausentismos">
 		<!--Table head-->
 		<thead>
 			<tr>
