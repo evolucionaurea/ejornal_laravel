@@ -68,7 +68,7 @@ if (route == 'ausentismos.show' || route == 'ausentismo') require('./empleados/a
 //if(route=='ausentismo') require('./empleados/ausentismo')
 
 if (route == '/empleados/tareas_livianas') require('./empleados/tareas_livianas')
-if (route == '/empleados/tareas_livianas') require('./empleados/tareas_livianas_extension_licencia')
+//if (route == '/empleados/tareas_livianas') require('./empleados/tareas_livianas_extension_licencia')
 if (route == 'tareas_livianas.create') require('./empleados/tareas_livianas.create')
 if (route == 'tareas_livianas.edit') require('./empleados/tareas_livianas.create')
 

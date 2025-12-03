@@ -1,5 +1,7 @@
-$(()=>{
+import DataTable from 'datatables.net-dt';
 
-	$('[data-table="grupos"]').dataTable(window.datatable_options)
+$(() => {
+
+	new DataTable('[data-table="grupos"]', window.datatable_options)
 
 })

@@ -14,7 +14,7 @@ const jsEntries = {
 		'users.edit',
 
 		'medicamentos',
-		'medicamentos_movimientos',
+		'medicamentos.movimientos',
 
 		'agendas',
 
@@ -25,14 +25,14 @@ const jsEntries = {
 		'grupos.create',
 		'grupos.edit',
 
-		'reportes_actividad_usuarios',
-		'reportes_ausentismos',
-		'reportes_certificaciones',
-		'reportes_comunicaciones',
-		'reportes_consultas',
-		'reportes_fichadas_nuevas',
-		'reportes_preocupacionales',
-		'reportes_tareas_adecuadas'
+		'reportes.actividad_usuarios',
+		'reportes.ausentismos',
+		'reportes.certificaciones',
+		'reportes.comunicaciones',
+		'reportes.consultas',
+		'reportes.fichadas_nuevas',
+		'reportes.preocupacionales',
+		'reportes.tareas_adecuadas'
 	],
 	empleados: [
 		'resumen',
@@ -82,11 +82,13 @@ const jsEntries = {
 
 		'medicamentos',
 		'medicamentos.create',
-		'medicamentos_movimientos',
+		'medicamentos.movimientos',
 
 		'preocupacionales',
 		'preocupacionales.create',
-		'preocupacionales.edit'
+		'preocupacionales.edit',
+
+		'recetas.create'
 
 	],
 	clientes: [
@@ -104,7 +106,7 @@ const jsEntries = {
 		'nominas_movimientos',
 		'nominas_historial',
 		'ausentismos'
-	],
+	]
 }
 
 // compilar los archivos de empleados
@@ -125,7 +127,7 @@ Object.keys(jsEntries).forEach(key => {
 		} else {
 			file = item;
 		}
-		mix.js(`${folder}${item}.js`, `public/js/${key}/${subfolder}${file}.js`);
+		mix.js(`${folder}${subfolder}${file}.js`, `public/js/${key}/${subfolder}${file}.js`);
 	});
 });
 //mix.sourceMaps();

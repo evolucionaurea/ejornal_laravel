@@ -197,12 +197,13 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::get('empleados/medicamentos_movimientos/exportar', 'EmpleadosStockMedicamentoController@exportarHistorial');
 	Route::resource('empleados/medicamentos', 'EmpleadosStockMedicamentoController', [
 		'names' => [
-			'index' => '/empleados/medicamentos'
+			'index' => '/empleados/medicamentos',
+			'create'=>'/empleados/medicamentos/create'
 		]
 	]);
 	Route::post('empleados/medicamentos/busqueda', 'EmpleadosStockMedicamentoController@busqueda');
 	Route::post('empleados/medicamentos_movimientos/busqueda', 'EmpleadosStockMedicamentoController@busquedaMovimientos');
-	Route::get('empleados/medicamentos_movimientos', 'EmpleadosStockMedicamentoController@movimientos')->name('/empleados/medicamentos_movimientos');
+	Route::get('empleados/medicamentos_movimientos', 'EmpleadosStockMedicamentoController@movimientos')->name('/empleados/medicamentos/movimientos');
 	Route::get('empleados/medicamentos/stock_actual/{id}', 'EmpleadosStockMedicamentoController@stock_actual');
 
 

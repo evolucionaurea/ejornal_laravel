@@ -14,8 +14,8 @@
 		{{-- Contenido de la pagina --}}
 
 		<div class="cabecera">
-			<h2>Reportes</h2>
-			<p>Aquí puedes ver los reportes del sistema.</p>
+			<h2>Reportes Ausentismos</h2>
+			<p>Aquí puedes ver los reportes de ausentismos.</p>
 		</div>
 
 		@include('../mensajes_validacion')

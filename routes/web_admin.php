@@ -61,7 +61,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 	Route::delete('admin/delete_token', 'AdminClientesController@deleteToken')->name('delete_token');
 
-	Route::get('admin/medicamentos_movimientos', 'AdminMovimientoMedicamentosController@index')->name('admin/medicamentos_movimientos');
+	Route::get('admin/medicamentos_movimientos', 'AdminMovimientoMedicamentosController@index')->name('admin/medicamentos/movimientos');
 	Route::resource('admin/medicamentos', 'AdminMedicamentosController', [
 			'names' => [
 					'index' => '/admin/medicamentos'
@@ -95,14 +95,14 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::delete('admin/reportes/fichadas/destroy/{id}','AdminFichadasNuevasController@destroy');
 	Route::get('admin/reportes/fichada_nueva/{id}','AdminReporteController@find_fichada');
 	Route::get('admin/reportes_fichadas_nuevas/exportar','AdminReporteController@exportar_fichadas');
-	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('/admin/reportes_fichadas_nuevas');
+	Route::get('admin/reportes_fichadas_nuevas', 'AdminReporteController@reportes_fichadas_nuevas')->name('/admin/reportes/fichadas_nuevas');
 
 	Route::get('admin/reportes/fichadas_nuevas', 'AdminReporteController@fichadas_nuevas')->name('reportes.fichadas_nuevas');
 	Route::post('admin/reportes/filtrar_fichadas_nuevas', 'AdminReporteController@filtrarFichadasNuevas')->name('reportes.filtrar_fichadas_nuevas');
 
 	// Ausentismos
-	Route::get('admin/reportes_ausentismos', 'AdminReporteController@reportes_ausentismos')->name('admin/reportes_ausentismos');
-	Route::get('admin/reportes/ausentismos', 'AdminReporteController@ausentismos')->name('reportes.ausentismos');
+	Route::get('admin/reportes_ausentismos', 'AdminReporteController@reportes_ausentismos')->name('admin/reportes/ausentismos');
+	//Route::get('admin/reportes/ausentismos', 'AdminReporteController@ausentismos')->name('reportes.ausentismos');
 	Route::post('admin/reportes/filtrar_ausentismos', 'AdminReporteController@filtrarAusentismos')->name('reportes.filtrar_ausentismos');
 	Route::post('admin/reportes/fichadas_ajax', 'AdminReporteController@fichadas_ajax');
 	Route::post('admin/reportes/ausentismos_ajax', 'AdminReporteController@ausentismos_ajax');
@@ -110,7 +110,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 
 
 	// Certificaciones
-	Route::get('admin/reportes_certificaciones', 'AdminReporteController@reportes_certificaciones')->name('admin/reportes_certificaciones');
+	Route::get('admin/reportes_certificaciones', 'AdminReporteController@reportes_certificaciones')->name('admin/reportes/certificaciones');
 	Route::post('admin/reportes/certificaciones', 'AdminReporteController@certificaciones')->name('reportes.certificaciones');
 	Route::post('admin/reportes/filtrar_certificaciones', 'AdminReporteController@filtrarCertificaciones')->name('reportes.filtrar_certificaciones');
 
@@ -119,7 +119,7 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::get('admin/documentacion_ausentismo/descargar/{id}', 'AdminReporteController@descargar_archivo')->name('documentacion_ausentismo.descargar');
 
 	// Consultas
-	Route::get('admin/reportes_consultas', 'AdminReporteController@reportes_consultas')->name('admin/reportes_consultas');
+	Route::get('admin/reportes_consultas', 'AdminReporteController@reportes_consultas')->name('admin/reportes/consultas');
 	Route::post('admin/reportes/consultas_medicas', 'AdminReporteController@consultas_medicas');
 	Route::post('admin/reportes/consultas_enfermeria', 'AdminReporteController@consultas_enfermeria');
 	Route::post('admin/reportes/consultas_nutricionales', 'AdminReporteController@consultas_nutricionales');
@@ -128,21 +128,21 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	//Route::post('admin/reportes/filtrar_consultas_enfermeria', 'AdminReporteController@filtrarConsultasEnfermeria')->name('reportes.filtrar_consultas_enfermeria');
 
 	// Comunicaciones
-	Route::get('admin/reportes_comunicaciones', 'AdminReporteController@reportes_comunicaciones')->name('admin/reportes_comunicaciones');
+	Route::get('admin/reportes_comunicaciones', 'AdminReporteController@reportes_comunicaciones')->name('admin/reportes/comunicaciones');
 	Route::post('admin/reportes/comunicaciones', 'AdminReporteController@comunicaciones')->name('admin/reportes/comunicaciones');
 
 	// Preocupacionales
-	Route::get('admin/reportes_preocupacionales', 'AdminReporteController@reportes_preocupacionales')->name('admin/reportes_preocupacionales');
+	Route::get('admin/reportes_preocupacionales', 'AdminReporteController@reportes_preocupacionales')->name('admin/reportes/preocupacionales');
 	Route::post('admin/reportes/preocupacionales/busqueda','AdminReporteController@preocupacionales');
 	Route::get('admin/preocupacionales/archivo/{id}','AdminReporteController@descargar_archivo_preocupacionales');
 
 	// Tareas Adecuadas
-	Route::get('admin/reportes_tareas_adecuadas', 'AdminReporteController@reportes_tareas_adecuadas')->name('admin/reportes_tareas_adecuadas');
+	Route::get('admin/reportes_tareas_adecuadas', 'AdminReporteController@reportes_tareas_adecuadas')->name('admin/reportes/tareas_adecuadas');
 	Route::post('admin/reportes/tareas-adecuadas/busqueda','AdminReporteController@tareas_adecuadas');
 	Route::get('admin/tareas_livianas/archivo/{id}','AdminReporteController@descargar_archivo_tarea_liviana');
 
 	// Actividad Usuarios
-	Route::get('admin/reportes_actividad_usuarios', 'AdminReporteController@actividad_usuarios')->name('admin/reportes_actividad_usuarios');
+	Route::get('admin/reportes_actividad_usuarios', 'AdminReporteController@actividad_usuarios')->name('admin/reportes/actividad_usuarios');
 	Route::get('admin/reportes/actividad_usuarios/exportar', 'AdminReporteController@exportar_actividad_usuarios')->name('/admin/reportes/actividad_usuarios/exportar');
 	Route::post('admin/reportes/search_actividad_usuarios', 'AdminReporteController@search_actividad_usuarios')->name('/admin/reportes/search_actividad_usuarios');
 
