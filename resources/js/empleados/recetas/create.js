@@ -2,709 +2,723 @@
   'use strict';
 
   const AJAX_TIMEOUT_MS = 20000;
-  const ALERT_COOLDOWN_MS = 4000;
 
-  const inflight = {
-    financiadores: null,
-    diagnosticos: null,
-    medicamentos: {},
-    practicas: null
-  };
+  let modalCss = false;
+  function modalCSS() {
+    if (modalCss) return; modalCss = true;
+    const css = `
+      .mm-back{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:9999}
+      .mm{background:#fff;border-radius:12px;box-shadow:0 15px 50px rgba(0,0,0,.25);max-width:640px;width:94%;padding:18px 20px}
+      .mm h3{margin:0 0 10px;font-size:18px;font-weight:800;color:#111}
+      .mm p{margin:0 0 10px;font-size:14px;color:#333}
+      .mm .row{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+      .mm .btn{border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+      .mm .b1{background:#2563eb;color:#fff}
+      .mm ul.mm-list{list-style:none;margin:6px 0 0;padding:0}
+      .mm ul.mm-list li{display:flex;align-items:flex-start;gap:10px; padding:8px 10px; border-radius:8px; background:#f8fafc; margin-bottom:8px; font-size:14px; color:#0f172a}
+      .mm ul.mm-list li .dot{width:8px;height:8px;border-radius:999px;background:#2563eb; margin-top:6px; flex:0 0 8px}
+      @media (prefers-color-scheme: dark){
+        .mm{background:#0f172a;color:#e2e8f0}
+        .mm h3{color:#e5e7eb}
+        .mm p{color:#cbd5e1}
+        .mm ul.mm-list li{background:#0b1221;color:#e2e8f0}
+        .mm ul.mm-list li .dot{background:#60a5fa}
+      }`;
+    document.head.appendChild(Object.assign(document.createElement('style'), { textContent: css }));
+  }
+  function modal({ title='Atención', html='<p>Ocurrió un error.</p>' } = {}) {
+    modalCSS();
+    const $b = $('<div class="mm-back" role="dialog" aria-modal="true"></div>');
+    const $m = $(`<div class="mm"><h3>${title}</h3>${html}<div class="row"><button class="btn b1">Aceptar</button></div></div>`);
+    $b.append($m).appendTo(document.body);
+    const close = () => $b.remove();
+    $b.on('click', e => { if (e.target === $b[0]) close(); });
+    $m.find('.b1').on('click', close);
+  }
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m]));
+  const errList = (items=[]) => `<ul class="mm-list">${items.map(it=>`<li><span class="dot"></span><div>${esc(it)}</div></li>`).join('')}</ul>`;
 
-  let ultimaAlerta = 0;
-  let spinnerCssInyectado = false;
-
-  function resolverUrl(u) {
-    try {
-      if (!u) return '/';
-      if (/^https?:\/\//i.test(u)) return u;
-      return new URL(u, window.location.origin).toString();
-    } catch (e) {
-      return u;
-    }
+  // ===== Spinner pequeño en labels =====
+  let spCSS=false;
+  function ensureSpinner(){
+    if (spCSS) return; spCSS=true;
+    const css=`@keyframes miniSpin{to{transform:rotate(360deg)}}.msw{display:inline-block;margin-left:6px;vertical-align:middle}.ms{width:16px;height:16px;animation:miniSpin .9s linear infinite}.ms circle{stroke-linecap:round}`;
+    document.head.appendChild(Object.assign(document.createElement('style'), { textContent: css }));
+  }
+  function spinnerSvg(){
+    ensureSpinner();
+    return '<span class="msw"><svg class="ms" viewBox="0 0 50 50"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2196f3"/><stop offset="100%" stop-color="#81d4fa"/></linearGradient></defs><circle cx="25" cy="25" r="20" stroke="url(#g)" fill="none" stroke-width="5"/></svg></span>';
+  }
+  function labelLoader($sel, on){
+    const $l=$sel.closest('.form-group').find('label').first();
+    if(!$l.length) return;
+    on ? (!$l.find('.msw').length && $l.append(spinnerSvg())) : $l.find('.msw').remove();
   }
 
-  function obtenerUrls() {
-    const $f = $('#recetaForm');
+  // ===== Helpers URL / fechas / select2 =====
+  function rurl(u){ try{ if(!u) return '/'; if(/^https?:\/\//i.test(u)) return u; return new URL(u,location.origin).toString(); }catch{ return u; } }
+  function urls(){
+    const $f=$('#recetaForm');
     return {
-      financiadores: resolverUrl($f.data('url-get-financiadores')),
-      diagnosticos: resolverUrl($f.data('url-get-diagnosticos')),
-      medicamentos: resolverUrl($f.data('url-get-medicamentos')),
-      practicas: resolverUrl($f.data('url-get-practicas'))
+      financiadores: rurl($f.data('url-get-financiadores')),
+      diagnosticos : rurl($f.data('url-get-diagnosticos')),
+      medicamentos : rurl($f.data('url-get-medicamentos')),
+      practicas    : rurl($f.data('url-get-practicas')),
+      provincias   : rurl($f.data('url-get-provincias'))
     };
   }
-
-  function mostrarErrorAjax(titulo, texto) {
-    const ahora = Date.now();
-    if (ahora - ultimaAlerta < ALERT_COOLDOWN_MS) return;
-    ultimaAlerta = ahora;
-    if (!window.Swal) {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
-      s.onload = function () { Swal.fire({ icon: 'error', title: titulo || 'Error', text: texto || 'Ocurrió un error.' }); };
-      document.head.appendChild(s);
-      return;
-    }
-    Swal.fire({ icon: 'error', title: titulo || 'Error', text: texto || 'Ocurrió un error.' });
-  }
-
-  function isoAEs(iso) {
+  const isoAEs = iso => {
     if (!iso) return '';
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
-    if (!m) return '';
-    return m[3] + '/' + m[2] + '/' + m[1];
-  }
-
-  function esAISO(es) {
-    if (!es) return '';
-    const m = /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/.exec(String(es).trim());
-    if (!m) return '';
-    const dd = ('0' + m[1]).slice(-2), mm = ('0' + m[2]).slice(-2), yyyy = m[3];
-    return `${yyyy}-${mm}-${dd}`;
-  }
-
-  function dividirNombreCompleto(full) {
-    full = (full || '').trim().replace(/\s+/g, ' ');
-    if (!full) return { apellido: '', nombre: '' };
-    const idx = full.indexOf(' ');
-    if (idx === -1) return { apellido: '', nombre: full };
-    return { apellido: full.substring(0, idx), nombre: full.substring(idx + 1) };
-  }
-
-  function setearCamposPaciente(data) {
-    const $nom = $('input[name="paciente[nombre]"]');
-    const $ape = $('input[name="paciente[apellido]"]');
-    const $dni = $('input[name="paciente[nroDoc]"]');
-    const $eml = $('input[name="paciente[email]"]');
-    const $tel = $('input[name="paciente[telefono]"]');
-    const $fecVis = $('#paciente_fecha_visual');
-    const $fecIso = $('input[name="paciente[fechaNacimiento]"]');
-
-    if (data.nombre !== undefined) $nom.val(data.nombre || '');
-    if (data.apellido !== undefined) $ape.val(data.apellido || '');
-    if (data.dni !== undefined) $dni.val(String(data.dni || ''));
-    if (data.email !== undefined) $eml.val(data.email || '');
-    if (data.telefono !== undefined) $tel.val(data.telefono || '');
-
-    if (data.fechaNacimiento !== undefined) {
-      const iso = esAISO(data.fechaNacimiento) || data.fechaNacimiento;
-      const es = isoAEs(iso);
-      $fecIso.val(iso || '');
-      $fecVis.val(es || '');
-    }
-
-    const $calle = $('input[name="domicilio[calle]"]');
-    const $num   = $('input[name="domicilio[numero]"]');
-    const $loc   = $('input[name="domicilio[localidad]"]');
-    const $cp    = $('input[name="domicilio[cp]"]');
-    if (data.calle !== undefined) $calle.val(data.calle || '');
-    if (data.nro !== undefined)   $num.val(String(data.nro || ''));
-    if (data.localidad !== undefined) $loc.val(data.localidad || '');
-    if (data.cod_postal !== undefined) $cp.val(String(data.cod_postal || ''));
-  }
-
-  function hacerSelect2Chico($sel) {
-    const $wrap = $sel.next('.select2');
-    const $selection = $wrap.find('.select2-selection--single');
-    $selection.css({
-      height: '31px',
-      'min-height': '31px',
-      'border-radius': '.2rem',
-      'border-color': '#ced4da',
-      padding: '2px 8px'
-    });
-    $selection.find('.select2-selection__rendered').css({
-      'line-height': '26px',
-      'font-size': '.875rem'
-    });
-    $selection.find('.select2-selection__arrow').css({ height: '29px', right: '6px' });
-  }
-
-  function inyectarSpinnerCss() {
-    if (spinnerCssInyectado) return;
-    const css = `
-      @keyframes miniSpin { 100% { transform: rotate(360deg);} }
-      .mini-spinner-wrap{display:inline-block;margin-left:6px;vertical-align:middle;}
-      .mini-spinner{display:inline-block; width:16px; height:16px; transform-origin:50% 50%; animation: miniSpin .9s linear infinite;}
-      .mini-spinner circle{stroke-linecap:round;}
-    `;
-    const style = document.createElement('style');
-    style.id = 'miniSpinnerCss';
-    style.type = 'text/css';
-    style.appendChild(document.createTextNode(css));
-    document.head.appendChild(style);
-    spinnerCssInyectado = true;
-  }
-
-  function svgSpinner() {
-    inyectarSpinnerCss();
-    return '' +
-      '<span class="mini-spinner-wrap">' +
-        '<svg class="mini-spinner" viewBox="0 0 50 50" aria-hidden="true" focusable="false">' +
-          '<defs>' +
-            '<linearGradient id="gradAzul" x1="0%" y1="0%" x2="100%" y2="0%">' +
-              '<stop offset="0%" stop-color="#2196f3"/>' +
-              '<stop offset="100%" stop-color="#81d4fa"/>' +
-            '</linearGradient>' +
-          '</defs>' +
-          '<circle cx="25" cy="25" r="20" stroke="url(#gradAzul)" fill="none" stroke-width="5"/>' +
-        '</svg>' +
-      '</span>';
-  }
-
-  function cargarLoader($select) {
-    const $lbl = $select.closest('.form-group').find('label').first();
-    if ($lbl.length && !$lbl.find('.mini-spinner-wrap').length) $lbl.append(svgSpinner());
-  }
-  function quitarLoader($select) {
-    $select.closest('.form-group').find('label .mini-spinner-wrap').remove();
-  }
-
-  function iniciarSelect2Nomina() {
-    const $sel = $('#id_nomina');
-    if (!$sel.length) return;
-
-    const opts = $sel.find('option').toArray();
-    if (opts.length > 1) {
-      const first = opts.shift();
-      opts.sort((a, b) => $(a).text().localeCompare($(b).text(), 'es', { sensitivity: 'base' }));
-      $sel.empty().append(first).append(opts);
-    }
-
-    $sel.select2({
-      width: '100%',
-      placeholder: 'Seleccione…',
-      allowClear: true,
-      minimumInputLength: 0,
-      dropdownParent: $(document.body)
-    });
-    hacerSelect2Chico($sel);
-
-    function alCambiarNomina() {
-      const val = $sel.val();
-      if (!val) {
-        setearCamposPaciente({
-          nombre: '', apellido: '', dni: '',
-          email: '', telefono: '', fechaNacimiento: '',
-          calle: '', nro: '', localidad: '', cod_postal: ''
-        });
-        return;
-      }
-      const $opt = $sel.find('option:selected');
-      if (!$opt.length) return;
-
-      let full = $opt.data('nombre');
-      if (!full) {
-        full = ($opt.text() || '').trim()
-          .replace(/\s+—\s+.*$/, '')
-          .replace(/\(DNI:.*?\)/, '')
-          .trim();
-      }
-
-      const partes = dividirNombreCompleto(full);
-      setearCamposPaciente({
-        nombre: partes.nombre,
-        apellido: partes.apellido,
-        dni: $opt.data('dni'),
-        email: $opt.data('email'),
-        telefono: $opt.data('telefono'),
-        fechaNacimiento: $opt.data('fecha-nacimiento'),
-        calle: $opt.data('calle'),
-        nro: $opt.data('nro'),
-        localidad: $opt.data('localidad'),
-        cod_postal: $opt.data('cod-postal')
-      });
-    }
-
-    $sel.on('select2:select', alCambiarNomina);
-    $sel.on('change', alCambiarNomina);
-    if ($sel.val()) alCambiarNomina();
-  }
-
-
-  function iniciarFinanciadores() {
-  const $fin = $('#financiador');
-  const $plan = $('#plan');
-  if (!$fin.length) return;
-
-  const urls = obtenerUrls();
-  let cacheFin = [];
-
-  const reinstanciarPlan = (disabled) => {
-    const estabaAbierto = $plan.data('select2') && $plan.data('select2').isOpen && $plan.data('select2').isOpen();
-    const valorActual = $plan.val();
-
-    // Destruir instancia previa (si existía)
-    if ($plan.data('select2')) {
-      try { $plan.select2('destroy'); } catch (e) {}
-    }
-
-    // Asegurar estado habilitado/deshabilitado a nivel DOM (prop + atributo)
-    if (disabled) {
-      $plan.prop('disabled', true).attr('disabled', 'disabled');
-    } else {
-      $plan.prop('disabled', false).removeAttr('disabled');
-    }
-
-    // Re-instanciar Select2
-    $plan.select2({
-      width: '100%',
-      placeholder: 'Plan…',
-      allowClear: true,
-      minimumInputLength: 0,
-      dropdownParent: $(document.body)
-    });
-    hacerSelect2Chico($plan);
-
-    // Restaurar valor si aplica
-    if (!disabled && valorActual) {
-      $plan.val(valorActual).trigger('change');
-    }
-
-    // Si queremos mostrarlo inmediatamente cuando queda habilitado:
-    if (!disabled && estabaAbierto) {
-      $plan.select2('open');
-    }
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec((iso+'').trim());
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
   };
-
-  // Estado inicial: vacío y deshabilitado
-  $plan.empty().append('<option value=""></option>');
-  reinstanciarPlan(true);
-
-  $fin.select2({
-    width: '100%',
-    placeholder: 'Financiador…',
-    allowClear: true,
-    minimumInputLength: 1,
-    ajax: {
-      delay: 250,
-      transport: (params, success, failure) => {
-        if (inflight.financiadores && inflight.financiadores.readyState !== 4) inflight.financiadores.abort();
-        const opts = $.extend(true, {}, params, { timeout: AJAX_TIMEOUT_MS, url: urls.financiadores });
-        const $forLoader = $fin;
-        cargarLoader($forLoader);
-        inflight.financiadores = $.ajax(opts)
-          .done(success)
-          .fail(jq => {
-            if (jq && (jq.statusText === 'abort' || jq.readyState === 0)) return;
-            mostrarErrorAjax('Financiadores', (jq.responseJSON && jq.responseJSON.message) || 'No se pudo cargar el listado.');
-            failure(jq);
-          })
-          .always(() => quitarLoader($forLoader));
-        return inflight.financiadores;
+  const esAISO = es => {
+    if (!es) return '';
+    const m = /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/.exec((es+'').trim());
+    if (!m) return '';
+    const dd=('0'+m[1]).slice(-2), mm=('0'+m[2]).slice(-2);
+    return `${m[3]}-${mm}-${dd}`;
+  };
+  function s2Small($sel){
+    const $w=$sel.next('.select2'), $s=$w.find('.select2-selection--single');
+    $s.css({height:'31px','min-height':'31px','border-radius':'.2rem','border-color':'#ced4da',padding:'2px 8px'});
+    $s.find('.select2-selection__rendered').css({'line-height':'26px','font-size':'.875rem'});
+    $s.find('.select2-selection__arrow').css({height:'29px',right:'6px'});
+  }
+  function s2Ajax($sel, {url, minLen=2, dataFn, procFn, tpl, langNoResults}){
+    $sel.select2({
+      width:'100%',
+      placeholder:'Buscar…',
+      allowClear:false, // sin opción vacía
+      minimumInputLength:minLen,
+      ajax:{
+        delay:300, url, dataType:'json', cache:true,
+        data: p => (dataFn ? dataFn(p) : ({ q:p.term||'', page:p.page||1 })),
+        processResults: res => (procFn ? procFn(res) : res),
+        beforeSend: () => labelLoader($sel,true),
+        complete:   () => labelLoader($sel,false),
+        headers: { 'Accept':'application/json' },
+        transport: function (params, success, failure) {
+          const cfg = Object.assign({}, params, { timeout: AJAX_TIMEOUT_MS });
+          return $.ajax(cfg).done(success).fail(failure);
+        }
       },
-      processResults: (data, params) => {
-        cacheFin = (data && data.results) ? data.results : [];
-        const term = (params && params.term ? String(params.term).toLowerCase() : '').trim();
-        let results = cacheFin;
-        if (term) results = cacheFin.filter(x => String(x.text).toLowerCase().indexOf(term) !== -1);
-        return { results };
-      },
-      cache: true
-    },
-    dropdownParent: $(document.body)
-  });
-  hacerSelect2Chico($fin);
+      language:{ noResults: () => langNoResults || 'Sin resultados' },
+      dropdownParent:$(document.body),
+      templateResult: tpl
+    });
+    s2Small($sel);
+  }
 
-  // Al seleccionar financiador: poblar planes y habilitar
-  $fin.on('select2:select', function () {
-    const sel = $fin.select2('data')[0];
+  // ===== Provincias por endpoint =====
+  function fetchProvincias(){
+    return $.ajax({
+      url: urls().provincias, dataType:'json',
+      headers:{'Accept':'application/json'}, timeout:AJAX_TIMEOUT_MS
+    }).then(j => (Array.isArray(j?.results) ? j.results : [])).catch(()=>[]);
+  }
+  function toSelect($input, items, {name}={}){
+    const $sel=$('<select class="form-control form-control-sm"></select>');
+    if (name) $sel.attr('name', name);
+    if ($input.attr('id')) $sel.attr('id', $input.attr('id'));
+    items.forEach((p,i)=>{
+      const v=p.id ? String(p.id) : (p.nombre||'');
+      const t=p.nombre || v;
+      const $o=$('<option>').val(v).text(t);
+      if (i===0 && !$input.val()) $o.prop('selected', true);
+      $sel.append($o);
+    });
+    $input.replaceWith($sel);
+    return $sel;
+  }
 
-    // Limpiar opciones anteriores
-    $plan.empty().append('<option value=""></option>');
+  // ===== Asteriscos dinámicos =====
+  function setRequired($field, required){
+    const $fg=$field.closest('.form-group');
+    const $label=$fg.find('label').first();
+    $field.prop('required', !!required);
+    $label.find('.req').remove();
+    if (required) $label.append(' <span class="req text-danger">*</span>');
+  }
 
-    if (sel && sel.raw && Array.isArray(sel.raw.planes) && sel.raw.planes.length) {
-      sel.raw.planes.forEach(p => $plan.append('<option value="'+p.id+'">'+p.nombre+'</option>'));
-      reinstanciarPlan(false);
-      // Opcional: abrir automáticamente para que el usuario elija
-      $plan.select2('open');
-    } else {
-      reinstanciarPlan(true);
+  // ===== Nómina → autocompletado de paciente =====
+  function splitNombre(full){
+    full=(full||'').trim().replace(/\s+/g,' ');
+    if(!full) return {apellido:'',nombre:''};
+    if (full.includes(',')){ const a=full.split(','); return {apellido:a[0].trim(), nombre:(a[1]||'').trim()}; }
+    const i=full.indexOf(' '); return i===-1? {apellido:'',nombre:full}:{apellido:full.slice(0,i),nombre:full.slice(i+1)};
+  }
+  function setPac(d){
+    const set=(n,v)=>$(`[name="${n}"]`).val(v??'');
+    set('paciente[nombre]',d.nombre);
+    set('paciente[apellido]',d.apellido);
+    set('paciente[nroDoc]',d.dni && String(d.dni));
+    set('paciente[email]',d.email);
+    set('paciente[telefono]',d.telefono);
+    const iso=esAISO(d.fechaNacimiento)||d.fechaNacimiento||'';
+    $('[name="paciente[fechaNacimiento]"]').val(iso);
+    $('#paciente_fecha_visual').val(isoAEs(iso));
+    set('domicilio[calle]',d.calle);
+    set('domicilio[numero]',d.nro && String(d.nro));
+    set('domicilio[localidad]',d.localidad);
+    set('domicilio[codigoPostal]',d.cod_postal && String(d.cod_postal));
+  }
+  function initNomina(){
+    const $s=$('#id_nomina'); if(!$s.length) return;
+    const opts=$s.find('option').toArray();
+    if(opts.length>1){ const f=opts.shift(); opts.sort((a,b)=>$(a).text().localeCompare($(b).text(),'es',{sensitivity:'base'})); $s.empty().append(f,opts); }
+    $s.select2({width:'100%',minimumInputLength:0,dropdownParent:$(document.body)}); s2Small($s);
+    const onCh=()=>{ const v=$s.val(); if(!v){ setPac({}); return; }
+      const $o=$s.find('option:selected'); let full=$o.data('nombre') || ($o.text()||'').replace(/\s+—\s+.*$/,'').replace(/\(DNI:.*?\)/,'').trim();
+      const {apellido,nombre}=splitNombre(full);
+      setPac({nombre,apellido,dni:$o.data('dni'),email:$o.data('email'),telefono:$o.data('telefono'),fechaNacimiento:$o.data('fecha-nacimiento'),calle:$o.data('calle'),nro:$o.data('nro'),localidad:$o.data('localidad'),cod_postal:$o.data('cod-postal')});
+    };
+    $s.on('change select2:select', onCh); if($s.val()) onCh();
+  }
+
+  // ===== Cobertura (Financiador + Plan) =====
+function ensureCobInputs(){
+  const $f = $('#recetaForm');
+  ['cobertura[idFinanciador]','cobertura[planId]','cobertura[plan]'].forEach(n => {
+    if (!$f.find(`input[name="${n}"]`).length) {
+      $f.append(`<input type="hidden" name="${n}">`);
     }
-  });
-
-  // Al limpiar financiador: dejar plan vacío y deshabilitado
-  $fin.on('select2:clear', function () {
-    $plan.empty().append('<option value=""></option>');
-    reinstanciarPlan(true);
   });
 }
 
 
-  function iniciarDiagnosticos() {
-    const $diag = $('#diag_search');
-    const $txt  = $('#diagnostico');
-    const $cod  = $('#diagnostico_codigo');
-    if (!$diag.length) return;
+function initFinanciadores(){
+  const $fin  = $('#financiador');
+  const $plan = $('#plan');
+  if (!$fin.length) return;
 
-    const urls = obtenerUrls();
-    $diag.select2({
-      width: '100%',
-      placeholder: 'Buscar diagnóstico…',
-      allowClear: true,
-      minimumInputLength: 3,
-      ajax: {
-        delay: 300,
-        transport: (params, success, failure) => {
-          if (inflight.diagnosticos && inflight.diagnosticos.readyState !== 4) inflight.diagnosticos.abort();
-          const opts = $.extend(true, {}, params, { timeout: AJAX_TIMEOUT_MS, url: urls.diagnosticos });
-          const $sel = $diag;
-          cargarLoader($sel);
-          inflight.diagnosticos = $.ajax(opts)
-            .done(success)
-            .fail(jq => {
-              if (jq && (jq.statusText === 'abort' || jq.readyState === 0)) return;
-              mostrarErrorAjax('Diagnósticos', (jq.responseJSON && jq.responseJSON.message) || 'No se pudo buscar diagnósticos.');
-              failure(jq);
-            })
-            .always(() => quitarLoader($sel));
-          return inflight.diagnosticos;
-        },
-        processResults: data => data,
-        cache: true
-      },
-      dropdownParent: $(document.body)
-    });
-    hacerSelect2Chico($diag);
+  ensureCobInputs();
+  const u = urls();
 
-    $diag.on('select2:select', function () {
-      const item = $diag.select2('data')[0];
-      if (!item) return;
-      $cod.val(item.id || '');
-      $txt.val(item.text || '');
-    });
-    $diag.on('select2:clear', function () { $cod.val(''); });
+  // Plan vacío al inicio
+  $plan.select2({width:'100%',minimumInputLength:0,dropdownParent:$(document.body)});
+  s2Small($plan);
+  $plan.prop('disabled', true).trigger('change');
+
+  // Financiadores (QBI2 GetFinanciadores)
+  s2Ajax($fin, {
+    url: u.financiadores,
+    minLen: 3,
+    dataFn: p => ({ q: p.term || '' }),
+    procFn: res => ({ results: res.results || [] })
+  });
+
+  function rebuildPlans(list){
+    try { $plan.select2('destroy'); } catch {}
+    $plan.empty();
+
+    const planes = (Array.isArray(list) ? list : []).reduce((acc,p) => {
+      const id  = p.id ?? p.planId ?? p.planid;
+      const nom = p.nombre ?? p.descripcion ?? p.name;
+      if (id && nom) acc.push({ id, text: nom });
+      return acc;
+    }, []);
+
+    planes.forEach(p => $plan.append(new Option(p.text, p.id)));
+
+    $plan.prop('disabled', planes.length === 0);
+    $plan.select2({width:'100%',minimumInputLength:0,dropdownParent:$(document.body)});
+    s2Small($plan);
+
+    if (planes.length){
+      $plan.val(String(planes[0].id)).trigger('change');
+    } else {
+      $('[name="cobertura[planId]"]').val('');
+      $('[name="cobertura[plan]"]').val('');
+    }
   }
 
-  function coberturaParaMedicamentos() {
-    const idFin  = $('#financiador').val();
-    const planId = $('#plan').val();
-    const dni    = $('input[name="paciente[nroDoc]"]').val();
-    const cred   = $('input[name="cobertura[credencial]"]').val();
-    const q = {};
-    if (idFin) q.idFinanciador = idFin;
-    if (planId) q.planid = planId;
-    if (dni) q.afiliadoDni = dni;
-    if (cred) q.afiliadoCredencial = cred;
-    return q;
+  function limpiarMedicamentos(){
+    const $wrap = $('#medsWrapper');
+    $wrap.find('.sel-medicamento').each(function(){ $(this).val(null).trigger('change'); });
+    $wrap.find(
+      '.regno,.presentacion,.nombre,.droga,' +
+      'input[name*="[tratamiento]"],input[name*="[posologia]"],textarea[name*="[indicaciones]"]'
+    ).val('');
+    $wrap.find('.duplicado').prop('checked', false);
   }
 
-  function adjuntarSelect2Medicamento($fila, index) {
-    const $sel = $fila.find('.sel-medicamento');
-    const $reg = $fila.find('.regno');
-    const $pre = $fila.find('.presentacion');
-    const $nom = $fila.find('.nombre');
-    const $dro = $fila.find('.droga');
-    const $dup = $fila.find('.duplicado');
+  // Cuando el usuario elige financiador
+  $fin.on('select2:select', function(){
+    const sel = $fin.select2('data')[0];
+    const raw = sel?.raw || {};
 
-    const urls = obtenerUrls();
+    // La doc usa idfinanciador como idFinanciador
+    const finId = raw.idfinanciador ?? raw.nrofinanciador ?? raw.nroFinanciador ?? raw.id ?? '';
 
-    $sel.select2({
-      width: '100%',
-      placeholder: 'Buscar medicamento…',
-      allowClear: true,
-      minimumInputLength: 2,
-      ajax: {
-        delay: 250,
-        transport: (params, success, failure) => {
-          if (inflight.medicamentos[index] && inflight.medicamentos[index].readyState !== 4) {
-            inflight.medicamentos[index].abort();
-          }
-          const extra = coberturaParaMedicamentos();
-          const dataFn = params.data || function(){ return {}; };
-          const data = typeof dataFn === 'function' ? dataFn(params) : {};
-          const query = $.param(Object.assign({}, data, extra));
-          const opts = $.extend(true, {}, params, {
-            timeout: AJAX_TIMEOUT_MS,
-            url: urls.medicamentos + (urls.medicamentos.indexOf('?') === -1 ? '?' : '&') + query
-          });
+    $('[name="cobertura[idFinanciador]"]').val(String(finId).replace(/\D+/g,''));
 
-          const $forLoader = $sel;
-          cargarLoader($forLoader);
+    rebuildPlans(raw.planes || []);
+    limpiarMedicamentos();
+  });
 
-          inflight.medicamentos[index] = $.ajax(opts)
-            .done(success)
-            .fail(jq => {
-              if (jq && (jq.statusText === 'abort' || jq.readyState === 0)) return;
-              mostrarErrorAjax('Medicamentos', (jq.responseJSON && jq.responseJSON.message) || 'No se pudo buscar medicamentos.');
-              failure(jq);
-            })
-            .always(() => quitarLoader($forLoader));
+  // Cuando el usuario elige plan
+  $plan.on('select2:select', function(){
+    const $o     = $plan.find('option:selected');
+    const planId = String($o.val() || '').replace(/\D+/g,'');
 
-          return inflight.medicamentos[index];
-        },
-        data: params => ({ q: params.term || '', page: params.page || 1 }),
-        processResults: data => ({
-          results: data.results || [],
-          pagination: { more: data.pagination && data.pagination.more }
-        }),
-        cache: true
+    $('[name="cobertura[planId]"]').val(planId);
+    $('[name="cobertura[plan]"]').val($o.text() || '');
+    limpiarMedicamentos();
+  });
+}
+
+  // ===== Diagnósticos =====
+  function initDiagnosticos(){
+    const $s=$('#diag_search'); if(!$s.length) return;
+    s2Ajax($s,{ url:urls().diagnosticos, minLen:3, procFn:d=>d });
+    $s.on('select2:select', ()=>{ const it=$s.select2('data')[0]; $('#diagnostico_codigo').val(it?.id||''); $('#diagnostico').val(it?.text||''); });
+  }
+
+  // ===== Medicamentos (ya filtrados por cobertura si existe) =====
+  function coberturaParams(){
+    const idFin=$('[name="cobertura[idFinanciador]"]').val() || $('#financiador').val();
+    const planId=$('[name="cobertura[planId]"]').val() || $('#plan').val();
+    const dni=$('[name="paciente[nroDoc]"]').val();
+    const cred=$('[name="cobertura[credencial]"]').val();
+    const q={}; if(idFin) q.idFinanciador=idFin; if(planId) q.planid=planId; if(dni) q.afiliadoDni=dni; if(cred) q.afiliadoCredencial=cred; return q;
+  }
+  function attachMed($row){
+    const $sel=$row.find('.sel-medicamento'),
+          $reg=$row.find('.regno'),
+          $pre=$row.find('.presentacion'),
+          $nom=$row.find('.nombre'),
+          $dro=$row.find('.droga'),
+          $dup=$row.find('.duplicado');
+
+    // Reg. Nº solo lectura
+    $reg.attr('readonly','readonly');
+    if (!$row.find('.regno-help').length) $reg.after('<small class="text-muted regno-help">Se completa automáticamente al elegir un medicamento</small>');
+
+    // Aviso visual sobre cobertura aplicada o no
+    let $hint = $row.find('.med-hint');
+    if (!$hint.length) {
+      $hint = $('<div class="med-hint small mt-1 text-muted"></div>');
+      $sel.closest('.form-group').append($hint);
+    }
+    function updateHint() {
+      const p=coberturaParams();
+      if (p.idFinanciador && p.planid) $hint.text('Resultados filtrados por tu cobertura/plan.');
+      else $hint.text('Resultados generales (sin cobertura). Podés recetar con Reg. Nº + Cantidad.');
+    }
+    updateHint();
+
+    // Select2 AJAX que SIEMPRE manda cobertura si existe (no hay validación posterior)
+    s2Ajax($sel,{
+      url: urls().medicamentos,
+      minLen: 2,
+      dataFn: p => {
+        const cov = coberturaParams();
+        const base = { q:p.term||'', page:p.page||1 };
+        // mandamos SIEMPRE lo que haya de cobertura (si existe, la API ya filtra)
+        if (cov.idFinanciador) base.idFinanciador = cov.idFinanciador;
+        if (cov.planid)       base.planid       = cov.planid;
+        if (cov.afiliadoDni)  base.afiliadoDni  = cov.afiliadoDni;
+        if (cov.afiliadoCredencial) base.afiliadoCredencial = cov.afiliadoCredencial;
+        return base;
       },
-      dropdownParent: $(document.body),
-      templateResult: function (item) {
-        if (!item.id) return item.text;
-        const r = item.raw || {};
-        const extra = [];
-        if (r.tieneCobertura)   extra.push('Cobertura');
-        if (r.psicofarmaco)     extra.push('Psicofármaco');
-        if (r.estupefaciente)   extra.push('Estupefaciente');
-        if (r.ventaControlada)  extra.push('Venta controlada');
-        if (r.hiv)              extra.push('HIV');
-        return $('<span>' + item.text + (extra.length ? ' <small class="text-muted">(' + extra.join(', ') + ')</small>' : '') + '</span>');
-      }
+      procFn: d => ({ results: d.results||[], pagination:{ more: !!d?.pagination?.more } }),
+      tpl: function(it){
+        if(!it.id) return it.text;
+        const r=it.raw||{}, flags=[];
+        if (r.tieneCobertura) flags.push('Cobertura');
+        if (r.psicofarmaco) flags.push('Psicofármaco');
+        if (r.estupefaciente) flags.push('Estupefaciente');
+        if (r.ventaControlada) flags.push('Venta controlada');
+        if (r.hiv) flags.push('HIV');
+        return $('<span>'+it.text+(flags.length? ' <small class="text-muted">('+flags.join(', ')+')</small>':'' )+'</span>');
+      },
+      langNoResults: 'No hay medicamentos disponibles con ese criterio.'
     });
-    hacerSelect2Chico($sel);
 
-    $sel.on('select2:select', function () {
-      const item = $sel.select2('data')[0];
-      const r = (item && item.raw) ? item.raw : {};
-      $reg.val(r.regNo || '');
-      $pre.val(r.presentacion || '');
-      $nom.val(r.nombreProducto || '');
-      $dro.val(r.nombreDroga || '');
+    // Al elegir, completar campos (sin “validación extra”)
+    $sel.on('select2:select', function(){
+      const r=$sel.select2('data')[0]?.raw || {};
+      $reg.val(r.regNo||'');
+      $pre.val(r.presentacion||'');
+      $nom.val(r.nombreProducto||'');
+      $dro.val(r.nombreDroga||'');
       if (r.requiereDuplicado === true) $dup.prop('checked', true);
     });
+
+    // Cuando la cobertura cambie, vaciamos selección de este row
+    $(document).on('change', '#financiador, #plan', function(){
+      $sel.val(null).trigger('change');
+      $reg.val(''); $pre.val(''); $nom.val(''); $dro.val(''); $dup.prop('checked', false);
+      updateHint();
+    });
+  }
+  function initMeds(){
+    let idx=1; const $wrap=$('#medsWrapper'), $add=$('#btnAddMed'); if(!$wrap.length) return;
+    const tpl=i=>`
+    <div class="med-row border rounded p-2 mb-3">
+      <div class="form-row">
+        <div class="form-group col-md-4 mb-2">
+          <label class="mb-1 text-muted small">Buscar medicamento <span class="req text-danger">*</span></label>
+          <select class="form-control form-control-sm sel-medicamento" style="width:100%"></select>
+        </div>
+        <div class="form-group col-md-2 mb-2">
+          <label class="mb-1 text-muted small">Cantidad <span class="req text-danger">*</span></label>
+          <input type="number" min="1" class="form-control form-control-sm" name="medicamentos[${i}][cantidad]" required>
+        </div>
+        <div class="form-group col-md-3 mb-2">
+          <label class="mb-1 text-muted small">Registro Nº</label>
+          <input type="text" class="form-control form-control-sm regno" name="medicamentos[${i}][regNo]" readonly>
+        </div>
+        <div class="form-group col-md-3 mb-2">
+          <label class="mb-1 text-muted small">Presentación</label>
+          <input type="text" class="form-control form-control-sm presentacion" name="medicamentos[${i}][presentacion]">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-4 mb-2">
+          <label class="mb-1 text-muted small">Nombre</label>
+          <input type="text" class="form-control form-control-sm nombre" name="medicamentos[${i}][nombre]">
+        </div>
+        <div class="form-group col-md-4 mb-2">
+          <label class="mb-1 text-muted small">Droga</label>
+          <input type="text" class="form-control form-control-sm droga" name="medicamentos[${i}][nombreDroga]">
+        </div>
+        <div class="form-group col-md-3 mb-2">
+          <label class="mb-1 text-muted small">Tratamiento (días)</label>
+          <input type="number" min="0" class="form-control form-control-sm" name="medicamentos[${i}][tratamiento]" placeholder="0">
+        </div>
+        <div class="form-group col-md-1 d-flex align-items-end mb-2">
+          <button type="button" class="btn btn-sm btn-outline-danger btn-del-med" title="Eliminar">×</button>
+        </div>
+      </div>
+      <div class="form-group mb-2">
+        <label class="mb-1 text-muted small">Posología</label>
+        <input type="text" class="form-control form-control-sm" name="medicamentos[${i}][posologia]">
+      </div>
+      <div class="form-group mb-2">
+        <label class="mb-1 text-muted small">Indicaciones / Observaciones</label>
+        <textarea class="form-control form-control-sm" name="medicamentos[${i}][indicaciones]" rows="2"></textarea>
+      </div>
+      <div class="custom-control custom-checkbox custom-control-inline">
+        <input type="checkbox" class="custom-control-input duplicado" id="dup${i}" name="medicamentos[${i}][forzarDuplicado]" value="1">
+        <label class="custom-control-label" for="dup${i}">Requiere duplicado</label>
+      </div>
+    </div>`;
+    function toggleDel(){ const $rows=$wrap.children('.med-row'); $rows.find('.btn-del-med').prop('disabled',$rows.length<=1); }
+    $add.on('click',()=>{ const $r=$(tpl(idx)); $wrap.append($r); attachMed($r); idx++; toggleDel(); });
+    $wrap.on('click','.btn-del-med',function(){ if($wrap.children().length>1){ $(this).closest('.med-row').remove(); toggleDel(); } });
+    attachMed($wrap.find('.med-row').first()); toggleDel();
   }
 
-  function iniciarRepetidorMedicamentos() {
-    let idx = 1;
-    const $wrap = $('#medsWrapper');
-    const $btnAdd = $('#btnAddMed');
-    if (!$wrap.length || !$btnAdd.length) return;
-
-    function plantillaFila(i) {
-      return `
-      <div class="med-row border rounded p-2 mb-3">
-        <div class="form-row">
-          <div class="form-group col-md-4 mb-2">
-            <label class="mb-1 text-muted small">Buscar medicamento</label>
-            <select class="form-control form-control-sm sel-medicamento" style="width:100%"></select>
-          </div>
-          <div class="form-group col-md-2 mb-2">
-            <label class="mb-1 text-muted small">Cantidad</label>
-            <input type="number" min="1" class="form-control form-control-sm" name="medicamentos[${i}][cantidad]" required>
-          </div>
-          <div class="form-group col-md-3 mb-2">
-            <label class="mb-1 text-muted small">Reg. Nº</label>
-            <input type="text" class="form-control form-control-sm regno" name="medicamentos[${i}][regNo]" placeholder="Ej: 20095">
-          </div>
-          <div class="form-group col-md-3 mb-2">
-            <label class="mb-1 text-muted small">Presentación</label>
-            <input type="text" class="form-control form-control-sm presentacion" name="medicamentos[${i}][presentacion]" placeholder="comp. blister x 10">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-4 mb-2">
-            <label class="mb-1 text-muted small">Nombre</label>
-            <input type="text" class="form-control form-control-sm nombre" name="medicamentos[${i}][nombre]" placeholder="TAFIROL">
-          </div>
-          <div class="form-group col-md-4 mb-2">
-            <label class="mb-1 text-muted small">Droga</label>
-            <input type="text" class="form-control form-control-sm droga" name="medicamentos[${i}][nombreDroga]" placeholder="paracetamol">
-          </div>
-          <div class="form-group col-md-3 mb-2">
-            <label class="mb-1 text-muted small">Tratamiento (días)</label>
-            <input type="number" min="0" class="form-control form-control-sm" name="medicamentos[${i}][tratamiento]" placeholder="0">
-          </div>
-          <div class="form-group col-md-1 d-flex align-items-end mb-2">
-            <button type="button" class="btn btn-sm btn-outline-danger btn-del-med">×</button>
-          </div>
-        </div>
-        <div class="form-group mb-2">
-          <label class="mb-1 text-muted small">Posología</label>
-          <input type="text" class="form-control form-control-sm" name="medicamentos[${i}][posologia]" placeholder="1 comprimido cada 8 horas">
-        </div>
-        <div class="form-group mb-2">
-          <label class="mb-1 text-muted small">Indicaciones / Observaciones</label>
-          <textarea class="form-control form-control-sm" name="medicamentos[${i}][indicaciones]" rows="2" placeholder="No tomar con alcohol"></textarea>
-        </div>
-        <div class="custom-control custom-checkbox custom-control-inline">
-          <input type="checkbox" class="custom-control-input duplicado" id="dup${i}" name="medicamentos[${i}][forzarDuplicado]" value="1">
-          <label class="custom-control-label" for="dup${i}">Requiere duplicado</label>
-        </div>
-      </div>`;
-    }
-
-    function alternarBotonesBorrar() {
-      const $rows = $wrap.children('.med-row');
-      $rows.find('.btn-del-med').prop('disabled', $rows.length <= 1);
-    }
-
-    $btnAdd.on('click', function () {
-      const $row = $(plantillaFila(idx));
-      $wrap.append($row);
-      adjuntarSelect2Medicamento($row, idx);
-      idx++;
-      alternarBotonesBorrar();
-    });
-
-    $wrap.on('click', '.btn-del-med', function () {
-      const $row = $(this).closest('.med-row');
-      if ($wrap.children().length > 1) {
-        $row.remove();
-        alternarBotonesBorrar();
-      }
-    });
-
-    adjuntarSelect2Medicamento($wrap.find('.med-row').first(), 0);
-    alternarBotonesBorrar();
-  }
-
-  function iniciarPracticas() {
-    const $pr = $('#practica_search');
-    const $chips = $('#practicasList');
-    const $hidden = $('#practicasHidden');
-    if (!$pr.length) return;
-
-    const urls = obtenerUrls();
-    $pr.select2({
-      width: '100%',
-      placeholder: 'Buscar práctica…',
-      allowClear: true,
-      minimumInputLength: 2,
-      ajax: {
-        delay: 300,
-        transport: (params, success, failure) => {
-          if (inflight.practicas && inflight.practicas.readyState !== 4) inflight.practicas.abort();
-          const opts = $.extend(true, {}, params, { timeout: AJAX_TIMEOUT_MS, url: urls.practicas });
-          const $sel = $pr;
-          cargarLoader($sel);
-          inflight.practicas = $.ajax(opts)
-            .done(success)
-            .fail(jq => {
-              if (jq && (jq.statusText === 'abort' || jq.readyState === 0)) return;
-              mostrarErrorAjax('Prácticas', (jq.responseJSON && jq.responseJSON.message) || 'No se pudo buscar prácticas.');
-              failure(jq);
-            })
-            .always(() => quitarLoader($sel));
-          return inflight.practicas;
-        },
-        data: params => {
-          const term = params.term || '';
-          const data = { page: params.page || 1 };
-          const mTipo = term.match(/tipo:([^ ]+)/i);
-          const mCat  = term.match(/cat:([^ ]+)/i);
-          if (mTipo) data.tipo = mTipo[1];
-          if (mCat)  data.categoria = mCat[1];
-          const clean = term.replace(/tipo:[^ ]+/ig,'').replace(/cat:[^ ]+/ig,'').trim();
-          if (clean) data.search = clean;
-          return data;
-        },
-        processResults: data => ({
-          results: data.results || [],
-          pagination: { more: data.pagination && data.pagination.more }
-        }),
-        cache: true
+  // ===== Prácticas (si aplica) =====
+  function initPracticas(){
+    const $s=$('#practica_search'); if(!$s.length) return;
+    s2Ajax($s,{
+      url: urls().practicas, minLen:3,
+      dataFn: p => {
+        const term=p.term||''; const data={ page:p.page||1 };
+        const mT=term.match(/tipo:([^ ]+)/i), mC=term.match(/cat:([^ ]+)/i);
+        if(mT) data.tipo=mT[1]; if(mC) data.categoria=mC[1];
+        const clean=term.replace(/tipo:[^ ]+/ig,'').replace(/cat:[^ ]+/ig,'').trim();
+        if(clean) data.search=clean; return data;
       },
-      dropdownParent: $(document.body)
+      procFn: d => ({ results: d.results||[], pagination:{ more: !!d?.pagination?.more } })
     });
-    hacerSelect2Chico($pr);
-
-    function agregarChip(it) {
-      const id = it.id;
-      if ($hidden.find('input[value="'+id+'"]').length) return;
-
-      const $in = $('<input type="hidden" name="practicas[]">').val(id);
-      $hidden.append($in);
-
-      const $chip = $(
-        '<span class="badge badge-primary d-inline-flex align-items-center mr-2 mb-2" data-id="'+id+'" style="font-size:.8rem;">' +
-          '<span class="mr-2">'+it.text+'</span>' +
-          '<button type="button" class="btn btn-sm btn-light py-0 px-1 quitar-chip" aria-label="Quitar" style="line-height:1;">×</button>' +
-        '</span>'
-      );
-      $chips.append($chip);
+    const $chips=$('#practicasList'), $h=$('#practicasHidden');
+    function addChip(it){ const id=it.id; if($h.find(`input[value="${id}"]`).length) return; $h.append($('<input type="hidden" name="practicas[]">').val(id));
+      $chips.append($(`<span class="badge badge-primary d-inline-flex align-items-center mr-2 mb-2" data-id="${id}" style="font-size:.8rem;"><span class="mr-2">${it.text}</span><button type="button" class="btn btn-sm btn-light py-0 px-1 quitar-chip" aria-label="Quitar" style="line-height:1;">×</button></span>`));
     }
+    $s.on('select2:select',()=>{ const it=$s.select2('data')[0]; if(it){ addChip(it); $s.val(null).trigger('change'); } });
+    $chips.on('click','.quitar-chip',function(){ const id=$(this).closest('[data-id]').data('id'); $h.find(`input[name="practicas[]"][value="${id}"]`).remove(); $(this).closest('[data-id]').remove(); });
+  }
 
-    $pr.on('select2:select', function () {
-      const it = $pr.select2('data')[0];
-      if (!it) return;
-      agregarChip(it);
-      $pr.val(null).trigger('change');
-    });
-
-    $chips.on('click', '.quitar-chip', function () {
-      const $chip = $(this).closest('[data-id]');
-      const id = $chip.data('id');
-      $hidden.find('input[name="practicas[]"][value="'+id+'"]').remove();
-      $chip.remove();
+  // ===== Sexo sin opción vacía =====
+  function initSexo(){
+    const $s=$('[name="paciente[sexo]"]'); if(!$s.length) return;
+    if (!$s.val()) $s.val('M');
+    $s.find('option').each(function(){
+      const v=$(this).val();
+      if (v==='M') $(this).text('Hombre (M)');
+      else if (v==='F') $(this).text('Mujer (F)');
+      else if (v==='X') $(this).text('No binario (X)');
+      else if (v==='O') $(this).text('Otro (O)');
     });
   }
 
-  function iniciarFechaNacimientoES() {
-    const $iso = $('input[name="paciente[fechaNacimiento]"]');
-    if (!$iso.length) return;
+  // ===== Matrícula MN/MP: provincia obligatoria sólo en MP =====
+function initMatricula(){
+  const $tipo   = $('[name="medico[matricula][tipo]"]');
+  const $numero = $('[name="medico[matricula][numero]"]');
+  let   $provMat = $('[name="medico[matricula][provincia]"]');
+  const $provMatWrap = $provMat.closest('.form-group');
 
-    const es = isoAEs($iso.val());
-    const $vis = $('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" readonly>');
-    $vis.val(es);
-    $iso.after($vis).hide();
+  fetchProvincias().then(items => {
+    // === Select de provincias para MATRÍCULA ===
+    if ($provMat.length) {
+      $provMat = toSelect($provMat, items, { name: 'medico[matricula][provincia]' });
+    }
+
+    // === Select de provincias para DOMICILIO (opcional) ===
+    const $provDom = $('[name="domicilio[provincia]"]');
+    if ($provDom.length) {
+      toSelect($provDom, items, { name: 'domicilio[provincia]' });
+    }
+
+    function applyRules(){
+      const t = ($tipo.val() || 'MN').toUpperCase().trim();
+      if (!$tipo.val()) $tipo.val('MN');
+
+      $numero.attr('maxlength', '10');
+      setRequired($numero, true);
+
+      if (t === 'MP') {
+        $provMatWrap.show();
+        setRequired($provMat, true);
+      } else {
+        $provMatWrap.hide();
+        setRequired($provMat, false);
+      }
+    }
+
+    $tipo.on('change', applyRules);
+    if (!$tipo.val()) $tipo.val('MN');
+    applyRules();
+  });
+}
+
+
+
+  // ===== Fecha: sólo datepicker (readonly) =====
+  function initFecha(){
+    const $iso=$('[name="paciente[fechaNacimiento]"]'); if(!$iso.length) return;
+    const $vis=$('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" readonly>');
+    const curISO=$iso.val(); $vis.val(isoAEs(curISO)).insertAfter($iso);
+    $iso.attr('type','hidden');
+
+    $vis.on('keydown paste', e=> e.preventDefault());
 
     if ($.datepicker && !$.datepicker.regional['es']) {
-      $.datepicker.regional['es'] = {
-        closeText: 'Cerrar', prevText: 'Anterior', nextText: 'Siguiente', currentText: 'Hoy',
-        monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
-        monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-        dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
-        dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
-        dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sa'],
-        weekHeader: 'Sm', dateFormat: 'dd/mm/yy', firstDay: 1, isRTL: false, showMonthAfterYear: false, yearSuffix: ''
-      };
+      $.datepicker.regional['es'] = {closeText:'Cerrar',prevText:'Anterior',nextText:'Siguiente',currentText:'Hoy',
+        monthNames:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+        monthNamesShort:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        dayNames:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],dayNamesShort:['Dom','Lun','Mar','Mié','Jue','Sáb'],
+        dayNamesMin:['Do','Lu','Ma','Mi','Ju','Vi','Sa'],weekHeader:'Sm',dateFormat:'dd/mm/yy',firstDay:1,isRTL:false,showMonthAfterYear:false,yearSuffix:''};
       $.datepicker.setDefaults($.datepicker.regional['es']);
     }
-
     if ($.fn.datepicker) {
       $vis.datepicker({
-        changeMonth: true,
-        changeYear: true,
-        yearRange: '1900:+0',
-        dateFormat: 'dd/mm/yy',
-        onClose: function (valor) {
-          const iso = esAISO(valor);
-          $iso.val(iso);
-        }
+        changeMonth:true, changeYear:true, yearRange:'1900:+0', dateFormat:'dd/mm/yy',
+        onClose:v=> $iso.val(esAISO(v))
       });
     }
-
-    $vis.on('focus click', function () {
-      if ($.fn.datepicker) $(this).datepicker('show');
-    });
+    $vis.on('focus click', function(){ if ($.fn.datepicker) $(this).datepicker('show'); });
   }
 
-  function iniciarConversionFechaEnvio() {
-    $('#recetaForm').on('submit', function () {
-      const $vis = $('#paciente_fecha_visual');
-      const $iso = $('input[name="paciente[fechaNacimiento]"]');
-      if ($vis.length && $iso.length) $iso.val(esAISO($vis.val()));
-    });
-  }
+  // ===== Submit (validaciones al usuario) =====
+function initSubmit(){
+  const $f = $('#recetaForm');
+  if (!$f.length) return;
 
-  function boot() {
-    $.ajaxSetup({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      timeout: AJAX_TIMEOUT_MS
-    });
+  $f.on('submit', function(e){
+    e.preventDefault();
 
-    iniciarFechaNacimientoES();
-    iniciarConversionFechaEnvio();
+    const items = [];
 
-    let intentos = 0;
-    const iv = setInterval(function () {
-      intentos++;
-      if (typeof $.fn.select2 === 'function') {
-        clearInterval(iv);
-        iniciarSelect2Nomina();
-        iniciarFinanciadores();
-        iniciarDiagnosticos();
-        iniciarRepetidorMedicamentos();
-        iniciarPracticas();
-      } else if (intentos > 60) {
-        clearInterval(iv);
-        iniciarRepetidorMedicamentos();
+    // Normalizar fecha visual → ISO (YYYY-MM-DD) antes de enviar
+    const vis = $('#paciente_fecha_visual').val();
+    const iso = esAISO(vis);
+    if (vis && iso) {
+      $('[name="paciente[fechaNacimiento]"]').val(iso);
+    }
+
+    // ===== DNI paciente =====
+    const dni = ($('[name="paciente[nroDoc]"]').val() || '').replace(/\D+/g, '');
+    if (!dni) {
+      items.push('DNI del paciente es obligatorio.');
+    } else if (dni.length < 7 || dni.length > 9) {
+      items.push('DNI del paciente debe tener entre 7 y 9 dígitos.');
+    }
+
+    // ===== Sexo paciente =====
+    const sexo = ($('[name="paciente[sexo]"]').val() || '').toUpperCase();
+    if (!['M','F','X','O'].includes(sexo)) {
+      items.push('Sexo seleccionado no es válido.');
+    }
+
+    // ===== Fecha de nacimiento: no futura =====
+    const fiso = $('[name="paciente[fechaNacimiento]"]').val();
+    if (fiso) {
+      const d = new Date(fiso + 'T00:00:00');
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      if (isNaN(d.getTime())) {
+        items.push('Fecha de nacimiento inválida.');
+      } else if (d > today) {
+        items.push('La fecha de nacimiento no puede ser futura.');
       }
-    }, 100);
-  }
+    }
 
+    // ===== Matrícula médico =====
+    const tipoMat = ($('[name="medico[matricula][tipo]"]').val() || 'MN').toUpperCase();
+    const nroMat  = ($('[name="medico[matricula][numero]"]').val() || '').replace(/\D+/g, '');
+    const provMat = ($('[name="medico[matricula][provincia]"]').val() || '').trim();
+
+    if (!nroMat) {
+      items.push('Número de matrícula es obligatorio.');
+    } else if (nroMat.length > 10) {
+      items.push('Número de matrícula: máximo 10 dígitos.');
+    }
+    if (tipoMat === 'MP' && !provMat) {
+      items.push('Para matrícula provincial (MP), la provincia es obligatoria.');
+    }
+
+    // ===== Domicilio OPCIONAL =====
+    // Solo se considera que hay domicilio si completan algo DISTINTO de la provincia.
+    // La provincia NO dispara validación por sí sola.
+    const dCalle    = ($('[name="domicilio[calle]"]').val() || '').trim();
+    const dNum      = ($('[name="domicilio[numero]"]').val() || '').trim();
+    const domProvEl = $('[name="domicilio[provincia]"]');
+    const dProv     = (domProvEl.val() || '').trim(); // no se usa para validar, solo lo dejamos por las dudas
+    const dLoc      = ($('[name="domicilio[localidad]"]').val() || '').trim();
+    const dCP       = ($('[name="domicilio[codigoPostal]"]').val() || '').trim();
+
+    // NO incluimos dProv acá, así que seleccionar solo provincia NO obliga nada
+    // Todo un tema lo de provincias
+    const anyDom = dCalle || dNum || dLoc || dCP;
+
+    if (anyDom) {
+      if (!dCalle) {
+        items.push('Domicilio: la calle es obligatoria si completás el domicilio.');
+      }
+      if (!dNum) {
+        items.push('Domicilio: el número es obligatorio si completás el domicilio.');
+      }
+      // La provincia ES OPCIONAL para domicilio, no la validamos acá
+    }
+
+
+    // ===== Cobertura: si hay financiador, número de afiliado obligatorio y numérico =====
+    const idFin = ($('[name="cobertura[idFinanciador]"]').val() || '').trim();
+    const cred  = ($('[name="cobertura[credencial]"]').val() || '').trim();
+
+    if (idFin) {
+      if (!cred) {
+        items.push('Cobertura: el número de afiliado es obligatorio si indicás un financiador.');
+      } else if (!/^\d+$/.test(cred)) {
+        items.push('Cobertura: el número de afiliado debe tener solo números (sin puntos ni guiones).');
+      }
+    }
+
+    // ===== Medicamentos mínimos =====
+    const $rows = $('#medsWrapper .med-row');
+    if (!$rows.length) {
+      items.push('Agregá al menos un medicamento.');
+    }
+    $rows.each(function(i){
+      const $r   = $(this);
+      const cant = Number($r.find('input[name^="medicamentos"][name$="[cantidad]"]').val() || 0);
+      const reg  = ($r.find('.regno').val() || '').trim();
+
+      if (!cant || cant < 1) {
+        items.push(`Medicamento (fila ${i+1}): la cantidad debe ser mayor a 0.`);
+      }
+      if (!reg) {
+        items.push(`Medicamento (fila ${i+1}): seleccioná un medicamento de la lista (Registro Nº).`);
+      }
+    });
+
+    // ===== Si hay errores, mostramos modal y no enviamos =====
+    if (items.length) {
+      modal({ title: 'Revisá estos datos', html: errList(items) });
+      return;
+    }
+
+    // ===== Envío AJAX =====
+    const url  = $f.attr('action');
+    const data = $f.serialize();
+    const $btn = $f.find('button[type="submit"]');
+    const old  = $btn.html();
+
+    $btn.prop('disabled', true).html('Generando…');
+
+    $.ajax({
+      type: 'POST',
+      url,
+      data,
+      headers: { 'Accept': 'application/json' },
+      timeout: AJAX_TIMEOUT_MS
+    })
+    .done(r => {
+      if (r && r.ok) {
+        if (r.url) {
+          location.assign(new URL(r.url, location.origin).toString());
+          return;
+        }
+        if (r.show) {
+          location.assign(new URL(r.show, location.origin).toString());
+          return;
+        }
+        location.assign(location.origin + '/empleados/recetas');
+        return;
+      }
+      modal({ title: 'Aviso', html: `<p>${esc(r?.message || 'Operación realizada.')}</p>` });
+    })
+    .fail(jq => {
+      let items2 = [];
+
+      if (jq.status === 422) {
+        const e = (jq.responseJSON || {}).errors || {};
+        items2 = Object.keys(e).map(k => `${k}: ${(e[k] || []).join(' ')}`);
+      } else if (jq.status === 504) {
+        items2 = ['El servicio tardó demasiado en responder. Probá nuevamente.'];
+      } else {
+        try {
+          const j  = jq.responseJSON || JSON.parse(jq.responseText || '{}');
+          const msg = j.message || j.mensaje || jq.statusText || 'Error al generar la receta.';
+          if (msg) items2.push(msg);
+          if (j.code) items2.push('Código técnico: ' + j.code);
+        } catch {
+          items2.push('Error desconocido al generar la receta.');
+        }
+      }
+
+      modal({ title: 'No se pudo generar la receta', html: errList(items2) });
+    })
+    .always(() => {
+      $btn.prop('disabled', false).html(old);
+    });
+  });
+}
+
+
+  // ===== Boot =====
+  function boot(){
+    $.ajaxSetup({ headers:{'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')}, timeout: AJAX_TIMEOUT_MS });
+
+    initSexo();
+    initFecha();
+    initSubmit();
+
+    let tries=0; const iv=setInterval(function(){
+      tries++;
+      if (typeof $.fn.select2 === 'function'){
+        clearInterval(iv);
+        fetchProvincias().then(()=>{  // cargo provincias antes de reglas de matrícula
+          initMatricula();
+          initNomina();
+          initFinanciadores();
+          initDiagnosticos();
+          initMeds();
+          initPracticas();
+        });
+      } else if (tries>60){
+        clearInterval(iv);
+        fetchProvincias().then(initMatricula);
+        initMeds();
+      }
+    },100);
+  }
   $(boot);
 
 })(jQuery, window, document);

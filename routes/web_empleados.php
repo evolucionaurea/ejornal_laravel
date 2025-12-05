@@ -339,6 +339,7 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/recetas','EmpleadosRecetasController@store')->name('empleados.recetas.store');
 	Route::get('empleados/recetas/{id}','EmpleadosRecetasController@show')->where('id','\d+')->name('empleados.recetas.show');
 	Route::put('empleados/recetas/{id}','EmpleadosRecetasController@update')->where('id','\d+')->name('empleados.recetas.update');
-	Route::delete('empleados/recetas/{id}','EmpleadosRecetasController@destroy')->where('id','\d+')->name('empleados.recetas.destroy');
+	Route::delete('empleados/recetas/{id}', 'EmpleadosRecetasController@anular')->name('empleados.recetas.anular');
+	Route::get('empleados/recetas/provincias', 'EmpleadosRecetasController@provincias')->name('empleados.recetas.provincias');
 
 });

@@ -182,5 +182,12 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	// Route::get('admin/agenda_motivos', 'EndpointsController@getMotivosAgenda');
 	
 	// Recetas
-	Route::get('admin/recetas','AdminRecetasController@index')->name('/admin/recetas');
+Route::get('admin/recetas', 'AdminRecetasController@index')
+    ->name('admin.recetas');
+
+Route::get('admin/recetas/{id}', 'AdminRecetasController@show')
+    ->where('id', '\d+')
+    ->name('admin.recetas.show');
+
+
 });

@@ -4,232 +4,224 @@ namespace App\Http\Controllers;
 
 use App\Receta;
 use App\Nomina;
+use App\Traits\Qbi2\BuildReceta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Qbi2Client;
 use App\Http\Traits\Clientes;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\ProvinciaReceta;
+use Illuminate\Support\Arr;
+use Carbon\Carbon;
+
 
 class EmpleadosRecetasController extends Controller
 {
-    use Clientes;
+    use Clientes, BuildReceta;
 
-    public function index()
+    public function index(Request $request)
     {
+        $user = Auth::user();
+        $clienteActualId = $user->id_cliente_actual;
         $clientes = $this->getClientesUser();
 
-        // Listado de recetas emitidas por el user actual (empleado)
-        $recetas = Receta::with(['nomina','cliente'])
-            ->where('id_user', Auth::id())
-            ->orderBy('id','desc')
-            ->paginate(20);
+        // Estados posibles
+        $estados = ['emitida', 'anulada', 'error'];
 
-        return view('empleados.recetas', compact('recetas', 'clientes'));
+        // Trabajadores: sólo nómina del cliente actual
+        $nominas = Nomina::query()
+            ->where('estado', 1)
+            ->when($clienteActualId, function ($q) use ($clienteActualId) {
+                $q->where('id_cliente', $clienteActualId);
+            })
+            ->orderBy('nombre', 'asc')
+            ->get(['id', 'nombre']);
+
+        $q = Receta::with(['nomina', 'cliente'])
+            ->where('id_user', $user->id);
+
+        // Sólo recetas del cliente donde fichó el empleado
+        if ($clienteActualId) {
+            $q->where('id_cliente', $clienteActualId);
+        }
+
+        // ---- Filtros ----
+        if ($request->filled('f_estado')) {
+            $q->where('estado', $request->input('f_estado'));
+        }
+
+        if ($request->filled('f_nomina')) {
+            $q->where('id_nomina', (int) $request->input('f_nomina'));
+        }
+
+        if ($request->filled('f_desde')) {
+            try {
+                $desde = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('f_desde'))->startOfDay();
+                $q->where('created_at', '>=', $desde);
+            } catch (\Throwable $e) {
+                // ignoramos formato inválido
+            }
+        }
+
+        if ($request->filled('f_hasta')) {
+            try {
+                $hasta = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('f_hasta'))->endOfDay();
+                $q->where('created_at', '<=', $hasta);
+            } catch (\Throwable $e) {
+                // ignoramos formato inválido
+            }
+        }
+
+        // Orden del más nuevo al más viejo
+        $recetas = $q
+            ->orderByDesc('id')
+            ->paginate(20)
+            ->appends($request->query());
+
+        // Respuesta parcial para AJAX (filtros / paginación)
+        if ($request->ajax()) {
+            return view('empleados.recetas._tabla', compact('recetas'))->render();
+        }
+
+        return view('empleados.recetas', compact(
+            'recetas',
+            'nominas',
+            'estados',
+            'clientes'
+        ));
     }
+
+
 
     public function create()
     {
+        $user = Auth::user();
+        $clienteActualId = $user->id_cliente_actual;
         $clientes = $this->getClientesUser();
-        
-        $nominas = Nomina::with('cliente')
-        ->where('estado', 1)
-        ->orderBy('nombre','asc')
-        ->get();
 
-        return view('empleados.recetas.create', compact('nominas', 'clientes'));
+        // Trabajadores sólo del cliente donde está fichado
+        $nominas = Nomina::with('cliente')
+            ->where('estado', 1)
+            ->when($clienteActualId, function ($q) use ($clienteActualId) {
+                $q->where('id_cliente', $clienteActualId);
+            })
+            ->orderBy('nombre', 'asc')
+            ->get();
+
+        $provincias = ProvinciaReceta::orderBy('nombre','asc')->get(['id','nombre']);
+
+        return view('empleados.recetas.create', compact('nominas', 'clientes', 'provincias'));
     }
 
 
-    public function store(Request $req, \App\Services\Qbi2Client $qbi)
+    public function provincias()
     {
-        // VALIDACIÓN (ajustada, pero no hiper-restrictiva)
-        $data = $this->validate($req, [
-            'id_nomina' => 'required|exists:nominas,id',
+        $items = ProvinciaReceta::orderBy('nombre','asc')->get(['id','nombre']);
+        return response()->json(['ok'=>true, 'results'=>$items]);
+    }
 
-            // Médico
-            'medico.apellido' => 'required|string|max:80',
-            'medico.nombre'   => 'required|string|max:80',
-            'medico.tipoDoc'  => 'required|string|max:20',
-            'medico.nroDoc'   => 'required|string|max:20',
-            'medico.sexo'     => 'required|in:F,M,X,O',
 
-            // Matrícula dentro de médico
-            'medico.matricula.tipo'      => 'required|in:MN,MP',
-            'medico.matricula.numero'    => 'required|string|max:30',
-            'medico.matricula.provincia' => 'nullable|string|max:60',
+    public function show($id)
+    {
+        $clientes = $this->getClientesUser();
 
-            // (algunos tenants piden CUIT en medico.idTributario o subemisor.cuit)
-            'medico.idTributario' => 'nullable|string|max:20',
+        $receta = Receta::with(['nomina', 'cliente'])
+            ->where('id', $id)
+            ->where('id_user', auth()->id())
+            ->firstOrFail();
 
-            // Paciente (overrides opcionales)
-            'paciente.apellido'        => 'nullable|string|max:80',
-            'paciente.nombre'          => 'nullable|string|max:80',
-            'paciente.tipoDoc'         => 'nullable|string|max:20',
-            'paciente.nroDoc'          => 'nullable|string|max:20',
-            'paciente.sexo'            => 'nullable|in:F,M,X,O',
-            'paciente.fechaNacimiento' => 'nullable|date', // aceptamos Y-m-d del input
+        // Normalizar payload / response a arrays
+        $payload  = is_string($receta->payload)
+            ? json_decode($receta->payload, true)
+            : (is_array($receta->payload) ? $receta->payload : []);
 
-            // Diagnóstico
-            'diagnostico' => 'nullable|string|max:2000',
+        $response = is_string($receta->response)
+            ? json_decode($receta->response, true)
+            : (is_array($receta->response) ? $receta->response : []);
 
-            // Domicilio/cobertura/subemisor/lugarAtencion opcionales
-            'domicilio'       => 'array',
-            'cobertura'       => 'array',
-            'subemisor'       => 'array',
-            'lugarAtencion'   => 'array',
+        // Payload "crudo"
+        $payloadPac   = $payload['paciente'] ?? [];
+        $payloadMed   = $payload['medico'] ?? [];
+        $payloadDiag  = $payload['diagnostico'] ?? null;
+        $payloadLugar = $payload['lugarAtencion']['domicilio'] ?? [];
 
-            // Medicamentos
-            'medicamentos'                      => 'required|array|min:1',
-            'medicamentos.*.cantidad'           => 'required|integer|min:1',
-            'medicamentos.*.regNo'              => 'nullable',
-            'medicamentos.*.nombre'             => 'nullable|string|max:150',
-            'medicamentos.*.presentacion'       => 'nullable|string|max:150',
-            'medicamentos.*.nombreDroga'        => 'nullable|string|max:150',
-            'medicamentos.*.posologia'          => 'nullable|string|max:500',
-            'medicamentos.*.indicaciones'       => 'nullable|string|max:500',
-            'medicamentos.*.forzarDuplicado'    => 'nullable|boolean',
-            'medicamentos.*.permiteSustitucion' => 'nullable|string|in:S,N',
-            'medicamentos.*.tratamiento'        => 'nullable|integer|min:0',
-            'medicamentos.*.diagnostico'        => 'nullable|string|max:500',
-            'recetasPostadatas.cantidad'        => 'nullable|integer|min:0',
-            'recetasPostadatas.diasAPosdatar'   => 'nullable|integer|min:0',
-        ]);
+        // Respuesta enriquecida de QBI
+        $apiRoot   = $response['response'][0] ?? [];
+        $apiPac    = $apiRoot['paciente'] ?? [];
+        $apiMed    = $apiRoot['medico'] ?? [];
+        $apiMeds   = $apiRoot['medicamentos'] ?? [];
+        $apiLugar  = $apiRoot['lugarAtencion']['domicilio'] ?? [];
+        $apiCob    = $apiPac['cobertura'] ?? [];
+        $apiReceta = $response['recetas'][0] ?? [];
 
-        $nomina = \App\Nomina::with('cliente')->findOrFail($data['id_nomina']);
+        // Diagnóstico "lindo" (texto completo del repositorio)
+        $diagTexto = $apiRoot['diagnostico'] ?? null;
 
-        // ==== Paciente (minúsculas) ====
-        // Split de nombre completo si no vino override
-        $full = trim((string) $nomina->nombre);
-        $apellido = $full; $nombre = '';
-        if (strpos($full, ' ') !== false) {
-            $parts = preg_split('/\s+/', $full);
-            $apellido = array_shift($parts);
-            $nombre   = trim(implode(' ', $parts));
-        }
-        $p = [
-            'apellido'        => $req->input('paciente.apellido', $apellido),
-            'nombre'          => $req->input('paciente.nombre',   $nombre),
-            'tipoDoc'         => $req->input('paciente.tipoDoc', 'DNI'),
-            'nroDoc'          => $req->input('paciente.nroDoc', (string) $nomina->dni),
-            'sexo'            => $req->input('paciente.sexo', 'X'),
-            'fechaNacimiento' => $req->input('paciente.fechaNacimiento') ?: null,
-        ];
-        // Normalizo fecha a YYYY-MM-DD si vino en otro formato
-        if (!empty($p['fechaNacimiento'])) {
-            try {
-                $p['fechaNacimiento'] = \Carbon\Carbon::parse($p['fechaNacimiento'])->format('Y-m-d');
-            } catch (\Throwable $e) {
-                $p['fechaNacimiento'] = null; // si falla, la dejamos nula
-            }
-        }
-        // Extra opcionales del paciente
-        foreach (['email','telefono','pais','localidad','provincia','cuil'] as $k) {
-            $v = $req->input("paciente.$k");
-            if ($v !== null && $v !== '') $p[$k] = $v;
-        }
-        // domicilio del paciente
-        $dom = $req->input('paciente.domicilio', $req->input('domicilio', []));
-        if (is_array($dom) && count(array_filter($dom, fn($v)=>$v!==null && $v!==''))) {
-            $p['domicilio'] = $dom;
-        }
-        // cobertura
-        $cov = $req->input('paciente.cobertura', $req->input('cobertura', []));
-        if (is_array($cov) && count(array_filter($cov, fn($v)=>$v!==null && $v!==''))) {
-            $p['cobertura'] = $cov;
-        }
+        // Lista de medicamentos a mostrar: priorizamos los enriquecidos
+        $listaMeds = !empty($apiMeds)
+            ? $apiMeds
+            : ($payload['medicamentos'] ?? []);
 
-        // ==== Médico (minúsculas) con matricula anidada ====
-        $m = [
-            'apellido' => $data['medico']['apellido'],
-            'nombre'   => $data['medico']['nombre'],
-            'tipoDoc'  => $data['medico']['tipoDoc'],
-            'nroDoc'   => $data['medico']['nroDoc'],
-            'sexo'     => $data['medico']['sexo'],
-            'matricula'=> [
-                'tipo'      => $data['medico']['matricula']['tipo'],
-                'numero'    => $data['medico']['matricula']['numero'],
-                'provincia' => $data['medico']['matricula']['provincia'] ?? '',
-            ],
-        ];
-        // campos opcionales del médico (profesion, especialidad, email, telefono, etc.)
-        foreach (['profesion','especialidad','fechaNacimiento','email','telefono','pais','firmalink','firmabase64','logoInstitucion','idTributario','idREFEPS'] as $k) {
-            $v = $req->input("medico.$k");
-            if ($v !== null && $v !== '') $m[$k] = $v;
-        }
-        // sello (opcional)
-        $sello = $req->input('medico.sello', []);
-        if (is_array($sello) && count(array_filter($sello))) $m['sello'] = $sello;
+        // Domicilio definitivo (prioriza lo que responde QBI)
+        $domLugar = !empty($apiLugar) ? $apiLugar : $payloadLugar;
 
-        // ==== Medicamentos (minúsculas) ====
-        $meds = [];
-        foreach ($data['medicamentos'] as $mm) {
-            $item = [
-                'cantidad' => (int) $mm['cantidad'],
-            ];
-            if (!empty($mm['regNo']))            $item['regNo'] = $mm['regNo'];
-            if (!empty($mm['nombre']))           $item['nombreProducto'] = $mm['nombre'];
-            if (!empty($mm['nombreDroga']))      $item['nombreDroga']    = $mm['nombreDroga'];
-            if (!empty($mm['presentacion']))     $item['presentacion']   = $mm['presentacion'];
-            if (isset($mm['permiteSustitucion']))$item['permiteSustitucion'] = $mm['permiteSustitucion'];
-            if (isset($mm['tratamiento']))       $item['tratamiento']    = (int) $mm['tratamiento'];
-            if (!empty($mm['diagnostico']))      $item['diagnostico']    = $mm['diagnostico'];
-            if (!empty($mm['posologia']))        $item['posologia']      = $mm['posologia'];
-            if (!empty($mm['indicaciones']))     $item['indicaciones']   = $mm['indicaciones'];
-            if (isset($mm['forzarDuplicado']))   $item['forzarDuplicado']= (bool) $mm['forzarDuplicado'];
-            $meds[] = $item;
-        }
+        // Estado → clase Bootstrap de badge
+        $estadoClass = $receta->estado === 'anulada'
+            ? 'danger'
+            : ($receta->estado === 'error' ? 'warning' : 'success');
 
-        // ==== Payload final (minúsculas) ====
-        $payload = [
-            'paciente'          => $p,
-            'medico'            => $m,
-            'medicamentos'      => $meds,
-            'clienteAppId'      => (string) config('qbi2.client_app_id'),
-        ];
+        // Texto ya formateado para la fecha de creación
+        $createdAtFormatted = $receta->created_at
+            ? $receta->created_at->format('d/m/Y H:i')
+            : null;
 
-        if ($diag = $req->input('diagnostico'))     $payload['diagnostico'] = $diag;
-        if ($rp = $req->input('recetasPostadatas')) $payload['recetasPostadatas'] = $rp;
+        return view('empleados.recetas.show', compact(
+            'receta',
+            'clientes',
+            'payload',
+            'response',
+            'payloadPac',
+            'payloadMed',
+            'payloadDiag',
+            'payloadLugar',
+            'apiRoot',
+            'apiPac',
+            'apiMed',
+            'apiMeds',
+            'apiLugar',
+            'apiCob',
+            'apiReceta',
+            'diagTexto',
+            'listaMeds',
+            'domLugar',
+            'estadoClass',
+            'createdAtFormatted'
+        ));
+    }
 
-        // lugarAtencion opcional
-        $lugar = $req->input('lugarAtencion', []);
-        if (is_array($lugar) && count(array_filter($lugar))) $payload['lugarAtencion'] = $lugar;
 
-        // subemisor (donde típicamente va un CUIT si lo pide tu tenant)
-        $sub = $req->input('subemisor', []);
-        if (is_array($sub) && count(array_filter($sub))) $payload['subemisor'] = $sub;
 
-        // extras
-        foreach (['imprimirDiagnostico','observaciones','indicaciones','fechaEmision','nombreConsultorio','datosContacto','direccionConsultorio','email','linkECommerce','codigoPromocion'] as $k) {
-            $v = $req->input($k);
-            if ($v !== null && $v !== '') $payload[$k] = $v;
-        }
-        $infoExtra = $req->input('informacionExtra', []);
-        if (is_array($infoExtra) && count($infoExtra)) $payload['informacionExtra'] = $infoExtra;
+    public function store(Request $req, Qbi2Client $qbi)
+    {
+        // Habria que decidir si queremos estos logs online o si los sacamos para no llenar el disco
+        $data   = $this->validarReceta($req);
+        $nomina = Nomina::with('cliente')->findOrFail($data['id_nomina']);
 
-        // LOG de depuración (request)
+        $payload = $this->buildPayload($req, $nomina);
         \Log::info('[QBI2] Crear Receta request', ['payload' => $payload]);
 
-        // Llamada remota (JSON)
         $api = $qbi->crearReceta($payload);
-
-        // LOG de depuración (response)
         \Log::info('[QBI2] Crear Receta response', ['api' => $api]);
 
         if (!$api['ok']) {
-            // Intentar mostrar mensaje entendible si viene {error:'QBIxxx', mensaje:'...'}
-            $msg = $api['error'];
-            $parsed = json_decode($api['error'], true);
-            if (is_array($parsed) && isset($parsed['mensaje'])) {
-                $msg = "[{$parsed['error']}] ".$parsed['mensaje'];
-            }
-            return back()->withErrors(['qbi2' => 'Error al generar receta: '.$msg])->withInput();
+            return $this->respuestaErrorQbi($api, $req);
         }
 
-        // Extraer IDs comunes
-        $hash   = data_get($api, 'data.hash') ?? data_get($api, 'data.id') ?? '';
-        $idRec  = data_get($api, 'data.idReceta');
-        $pdfUrl = data_get($api, 'data.pdfUrl');
+        // Fuente oficial: data.recetas[0]
+        $first  = data_get($api, 'data.recetas.0', []);
+        $hash   = data_get($first, 'id', '') ?: (data_get($api, 'data.id') ?: '');
+        $idRec  = data_get($first, 'idReceta');
+        $pdfUrl = data_get($first, 's3Link');
 
         $receta = Receta::create([
             'id_user'    => auth()->id(),
@@ -243,117 +235,245 @@ class EmpleadosRecetasController extends Controller
             'response'   => $api['data'] ?? null,
         ]);
 
-        return redirect()->route('empleados.recetas.show', $receta->id)->with('ok','Receta generada correctamente.');
+        // Devuelvo ruta RELATIVA segura (el front la resuelve sobre location.origin)
+        $indexPath = '/empleados/recetas';
+
+        if ($req->ajax() || $req->wantsJson()) {
+            return response()->json([
+                'ok'     => true,
+                'id'     => $receta->id,
+                'url'    => $indexPath,                           // principal
+                'show'   => "/empleados/recetas/{$receta->id}",
+                'pdfUrl' => $pdfUrl,
+            ]);
+        }
+
+        // Redirect server-side sin usar APP_URL (para evitar problemas de cambios de dominio)
+        return redirect($indexPath)->with('success', 'Receta generada correctamente.');
     }
 
 
+    public function getFinanciadores(Request $req, Qbi2Client $qbi)
+    {
+        $api = $qbi->financiadores();
 
-public function getFinanciadores(Request $req, Qbi2Client $qbi)
-{
-    $api = $qbi->financiadores();
-    if (!$api['ok'] || !is_array($api['data'])) {
-        return response()->json(['results' => []]);
+        if (!$api['ok'] || !is_array($api['data'])) {
+            return response()->json(['results' => []]);
+        }
+
+        $q      = mb_strtolower(trim($req->query('q', '')));
+        $items  = Arr::get($api, 'data.financiadores', []) ?: [];
+        $results = [];
+
+        foreach ($items as $f) {
+            // idfinanciador es el que después vamos a usar como idFinanciador en cobertura
+            $id   = Arr::get($f, 'idfinanciador');
+            $num  = Arr::get($f, 'nrofinanciador', '');
+            $name = Arr::get($f, 'nombreComercial', '');
+
+            // Texto que ve el usuario en el select
+            $text = trim(($num ? $num.' - ' : '').$name);
+
+            if (!$id) {
+                // si por algún motivo no trae id, lo salteamos
+                continue;
+            }
+
+            // Filtro por búsqueda
+            if ($q !== '') {
+                $hay = mb_strtolower($text);
+                if (mb_strpos($hay, $q) === false) {
+                    $legal = mb_strtolower((string) Arr::get($f, 'razonSocial', ''));
+                    if (mb_strpos($legal, $q) === false) {
+                        continue;
+                    }
+                }
+            }
+
+            // Normalizamos planes para el front
+            $planes = collect(Arr::get($f, 'planes', []))
+                ->map(function ($p) {
+                    return [
+                        'id'     => Arr::get($p, 'id') ??
+                                    Arr::get($p, 'planId') ??
+                                    Arr::get($p, 'planid'),
+                        'nombre' => Arr::get($p, 'nombre') ??
+                                    Arr::get($p, 'descripcion') ??
+                                    Arr::get($p, 'name'),
+                    ];
+                })
+                ->filter(function ($p) {
+                    return !empty($p['id']) && !empty($p['nombre']);
+                })
+                ->values()
+                ->all();
+
+            $results[] = [
+                'id'   => $id,
+                'text' => $text,
+                'raw'  => array_replace($f, ['planes' => $planes]),
+            ];
+        }
+
+        return response()->json(['results' => $results]);
     }
-    $results = [];
-    foreach (($api['data']['financiadores'] ?? []) as $f) {
-        $results[] = [
-            'id'   => Arr::get($f, 'idfinanciador'),
-            'text' => trim(Arr::get($f,'nrofinanciador','').' - '.Arr::get($f,'nombreComercial','')),
-            'raw'  => $f,
-        ];
-    }
-    return response()->json(['results' => $results]);
-}
+
 
     public function getDiagnosticos(Request $req, Qbi2Client $qbi)
-{
-    $text = trim($req->query('q',''));
-    if (mb_strlen($text) < 3) {
-        return response()->json(['results' => []]);
-    }
-    $api = $qbi->buscarDiagnosticos($text);
-    if (!$api['ok'] || !is_array($api['data'])) {
-        return response()->json(['results' => []]);
-    }
-    $out = [];
-    foreach (($api['data']['diagnosticos'] ?? []) as $d) {
-        $cod  = Arr::get($d,'coddiagnostico');
-        $desc = Arr::get($d,'descdiagnostico');
-        $out[] = ['id' => $cod, 'text' => $cod.' — '.$desc, 'raw' => $d];
-    }
-    return response()->json(['results' => $out]);
-}
-
-public function getMedicamentos(Request $req, Qbi2Client $qbi)
-{
-    $search = trim($req->query('q',''));
-    if (mb_strlen($search) < 2) {
-        return response()->json(['results' => [], 'pagination' => ['more' => false]]);
-    }
-    $page = (int) $req->query('page', 1);
-    $numeroPagina = max(0, $page - 1);
-
-    $extra = [];
-    foreach (['idFinanciador','afiliadoDni','afiliadoCredencial','planid','plan'] as $k) {
-        if ($req->filled($k)) $extra[$k] = $req->query($k);
+    {
+        $text = trim($req->query('q',''));
+        if (mb_strlen($text) < 3) {
+            return response()->json(['results' => []]);
+        }
+        $api = $qbi->buscarDiagnosticos($text);
+        if (!$api['ok'] || !is_array($api['data'])) {
+            return response()->json(['results' => []]);
+        }
+        $out = [];
+        foreach (($api['data']['diagnosticos'] ?? []) as $d) {
+            $cod  = \Illuminate\Support\Arr::get($d,'coddiagnostico');
+            $desc = \Illuminate\Support\Arr::get($d,'descdiagnostico');
+            $out[] = ['id' => $cod, 'text' => $cod.' — '.$desc, 'raw' => $d];
+        }
+        return response()->json(['results' => $out]);
     }
 
-    $api = $qbi->buscarMedicamentos($search, $numeroPagina, $extra);
-    if (!$api['ok'] || !is_array($api['data'])) {
-        return response()->json(['results' => [], 'pagination' => ['more' => false]]);
+    public function getMedicamentos(Request $req, Qbi2Client $qbi)
+    {
+        $search = trim($req->query('q',''));
+        if (mb_strlen($search) < 3) { // subi a 3 para evitar 404 por consultas muy cortas
+            return response()->json(['results' => [], 'pagination' => ['more' => false]]);
+        }
+        $page = (int) $req->query('page', 1);
+        $numeroPagina = max(0, $page - 1);
+
+        $extra = [];
+        foreach (['idFinanciador','afiliadoDni','afiliadoCredencial','planid','plan'] as $k) {
+            if ($req->filled($k)) $extra[$k] = $req->query($k);
+        }
+
+        $api = $qbi->buscarMedicamentos($search, $numeroPagina, $extra);
+
+        // ⬇si el backend respondió 404 “no encontrado”, devolvemos vacío (no lo tratamos como error)
+        if (!$api['ok'] && (($api['status'] ?? 0) === 404)) {
+            return response()->json(['results' => [], 'pagination' => ['more' => false]]);
+        }
+
+        if (!$api['ok'] || !is_array($api['data'])) {
+            return response()->json(['results' => [], 'pagination' => ['more' => false]]);
+        }
+
+        $results = [];
+        foreach (($api['data']['medicamentos'] ?? []) as $m) {
+            $text = trim(
+                ($m['nombreProducto'] ?? '') .
+                (isset($m['presentacion']) ? ' — '.$m['presentacion'] : '') .
+                (isset($m['nombreDroga']) ? ' ('.$m['nombreDroga'].')' : '')
+            );
+            $results[] = [
+                'id'   => $m['regNo'] ?? \Illuminate\Support\Str::uuid()->toString(),
+                'text' => $text ?: 'Producto sin nombre',
+                'raw'  => $m,
+            ];
+        }
+
+        $pageInfo = $api['data']['pageInfo'] ?? [];
+        $more = (bool)($pageInfo['tieneMasResultados'] ?? false);
+
+        return response()->json(['results' => $results, 'pagination' => ['more' => $more]]);
     }
 
-    $results = [];
-    foreach (($api['data']['medicamentos'] ?? []) as $m) {
-        $text = trim(
-            ($m['nombreProducto'] ?? '').
-            (isset($m['presentacion']) ? ' — '.$m['presentacion'] : '').
-            (isset($m['nombreDroga']) ? ' ('.$m['nombreDroga'].')' : '')
-        );
-        $results[] = [
-            'id'   => $m['regNo'] ?? Str::uuid()->toString(),
-            'text' => $text ?: 'Producto sin nombre',
-            'raw'  => $m,
+
+    public function getPracticas(Request $req, Qbi2Client $qbi)
+    {
+        $params = [
+            'search'       => trim((string)$req->query('search','')),
+            'tipo'         => trim((string)$req->query('tipo','')),
+            'categoria'    => trim((string)$req->query('categoria','')),
+            'numeroPagina' => max(1, (int)$req->query('page', 1)),
         ];
+        $api = $qbi->buscarPracticas(array_filter($params, fn($v)=>$v!==''));
+
+        if (!$api['ok'] || !is_array($api['data'])) {
+            return response()->json(['results' => [], 'pagination' => ['more' => false]]);
+        }
+
+        $results = [];
+        foreach (($api['data']['practicas'] ?? []) as $p) {
+            $txt = $p['practica'] ?? 'Práctica';
+            if (!empty($p['tipo']))      $txt .= ' — '.$p['tipo'];
+            if (!empty($p['categoria'])) $txt .= ' / '.$p['categoria'];
+            $results[] = [
+                'id'   => $p['id'] ?? Str::uuid()->toString(),
+                'text' => $txt,
+                'raw'  => $p,
+            ];
+        }
+
+        $pageInfo = $api['data']['pageInfo'] ?? [];
+        $more = (bool)($pageInfo['tieneMasResultados'] ?? false);
+
+        return response()->json(['results' => $results, 'pagination' => ['more' => $more]]);
     }
 
-    $pageInfo = $api['data']['pageInfo'] ?? [];
-    $more = (bool)($pageInfo['tieneMasResultados'] ?? false);
 
-    return response()->json(['results' => $results, 'pagination' => ['more' => $more]]);
-}
+    public function anular($id, Qbi2Client $qbi, Request $req)
+    {
+        $receta = Receta::where('id', $id)
+            ->where('id_user', auth()->id())
+            ->firstOrFail();
 
-public function getPracticas(Request $req, Qbi2Client $qbi)
-{
-    $params = [
-        'search'       => trim((string)$req->query('search','')),
-        'tipo'         => trim((string)$req->query('tipo','')),
-        'categoria'    => trim((string)$req->query('categoria','')),
-        'numeroPagina' => max(1, (int)$req->query('page', 1)),
-    ];
-    $api = $qbi->buscarPracticas(array_filter($params, fn($v)=>$v!==''));
+        if ($receta->estado === 'anulada') {
+            if ($req->ajax() || $req->wantsJson()) {
+                return response()->json([
+                    'ok'      => true,
+                    'message' => 'La receta ya estaba anulada.',
+                    'estado'  => 'anulada',
+                ]);
+            }
 
-    if (!$api['ok'] || !is_array($api['data'])) {
-        return response()->json(['results' => [], 'pagination' => ['more' => false]]);
+            return back()->with('warning', 'La receta ya estaba anulada.');
+        }
+
+        // Si hay hash, intentamos anular en QBI2
+        if ($receta->hash_id) {
+            $api = $qbi->anularReceta($receta->hash_id);
+
+            if (!$api['ok']) {
+                $msg    = 'No se pudo anular en el servicio.';
+                $parsed = json_decode($api['error'] ?? '', true);
+
+                if (is_array($parsed) && !empty($parsed['mensaje'])) {
+                    $msg = $parsed['mensaje'];
+                }
+
+                if ($req->ajax() || $req->wantsJson()) {
+                    return response()->json([
+                        'ok'      => false,
+                        'message' => $msg,
+                    ], 400);
+                }
+
+                return back()->withErrors(['anular' => $msg]);
+            }
+        }
+
+        $receta->estado = 'anulada';
+        $receta->save();
+
+        if ($req->ajax() || $req->wantsJson()) {
+            return response()->json([
+                'ok'      => true,
+                'message' => 'Receta anulada correctamente.',
+                'estado'  => 'anulada',
+            ]);
+        }
+
+        return back()->with('success', 'Receta anulada correctamente.');
     }
 
-    $results = [];
-    foreach (($api['data']['practicas'] ?? []) as $p) {
-        $txt = $p['practica'] ?? 'Práctica';
-        if (!empty($p['tipo']))      $txt .= ' — '.$p['tipo'];
-        if (!empty($p['categoria'])) $txt .= ' / '.$p['categoria'];
-        $results[] = [
-            'id'   => $p['id'] ?? Str::uuid()->toString(),
-            'text' => $txt,
-            'raw'  => $p,
-        ];
-    }
 
-    $pageInfo = $api['data']['pageInfo'] ?? [];
-    $more = (bool)($pageInfo['tieneMasResultados'] ?? false);
 
-    return response()->json(['results' => $results, 'pagination' => ['more' => $more]]);
-}
 
- 
+
 }

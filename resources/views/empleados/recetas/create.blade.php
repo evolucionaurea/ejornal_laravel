@@ -23,7 +23,8 @@
                     data-url-get-financiadores="{{ route('empleados.recetas.get_financiadores') }}"
                     data-url-get-diagnosticos="{{ route('empleados.recetas.get_diagnosticos') }}"
                     data-url-get-medicamentos="{{ route('empleados.recetas.get_medicamentos') }}"
-                    data-url-get-practicas="{{ route('empleados.recetas.get_practicas') }}">
+                    data-url-get-practicas="{{ route('empleados.recetas.get_practicas') }}"
+                    data-url-get-provincias="{{ route('empleados.recetas.provincias') }}">
                     @csrf
 
                     {{-- SECCIÓN: Trabajador --}}
@@ -54,7 +55,12 @@
                         <div class="text-uppercase text-info font-weight-bold small mb-2">Diagnóstico</div>
                         <div class="form-row">
                             <div class="form-group col-md-6 mb-2">
-                                <label class="mb-1">Buscar CIE-10</label>
+                                <label class="mb-1">
+                                    Buscar CIE-10
+                                    <span class="text-muted text-sm">
+                                        (Código de diagnostico estandar)
+                                    </span>
+                                </label>
                                 <select id="diag_search" class="form-control form-control-sm"
                                     style="width:100%"></select>
                                 <input type="hidden" id="diagnostico_codigo" name="diagnostico_codigo"
@@ -97,13 +103,13 @@
                                 <input type="text" class="form-control form-control-sm" name="paciente[nroDoc]"
                                     value="{{ old('paciente.nroDoc') }}">
                             </div>
-                            <div class="form-group col-md-2 mb-2">
-                                <label class="mb-1">Sexo</label>
-                                <select class="form-control form-control-sm" name="paciente[sexo]">
-                                    @foreach(['F','M','X','O'] as $sx)
-                                    <option value="{{ $sx }}" {{ old('paciente.sexo')===$sx ? 'selected' :'' }}>{{ $sx
-                                        }}</option>
-                                    @endforeach
+                            <div class="form-group">
+                                <label>Sexo</label>
+                                <select name="paciente[sexo]" class="form-control form-control-sm">
+                                    <option value="M">Hombre (M)</option>
+                                    <option value="F">Mujer (F)</option>
+                                    <option value="X">No binario (X)</option>
+                                    <option value="O">Otro (O)</option>
                                 </select>
                             </div>
                         </div>
@@ -128,30 +134,18 @@
 
                         <div class="text-info font-weight-bold small mb-2">Domicilio (opcional)</div>
                         <div class="form-row">
-                            <div class="form-group col-md-4 mb-2">
-                                <label class="mb-1">Calle</label>
-                                <input type="text" class="form-control form-control-sm" name="domicilio[calle]"
-                                    value="{{ old('domicilio.calle') }}">
+                            <div class="form-group col-md-5">
+                                <label>Calle</label>
+                                <input type="text" name="domicilio[calle]" class="form-control form-control-sm">
                             </div>
-                            <div class="form-group col-md-2 mb-2">
-                                <label class="mb-1">Número</label>
-                                <input type="text" class="form-control form-control-sm" name="domicilio[numero]"
-                                    value="{{ old('domicilio.numero') }}">
+                            <div class="form-group col-md-2">
+                                <label>Número</label>
+                                <input type="text" name="domicilio[numero]" class="form-control form-control-sm">
                             </div>
-                            <div class="form-group col-md-3 mb-2">
-                                <label class="mb-1">Localidad</label>
-                                <input type="text" class="form-control form-control-sm" name="domicilio[localidad]"
-                                    value="{{ old('domicilio.localidad') }}">
-                            </div>
-                            <div class="form-group col-md-2 mb-2">
-                                <label class="mb-1">Provincia</label>
-                                <input type="text" class="form-control form-control-sm" name="domicilio[provincia]"
-                                    value="{{ old('domicilio.provincia') }}">
-                            </div>
-                            <div class="form-group col-md-1 mb-2">
-                                <label class="mb-1">CP</label>
-                                <input type="text" class="form-control form-control-sm" name="domicilio[cp]"
-                                    value="{{ old('domicilio.cp') }}">
+                            <div class="form-group col-md-5">
+                                <label>Provincia</label>
+                                {{-- Se convierte a <select> si hay catálogo --}}
+                                    <input type="text" name="domicilio[provincia]" class="form-control form-control-sm">
                             </div>
                         </div>
                     </div>
@@ -208,35 +202,33 @@
                             <div class="form-group col-md-2 mb-2">
                                 <label class="mb-1">Sexo <span class="text-danger">*</span></label>
                                 <select class="form-control form-control-sm" name="medico[sexo]" required>
-                                    @foreach(['F','M','X','O'] as $sx)
-                                    <option value="{{ $sx }}" {{ old('medico.sexo')===$sx ? 'selected' :'' }}>{{ $sx }}
-                                    </option>
-                                    @endforeach
+                                    <option value="F">Mujer (F)</option>
+                                    <option value="M">Hombre (M)</option>
+                                    <option value="X">No binario (X)</option>
+                                    <option value="O">Otro (O)</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="text-info font-weight-bold small mb-2">Matrícula</div>
                         <div class="form-row">
-                            <div class="form-group col-md-2 mb-2">
-                                <label class="mb-1">Tipo <span class="text-danger">*</span></label>
-                                <select class="form-control form-control-sm" name="medico[matricula][tipo]" required>
-                                    <option value="MN" {{ old('medico.matricula.tipo')==='MN' ? 'selected' :'' }}>MN
-                                    </option>
-                                    <option value="MP" {{ old('medico.matricula.tipo')==='MP' ? 'selected' :'' }}>MP
-                                    </option>
+                            <div class="form-group col-md-2">
+                                <label>Tipo matrícula</label>
+                                <select name="medico[matricula][tipo]" class="form-control form-control-sm">
+                                    <option value="MN">MN</option>
+                                    <option value="MP">MP</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-3 mb-2">
-                                <label class="mb-1">Número <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="medico[matricula][numero]"
-                                    value="{{ old('medico.matricula.numero') }}" required>
+                            <div class="form-group col-md-4">
+                                <label>Número</label>
+                                <input type="text" name="medico[matricula][numero]" class="form-control form-control-sm"
+                                    placeholder="Sólo dígitos (máx. 9)">
                             </div>
-                            <div class="form-group col-md-4 mb-2">
-                                <label class="mb-1">Provincia (si MP)</label>
-                                <input type="text" class="form-control form-control-sm"
-                                    name="medico[matricula][provincia]" value="{{ old('medico.matricula.provincia') }}"
-                                    placeholder="Ej: Buenos Aires">
+                            <div class="form-group col-md-6">
+                                <label>Provincia (requerida si MP)</label>
+                                {{-- Se completa por JS --}}
+                                <input type="text" name="medico[matricula][provincia]"
+                                    class="form-control form-control-sm" placeholder="Provincia">
                             </div>
                         </div>
                     </div>
@@ -327,8 +319,8 @@
 
                     {{-- Acciones --}}
                     <div class="mt-3 d-flex">
-                        <a href="{{ route('empleados.recetas') }}" class="btn-ejornal btn-ejornal-base">Volver</a>
-                        <button type="submit" class="btn-ejornal btn-ejornal-gris-claro mr-2">Generar receta</button>
+                        <a href="{{ route('empleados.recetas') }}" class="btn-ejornal btn-ejornal-gris-claro">Volver</a>
+                        <button type="submit" class="btn-ejornal btn-ejornal-base mr-2">Generar receta</button>
                     </div>
                 </form>
             </div>

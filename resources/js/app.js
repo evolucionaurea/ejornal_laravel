@@ -23,6 +23,8 @@ if(route=='/admin/clientes') require('./admin/clientes')
 if(route=='admin.clientes.show') require('./admin/admin_tablas')
 if(route=='admin.clientes.show') require('./admin/clientes/agendas')
 if(route=='/admin/medicamentos') require('./admin/medicamentos')
+if(route=='admin.recetas') require('./admin/recetas/index')
+if(route=='admin.recetas.show') require('./admin/recetas/index')
 
 if(route=='/admin/movimiento_medicamentos') require('./admin/medicamentos/movimientos')
 
@@ -113,6 +115,8 @@ if(route=='enfermeria.create') {
 if(route=='empleados/agenda') require('./empleados/agenda')
 
 if(route=='empleados.recetas.create') require('./empleados/recetas/create')
+if(route=='empleados.recetas') require('./empleados/recetas/index')
+if(route=='empleados.recetas.show') require('./empleados/recetas/index')
 
 
 //CLIENTES

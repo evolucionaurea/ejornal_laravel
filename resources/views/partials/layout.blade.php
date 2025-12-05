@@ -58,7 +58,7 @@
 
 	{{-- <script defer type="text/javascript" src="{{asset('js/lib/chart.min.js')}}"></script> --}}
 	{{-- Graficos con Chart JS --}}
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" ></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js"></script>
 	{{-- Graficos con Chart JS --}}
 	<script type="text/javascript" src="{{ asset('js/lib/jquery-3.3.1.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/lib/jquery-ui.js') }}"></script>
@@ -95,8 +95,8 @@
 
 
 	@php
-		$routeName = Route::currentRouteName();
-		$routeJsBase = 'js' . str_replace('.', '/', $routeName);
+	$routeName = Route::currentRouteName();
+	$routeJsBase = 'js' . str_replace('.', '/', $routeName);
 	@endphp
 	<div>{{$routeJsBase}}</div>
 	@if (file_exists(public_path($routeJsBase . '.min.js')))
