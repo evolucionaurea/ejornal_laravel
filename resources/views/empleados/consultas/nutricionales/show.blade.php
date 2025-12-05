@@ -110,7 +110,7 @@
 
 							<div class="text-muted font-italic">No se ha cargado carátula</div>
 							<hr>
-							<a href="{{ route('empleados.nominas.caratulas.create', $nutricional->nomina->id) }}" class="btn btn-primary">
+							<a href="{{ url('empleados/caratulas/create', $nutricional->nomina->id) }}" class="btn btn-primary">
 								<i class="fal fa-plus"></i>
 								<span>Crear Carátula</span>
 							</a>

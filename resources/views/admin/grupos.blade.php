@@ -14,7 +14,7 @@
 			<h2>Listado de grupos empresarios</h2>
 			<p>Aquí puedes ver el listado de los grupos empresarios del sistema</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('grupos.create')}}">
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('admin/grupos/create')}}">
 					<i class="fas fa-plus-circle"></i> Nuevo grupo
 				</a>
 			</div>
@@ -54,7 +54,7 @@
 							</a>
 						</td>
 						<td class="acciones_tabla" scope="row">
-							<a title="Editar" href="{{route('grupos.edit', $grupo->id)}}">
+							<a title="Editar" href="{{url('admin/grupos/'.$grupo->id.'/edit')}}">
 								<i class="fas fa-pen"></i>
 							</a>
 						</td>

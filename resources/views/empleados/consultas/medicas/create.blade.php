@@ -77,7 +77,7 @@
 					<div class="form-group col-md-3">
 						<label>Fecha <span style="color: red;">*</span> </label>
 						<input required id="data_picker_gral" name="fecha" type="text" class="form-control"
-							value="{{ old(" fecha") }}">
+							value="{{ old("fecha") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Amerita salida <span style="color: red;">*</span></label>

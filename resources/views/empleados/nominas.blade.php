@@ -17,16 +17,24 @@
 			<p>Aquí puede ver el listado de trabajadores de la empresa</p>
 			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('nominas.create')}}"><i
-						class="fas fa-plus-circle fa-fw"></i> Nuevo trabajador</a>
-				<a data-toggle="modal" data-target="#cargar_nominas_excel" class="btn-ejornal btn-ejornal-success"
-					href="#"><i class="fas fa-file-excel fa-fw"></i>Carga masiva</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('/empleados/nominas/create')}}">
+					<i class="fas fa-plus-circle fa-fw"></i> 
+					Nuevo trabajador
+				</a>
+				<a data-toggle="modal" data-target="#cargar_nominas_excel" class="btn-ejornal btn-ejornal-success" href="#">
+					<i class="fas fa-file-excel fa-fw"></i> 
+					Carga masiva
+				</a>
 
-				<a href="{{route('/empleados/nominas/historial')}}" class="btn-ejornal btn-dark"><i
-						class="fas fa-file-excel fa-fw"></i> Historial</a>
+				<a href="{{route('/empleados/nominas/historial')}}" class="btn-ejornal btn-dark">
+					<i class="fas fa-file-excel fa-fw"></i> 
+					Historial
+				</a>
 			</div>
 			@else
-			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo trabajador</i></div>
+			<div class="small text-muted">
+				<i>Debe fichar para poder agregar un nuevo trabajador</i>
+			</div>
 			@endif
 		</div>
 

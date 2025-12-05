@@ -107,8 +107,7 @@ class EmpleadosComunicacionesLivianas extends Controller
 			->where('tareas_livianas.id_cliente', auth()->user()->id_cliente_actual)
 			->select(
 				'nominas.nombre', 'nominas.email', 'nominas.estado', 'nominas.telefono',
-				DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio', 'tareas_livianas.fecha_final',
-				'tareas_livianas.fecha_regreso_trabajar', 'tareas_livianas.archivo', 'tareas_livianas.id'
+				DB::raw('tareas_livianas_tipos.nombre nombre_tarea_liviana'), 'tareas_livianas.fecha_inicio', 'tareas_livianas.fecha_final', 'tareas_livianas.fecha_regreso_trabajar', 'tareas_livianas.archivo', 'tareas_livianas.id', 'tareas_livianas.id_cliente'
 			)
 			->first();
 

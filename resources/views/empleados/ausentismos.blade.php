@@ -16,7 +16,7 @@
 			<p>Aquí puede ver el listado de ausentismos de la empresa</p>
 			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('ausentismos.create')}}"><i
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('empleados/ausentismos/create')}}"><i
 						class="fas fa-plus-circle"></i> Nuevo ausentismo</a>
 			</div>
 			@else

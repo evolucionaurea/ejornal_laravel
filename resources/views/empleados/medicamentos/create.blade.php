@@ -77,14 +77,4 @@
 	</div>
 </div>
 
-<script type="text/javascript">
-
-window.addEventListener("load", function(event) {
-
-	$('.select_2').select2();
-
-});
-
-</script>
-
 @endsection

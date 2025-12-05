@@ -16,7 +16,7 @@
 			<p>Aquí puede ver el listado de consultas médicas de la empresa</p>
 			@if( (auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicas.create')}}">
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('empleados/consultas/medicas/create')}}">
 					<i class="fas fa-plus-circle"></i> Nueva consulta médica
 				</a>
 			</div>

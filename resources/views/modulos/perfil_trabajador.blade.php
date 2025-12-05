@@ -32,7 +32,7 @@
 			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center" style="cursor: pointer;">
 				<span>Carátula</span>
 				@if ($caratula)
-				<a href="{{ route('empleados.nominas.caratulas.edit', $trabajador->id) }}" class="btn btn-tiny btn-primary">
+				<a href="{{ url('empleados/caratulas/edit', $trabajador->id) }}" class="btn btn-tiny btn-primary">
 					<i class="fal fa-pencil fa-fw"></i>
 					<span>Editar carátula</span>
 				</a>
@@ -67,7 +67,7 @@
 				</div>
 				@else
 				<div class="p-4 alert alert-info">Sin contenido cargado aún</div>
-				<a href="{{ route('empleados.nominas.caratulas.create', $trabajador->id) }}" class="btn btn-primary">
+				<a href="{{ url('empleados/caratulas/create', $trabajador->id) }}" class="btn btn-primary">
 					<i class="fal fa-plus"></i>
 					<span>Crear carátula</span>
 				</a>
@@ -279,13 +279,9 @@
 			</div>
 		</div>
 
-
-	</div>
-
-	<div class="accordion w-100" id="accordionInfoInicial">
 		{{-- Acorddeon Info Principal --}}
 		<div class="card">
-			<div class="card-header bg-dark text-white" id="headingInfoInicial">
+			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingInfoInicial">
 				<h2 class="mb-0 d-flex">
 					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
 						data-target="#collapseInfoInicial" aria-expanded="false" aria-controls="collapseInfoInicial">

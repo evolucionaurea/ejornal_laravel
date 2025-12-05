@@ -16,7 +16,9 @@
 			<h2>Listado de usuarios</h2>
 			<p>Aquí puede ver el listado de los usuarios del sistema</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('users.create')}}"><i class="fas fa-plus-circle"></i> Nuevo usuario</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{url('admin/users/create')}}">
+					<i class="fas fa-plus-circle fa-fw"></i> Nuevo usuario
+				</a>
 			</div>
 		</div>
 

@@ -57,7 +57,7 @@ class EmpleadosCaratulaController extends Controller
 					['path' => Paginator::resolveCurrentPath()]
 			); */
 
-			return view('empleados.nominas.caratulas', compact('clientes'));
+			return view('empleados.caratulas', compact('clientes'));
 	}
 	public function busqueda(Request $request)
 	{
@@ -156,7 +156,7 @@ class EmpleadosCaratulaController extends Controller
 				->get();
 		}
 		
-		return view('empleados.nominas.caratulas.create', compact('trabajador', 'patologias', 'clientes', 'nominas'));
+		return view('empleados.caratulas.create', compact('trabajador', 'patologias', 'clientes', 'nominas'));
 	}
 
 	/**
@@ -208,7 +208,7 @@ class EmpleadosCaratulaController extends Controller
 	{
 		$clientes = $this->getClientesUser();
 		$trabajador = Nomina::with('cliente')->where('id',$id)->first();
-		return view('empleados.nominas.caratulas.show', compact('clientes','trabajador'));
+		return view('empleados.caratulas.show', compact('clientes','trabajador'));
 	}
 	public function busqueda_trabajador(Request $request)
 	{
@@ -262,7 +262,7 @@ class EmpleadosCaratulaController extends Controller
 
 		//dd($caratula->patologias->count());
 
-		return view('empleados.nominas.caratulas.edit',compact('caratula','clientes','patologias'));
+		return view('empleados.caratulas.edit',compact('caratula','clientes','patologias'));
 	}
 
 	/**

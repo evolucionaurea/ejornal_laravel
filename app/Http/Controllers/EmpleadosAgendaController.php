@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Traits\Clientes;
 use App\User;
+use App\Nomina;
 use App\Agenda;
 use App\AgendaEstado;
 use App\AgendaMotivo;
@@ -22,11 +23,19 @@ class EmpleadosAgendaController extends Controller
 
 		$clientes = $this->getClientesUser();
 		$estados = AgendaEstado::all();	
+		$trabajadores = Nomina::where('id_cliente',auth()->user()->id_cliente_actual)->get();
+		
 		$usuarios = User::with(['especialidad','rol','cliente_actual'])
-			->where('id_cliente_actual',auth()->user()->id_cliente_actual)
+			//->where('id_cliente_actual',auth()->user()->id_cliente_actual)
+			->whereHas('clientes_user',function($query){
+				$query
+					->where('id_cliente',auth()->user()->id_cliente_actual)
+					->where('estado',1);
+			})
 			->get();
 
-		return view('empleados.agenda',compact('clientes','estados','usuarios'));
+		//dd($usuarios->toArray());
+		return view('empleados.agenda',compact('clientes','estados','trabajadores','usuarios'));
 	}
 
 	public function store(Request $request){
@@ -223,6 +232,9 @@ class EmpleadosAgendaController extends Controller
 		if(!is_null($request->user)){
 			$query->where('user_id',$request->user);
 		}
+		if(!is_null($request->trabajador)){
+			$query->where('nomina_id',$request->trabajador);
+		}
 
 		return response()->json([
 			'from' => $from,
@@ -258,6 +270,9 @@ class EmpleadosAgendaController extends Controller
 
 		if(!is_null($request->user)){
 			$qTurnos->where('user_id',$request->user);
+		}
+		if(!is_null($request->trabajador)){
+			$qTurnos->where('nomina_id',$request->trabajador);
 		}
 		
 		$turnos = $qTurnos->orderBy('fecha_inicio','asc')->take(5)->get();

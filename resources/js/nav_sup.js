@@ -1,36 +1,28 @@
 $(document).ready(() => {
 
-  let fecha = new Date();
-  $('.fichada_fecha_actual').text(fecha.getDate() + "/" + (fecha.getMonth() +1) + "/" + fecha.getFullYear());
+	let fecha = new Date();
+	$('.fichada_fecha_actual').text(`${fecha.getDate()} / ${fecha.getMonth() + 1} / ${fecha.getFullYear()}`);
 
-  $( ".click_fichada_huella" ).click(function() {
+	$(".click_fichada_huella").on('click', async btn => {
+		const response = await axios.get('horario_ultima_fichada')
+		$('.estado_trabajando_desde').text(response.data[0].ingreso)
+		mostrarReloj()
+	})
 
-    axios.get('horario_ultima_fichada')
-    .then(response => {
-      $('.estado_trabajando_desde').text(response.data[0].ingreso);
-    });
+	function mostrarReloj() {
 
+		const clock = new Date();
+		const hour = clock.getHours();
+		const minutes = clock.getMinutes();
+		const seconds = clock.getSeconds();
 
-    mostrarReloj();
-  });
+		const print_clock = `${hour}:${minutes}:${seconds}`;
 
-  let today = new Date();
+		$('.reloj_hora_actual').text(print_clock);
+		setTimeout(mostrarReloj, 1000);
 
-  function mostrarReloj()
-  {
-
-  clock = new Date();
-  hour =   clock.getHours();
-  minutes = clock.getMinutes();
-  seconds = clock.getSeconds();
-
-  print_clock = hour + ":" + minutes + ":" + seconds;
-
-  $('.reloj_hora_actual').text(print_clock);
-  setTimeout(mostrarReloj, 1000);
-
-  }
-  setTimeout(mostrarReloj, 1000);
+	}
+	setTimeout(mostrarReloj, 1000);
 
 
 });

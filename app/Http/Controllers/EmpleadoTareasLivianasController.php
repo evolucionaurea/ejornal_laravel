@@ -243,6 +243,7 @@ class EmpleadoTareasLivianasController extends Controller
 			'tareas_livianas.fecha_regreso_trabajar',
 			'tareas_livianas.archivo',
 			'tareas_livianas.id',
+			DB::raw('tareas_livianas.id_cliente'),
 			DB::raw('tareas_livianas.user user'),
 			DB::raw('comunicaciones_livianas.descripcion descripcion_comunicacion_liviana'),
 			DB::raw('tipos_comunicaciones_livianas.nombre tipo_comunicacion_liviana')

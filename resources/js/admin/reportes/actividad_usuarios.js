@@ -1,52 +1,52 @@
 import Tablas from '../../classes/Tablas.js';
 
-$(()=>{
+$(() => {
 
 
 	new Tablas({
-		controller:'/admin/reportes',
-		get_path:'/search_actividad_usuarios',
-		table:$('[data-table="actividades"]'),
-		modulo_busqueda:$('[data-toggle="busqueda-fecha"]'),
-		server_side:true,
-		responsive:true,
+		controller: '/admin/reportes',
+		get_path: '/search_actividad_usuarios',
+		table: $('[data-table="actividades"]'),
+		modulo_busqueda: $('[data-toggle="busqueda-fecha"]'),
+		server_side: true,
+		responsive: true,
 
-		datatable_options:{
-			order:[[2,'desc']],
-			columns:[
+		datatable_options: {
+			order: [[2, 'desc']],
+			columns: [
 
 				{
-					data:null,
-					name:'user',
-					render:v=>{
-						if(v.user==null) return `<span class="text-muted font-italic">[dato faltante]</span>`
+					data: null,
+					name: 'user',
+					render: v => {
+						if (v.user == null) return `<span class="text-muted font-italic">[dato faltante]</span>`
 						return `
 							<div>${v.user}</div>
-							<span class="badge badge-${v.estado==1?'success':'danger'}">${v.estado==1?'activo':'inactivo'}</span>
+							<span class="badge badge-${v.estado == 1 ? 'success' : 'danger'}">${v.estado == 1 ? 'activo' : 'inactivo'}</span>
 						`
 					}
 				},
 				{
-					data:'cliente_nombre',
-					name:'cliente_nombre',
-					render:v=>{
-						if(v==null) return ''
+					data: 'cliente_nombre',
+					name: 'cliente_nombre',
+					render: v => {
+						if (v == null) return ''
 						return v
 					}
 				},
 				{
-					data:'created_at_formatted',
-					name:'created_at'
+					data: 'created_at_formatted',
+					name: 'created_at'
 				},
 				{
-					data:'actividad',
-					name:'actividad'
+					data: 'actividad',
+					name: 'actividad'
 				},
 				{
-					data:'trabajador_nombre',
-					name:'trabajador_nombre',
-					render:v=>{
-						if(v==null) return ''
+					data: 'trabajador_nombre',
+					name: 'trabajador_nombre',
+					render: v => {
+						if (v == null) return ''
 						return v
 					}
 				}

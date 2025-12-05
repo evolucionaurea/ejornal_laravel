@@ -80,8 +80,8 @@
 						<a href="{{url('/empleados/nominas')}}">Listado</a>
 					</ol>
 					@if(auth()->user()->fichada == 1 || !auth()->user()->fichar)
-					<ol data-route="nominas.create" class="{{ setActiveSub('nominas.create') }}">
-						<a href="{{route('nominas.create')}}">Crear Trabajador</a>
+					<ol data-route="/empleados/nominas/create" class="{{ setActiveSub('/empleados/nominas/create') }}">
+						<a href="{{url('/empleados/nominas/create')}}">Crear Trabajador</a>
 					</ol>
 					@endif
 
@@ -249,6 +249,9 @@
 					</ol>
 					<ol data-route="/empleados/liquidacion" class="{{ setActiveSub('/empleados/liquidacion') }}">
 						<a href="{{url('/empleados/liquidacion')}}">Liquidacion</a>
+					</ol>
+					<ol >
+						<a href="{{asset('archivos/instructivo_de_uso_ejornal.pdf')}}" target="_blank" >Descargar Manual de Uso</a>
 					</ol>
 				</ul>
 			</div>
