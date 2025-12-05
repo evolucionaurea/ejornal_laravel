@@ -32,7 +32,8 @@ const jsEntries = {
 		'reportes.consultas',
 		'reportes.fichadas_nuevas',
 		'reportes.preocupacionales',
-		'reportes.tareas_adecuadas'
+		'reportes.tareas_adecuadas',
+		'recetas'
 	],
 	empleados: [
 		'resumen',
@@ -88,6 +89,7 @@ const jsEntries = {
 		'preocupacionales.create',
 		'preocupacionales.edit',
 
+		'recetas',
 		'recetas.create'
 
 	],
@@ -133,5 +135,5 @@ Object.keys(jsEntries).forEach(key => {
 //mix.sourceMaps();
 
 
-mix.browserSync('http://ejornal.test/');
+mix.browserSync('http://localhost:3000/');
 mix.version();
