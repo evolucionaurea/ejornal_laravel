@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+require('dotenv').config(); // leer .env
 
 mix.sass('resources/sass/app.scss', 'public/css')
 //mix.js('resources/js/app.js', 'public/js');
@@ -111,29 +112,51 @@ const jsEntries = {
 	]
 }
 
-// compilar los archivos de empleados
+// compilar los archivos de cada grupo
 Object.keys(jsEntries).forEach(key => {
-	const items = jsEntries[key];
-	const folder = `resources/js/${key}/`;
-	items.forEach(item => {
-		let subfolder = item.includes('.') ? `${item.split('.')[0]}/` : '';
-		//const file = item.includes('.') ? (item.split('.').length == 3 ? `${item.split('.')[1]}.${item.split('.')[2]}` : item.split('.')[1]) : item;
-		let file;
-		if (item.includes('.')) {
-			if (item.split('.').length == 3) {
-				subfolder = `${subfolder}/${item.split('.')[1]}/`
-				file = item.split('.')[2];
-			} else {
-				file = item.split('.')[1];
-			}
-		} else {
-			file = item;
-		}
-		mix.js(`${folder}${subfolder}${file}.js`, `public/js/${key}/${subfolder}${file}.js`);
-	});
+    const items = jsEntries[key];
+    const folder = `resources/js/${key}/`;
+
+    items.forEach(item => {
+        let subfolder = item.includes('.') ? `${item.split('.')[0]}/` : '';
+        let file;
+
+        if (item.includes('.')) {
+            const parts = item.split('.');
+            if (parts.length === 3) {
+                subfolder = `${subfolder}/${parts[1]}/`;
+                file = parts[2];
+            } else {
+                file = parts[1];
+            }
+        } else {
+            file = item;
+        }
+
+        mix.js(
+            `${folder}${subfolder}${file}.js`,
+            `public/js/${key}/${subfolder}${file}.js`
+        );
+    });
 });
-//mix.sourceMaps();
 
 
-mix.browserSync('http://localhost:3000/');
+const appUrl = process.env.APP_URL || 'http://ejornal_laravel.test';
+
+if (!mix.inProduction()) {
+    mix.browserSync({
+        proxy: appUrl,
+        port: 3000,
+        open: true,
+        notify: false,
+        files: [
+            'resources/views/**/*.blade.php',
+            'public/js/**/*.js',
+            'public/css/**/*.css',
+        ],
+    });
+}
+
 mix.version();
+
+
