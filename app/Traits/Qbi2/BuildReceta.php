@@ -453,29 +453,37 @@ protected function mapLugarAtencion(Request $req): array
     $cobertura    = $this->mapCobertura($req);
     $lugar        = $this->mapLugarAtencion($req);
 
-    // --- Fecha del paciente: la API DEMOSTRÓ aceptar ISO (YYYY-MM-DD) aunque se contradiga.
-    //     Aseguramos ese formato y que no sea futura.
+
+    // --- Fecha paciente en ISO ---
     if (!empty($paciente['fechaNacimiento'])) {
         try {
             $d = \Carbon\Carbon::parse($paciente['fechaNacimiento']);
             if ($d->greaterThan(\Carbon\Carbon::today())) {
                 $d = \Carbon\Carbon::yesterday();
             }
-            // Formato final que va al JSON → "2003-03-11" como en el curl que me pasaron por mail
             $paciente['fechaNacimiento'] = $d->format('Y-m-d');
         } catch (\Throwable $e) {
-            // Si no se puede parsear, preferimos NO mandar el campo antes que romper el tipo
             unset($paciente['fechaNacimiento']);
         }
     }
 
-    // --- Base de payload
+    // AQUÍ: inyectamos la cobertura dentro de paciente
+    if (!empty($cobertura)) {
+        \Log::info('[QBI2] Cobertura enviada en receta', ['cobertura' => $cobertura]);
+        $paciente['cobertura'] = $cobertura;
+    }
+
+
     $payload = [
         'paciente'      => $paciente,
         'medico'        => $medico,
         'medicamentos'  => $medicamentos,
         'clienteAppId'  => (int) (config('qbi2.client_app_id') ?? 510),
     ];
+
+    if (!empty($lugar)) {
+        $payload['lugarAtencion'] = $lugar;
+    }
 
     // Siempre que mapLugarAtencion devuelva algo, lo mandamos
     if (!empty($lugar['domicilio'])) {
@@ -578,6 +586,15 @@ protected function mapLugarAtencion(Request $req): array
                         ."• Fechas en formato DD/MM/AAAA válidas.\n"
                         ."• Campos obligatorios de domicilio (calle y número) completos.";
                 }
+
+                if ((string) $code === 'QBI166') {
+                    $msg = "El servicio de validación de QBI está presentando inconvenientes.\n"
+                        . "Intentá nuevamente en unos minutos.\n\n"
+                        . "Si el problema persiste, contactá soporte con el ID de request que figura en el log.";
+                }
+
+
+
             } elseif (is_string($rawError) && trim($rawError) !== '') {
                 $msg = $rawError;
             }
