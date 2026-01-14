@@ -163,8 +163,9 @@ trait BuildReceta
         'medico.matricula.provincia' => 'nullable|string|max:60',
 
         // Paciente (opcionales)
-        'paciente.apellido'        => 'nullable|string|max:80',
-        'paciente.nombre'          => 'nullable|string|max:80',
+        'paciente.apellido'        => 'required|string|max:80',
+        'paciente.nombre'          => 'required|string|max:80',
+        'paciente.email'          => 'required|email|max:150',
         'paciente.tipoDoc'         => 'nullable|string|max:20',
         'paciente.nroDoc'          => 'nullable|string|max:20',
         'paciente.sexo'            => 'nullable|in:F,M,X,O',

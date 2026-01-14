@@ -25017,12 +25017,11 @@ $(function () {
         name: 'ingreso',
         orderable: false,
         render: function render(v, type, row, meta) {
-          //console.log(meta.settings.json.user.permiso_edicion_fichada);
-
+          var infoIngreso = "\n\t\t\t\t\t\t<div class=\"small text-muted mt-1\">\n\t\t\t\t\t\t\t<div><b>SO:</b> ".concat(v.sistema_operativo || '-', "</div>\n\t\t\t\t\t\t\t<div><b>Nav:</b> ").concat(v.browser || '-', "</div>\n\t\t\t\t\t\t\t<div><b>Disp:</b> ").concat(v.dispositivo || '-', "</div>\n\t\t\t\t\t\t\t<div><b>IP:</b> ").concat(v.ip || '-', "</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t");
           if (meta.settings.json.user.permiso_edicion_fichada == 1) {
-            return "\n\t\t\t\t\t\t\t\t<div>".concat(v.ingreso_formatted, "</div>\n\t\t\t\t\t\t\t\t<a href=\"#\" class=\"floating-btn\" title=\"Editar Fecha/Hora\" data-toggle=\"editar-fichada\" data-action=\"ingreso\" data-fecha=\"").concat(v.ingreso_carbon, "\">\n\t\t\t\t\t\t\t\t\t<i class=\"fa fa-pencil\"></i>\n\t\t\t\t\t\t\t\t</a>");
+            return "\n\t\t\t\t\t\t\t<div>".concat(v.ingreso_formatted, "</div>\n\t\t\t\t\t\t\t").concat(infoIngreso, "\n\t\t\t\t\t\t\t<a href=\"#\" class=\"floating-btn\" title=\"Editar Fecha/Hora\" data-toggle=\"editar-fichada\" data-action=\"ingreso\" data-fecha=\"").concat(v.ingreso_carbon, "\">\n\t\t\t\t\t\t\t<i class=\"fa fa-pencil\"></i>\n\t\t\t\t\t\t\t</a>");
           }
-          return v.ingreso_formatted;
+          return "<div>".concat(v.ingreso_formatted, "</div>").concat(infoIngreso);
         }
       }, {
         className: 'align-middle has-floating-btn',
@@ -25030,10 +25029,27 @@ $(function () {
         name: 'egreso',
         render: function render(v, type, row, meta) {
           if (v.egreso == null) return '<i class="text-muted">[aún trabajando]</i>';
-          if (meta.settings.json.user.permiso_edicion_fichada == 1) {
-            return "\n\t\t\t\t\t\t\t\t<div>".concat(v.egreso_formatted, "</div>\n\t\t\t\t\t\t\t\t<a href=\"#\" class=\"floating-btn\" title=\"Editar Fecha/Hora\" data-toggle=\"editar-fichada\" data-action=\"egreso\" data-fecha=\"").concat(v.egreso_carbon, "\">\n\t\t\t\t\t\t\t\t\t<i class=\"fa fa-pencil fa-fw\"></i>\n\t\t\t\t\t\t\t\t</a>");
+
+          // egreso_dispositivo_dif puede venir null, "{}", {}, o ya parseado
+          var egresoDif = v.egreso_dispositivo_dif;
+
+          // Si viene string JSON
+          if (typeof egresoDif === 'string') {
+            try {
+              egresoDif = JSON.parse(egresoDif);
+            } catch (e) {
+              egresoDif = {};
+            }
           }
-          return v.egreso_formatted;
+
+          // Normalizar null
+          if (!egresoDif) egresoDif = {};
+          var hasDif = Object.keys(egresoDif).length > 0;
+          var infoEgreso = hasDif ? "\n\t\t\t\t\t\t\t<div class=\"small mt-1\">\n\t\t\t\t\t\t\t<span class=\"badge badge-warning\">Egreso desde otro dispositivo</span>\n\t\t\t\t\t\t\t<div class=\"text-muted mt-1\">\n\t\t\t\t\t\t\t\t<div><b>SO:</b> ".concat(egresoDif.sistema_operativo || '-', "</div>\n\t\t\t\t\t\t\t\t<div><b>Nav:</b> ").concat(egresoDif.browser || '-', "</div>\n\t\t\t\t\t\t\t\t<div><b>Disp:</b> ").concat(egresoDif.dispositivo || '-', "</div>\n\t\t\t\t\t\t\t\t<div><b>IP:</b> ").concat(egresoDif.ip || '-', "</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t") : "\n\t\t\t\t\t\t\t<div class=\"small text-muted mt-1\">\n\t\t\t\t\t\t\t<span class=\"badge badge-success\">Mismo dispositivo</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t";
+          if (meta.settings.json.user.permiso_edicion_fichada == 1) {
+            return "\n\t\t\t\t\t\t\t<div>".concat(v.egreso_formatted, "</div>\n\t\t\t\t\t\t\t").concat(infoEgreso, "\n\t\t\t\t\t\t\t<a href=\"#\" class=\"floating-btn\" title=\"Editar Fecha/Hora\" data-toggle=\"editar-fichada\" data-action=\"egreso\" data-fecha=\"").concat(v.egreso_carbon, "\">\n\t\t\t\t\t\t\t<i class=\"fa fa-pencil fa-fw\"></i>\n\t\t\t\t\t\t\t</a>");
+          }
+          return "<div>".concat(v.egreso_formatted, "</div>").concat(infoEgreso);
         }
       }, {
         className: 'align-middle',
@@ -25044,25 +25060,11 @@ $(function () {
           return v.egreso == null ? '<i class="text-muted">[aún trabajando]</i>' : "".concat(v.horas_minutos_trabajado);
         }
       }, {
-        className: 'align-middle',
-        data: null,
-        name: 'dispositivo',
-        render: function render(v) {
-          var output = "<div>".concat(v.sistema_operativo, "</div>");
-          if (v.browser) output += "<div class=\"small\">Nav: ".concat(v.browser, "</div>");
-          if (v.dispositivo) output += "<div class=\"text-muted small\">Disp: ".concat(v.dispositivo, "</div>");
-          return output;
-        }
-      }, {
-        className: 'align-middle',
-        data: 'ip',
-        name: 'ip'
-      }, {
         data: null,
         className: 'align-middle',
         name: 'actions',
         render: function render(v) {
-          return "\n\t\t\t\t\t\t<div class=\"acciones_tabla\">\n\t\t\t\t\t\t\t<button data-toggle=\"delete\" title=\"Eliminar\" class=\"\">\n\t\t\t\t\t\t\t\t<i class=\"fa fa-trash\"></i>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t</div>";
+          return "\n\t\t\t\t\t\t<div class=\"acciones_tabla\">\n\t\t\t\t\t\t\t<button data-toggle=\"delete\" title=\"Eliminar\" class=\"\">\n\t\t\t\t\t\t\t<i class=\"fa fa-trash\"></i>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t</div>";
         }
       }]
     }

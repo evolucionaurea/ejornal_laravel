@@ -7,10 +7,12 @@
 		<div class="row">
 
 			<div class="col-lg-4">
-				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="{{$fecha_inicio ?? ''}}">
+				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm"
+					value="{{$fecha_inicio ?? ''}}">
 			</div>
 			<div class="col-lg-4">
-				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="{{$fecha_final ?? ''}}">
+				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm"
+					value="{{$fecha_final ?? ''}}">
 			</div>
 
 			<div class="col-lg-4">
@@ -29,11 +31,14 @@
 
 	<div class="col-lg-4 border-left align-items-center d-flex flex-wrap">
 
-		<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-2"><i class="fas fa-search"></i> Buscar</button>
-		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!"><i class="fas fa-list"></i> Mostrar todo</button>
+		<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro mb-2"><i class="fas fa-search"></i>
+			Buscar</button>
+		<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro mb-2" href="#!"><i
+				class="fas fa-list"></i> Mostrar todo</button>
 
 		@if(isset($export))
-		<button data-toggle="export" data-href="{{ url(Route::currentRouteName().'/exportar') }}" type="button" class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
+		<button data-toggle="export" data-href="{{ url('admin/reportes_fichadas_nuevas/exportar') }}" type="button"
+			class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
 		@endif
 
 	</div>

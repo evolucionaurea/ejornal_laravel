@@ -392,8 +392,10 @@ class EmpleadoConsultaMedicaController extends Controller
 			]);
 		}
 
-	
-		return redirect('empleados/consultas/medicas')->with('success','Consulta médica guardada con éxito');
+
+		$idNomina = $request->nomina;
+		return redirect('empleados/recetas/create' . ($idNomina ? ('?id_nomina=' . urlencode($idNomina)) : ''))
+			->with('success', 'Consulta médica guardada con éxito. Créa la receta médica.');
 
 
 	}

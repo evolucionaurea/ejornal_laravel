@@ -161,7 +161,44 @@
     on ? !$l.find('.msw').length && $l.append(spinnerSvg()) : $l.find('.msw').remove();
   }
 
+  // ===== Loader sobre el formulario (solo para cuando mandamos id_nomina en url) =====
+  var formLoaderReady = false;
+  function ensureFormLoaderCSS() {
+    if (formLoaderReady) return;
+    formLoaderReady = true;
+    var css = "\n    .fl-back{\n      position:absolute; inset:0;\n      background: rgba(255,255,255,.75);\n      display:flex; align-items:center; justify-content:center;\n      z-index: 9998;\n      border-radius: 12px;\n    }\n    @media (prefers-color-scheme: dark){\n      .fl-back{ background: rgba(15,23,42,.72); }\n    }\n    .fl-box{\n      display:flex; align-items:center; gap:10px;\n      padding:10px 14px;\n      border-radius: 12px;\n      background: rgba(255,255,255,.95);\n      box-shadow: 0 10px 30px rgba(0,0,0,.18);\n      font-size: 14px;\n      color:#0f172a;\n    }\n    @media (prefers-color-scheme: dark){\n      .fl-box{ background: rgba(2,6,23,.92); color:#e2e8f0; }\n    }\n    .fl-spin{\n      width:18px; height:18px;\n      border-radius:999px;\n      border: 3px solid rgba(0,0,0,.12);\n      border-top-color: rgba(0,0,0,.55);\n      animation: flrot .9s linear infinite;\n    }\n    @media (prefers-color-scheme: dark){\n      .fl-spin{\n        border-color: rgba(255,255,255,.15);\n        border-top-color: rgba(255,255,255,.65);\n      }\n    }\n    @keyframes flrot{to{transform:rotate(360deg)}}\n  ";
+    document.head.appendChild(Object.assign(document.createElement('style'), {
+      textContent: css
+    }));
+  }
+  function showFormLoader() {
+    var msg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Cargando datos del trabajador…';
+    ensureFormLoaderCSS();
+    var $f = $('#recetaForm');
+    if (!$f.length) return;
+
+    // contenedor que cubrimos
+    var $wrap = $f.closest('.tarjeta');
+    var $host = $wrap.length ? $wrap : $f;
+
+    // evitar duplicados
+    if ($host.find('.fl-back').length) return;
+
+    // asegurar posicionamiento
+    if ($host.css('position') === 'static') $host.css('position', 'relative');
+    var $ov = $("\n    <div class=\"fl-back\" aria-live=\"polite\" aria-busy=\"true\">\n      <div class=\"fl-box\">\n        <div class=\"fl-spin\"></div>\n        <div class=\"fl-msg\">".concat(msg, "</div>\n      </div>\n    </div>\n  "));
+    $host.append($ov);
+  }
+  function hideFormLoader() {
+    var $f = $('#recetaForm');
+    if (!$f.length) return;
+    var $wrap = $f.closest('.tarjeta');
+    var $host = $wrap.length ? $wrap : $f;
+    $host.find('.fl-back').remove();
+  }
+
   // ===== Helpers URL / fechas / select2 =====
+  var pendingFechaISO = '';
   function rurl(u) {
     try {
       if (!u) return '/';
@@ -183,7 +220,8 @@
   }
   var isoAEs = function isoAEs(iso) {
     if (!iso) return '';
-    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec((iso + '').trim());
+    var s = String(iso).trim();
+    var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/); // acepta "YYYY-MM-DD ..." también
     return m ? "".concat(m[3], "/").concat(m[2], "/").concat(m[1]) : '';
   };
   var esAISO = function esAISO(es) {
@@ -194,6 +232,12 @@
       mm = ('0' + m[2]).slice(-2);
     return "".concat(m[3], "-").concat(mm, "-").concat(dd);
   };
+  function normalizeISO(input) {
+    if (!input) return '';
+    var s = String(input).trim();
+    var m = s.match(/^(\d{4}-\d{2}-\d{2})/);
+    return m ? m[1] : '';
+  }
   function s2Small($sel) {
     var $w = $sel.next('.select2'),
       $s = $w.find('.select2-selection--single');
@@ -341,59 +385,120 @@
     set('paciente[nroDoc]', d.dni && String(d.dni));
     set('paciente[email]', d.email);
     set('paciente[telefono]', d.telefono);
-    var iso = esAISO(d.fechaNacimiento) || d.fechaNacimiento || '';
+
+    // ===== Fecha de nacimiento (normalizada + fallback hoy si viene vacío) =====
+    var iso = normalizeISO(d.fechaNacimiento) || esAISO(d.fechaNacimiento);
+    if (!iso) {
+      var t = new Date();
+      var mm = ('0' + (t.getMonth() + 1)).slice(-2);
+      var dd = ('0' + t.getDate()).slice(-2);
+      iso = "".concat(t.getFullYear(), "-").concat(mm, "-").concat(dd);
+    }
     $('[name="paciente[fechaNacimiento]"]').val(iso);
-    $('#paciente_fecha_visual').val(isoAEs(iso));
+    var $vis = $('#paciente_fecha_visual');
+    if ($vis.length) {
+      $vis.val(isoAEs(iso));
+    } else {
+      pendingFechaISO = iso;
+    }
+
+    // Domicilio
     set('domicilio[calle]', d.calle);
     set('domicilio[numero]', d.nro && String(d.nro));
     set('domicilio[localidad]', d.localidad);
     set('domicilio[codigoPostal]', d.cod_postal && String(d.cod_postal));
+
+    // si está el loader, lo dejamos como ya lo tenías
+    setTimeout(hideFormLoader, 50);
   }
   function initNomina() {
     var $s = $('#id_nomina');
     if (!$s.length) return;
+    var preset = String($s.data('preset') || '').trim();
+
+    // 🔄 Si viene preset (redirect desde consulta médica), mostramos loader
+    if (preset) {
+      showFormLoader('Cargando datos del trabajador…');
+    }
+
+    // =========================
+    // Ordenar opciones alfabéticamente (manteniendo la primera)
+    // =========================
     var opts = $s.find('option').toArray();
     if (opts.length > 1) {
-      var f = opts.shift();
+      var first = opts.shift();
       opts.sort(function (a, b) {
         return $(a).text().localeCompare($(b).text(), 'es', {
           sensitivity: 'base'
         });
       });
-      $s.empty().append(f, opts);
+      $s.empty().append(first, opts);
     }
+
+    // =========================
+    // Inicializar Select2
+    // =========================
     $s.select2({
       width: '100%',
       minimumInputLength: 0,
       dropdownParent: $(document.body)
     });
     s2Small($s);
+
+    // =========================
+    // Cambio de nómina → autocompletar paciente
+    // =========================
     var onCh = function onCh() {
       var v = $s.val();
       if (!v) {
         setPac({});
+        hideFormLoader();
         return;
       }
       var $o = $s.find('option:selected');
-      var full = $o.data('nombre') || ($o.text() || '').replace(/\s+—\s+.*$/, '').replace(/\(DNI:.*?\)/, '').trim();
+      var full = $o.attr('data-nombre') || $o.data('nombre') || ($o.text() || '').replace(/\s+—\s+.*$/, '').replace(/\(DNI:.*?\)/, '').trim();
       var _splitNombre = splitNombre(full),
         apellido = _splitNombre.apellido,
         nombre = _splitNombre.nombre;
+
+      // ✅ leer del atributo, no confiar en .data()
+      var fnac = ($o.attr('data-fecha-nacimiento') || '').trim() || ($o.data('fechaNacimiento') || '').toString().trim() || ($o.data('fecha-nacimiento') || '').toString().trim();
       setPac({
         nombre: nombre,
         apellido: apellido,
-        dni: $o.data('dni'),
-        email: $o.data('email'),
-        telefono: $o.data('telefono'),
-        fechaNacimiento: $o.data('fecha-nacimiento'),
-        calle: $o.data('calle'),
-        nro: $o.data('nro'),
-        localidad: $o.data('localidad'),
-        cod_postal: $o.data('cod-postal')
+        dni: $o.attr('data-dni') || $o.data('dni'),
+        email: $o.attr('data-email') || $o.data('email'),
+        telefono: $o.attr('data-telefono') || $o.data('telefono'),
+        fechaNacimiento: fnac,
+        // <-- acá
+        calle: $o.attr('data-calle') || $o.data('calle'),
+        nro: $o.attr('data-nro') || $o.data('nro'),
+        localidad: $o.attr('data-localidad') || $o.data('localidad'),
+        cod_postal: $o.attr('data-cod-postal') || $o.data('cod-postal')
       });
+      console.log(fnac);
     };
     $s.on('change select2:select', onCh);
-    if ($s.val()) onCh();
+
+    // =========================
+    // Caso 1: viene preset por querystring (?id_nomina=)
+    // =========================
+    if (preset && $s.find("option[value=\"".concat(preset, "\"]")).length) {
+      // Forzamos valor, disparamos change y dejamos que onCh quite el loader
+      $s.val(preset).trigger('change');
+      $s.trigger('change.select2');
+      return;
+    }
+
+    // =========================
+    // Caso 2: NO viene preset → comportamiento actual
+    // =========================
+    if ($s.val()) {
+      onCh();
+    } else {
+      // si no hay selección y había loader (caso raro), lo quitamos
+      hideFormLoader();
+    }
   }
 
   // ===== Cobertura (Financiador + Plan) =====
@@ -756,6 +861,13 @@
     var $vis = $('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" readonly>');
     var curISO = $iso.val();
     $vis.val(isoAEs(curISO)).insertAfter($iso);
+
+    // Si setPac corrió antes que initFecha, aplicamos la fecha pendiente
+    if (pendingFechaISO) {
+      $iso.val(pendingFechaISO);
+      $vis.val(isoAEs(pendingFechaISO));
+      pendingFechaISO = '';
+    }
     $iso.attr('type', 'hidden');
     $vis.on('keydown paste', function (e) {
       return e.preventDefault();

@@ -149,51 +149,78 @@ class AdminReporteController extends Controller
 
 		$fp = fopen('php://memory', 'w');
 		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
-		fputcsv($fp, [
-				'Empleado',
-				'Estado',
-				'Especialidad',
-				'Empresa',
+			fputcsv($fp, [
+			'Empleado',
+			'Estado',
+			'Especialidad',
+			'Empresa',
 
-				'Día Ingreso',
-				'Fecha Ingreso',
-				'Hora Ingreso',
+			'Día Ingreso',
+			'Fecha Ingreso',
+			'Hora Ingreso',
 
-				'Fecha Egreso',
-				'Hora Egreso',
+			'Fecha Egreso',
+			'Hora Egreso',
 
-				'Tiempo trabajado',
+			'Tiempo trabajado',
 
-				'Sistema Operativo',
-				'Dispositivo',
-				'Navegador',
-				'IP'
+			// Ingreso
+			'Sistema Operativo Ingreso',
+			'Dispositivo Ingreso',
+			'Navegador Ingreso',
+			'IP Ingreso',
+
+			// Egreso (solo si difiere; si no, vacío)
+			'Sistema Operativo Egreso',
+			'Dispositivo Egreso',
+			'Navegador Egreso',
+			'IP Egreso',
 		], ';');
 
-		foreach($fichadas as $fichada){
 
-			fputcsv($fp, [
-				$fichada->user->nombre,
-				$fichada->user->estado == 1 ? 'Activo' : 'Inactivo',
-				$fichada->user->especialidad->nombre,
-				$fichada->cliente ? $fichada->cliente->nombre : '',
+foreach ($fichadas as $fichada) {
 
-				//$fichada->ingreso.' al '.($fichada->egreso ?? 'aún trabajando'),
-				mb_convert_case($fichada->ingreso_carbon->translatedFormat('l'),MB_CASE_TITLE,'UTF-8'),
-				$fichada->ingreso_carbon->format('d/m/Y'),
-				$fichada->ingreso_carbon->format('H:i'),
+    // egreso_dispositivo_dif puede venir como null, string JSON o ya decodificado (según casts)
+    $eg = $fichada->egreso_dispositivo_dif;
 
-				$fichada->egreso ? $fichada->egreso_carbon->format('d/m/Y') : '[aún trabajando]',
-				$fichada->egreso ? $fichada->egreso_carbon->format('H:i') : '[aún trabajando]',
+    if (is_string($eg)) {
+        $eg = json_decode($eg, true);
+    } elseif (is_object($eg)) {
+        $eg = (array) $eg;
+    }
 
-				$fichada->egreso ? $fichada->horas_minutos_trabajado : '[aún trabajando]',
+    $eg = is_array($eg) ? $eg : [];
+    $has = count($eg) > 0;
 
-				$fichada->sistema_operativo,
-				$fichada->dispositivo,
-				$fichada->browser,
-				$fichada->ip
-			], ';');
-		}
+		fputcsv($fp, [
+			$fichada->user->nombre,
+			$fichada->user->estado == 1 ? 'Activo' : 'Inactivo',
+			$fichada->user->especialidad ? $fichada->user->especialidad->nombre : 'No aplica',
+			$fichada->cliente ? $fichada->cliente->nombre : '',
+
+			mb_convert_case($fichada->ingreso_carbon->translatedFormat('l'), MB_CASE_TITLE, 'UTF-8'),
+			$fichada->ingreso_carbon->format('d/m/Y'),
+			$fichada->ingreso_carbon->format('H:i'),
+
+			$fichada->egreso ? $fichada->egreso_carbon->format('d/m/Y') : '[aún trabajando]',
+			$fichada->egreso ? $fichada->egreso_carbon->format('H:i') : '[aún trabajando]',
+
+			$fichada->egreso ? $fichada->horas_minutos_trabajado : '[aún trabajando]',
+
+			// Ingreso (columnas de la fila)
+			$fichada->sistema_operativo,
+			$fichada->dispositivo,
+			$fichada->browser,
+			$fichada->ip,
+
+			// Egreso (solo si difiere)
+			$has ? ($eg['sistema_operativo'] ?? '') : '',
+			$has ? ($eg['dispositivo'] ?? '') : '',
+			$has ? ($eg['browser'] ?? '') : '',
+			$has ? ($eg['ip'] ?? '') : '',
+		], ';');
+	}
+
 
 		fseek($fp, 0);
 		header('Content-Type: text/csv');

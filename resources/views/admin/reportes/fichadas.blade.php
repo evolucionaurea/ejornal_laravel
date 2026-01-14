@@ -44,9 +44,6 @@
 						<th>Egreso</th>
 
 						<th>Tiempo trabajado</th>
-
-						<th>Sistema/Browser</th>
-						<th>IP</th>
 						<th class="text-right">Acciones</th>
 					</tr>
 				</thead>

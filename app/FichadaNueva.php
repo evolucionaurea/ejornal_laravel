@@ -18,14 +18,18 @@ class FichadaNueva extends Model
 	protected $table = 'fichadas_nuevas';
 
 	// Campos habilitados para ingresar
-	protected $fillable = ['ingreso', 'egreso', 'tiempo_dedicado', 'id_user', 'id_cliente', 'ip', 'dispositivo'];
+	protected $fillable = [
+		'ingreso', 'egreso', 'tiempo_dedicado', 'id_user', 'id_cliente', 'ip', 'dispositivo',
+		'sistema_operativo', 'browser', 'egreso_dispositivo_dif'
+	];
 
 	protected $appends = ['ingreso_carbon', 'ingreso_formatted','egreso_carbon','egreso_formatted','horas_minutos_trabajado'];
 
 
 	protected $casts = [
 		'ingreso' => 'datetime:d/m/Y - H:i:s',
-		'egreso' => 'datetime:d/m/Y - H:i:s'
+		'egreso' => 'datetime:d/m/Y - H:i:s',
+		'egreso_dispositivo_dif' => 'object',
 	];
 
 

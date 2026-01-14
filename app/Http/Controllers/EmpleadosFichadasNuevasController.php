@@ -33,12 +33,12 @@ class EmpleadosFichadasNuevasController extends Controller
 	}
 
 
-
 	public function store(Request $request)
 	{
+		$agent = new Agent();
 
-	  $agent = new Agent();
-	  if (auth()->user()->fichada == 0) {
+		if (auth()->user()->fichada == 0) {
+
 			$ingreso = Carbon::now();
 
 			//Actualizar usuario para que figure que esta trabajando
@@ -46,24 +46,24 @@ class EmpleadosFichadasNuevasController extends Controller
 			$user->fichada = 1;
 			$user->save();
 
-			//Guardar en base
+			//Guardar en base (datos del INGRESO)
 			$fichada = new FichadaNueva();
 			$fichada->ingreso = $ingreso;
 			$fichada->id_user = $request->id_user;
 			$fichada->id_cliente = auth()->user()->id_cliente_actual;
-			$fichada->ip = \Request::ip();
 
+			$fichada->ip = \Request::ip();
 			$fichada->sistema_operativo = $agent->platform();
 			$fichada->browser = $agent->browser();
-
-			// Determinar el tipo de dispositivo
-			// Se quita nuevamente deviceType() porque puede devolver null o unknown. 
-			// Hay registros guardados como "desconocido" y se pidió que no existiera esa opción.
-			// Se deja el mismo criterio que en el modelo de Fichada porque venia de ahi el "Desconocido"
 			$fichada->dispositivo = $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'phone' : 'desktop');
+
+			// opcional: dejalo vacío desde el inicio (si querés ver {} y no null)
+			$fichada->egreso_dispositivo_dif = (object)[];
+
 			$fichada->save();
 
-	  }else {
+		} else {
+
 			$egreso = Carbon::now();
 
 			//Actualizar usuario para que figure que no está trabajando
@@ -71,36 +71,57 @@ class EmpleadosFichadasNuevasController extends Controller
 			$user->fichada = 0;
 			$user->save();
 
-
-			//Actualizar en base
+			// Buscar fichada
 			$fichada = FichadaNueva::where('id_user', auth()->user()->id)->latest()->first();
+
+
+			// Guardar egreso y tiempo
 			$fichada->egreso = $egreso;
 
 			$f_ingreso = new DateTime($fichada->ingreso);
 			$f_egreso = new DateTime();
 			$time = $f_ingreso->diff($f_egreso);
 
-			$fichada->id_user = $request->id_user;
-			$fichada->id_cliente = auth()->user()->id_cliente_actual;
-			$fichada->ip = \Request::ip();
-
-			$fichada->sistema_operativo = $agent->platform();
-			$fichada->browser = $agent->browser();
-
-			// Determinar el tipo de dispositivo
-			// Se quita nuevamente deviceType() porque puede devolver null o unknown. 
-			// Hay registros guardados como "desconocido" y se pidió que no existiera esa opción.
-			// Se deja el mismo criterio que en el modelo de Fichada porque venia de ahi el "Desconocido"
-			$fichada->dispositivo = $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'phone' : 'desktop');
-
 			$tiempo_dedicado = $time->days . ' días ' . $time->format('%H horas %i minutos %s segundos');
 			$fichada->tiempo_dedicado = $tiempo_dedicado;
+			$fichada->id_user = $request->id_user;
+			$fichada->id_cliente = auth()->user()->id_cliente_actual;
+
+			// Armar datos del egreso y comparar contra los del ingreso ya guardados
+			$egresoInfo = [
+				'ip' => \Request::ip(),
+				'dispositivo' => $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'phone' : 'desktop'),
+				'sistema_operativo' => $agent->platform(),
+				'browser' => $agent->browser(),
+			];
+
+			$ingresoInfo = [
+				'ip' => $fichada->ip,
+				'dispositivo' => $fichada->getOriginal('dispositivo'), // valor DB (desktop/phone/tablet)
+				'sistema_operativo' => $fichada->sistema_operativo,
+				'browser' => $fichada->browser,
+			];
+
+			$difiere = false;
+			foreach ($egresoInfo as $k => $v) {
+				if ((string)($ingresoInfo[$k] ?? '') !== (string)$v) {
+					$difiere = true;
+					break;
+				}
+			}
+
+			// si difiere, guardo el "dispositivo del egreso" en el json
+			// si no difiere, {} (objeto vacío)
+			$fichada->egreso_dispositivo_dif = $difiere ? (object)$egresoInfo : (object)[];
+
 			$fichada->save();
 		}
 
 		return back();
-
 	}
+
+
+
 
 	/**
 	 * Display the specified resource.

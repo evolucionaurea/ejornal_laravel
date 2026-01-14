@@ -13,6 +13,11 @@ use Illuminate\Support\Str;
 use App\ProvinciaReceta;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\EnviarEmail;
+use App\User;
+use GuzzleHttp\Client;
 
 
 class EmpleadosRecetasController extends Controller
@@ -93,11 +98,28 @@ class EmpleadosRecetasController extends Controller
 
 
 
-    public function create()
+    public function create(Request $request)
     {
         $user = Auth::user();
         $clienteActualId = $user->id_cliente_actual;
         $clientes = $this->getClientesUser();
+
+        // =========================
+        // Resolver nombre / apellido desde users.nombre
+        // =========================
+        $nombreCompleto = trim((string) $user->nombre);
+
+        $partes = preg_split('/\s+/', $nombreCompleto);
+
+        $medicoNombre   = $partes[0] ?? '';
+        $medicoApellido = '';
+
+        if (count($partes) > 1) {
+            // todo lo que sigue a la primera palabra
+            $medicoApellido = implode(' ', array_slice($partes, 1));
+        }
+
+        // =========================
 
         // Trabajadores sólo del cliente donde está fichado
         $nominas = Nomina::with('cliente')
@@ -108,10 +130,32 @@ class EmpleadosRecetasController extends Controller
             ->orderBy('nombre', 'asc')
             ->get();
 
-        $provincias = ProvinciaReceta::orderBy('nombre','asc')->get(['id','nombre']);
+        $provincias = ProvinciaReceta::orderBy('nombre', 'asc')->get(['id', 'nombre']);
 
-        return view('empleados.recetas.create', compact('nominas', 'clientes', 'provincias'));
+        // ===== id_nomina opcional por querystring =====
+        $selectedNominaId = $request->query('id_nomina');
+        if ($selectedNominaId !== null) {
+            $selectedNominaId = (int) $selectedNominaId;
+
+            // Seguridad: si no está dentro de las nóminas que puede ver, lo anulamos
+            if (!$nominas->contains('id', $selectedNominaId)) {
+                $selectedNominaId = null;
+            }
+        }
+
+        return view(
+            'empleados.recetas.create',
+            compact(
+                'nominas',
+                'clientes',
+                'provincias',
+                'medicoNombre',
+                'medicoApellido',
+                'selectedNominaId'
+            )
+        );
     }
+
 
 
     public function provincias()
@@ -200,7 +244,7 @@ class EmpleadosRecetasController extends Controller
     }
 
 
-
+    
     public function store(Request $req, Qbi2Client $qbi)
     {
         // Habria que decidir si queremos estos logs online o si los sacamos para no llenar el disco
@@ -235,22 +279,137 @@ class EmpleadosRecetasController extends Controller
             'response'   => $api['data'] ?? null,
         ]);
 
+        // =========================
+        // ENVIAR EMAIL (sin romper la receta si falla)
+        // =========================
+        $emailOk = true;
+        $tmpFilePath = null;
+
+        try {
+            // Destino: SOLO paciente (email que viene del front / request validado)
+            $pacienteEmail = trim((string) data_get($data, 'paciente.email'));
+
+            $destinos = array_values(array_filter(array_unique([
+                $pacienteEmail,
+            ])));
+
+            // Si no hay destinatario válido, no intentamos enviar (pero no rompemos)
+            if (empty($destinos)) {
+                $emailOk = false;
+                \Log::warning('[EMAIL] No se envió: paciente.email vacío o inválido', [
+                    'receta_id' => (int) $receta->id,
+                    'id_nomina' => (int) $nomina->id,
+                ]);
+            } else {
+
+                // timeout SwiftMailer (Laravel 6)
+                $swift = Mail::getSwiftMailer();
+                $transport = $swift ? $swift->getTransport() : null;
+                if ($transport instanceof \Swift_SmtpTransport) {
+                    $transport->setTimeout(10);
+                }
+
+                $nominaNombre = trim((string) ($nomina->nombre ?? ''));
+
+                // Si tu User no tiene apellido, esto igual queda OK
+                $medicoNombre = trim((string) (
+                    (optional(auth()->user())->nombre ?? '') . ' ' . (optional(auth()->user())->apellido ?? '')
+                ));
+                if ($medicoNombre === '') {
+                    $medicoNombre = trim((string) optional(auth()->user())->email);
+                }
+
+                $dataEmail = [
+                    'view'          => 'emails.recetas',
+                    'titulo'        => 'eJornal',
+                    'nomina_nombre' => $nominaNombre ?: 'trabajador',
+                    'medico_nombre' => $medicoNombre ?: 'profesional',
+                    'pdf_url'       => $pdfUrl, // link en el cuerpo
+                ];
+
+                // Descargar PDF desde URL, guardar en temp y adjuntar por PATH (queue-safe)
+                if (!empty($pdfUrl)) {
+                    $client = new \GuzzleHttp\Client([
+                        'timeout' => 15,
+                        'verify'  => true,
+                    ]);
+
+                    $resp = $client->request('GET', $pdfUrl);
+
+                    if ((int) $resp->getStatusCode() === 200) {
+                        $pdfBinary = $resp->getBody()->getContents();
+
+                        $dir = storage_path('app/tmp/recetas');
+                        if (!is_dir($dir)) {
+                            @mkdir($dir, 0775, true);
+                        }
+
+                        $tmpFilePath = $dir . '/receta_' . $receta->id . '.pdf';
+                        file_put_contents($tmpFilePath, $pdfBinary);
+
+                        $dataEmail['archivo'] = [
+                            'path' => $tmpFilePath,
+                            'as'   => 'receta.pdf',
+                            'mime' => 'application/pdf',
+                        ];
+                    } else {
+                        \Log::warning('[EMAIL] No se pudo descargar PDF (status != 200), se enviará sin adjunto', [
+                            'receta_id' => (int) $receta->id,
+                            'pdf_url'   => (string) $pdfUrl,
+                            'status'    => (int) $resp->getStatusCode(),
+                        ]);
+                    }
+                }
+
+                // Enviar email
+                Mail::to($destinos)->send(new EnviarEmail($dataEmail));
+
+                // Si llegamos acá, se envió OK -> borrar temp si existe
+                if (!empty($tmpFilePath) && file_exists($tmpFilePath)) {
+                    @unlink($tmpFilePath);
+                }
+            }
+
+        } catch (\Throwable $e) {
+            $emailOk = false;
+
+            // Si falló, dejamos el temp para inspección (o si querés borrarlo igual, decime)
+            \Log::error('[EMAIL] Error al enviar notificación de receta: ' . $e->getMessage());
+            \Log::error('[EMAIL] Contexto', [
+                'receta_id' => (int) $receta->id,
+                'id_user'   => (int) auth()->id(),
+                'id_nomina' => (int) $nomina->id,
+                'pdf_url'   => (string) $pdfUrl,
+                'to'        => (string) trim((string) data_get($data, 'paciente.email')),
+                'tmp'       => (string) $tmpFilePath,
+            ]);
+        }
+
         // Devuelvo ruta RELATIVA segura (el front la resuelve sobre location.origin)
         $indexPath = '/empleados/recetas';
 
         if ($req->ajax() || $req->wantsJson()) {
             return response()->json([
-                'ok'     => true,
-                'id'     => $receta->id,
-                'url'    => $indexPath,                           // principal
-                'show'   => "/empleados/recetas/{$receta->id}",
-                'pdfUrl' => $pdfUrl,
+                'ok'      => true,
+                'id'      => $receta->id,
+                'url'     => $indexPath,
+                'show'    => "/empleados/recetas/{$receta->id}",
+                'pdfUrl'  => $pdfUrl,
+                'emailOk' => $emailOk,
+                'warning' => $emailOk ? null : 'La receta se creó correctamente, pero hubo un error al enviar el email.',
             ]);
         }
 
-        // Redirect server-side sin usar APP_URL (para evitar problemas de cambios de dominio)
-        return redirect($indexPath)->with('success', 'Receta generada correctamente.');
+        if ($emailOk) {
+            return redirect($indexPath)->with('success', 'Receta generada correctamente.');
+        }
+
+        return redirect($indexPath)
+            ->with('success', 'Receta generada correctamente.')
+            ->with('warning', 'La receta se creó correctamente, pero hubo un error al enviar el email.');
     }
+
+
 
 
     public function getFinanciadores(Request $req, Qbi2Client $qbi)

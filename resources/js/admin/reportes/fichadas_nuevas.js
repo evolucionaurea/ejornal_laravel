@@ -55,63 +55,88 @@ $(() => {
 					name: 'ingreso',
 					orderable: false,
 					render: (v, type, row, meta) => {
-
-						//console.log(meta.settings.json.user.permiso_edicion_fichada);
+						const infoIngreso = `
+						<div class="small text-muted mt-1">
+							<div><b>SO:</b> ${v.sistema_operativo || '-'}</div>
+							<div><b>Nav:</b> ${v.browser || '-'}</div>
+							<div><b>Disp:</b> ${v.dispositivo || '-'}</div>
+							<div><b>IP:</b> ${v.ip || '-'}</div>
+						</div>
+						`;
 
 						if (meta.settings.json.user.permiso_edicion_fichada == 1) {
-							return `
-								<div>${v.ingreso_formatted}</div>
-								<a href="#" class="floating-btn" title="Editar Fecha/Hora" data-toggle="editar-fichada" data-action="ingreso" data-fecha="${v.ingreso_carbon}">
-									<i class="fa fa-pencil"></i>
-								</a>`
+						return `
+							<div>${v.ingreso_formatted}</div>
+							${infoIngreso}
+							<a href="#" class="floating-btn" title="Editar Fecha/Hora" data-toggle="editar-fichada" data-action="ingreso" data-fecha="${v.ingreso_carbon}">
+							<i class="fa fa-pencil"></i>
+							</a>`;
 						}
-						return v.ingreso_formatted
+						return `<div>${v.ingreso_formatted}</div>${infoIngreso}`;
 					}
-				},
+					},
 
-				{
+					{
 					className: 'align-middle has-floating-btn',
 					data: null,
 					name: 'egreso',
 					render: (v, type, row, meta) => {
-						if (v.egreso == null) return '<i class="text-muted">[aún trabajando]</i>'
-						if (meta.settings.json.user.permiso_edicion_fichada == 1) {
-							return `
-								<div>${v.egreso_formatted}</div>
-								<a href="#" class="floating-btn" title="Editar Fecha/Hora" data-toggle="editar-fichada" data-action="egreso" data-fecha="${v.egreso_carbon}">
-									<i class="fa fa-pencil fa-fw"></i>
-								</a>`;
-						}
-						return v.egreso_formatted
-					}
-				},
 
-				{
+						if (v.egreso == null) return '<i class="text-muted">[aún trabajando]</i>';
+
+						// egreso_dispositivo_dif puede venir null, "{}", {}, o ya parseado
+						let egresoDif = v.egreso_dispositivo_dif;
+
+						// Si viene string JSON
+						if (typeof egresoDif === 'string') {
+						try { egresoDif = JSON.parse(egresoDif); } catch (e) { egresoDif = {}; }
+						}
+
+						// Normalizar null
+						if (!egresoDif) egresoDif = {};
+
+						const hasDif = Object.keys(egresoDif).length > 0;
+
+						const infoEgreso = hasDif
+						? `
+							<div class="small mt-1">
+							<span class="badge badge-warning">Egreso desde otro dispositivo</span>
+							<div class="text-muted mt-1">
+								<div><b>SO:</b> ${egresoDif.sistema_operativo || '-'}</div>
+								<div><b>Nav:</b> ${egresoDif.browser || '-'}</div>
+								<div><b>Disp:</b> ${egresoDif.dispositivo || '-'}</div>
+								<div><b>IP:</b> ${egresoDif.ip || '-'}</div>
+							</div>
+							</div>
+						`
+						: `
+							<div class="small text-muted mt-1">
+							<span class="badge badge-success">Mismo dispositivo</span>
+							</div>
+						`;
+
+						if (meta.settings.json.user.permiso_edicion_fichada == 1) {
+						return `
+							<div>${v.egreso_formatted}</div>
+							${infoEgreso}
+							<a href="#" class="floating-btn" title="Editar Fecha/Hora" data-toggle="editar-fichada" data-action="egreso" data-fecha="${v.egreso_carbon}">
+							<i class="fa fa-pencil fa-fw"></i>
+							</a>`;
+						}
+
+						return `<div>${v.egreso_formatted}</div>${infoEgreso}`;
+					}
+					},
+
+					{
 					className: 'align-middle',
 					data: null,
 					name: 'tiempo_dedicado',
 					orderable: false,
 					render: v => v.egreso == null ? '<i class="text-muted">[aún trabajando]</i>' : `${v.horas_minutos_trabajado}`
-				},
+					},
 
-				{
-					className: 'align-middle',
-					data: null,
-					name: 'dispositivo',
-					render: v => {
-						let output = `<div>${v.sistema_operativo}</div>`
-						if (v.browser) output += `<div class="small">Nav: ${v.browser}</div>`
-						if (v.dispositivo) output += `<div class="text-muted small">Disp: ${v.dispositivo}</div>`
-
-						return output
-					}
-				},
-				{
-					className: 'align-middle',
-					data: 'ip',
-					name: 'ip'
-				},
-				{
+					{
 					data: null,
 					className: 'align-middle',
 					name: 'actions',
@@ -119,11 +144,12 @@ $(() => {
 						return `
 						<div class="acciones_tabla">
 							<button data-toggle="delete" title="Eliminar" class="">
-								<i class="fa fa-trash"></i>
+							<i class="fa fa-trash"></i>
 							</button>
-						</div>`
+						</div>`;
 					}
-				}
+					}
+
 			]
 		}
 	})

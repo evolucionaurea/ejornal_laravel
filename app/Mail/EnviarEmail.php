@@ -6,63 +6,69 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 
 class EnviarEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    /** @var array Datos (título, mensaje, destino, archivo, etc.) */
-    public $datos;
+    /** @var array */
+    public $data;
 
-    /**
-     * @param array $datos Debe incluir al menos:
-     *                     - 'destino'  => email destinatario
-     *                     - 'titulo'   => asunto del correo
-     *                     - 'mensaje'  => cuerpo del correo
-     *                     - opcional 'archivo' => UploadedFile
-     */
-    public function __construct(array $datos)
+    public function __construct(array $data)
     {
-        $this->datos = $datos;
+        $this->data = $data;
     }
 
-    /**
-     * Construye y retorna el correo.
-     *
-     * @return $this
-     * @throws \Exception
-     */
     public function build()
     {
-        try {
-            $email = $this->subject($this->datos['titulo'] ?? 'Notificacion')
-                ->view('emails.generico')
-                ->with($this->datos);
+        $subject = $this->data['titulo'] ?? 'Notificación';
+        $view    = $this->data['view'] ?? 'emails.recetas';
 
-            // si llega UploadedFile en $datos['archivo'], lo adjuntamos
-            if (!empty($this->datos['archivo']) && $this->datos['archivo'] instanceof UploadedFile) {
-                /** @var UploadedFile $file */
-                $file = $this->datos['archivo'];
-                $path = $file->getRealPath();
+        $mail = $this->subject($subject)
+            ->view($view)
+            ->with($this->data);
 
-                if (File::exists($path)) {
-                    Log::info("Adjuntando archivo: {$path}");
-                    $email->attach($path, [
-                        'as'   => $file->getClientOriginalName(),
-                        'mime' => $file->getClientMimeType(),
-                    ]);
-                } else {
-                    Log::error("Archivo no encontrado: {$path}");
-                }
+        /**
+         * Adjuntos (OPCIONAL) - 2 formas:
+         *
+         * A) Path (ideal / queue-safe):
+         * 'archivo' => ['path' => '/abs/path/receta.pdf', 'as' => 'receta.pdf', 'mime' => 'application/pdf']
+         *
+         * B) UploadedFile (si viene en request):
+         * 'archivo' => $req->file('archivo')
+         */
+        if (!empty($this->data['archivo'])) {
+
+            // B) UploadedFile
+            if ($this->data['archivo'] instanceof UploadedFile) {
+                $file = $this->data['archivo'];
+
+                $mail->attach($file->getRealPath(), [
+                    'as'   => $file->getClientOriginalName(),
+                    'mime' => $file->getClientMimeType(),
+                ]);
+
+                return $mail;
             }
 
-            return $email;
-        } catch (\Exception $e) {
-            Log::error('Error al construir el correo: ' . $e->getMessage());
-            throw $e;
+            // A) Path (array)
+            if (is_array($this->data['archivo'])) {
+                $path = $this->data['archivo']['path'] ?? null;
+                $name = $this->data['archivo']['as'] ?? 'archivo.pdf';
+                $mime = $this->data['archivo']['mime'] ?? 'application/octet-stream';
+
+                if (!empty($path) && file_exists($path)) {
+                    $mail->attach($path, [
+                        'as'   => $name,
+                        'mime' => $mime,
+                    ]);
+                }
+
+                return $mail;
+            }
         }
+
+        return $mail;
     }
 }

@@ -13,17 +13,13 @@
             <h2 class="h4 font-weight-bold mb-1">Recetas generadas</h2>
             <p class="text-muted mb-0">Listado de recetas emitidas por tu usuario</p>
 
-            @if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
+            {{-- @if ((auth()->user()->fichada == 1 || !auth()->user()->fichar) && auth()->user()->id_especialidad == 1)
             <div class="cabecera_acciones mt-3">
                 <a class="btn-ejornal btn-ejornal-base" href="{{ route('empleados.recetas.create') }}">
                     <i class="fas fa-plus-circle mr-1"></i> Nueva receta
                 </a>
             </div>
-            @else
-            <div class="small text-muted mt-2">
-                <i>[Debe fichar para agregar una nueva receta]</i>
-            </div>
-            @endif
+            @endif --}}
         </div>
 
         @include('../mensajes_validacion')
