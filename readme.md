@@ -88,3 +88,11 @@ Es para saber si un usuario empleado es parte de eJornal o está terciarizado.
 
 - Archivo - hasharchivo / matricula - hashmatricula / Etc:
 Es para el user empleado. Un requerimiento que ingresó despues para poder subir contenido.
+
+
+### Integracion para generar Recetas. Datos para Test validos
+1) Receta con financiador OSDE y numero de afiliado: 23200126801 
+2) Receta con financiador Luis Pasteur y numero de afiliado: 42731800060 
+3) Receta con financiador Accord Salud y numero de afiliado: 2325678  
+4) Receta sin datos de financiador, es decir, particular.  
+
