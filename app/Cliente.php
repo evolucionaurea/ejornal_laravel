@@ -19,7 +19,7 @@ class Cliente extends Model
   protected $table = 'clientes';
 
   // Campos habilitados para ingresar
-  protected $fillable = ['logo', 'direccion', 'nombre', 'token', 'id_grupo'];
+  protected $fillable = ['logo', 'direccion', 'nombre', 'token', 'id_grupo', 'calle', 'nro', 'id_provincia'];
 
   protected $appends = ['cantidad_nomina'];
 
@@ -63,6 +63,12 @@ class Cliente extends Model
     }
 
     return $h_nomina->cantidad;
+  }
+
+  // Relacion con ProvinciaReceta
+  public function provincia()
+  {
+      return $this->belongsTo(ProvinciaReceta::class, 'id_provincia');
   }
 
 

@@ -13,6 +13,7 @@ use Jenssegers\Agent\Agent;
 use DateTime;
 use App\Grupo;
 use App\ClienteGrupo;
+use App\ProvinciaReceta;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,8 @@ class AdminClientesController extends Controller
    */
   public function create()
   {
-      return view('admin.clientes.create');
+      $provincias = ProvinciaReceta::all();
+      return view('admin.clientes.create', compact('provincias'));
   }
 
   /**
@@ -58,13 +60,19 @@ class AdminClientesController extends Controller
 
     $validatedData = $request->validate([
       'nombre' => 'required|string',
-      'direccion' => 'required|string'
+      'direccion' => 'required|string',
+      'provincia' => 'required|integer',
+      'calle' => 'nullable|string',
+      'nro' => 'nullable|string'
     ]);
 
     //Guardar en base
     $cliente = new Cliente();
     $cliente->nombre = $request->nombre;
     $cliente->direccion = $request->direccion;
+    $cliente->id_provincia = $request->provincia;
+    $cliente->calle = $request->calle;
+    $cliente->nro = $request->nro;
     $cliente->save();
 
     return redirect('admin/clientes')->with('success', 'Cliente guardado con éxito');
@@ -127,8 +135,9 @@ class AdminClientesController extends Controller
   {
 
     $cliente = Cliente::findOrFail($id);
+    $provincias = ProvinciaReceta::all();
 
-    return view('admin.clientes.edit', compact('cliente'));
+    return view('admin.clientes.edit', compact('cliente', 'provincias'));
 
   }
 
@@ -144,13 +153,19 @@ class AdminClientesController extends Controller
 
     $validatedData = $request->validate([
       'nombre' => 'required|string',
-      'direccion' => 'required|string'
+      'direccion' => 'required|string',
+      'provincia' => 'required|integer',
+      'calle' => 'nullable|string',
+      'nro' => 'nullable|string'
     ]);
 
     //Actualizar en base
     $cliente = Cliente::findOrFail($id);
     $cliente->nombre = $request->nombre;
     $cliente->direccion = $request->direccion;
+    $cliente->id_provincia = $request->provincia;
+    $cliente->calle = $request->calle;
+    $cliente->nro = $request->nro;
     $cliente->save();
 
     return redirect('admin/clientes')->with('success', 'Cliente actualizado con éxito');

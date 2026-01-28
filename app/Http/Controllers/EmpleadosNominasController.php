@@ -27,6 +27,7 @@ use App\NominaImportacion;
 use App\NominaHistorial;
 use App\NominaClienteHistorial;
 use App\Caratula;
+use App\ProvinciaReceta;
 use Intervention\Image\Facades\Image;
 use App\User;
 
@@ -73,7 +74,9 @@ class EmpleadosNominasController extends Controller
 	{
 
 		$clientes = $this->getClientesUser();
-		return view('empleados.nominas.create', compact('clientes'));
+		$provincias = ProvinciaReceta::all();
+
+		return view('empleados.nominas.create', compact('clientes', 'provincias'));
 	}
 
 	/**
@@ -89,7 +92,8 @@ class EmpleadosNominasController extends Controller
 			'nombre' => 'required|string',
 			'dni' => 'required|digits:8',
 			'estado' => 'required',
-			'sector' => 'required'
+			'sector' => 'required',
+			'sexo' => 'nullable|string|in:M,F,X,O',
 		]);
 
 		if(!auth()->user()->id_cliente_actual){
@@ -107,6 +111,7 @@ class EmpleadosNominasController extends Controller
 		$trabajador = new Nomina();
 		$trabajador->id_cliente = auth()->user()->id_cliente_actual;
 		$trabajador->nombre = $request->nombre;
+		$trabajador->sexo = $request->sexo;
 		if (isset($request->email) && !empty($request->email)) {
 			$trabajador->email = $request->email;
 		}
@@ -124,6 +129,9 @@ class EmpleadosNominasController extends Controller
 		}
 		if (isset($request->localidad) && !empty($request->localidad)) {
 			$trabajador->localidad = $request->localidad;
+		}
+		if (isset($request->id_provincia) && !empty($request->id_provincia)) {
+			$trabajador->id_provincia = $request->id_provincia;
 		}
 		if (isset($request->partido) && !empty($request->partido)) {
 			$trabajador->partido = $request->partido;
@@ -196,11 +204,12 @@ class EmpleadosNominasController extends Controller
 	 */
 	public function edit($id)
 	{
-		$trabajador = Nomina::findOrFail($id);
+		// Traer la nomina con su relacion con ProvinciaReceta
+		$trabajador = Nomina::with('provincia')->findOrFail($id);
 		$clientes = $this->getClientesUser();
+		$provincias = ProvinciaReceta::all();
 
-		///dd($trabajador->toArray());
-		return view('empleados.nominas.edit', compact('trabajador', 'clientes'));
+		return view('empleados.nominas.edit', compact('trabajador', 'clientes', 'provincias'));
 	}
 
 	/**
@@ -217,7 +226,8 @@ class EmpleadosNominasController extends Controller
 			'nombre' => 'required|string',
 			'dni' => 'required|numeric|digits:8',
 			'estado' => 'required',
-			'sector' => 'required'
+			'sector' => 'required',
+			'sexo' => 'nullable|string|in:M,F,X,O',
 		]);
 
 
@@ -276,10 +286,12 @@ class EmpleadosNominasController extends Controller
 
 		$trabajador->telefono = $request->telefono;
 		$trabajador->dni = $request->dni;
+		$trabajador->sexo = $request->sexo;
 		$trabajador->calle = $request->calle;
 		$trabajador->nro = $request->nro;
 		$trabajador->entre_calles = $request->entre_calles;
 		$trabajador->localidad = $request->localidad;
+		$trabajador->id_provincia = $request->id_provincia;
 		$trabajador->partido = $request->partido;
 		$trabajador->cod_postal = $request->cod_postal;
 		$trabajador->observaciones = $request->observaciones;

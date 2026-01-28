@@ -67,6 +67,16 @@
 					</div>
 
 					<div class="form-group col-md-3">
+						<label>Sexo</label>
+						<select name="sexo" class="form-control form-control-sm">
+							<option value="M" {{ $trabajador->sexo==='M'?'selected':'' }}>Hombre (M)</option>
+							<option value="F" {{ $trabajador->sexo==='F'?'selected':'' }}>Mujer (F)</option>
+							<option value="X" {{ $trabajador->sexo==='X'?'selected':'' }}>No binario (X)</option>
+							<option value="O" {{ $trabajador->sexo==='O'?'selected':'' }}>Otro (O)</option>
+						</select>
+					</div>
+
+					<div class="form-group col-md-3">
 						<label>Fecha de Nacimiento</label>
 						<input name="fecha_nacimiento" type="text" class="form-control form-control-sm"
 							value="{{ $trabajador->fecha_nacimiento ? $trabajador->fecha_nacimiento->format('d/m/Y') : '' }}"
@@ -123,6 +133,16 @@
 						<label>Localidad</label>
 						<input name="localidad" type="text" class="form-control form-control-sm" placeholder=""
 							value="{{$trabajador->localidad}}">
+					</div>
+					<div class="form-group col-md-3">
+						<label>Provincia</label>
+						<select name="id_provincia" class="form-control form-control-sm">
+							@if($provincias) @foreach($provincias as $provincia):
+							<option value="{{ $provincia->id }}" {{ $provincia->id==$trabajador->id_provincia ?
+								'selected' :
+								'' }} >{{ $provincia->nombre }}</option>
+							@endforeach @endif
+						</select>
 					</div>
 					<div class="form-group col-md-3">
 						<label>Partido</label>

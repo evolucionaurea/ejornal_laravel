@@ -43,7 +43,8 @@
 						<th>Nombre</th>
 						<th>Dirección</th>
 						<th>Total Nómina</th>
-						<th>Borrado Lógico <i class="fa fa-question-circle fa-fw" data-swal="Click en la etiqueta <b>si</b> para restaurar al cliente"></i></th>
+						<th>Borrado Lógico <i class="fa fa-question-circle fa-fw"
+								data-swal="Click en la etiqueta <b>si</b> para restaurar al cliente"></i></th>
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -52,7 +53,13 @@
 					<tr>
 						<td>{{$cliente->grupo}}</td>
 						<td>{{$cliente->nombre}}</td>
-						<td>{{$cliente->direccion}}</td>
+						<td>
+							{{$cliente->calle}} {{$cliente->nro}}
+							{{-- Mostrar nombre de la provincia si existe --}}
+							@if ($cliente->provincia)
+							, {{$cliente->provincia->nombre}}
+							@endif
+						</td>
 						<td>{{$cliente->nominas_count}}</td>
 						<td>
 							@if ($cliente->trashed())

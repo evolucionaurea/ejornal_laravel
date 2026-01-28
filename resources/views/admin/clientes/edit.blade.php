@@ -16,7 +16,8 @@
             <h2>Edición de clientes</h2>
             <p>Aquí podrá editar la información de un cliente</p>
             <div class="cabecera_acciones">
-                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('admin/clientes')}}"><i class="fas fa-arrow-circle-left"></i>Volver</a>
+                <a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('admin/clientes')}}"><i
+                        class="fas fa-arrow-circle-left"></i>Volver</a>
             </div>
         </div>
 
@@ -33,20 +34,44 @@
         @endif
 
         <div class="tarjeta">
-            <form action="{{action('AdminClientesController@update', $cliente->id)}}" accept-charset="UTF-8" method="post">
+            <form action="{{action('AdminClientesController@update', $cliente->id)}}" accept-charset="UTF-8"
+                method="post">
                 {{ csrf_field() }}
                 <input name="_method" type="hidden" value="PUT">
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-2">
                         <label>Nombre de la empresa</label>
-                        <input name="nombre" type="text" class="form-control form-control-sm" value="{{$cliente->nombre}}" placeholder="">
+                        <input name="nombre" type="text" class="form-control form-control-sm"
+                            value="{{$cliente->nombre}}" placeholder="">
                     </div>
-                    <div class="form-group col-md-6">
-                        <label>Direccion</label>
-                        <input name="direccion" type="text" class="form-control form-control-sm" value="{{$cliente->direccion}}" placeholder="">
+                    <div class="form-group col-md-2">
+                        <label>Direccion (Dejará de estar en uso)</label>
+                        <input name="direccion" type="text" class="form-control form-control-sm"
+                            value="{{$cliente->direccion}}" placeholder="">
                     </div>
-                    <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
+                    <div class="form-group col-md-2">
+                        <label>Calle</label>
+                        <input name="calle" type="text" class="form-control form-control-sm" value="{{$cliente->calle}}"
+                            placeholder="">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Número</label>
+                        <input name="nro" type="text" class="form-control form-control-sm" value="{{$cliente->nro}}"
+                            placeholder="">
+                    </div>
+                    {{-- Elegir la provincia por tabla de ProvinciaReceta --}}
+                    <div class="form-group col-md-2">
+                        <label>Provincia</label>
+                        <select name="provincia" class="form-control form-control-sm select2">
+                            @foreach ($provincias as $provincia)
+                            <option value="{{$provincia->id}}" @if ($cliente->id_provincia == $provincia->id) selected
+                                @endif>{{$provincia->nombre}}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
+                <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar cambios</button>
             </form>
         </div>
 

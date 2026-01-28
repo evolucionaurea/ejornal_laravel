@@ -84,6 +84,10 @@ Route::group(['middleware' => 'autenticacion_admin'], function () {
 	Route::get('admin/migrar_fichadas', 'AdminMigracionesController@migrarFichadas')->name('migrar_fichadas');
 	Route::get('admin/migrar_users_clientes', 'AdminMigracionesController@migrarUsersClientes')->name('migrar_users_clientes');
 
+	Route::get('admin/migrar_clientes_actualizados/modelo', 'AdminMigracionesController@exportarModeloClientesActualizados')
+    ->name('migrar_clientes_actualizados_modelo');
+	Route::post('admin/migrar_clientes_actualizados', 'AdminMigracionesController@migrarClientesActualizados')->name('migrar_clientes_actualizados');
+
 	// Route::get('admin/reportes_fichadas', 'AdminReporteController@reportes_fichadas')->name('reportes_fichadas');
 	// Route::get('admin/reportes/fichadas', 'AdminReporteController@fichadas')->name('reportes.fichadas');
 	// Route::post('admin/reportes/filtrar_fichadas', 'AdminReporteController@filtrarFichadas')->name('reportes.filtrar_fichadas');

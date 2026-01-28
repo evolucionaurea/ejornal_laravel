@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Ausentismo;
+use App\ProvinciaReceta;
 use App\Cliente;
 use App\NominaClienteHistorial;
 use Carbon\Carbon;
@@ -21,7 +22,7 @@ class Nomina extends Model
   // Campos habilitados para ingresar
   protected $fillable = [
     'id_cliente', 'nombre', 'email', 'telefono', 'dni', 'estado', 'foto', 'hash_foto', 'legajo', 'fecha_nacimiento', 'thumbnail',
-    'hash_thumbnail', 'calle', 'nro', 'localidad', 'partido', 'cod_postal' 
+    'hash_thumbnail', 'calle', 'nro', 'localidad', 'partido', 'cod_postal' , 'id_provincia'
   ];
 
   protected $casts = [
@@ -81,6 +82,12 @@ class Nomina extends Model
   public function getUltimaCaratulaAttribute()
   {
     return $this->caratulas()->with('patologias')->orderBy('created_at', 'desc')->first();
+  }
+
+  // Relacion de nominas con provincias recetas (puede ser null)
+  public function provincia()
+  {
+    return $this->belongsTo(ProvinciaReceta::class, 'id_provincia');
   }
 
 

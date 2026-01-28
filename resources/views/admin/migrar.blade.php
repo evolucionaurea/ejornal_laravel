@@ -9,8 +9,68 @@
 	<div id="page-content-wrapper">
 		@include('partials.nav_sup')
 
-
 		{{-- Contenido de la pagina --}}
+
+		{{-- Migracion de Clientes con datos nuevos en direccion (Es algo momentaneo) --}}
+		@if (true)
+
+		<div class="cabecera">
+			<h2>Migrar Clientes con datos actualizados</h2>
+			<p>
+				Subí un archivo <b>CSV</b> (modelo) para completar masivamente:
+				<b>calle</b>, <b>nro</b> y <b>provincia</b> (por nombre).
+			</p>
+
+			{{-- Mensajes de validación / errores --}}
+			@include('../mensajes_validacion')
+
+			@if ($errors->any())
+			@foreach ($errors->all() as $error)
+			<div class="alert alert-danger alert-dismissible fade show mr-4 ml-4" role="alert">
+				{{ $error }}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			@endforeach
+			@endif
+
+			@if (session('ok'))
+			<div class="alert alert-success alert-dismissible fade show mr-4 ml-4" role="alert">
+				{{ session('ok') }}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			@endif
+
+			<div class="cabecera_acciones">
+				<form action="{{ route('migrar_clientes_actualizados') }}" method="POST" enctype="multipart/form-data">
+					@csrf
+					<div class="form-group">
+						<label for="archivo_excel">Archivo (CSV):</label>
+						<input type="file" class="form-control-file" id="archivo_excel" name="archivo_excel" required>
+						<small class="form-text text-muted">
+							Cabeceras obligatorias: <b>id_cliente</b>, <b>calle</b>, <b>nro</b>, <b>provincia</b>.
+							(La provincia se escribe por nombre, se convierte a <b>id_provincia</b> automáticamente)
+						</small>
+					</div>
+
+					<button type="submit" class="btn-ejornal btn-ejornal-base">
+						<i class="fas fa-upload"></i>
+						Subir y Migrar
+					</button>
+
+					{{-- Descargar modelo --}}
+					<a class="btn-ejornal btn-ejornal-dark" href="{{ route('migrar_clientes_actualizados_modelo') }}">
+						<i class="fas fa-download"></i>
+						Descargar modelo Excel
+					</a>
+
+				</form>
+			</div>
+		</div>
+		@endif
 
 		@if (true)
 		<div class="alert alert-info m-4">
@@ -107,8 +167,6 @@
 		</div>
 
 		@endif
-
-
 
 		{{-- Contenido de la pagina --}}
 	</div>

@@ -13,6 +13,14 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use App\MigrarSitioPrevio;
+use App\ProvinciaReceta;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\NamedRange;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Style\Protection as CellProtection;
 
 class AdminMigracionesController extends Controller
 {
@@ -21,6 +29,9 @@ class AdminMigracionesController extends Controller
 	{
 
 		if (auth()->user()->email == 'sebas_admin@ejornal.com.ar') {
+
+		// Migracion de clientes con datos actualizados (Momentáneo. Se deja comentado dps de la migracion)
+		return view('admin.migrar');
 
 			$migraciones = MigrarSitioPrevio::all()->first();
 			$sitio_previo_migrado = false;
@@ -71,6 +82,319 @@ class AdminMigracionesController extends Controller
 			return redirect('admin/resumen');
 		}
 	}
+
+
+	// Clientes actualizados en su direccion (calle, nro, provincia) via CSV (Excel)  //
+
+	public function exportarModeloClientesActualizados()
+	{
+		if (auth()->user()->email !== 'sebas_admin@ejornal.com.ar') {
+			return redirect('admin/resumen');
+		}
+
+		$password = 'ejornal_migraciones'; // cambiá esto si querés
+
+		$provincias = ProvinciaReceta::select('id','nombre')->orderBy('nombre')->get();
+		$provNombreById = $provincias->pluck('nombre', 'id')->all();
+
+		$clientes = Cliente::select('id','nombre','direccion','calle','nro','id_provincia')
+			->orderBy('id','asc')->get();
+
+		$spreadsheet = new Spreadsheet();
+
+		// ===== Hoja 1: Clientes =====
+		$sh = $spreadsheet->getActiveSheet();
+		$sh->setTitle('Clientes');
+
+		$sh->fromArray(['id_cliente','nombre','direccion_actual','calle','nro','provincia'], null, 'A1');
+		$sh->getStyle('A1:F1')->getFont()->setBold(true);
+		$sh->freezePane('A2');
+
+		$row = 2;
+		foreach ($clientes as $c) {
+			$prov = $c->id_provincia ? ($provNombreById[$c->id_provincia] ?? '') : '';
+
+			$sh->fromArray([
+				$c->id,
+				$c->nombre,
+				$c->direccion ?? '',
+				$c->calle ?? '',
+				$c->nro ?? '',
+				$prov
+			], null, "A{$row}");
+
+			$row++;
+		}
+		$lastRow = max(2, $row - 1);
+
+		// Anchos
+		$sh->getColumnDimension('A')->setWidth(12);
+		$sh->getColumnDimension('B')->setWidth(28);
+		$sh->getColumnDimension('C')->setWidth(40);
+		$sh->getColumnDimension('D')->setWidth(25);
+		$sh->getColumnDimension('E')->setWidth(10);
+		$sh->getColumnDimension('F')->setWidth(22);
+
+		// Bloqueo por celdas: A:C locked, D:F editable
+		$sh->getStyle("A2:C{$lastRow}")->getProtection()
+			->setLocked(CellProtection::PROTECTION_PROTECTED);
+
+		$sh->getStyle("D2:F{$lastRow}")->getProtection()
+			->setLocked(CellProtection::PROTECTION_UNPROTECTED);
+
+		// ===== Hoja 2: Provincias =====
+		$shProv = $spreadsheet->createSheet();
+		$shProv->setTitle('Provincias');
+
+		$shProv->setCellValue('A1', 'provincia');
+		$shProv->getStyle('A1')->getFont()->setBold(true);
+
+		$r = 2;
+		foreach ($provincias as $p) {
+			$shProv->setCellValue("A{$r}", $p->nombre);
+			$r++;
+		}
+		$provLastRow = max(2, $r - 1);
+
+		$shProv->getColumnDimension('A')->setWidth(25);
+
+		// NamedRange para el dropdown (más robusto)
+		$spreadsheet->addNamedRange(new NamedRange('ListaProvincias', $shProv, "A2:A{$provLastRow}"));
+
+		// Dropdown en F2:F{lastRow}
+		for ($i = 2; $i <= $lastRow; $i++) {
+			$dv = $sh->getCell("F{$i}")->getDataValidation();
+			$dv->setType(DataValidation::TYPE_LIST);
+			$dv->setErrorStyle(DataValidation::STYLE_STOP);
+			$dv->setAllowBlank(false);
+			$dv->setShowDropDown(true);
+			$dv->setShowInputMessage(true);
+			$dv->setPromptTitle('Provincia');
+			$dv->setPrompt('Elegí una provincia del listado.');
+			$dv->setShowErrorMessage(true);
+			$dv->setErrorTitle('Valor inválido');
+			$dv->setError('Debés elegir una provincia del dropdown.');
+			$dv->setFormula1('=ListaProvincias');
+		}
+
+		// ===== Protecciones =====
+
+		// Bloquear estructura del libro: no borrar/renombrar hojas
+		$spreadsheet->getSecurity()->setLockStructure(true);
+		$spreadsheet->getSecurity()->setWorkbookPassword($password);
+
+		// Proteger hoja Provincias (no editable)
+		$shProv->getProtection()->setSheet(true);
+		$shProv->getProtection()->setPassword($password);
+
+		// Proteger hoja Clientes (no pueden tocar validaciones ni celdas bloqueadas)
+		$sh->getProtection()->setSheet(true);
+		$sh->getProtection()->setPassword($password);
+
+		// Export a output
+		$filename = 'modelo_clientes_actualizados_' . date('Ymd_His') . '.xlsx';
+		$writer = new Xlsx($spreadsheet);
+
+		return response()->streamDownload(function () use ($writer) {
+			$writer->save('php://output');
+		}, $filename, [
+			'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		]);
+	}
+
+
+
+public function migrarClientesActualizados(Request $request)
+{
+    if (auth()->user()->email !== 'sebas_admin@ejornal.com.ar') {
+        return redirect('admin/resumen');
+    }
+
+    $request->validate([
+        'archivo_excel' => 'required|file|max:10240|mimes:xlsx',
+    ], [
+        'archivo_excel.required' => 'Tenés que subir un archivo.',
+        'archivo_excel.mimes'    => 'Formato inválido. Subí el Excel .xlsx descargado desde el botón de modelo.',
+        'archivo_excel.max'      => 'El archivo supera el máximo permitido (10MB).',
+    ]);
+
+    // Provincias DB: nombre_normalizado -> id
+    $provMap = [];
+    foreach (ProvinciaReceta::select('id','nombre')->get() as $p) {
+        $provMap[$this->normText($p->nombre)] = $p->id;
+    }
+
+    try {
+        $spreadsheet = IOFactory::load($request->file('archivo_excel')->getRealPath());
+    } catch (\Throwable $e) {
+        return back()->withErrors(['No se pudo leer el Excel: ' . $e->getMessage()]);
+    }
+
+    $sh = $spreadsheet->getSheetByName('Clientes');
+    if (!$sh) {
+        return back()->withErrors(['El Excel no contiene la hoja "Clientes". Descargá el modelo nuevamente.']);
+    }
+
+    // Validar cabeceras (fila 1)
+    $expected = ['id_cliente','nombre','direccion_actual','calle','nro','provincia'];
+    $found = [];
+    foreach (['A','B','C','D','E','F'] as $idx => $col) {
+        $found[] = $this->normHeader((string)$sh->getCell($col.'1')->getValue());
+    }
+    if ($found !== $expected) {
+        return back()->withErrors([
+            'Cabeceras inválidas en hoja "Clientes". Deben ser: ' . implode(', ', $expected)
+        ]);
+    }
+
+    $highestRow = (int)$sh->getHighestRow();
+    if ($highestRow < 2) {
+        return back()->withErrors(['El Excel no tiene filas para procesar.']);
+    }
+
+    $errores = [];
+    $updates = [];
+
+    for ($r = 2; $r <= $highestRow; $r++) {
+        $id = trim((string)$sh->getCell("A{$r}")->getValue());
+        $calle = trim((string)$sh->getCell("D{$r}")->getValue());
+        $nroVal = $sh->getCell("E{$r}")->getValue();
+        $prov = trim((string)$sh->getCell("F{$r}")->getValue());
+
+        // Saltar fila totalmente vacía
+        if ($id === '' && $calle === '' && (string)$nroVal === '' && $prov === '') {
+            continue;
+        }
+
+        if ($id === '' || !ctype_digit($id)) {
+            $errores[] = "Fila {$r}: id_cliente inválido.";
+            continue;
+        }
+
+        // calle/nro/provincia: si están vacíos, los ignoramos (para “completar faltantes”)
+        $nro = $this->parseDigits($nroVal);
+        if ($nroVal !== null && $nroVal !== '' && $nro === null) {
+            $errores[] = "Fila {$r}: nro inválido. Debe ser numérico (solo dígitos).";
+            continue;
+        }
+
+        $idProvincia = null;
+        if ($prov !== '') {
+            $idProvincia = $provMap[$this->normText($prov)] ?? null;
+            if (!$idProvincia) {
+                $errores[] = "Fila {$r}: provincia '{$prov}' no existe en ProvinciaReceta.";
+                continue;
+            }
+        }
+
+        $cliente = Cliente::find((int)$id);
+        if (!$cliente) {
+            $errores[] = "Fila {$r}: no existe Cliente con id {$id}.";
+            continue;
+        }
+
+        $updates[] = [
+            'cliente' => $cliente,
+            'calle' => $calle,
+            'nro' => $nro,
+            'id_provincia' => $idProvincia,
+        ];
+    }
+
+    if (!empty($errores)) {
+        return back()->withErrors(array_slice($errores, 0, 60));
+    }
+
+    DB::beginTransaction();
+    try {
+        $actualizados = 0;
+
+        foreach ($updates as $u) {
+            /** @var Cliente $c */
+            $c = $u['cliente'];
+
+            // Completar faltantes (no pisa si ya existe)
+            if ($u['calle'] !== '' && empty($c->calle)) {
+                $c->calle = $u['calle'];
+            }
+            if ($u['nro'] !== null && ($c->nro === null || $c->nro === '')) {
+                $c->nro = $u['nro'];
+            }
+            if ($u['id_provincia'] && empty($c->id_provincia)) {
+                $c->id_provincia = $u['id_provincia'];
+            }
+
+            if ($c->isDirty(['calle','nro','id_provincia'])) {
+                $c->save();
+                $actualizados++;
+            }
+        }
+
+        DB::commit();
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        return back()->withErrors(['Error al actualizar: ' . $e->getMessage()]);
+    }
+
+    return back()->with('ok', "Migración OK. Clientes actualizados: {$actualizados}.");
+}
+
+    private function normHeader($s)
+{
+    $s = trim((string)$s);
+    $s = mb_strtolower($s, 'UTF-8');
+    $s = $this->stripAccents($s);
+    $s = preg_replace('/[^a-z0-9_ ]/i', '', $s);
+    $s = preg_replace('/\s+/', '_', $s);
+    return trim($s, '_');
+}
+
+private function normText($s)
+{
+    $s = trim((string)$s);
+    $s = mb_strtolower($s, 'UTF-8');
+    $s = $this->stripAccents($s);
+    $s = preg_replace('/[^a-z0-9 ]/i', ' ', $s);
+    $s = preg_replace('/\s+/', ' ', $s);
+    return trim($s);
+}
+
+private function stripAccents($str)
+{
+    $out = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+    return $out !== false ? $out : $str;
+}
+
+// Acepta nro como número de Excel o string; devuelve string de dígitos o null
+private function parseDigits($v)
+{
+    if ($v === null) return null;
+
+    // si viene como float/int
+    if (is_int($v)) return (string)$v;
+    if (is_float($v)) {
+        if (floor($v) != $v) return null;
+        return (string)(int)$v;
+    }
+
+    $s = trim((string)$v);
+    if ($s === '') return null;
+
+    // si es "123" ok
+    if (ctype_digit($s)) return $s;
+
+    // si viene "123.0"
+    if (is_numeric($s)) {
+        $f = (float)$s;
+        if (floor($f) != $f) return null;
+        return (string)(int)$f;
+    }
+
+    return null;
+}
+
+
+	// Clientes actualizados en su direccion (calle, nro, provincia) via CSV (Excel)  //
 
 
 	public function migrarClientes()

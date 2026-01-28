@@ -10,25 +10,34 @@
 			</h4>
 			<hr>
 			<div class="show mt-2" id="infoPrincipal">
-				<ul class="row px-2" >
-					<div class="col-4" ><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</div>
-					<div class="col-4" ><b>DNI:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</div>
-					<div class="col-4" ><b>CUIL:</b><br> {!! $trabajador->email ? '<a href="mailto:'.$trabajador->email.'" style="color:rgb(81, 120, 206) !important;">'.$trabajador->email.'</a>' : 'No fue cargado' !!}</div>
-					<div class="col-4" ><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
+				<ul class="row px-2">
+					<div class="col-4"><b>Activo:</b><br> {{ $trabajador->estado == 1 ? 'Sí' : 'No' }}</div>
+					<div class="col-4"><b>DNI:</b><br> {{ $trabajador->dni ?: 'No fue cargado' }}</div>
+					<div class="col-4"><b>CUIL:</b><br> {!! $trabajador->email ? '<a
+							href="mailto:'.$trabajador->email.'"
+							style="color:rgb(81, 120, 206) !important;">'.$trabajador->email.'</a>' : 'No fue cargado'
+						!!}</div>
+					<div class="col-4"><b>Fecha Nacimiento:</b><br> {{ $trabajador->fecha_nacimiento ?
 						$trabajador->fecha_nacimiento->format('d/m/Y') : '[no cargado]' }}</div>
 					@if ($trabajador->fecha_nacimiento)
-					<div class="col-4" ><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }} años</div>
+					<div class="col-4"><b>Edad:</b><br> {{ \Carbon\Carbon::parse($trabajador->fecha_nacimiento)->age }}
+						años</div>
 					@endif
-					<div class="col-4" ><b>Teléfono:</b><br> {!! $trabajador->telefono ? "<a href='tel:$trabajador->telefono' style='color:rgb(81, 120, 206) !important;'>$trabajador->telefono</a>" : 'No fue cargado' !!}</div>
-					<div class="col-4" ><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</div>
-					<div class="col-4" ><b>Sector</b><br> {{ $trabajador->sector }}</div>
+					<div class="col-4"><b>Teléfono:</b><br> {!! $trabajador->telefono ? "<a
+							href='tel:$trabajador->telefono'
+							style='color:rgb(81, 120, 206) !important;'>$trabajador->telefono</a>" : 'No fue cargado'
+						!!}</div>
+					<div class="col-4"><b>Legajo</b><br> {{ $trabajador->legajo ?: 'No fue cargado' }}</div>
+					<div class="col-4"><b>Sector</b><br> {{ $trabajador->sector }}</div>
+					<div class="col-4"><b>Provincia</b><br> {{ $trabajador->provincia ? $trabajador->provincia->nombre :
+						'No fue cargado' }}</div>
 				</ul>
 			</div>
 		</div>
 
 		<!-- Carátula -->
 		<div class="p-2 col-lg-6" style="background-color: #1a3b63; color: #8cb3ff;">
-			
+
 			<h4 class="text-white px-2 mb-0 d-flex justify-content-between align-items-center" style="cursor: pointer;">
 				<span>Carátula</span>
 				@if ($caratula)
@@ -42,7 +51,7 @@
 			<hr>
 			<div class="show mt-2 px-2" id="infoCaratula">
 				@if ($caratula)
-				
+
 				<div class="row">
 					@if ($caratula->patologias && count($caratula->patologias) > 0)
 					<div class="col-4">

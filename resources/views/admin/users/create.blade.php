@@ -55,6 +55,15 @@
 						</select>
 					</div>
 					<div class="form-group col-md-3">
+						<label>Sexo</label>
+						<select name="sexo" class="form-control form-control-sm">
+							<option value="M" {{ old('sexo')==='M' ?'selected':'' }}>Hombre (M)</option>
+							<option value="F" {{ old('sexo')==='F' ?'selected':'' }}>Mujer (F)</option>
+							<option value="X" {{ old('sexo')==='X' ?'selected':'' }}>No binario (X)</option>
+							<option value="O" {{ old('sexo')==='O' ?'selected':'' }}>Otro (O)</option>
+						</select>
+					</div>
+					<div class="form-group col-md-3">
 						<label>Rol</label>
 						<select name="rol" class="form-control form-control-sm capturar_rol">
 							@foreach ($roles as $rol)

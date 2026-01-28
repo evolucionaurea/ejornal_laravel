@@ -5,11 +5,11 @@
 @section('content')
 
 <div class="d-flex" id="wrapper">
-	
+
 	@include('partials.sidebar_empleados')
 
 	<div id="page-content-wrapper">
-	
+
 		@include('partials.nav_sup')
 
 		{{-- Contenido de la pagina --}}
@@ -48,7 +48,8 @@
 						<select id="id_nomina" name="nomina" class="form-control select_2" required>
 							<option value="">--Seleccionar--</option>
 							@foreach ($nominas as $nomina)
-							<option value="{{$nomina->id}}" {{ old('id_nomina')==$nomina->id || Request::get('id_nomina')==$nomina->id ? 'selected' : '' }}
+							<option value="{{$nomina->id}}" {{ old('id_nomina')==$nomina->id ||
+								Request::get('id_nomina')==$nomina->id ? 'selected' : '' }}
 								>{{$nomina->nombre}}</option>
 							@endforeach
 						</select>
@@ -74,17 +75,24 @@
 							@endforeach
 						</select>
 					</div>
-					<div class="form-group col-md-3">
+					<div class="form-group col-md-2">
 						<label>Fecha <span style="color: red;">*</span> </label>
 						<input required id="data_picker_gral" name="fecha" type="text" class="form-control"
-							value="{{ old("fecha") }}">
+							value="{{ old(" fecha") }}">
 					</div>
-					<div class="form-group col-md-3">
+					<div class="form-group col-md-2">
 						<label>Amerita salida <span style="color: red;">*</span></label>
 						<select name="amerita_salida" class="form-control">
 							<option value="">--Seleccionar--</option>
 							<option value="1" {{ old('amerita_salida')==1 ? 'selected' : '' }}>Si</option>
 							<option value="0" {{ old('amerita_salida')==0 ? 'selected' : '' }}>No</option>
+						</select>
+					</div>
+					<div class="form-group col-md-2">
+						<label>Emitir receta <span style="color: red;">*</span></label>
+						<select name="emitir_receta" class="form-control">
+							<option value="0" {{ old('emitir_receta')==0 ? 'selected' : '' }}>No</option>
+							<option value="1" {{ old('emitir_receta')==1 ? 'selected' : '' }}>Si</option>
 						</select>
 					</div>
 				</div>
@@ -111,16 +119,18 @@
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label>Temperatura axilar</label>
-						<input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("temperatura_auxiliar") }}" step="0.01">
+						<input name="temperatura_auxiliar" type="number" class="form-control" value="{{ old("
+							temperatura_auxiliar") }}" step="0.01">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Peso</label>
-						<input name="peso" type="number" class="form-control" value="{{ old("peso") }}" step="0.01" min="1">
+						<input name="peso" type="number" class="form-control" value="{{ old(" peso") }}" step="0.01"
+							min="1">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Altura</label>
 						<div class="input-group">
-							<input name="altura" type="number" class="form-control" value="{{ old("altura") }}">
+							<input name="altura" type="number" class="form-control" value="{{ old(" altura") }}">
 							<div class="input-group-append">
 								<span class="input-group-text">cm.</span>
 							</div>
@@ -128,24 +138,26 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label>IMC</label>
-						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old("imc") }}">
-						<input name="imc" type="hidden" class="form-control" value="{{ old("imc") }}">
+						<input disabled name="imc_disabled" type="text" class="form-control" value="{{ old(" imc") }}">
+						<input name="imc" type="hidden" class="form-control" value="{{ old(" imc") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Glucemia</label>
-						<input name="glucemia" type="number" class="form-control" value="{{ old("glucemia") }}">
+						<input name="glucemia" type="number" class="form-control" value="{{ old(" glucemia") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Saturación oxígeno</label>
-						<input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("saturacion_oxigeno") }}">
+						<input name="saturacion_oxigeno" type="number" class="form-control" value="{{ old("
+							saturacion_oxigeno") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Tensión arterial</label>
-						<input name="tension_arterial" type="text" class="form-control" value="{{ old("tension_arterial") }}">
+						<input name="tension_arterial" type="text" class="form-control" value="{{ old("
+							tension_arterial") }}">
 					</div>
 					<div class="form-group col-md-3">
 						<label>Frecuencia Cardíaca</label>
-						<input name="frec_cardiaca" type="number" class="form-control" value="{{ old("frec_cardiaca")
+						<input name="frec_cardiaca" type="number" class="form-control" value="{{ old(" frec_cardiaca")
 							}}">
 					</div>
 					<div class="form-group col-md-3">
@@ -202,7 +214,8 @@
 
 				<div class="row">
 					<div class="col-md-12">
-						<form action="{{action('EmpleadoConsultaMedicaController@tipo')}}" accept-charset="UTF-8" method="post">
+						<form action="{{action('EmpleadoConsultaMedicaController@tipo')}}" accept-charset="UTF-8"
+							method="post">
 							{{ csrf_field() }}
 							<div class="form-group">
 								<label>Nombre</label>
@@ -271,7 +284,7 @@
 
 
 <!-- Modal edicion Caratula -->
-<div class="modal fade" id="modalEdicionCaratula" tabindex="-1" >
+<div class="modal fade" id="modalEdicionCaratula" tabindex="-1">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">

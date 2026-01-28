@@ -64,6 +64,15 @@
 							@endif
 						</select>
 					</div>
+					<div class="form-group col-md-3">
+						<label>Sexo</label>
+						<select name="sexo" class="form-control form-control-sm">
+							<option value="M" {{ $user->sexo==='M'?'selected':'' }}>Hombre (M)</option>
+							<option value="F" {{ $user->sexo==='F'?'selected':'' }}>Mujer (F)</option>
+							<option value="X" {{ $user->sexo==='X'?'selected':'' }}>No binario (X)</option>
+							<option value="O" {{ $user->sexo==='O'?'selected':'' }}>Otro (O)</option>
+						</select>
+					</div>
 					<div class="form-group col-lg-3 col-md-4 col-sm-12 select_contratacion_users">
 						<label>Contratación</label>
 						<select name="contratacion" class="form-control form-control-sm">
@@ -93,6 +102,13 @@
 							@endforeach
 						</select>
 					</div>
+					{{-- <div class="form-group col-lg-3 col-md-4 col-sm-12">
+						<label>Tipo Matricula</label>
+						<select name="tipo_matricula" class="form-control form-control-sm">
+							<option value="provincial">Provincial</option>
+							<option value="nacional">Nacional</option>
+						</select>
+					</div> --}}
 					<div class="form-group col-md-4 select_permiso_edicion_fichadas">
 						<label>Permiso Edicion Fichadas</label>
 						<select name="permiso_edicion_fichada" class="form-control form-control-sm">

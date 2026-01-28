@@ -151,7 +151,6 @@ class EmpleadoConsultaMedicaController extends Controller
 	 */
 	public function store(Request $request)
 	{
-
 		if ($request->amerita_salida == null || $request->derivacion_consulta == null) {
 			return back()->withInput($request->input())->with(
 				'error',
@@ -392,10 +391,15 @@ class EmpleadoConsultaMedicaController extends Controller
 			]);
 		}
 
+		if($request->emitir_receta == 1)
+		{
+			$idNomina = $request->nomina;
+			return redirect('empleados/recetas/create' . ($idNomina ? ('?id_nomina=' . urlencode($idNomina)) : ''))
+				->with('success', 'Consulta médica guardada con éxito. Créa la receta médica.');
+		}else{
+			return redirect('empleados/consultas/medicas')->with('success', 'Consulta médica creada con éxito');
+		}
 
-		$idNomina = $request->nomina;
-		return redirect('empleados/recetas/create' . ($idNomina ? ('?id_nomina=' . urlencode($idNomina)) : ''))
-			->with('success', 'Consulta médica guardada con éxito. Créa la receta médica.');
 
 
 	}

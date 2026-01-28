@@ -17,7 +17,7 @@
 			<p>Aquí puedes cargar a los trabajadores que formarán parte de la nómina de la empresa</p>
 			<div class="cabecera_acciones">
 				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{ url('empleados/nominas') }}">
-					<i class="fas fa-arrow-circle-left fa-fw"></i> 
+					<i class="fas fa-arrow-circle-left fa-fw"></i>
 					Volver
 				</a>
 			</div>
@@ -66,6 +66,16 @@
 						<input required name="dni" type="number" class="form-control form-control-sm"
 							placeholder="solamente números, sin puntos" step="1" value="{{old('dni')}}">
 					</div>
+					<div class="form-group col-md-3">
+						<label>Sexo</label>
+						<select name="sexo" class="form-control form-control-sm">
+							<option value="M" {{ old('sexo')==='M' ?'selected':'' }}>Hombre (M)</option>
+							<option value="F" {{ old('sexo')==='F' ?'selected':'' }}>Mujer (F)</option>
+							<option value="X" {{ old('sexo')==='X' ?'selected':'' }}>No binario (X)</option>
+							<option value="O" {{ old('sexo')==='O' ?'selected':'' }}>Otro (O)</option>
+						</select>
+					</div>
+
 
 					<div class="form-group col-md-3">
 						<label>Fecha de Nacimiento</label>
@@ -106,6 +116,16 @@
 							value="{{old('localidad')}}">
 					</div>
 					<div class="form-group col-md-3">
+						<label>Provincia</label>
+						<select name="id_provincia" class="form-control form-control-sm">
+							@if($provincias) @foreach($provincias as $provincia):
+							<option value="{{ $provincia->id }}" {{ $provincia->id==old('id_provincia') ?
+								'selected' :
+								'' }} >{{ $provincia->nombre }}</option>
+							@endforeach @endif
+						</select>
+					</div>
+					<div class="form-group col-md-3">
 						<label>Partido</label>
 						<input name="partido" type="text" class="form-control form-control-sm" placeholder=""
 							value="{{old('partido')}}">
@@ -120,7 +140,8 @@
 						<label>Subir foto</label>
 						<div class="input-group input-group-sm">
 							<div class="custom-file">
-								<input name="foto" id="input_file" type="file" class="custom-file-input" accept="image/*">
+								<input name="foto" id="input_file" type="file" class="custom-file-input"
+									accept="image/*">
 								<label for="input_file" class="custom-file-label">Subir Imagen</label>
 							</div>
 						</div>

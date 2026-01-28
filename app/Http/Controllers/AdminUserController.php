@@ -118,7 +118,8 @@ class AdminUserController extends Controller
 			'email' => 'required|email',
 			'estado' => 'required|numeric',
 			'rol' => 'required|numeric',
-			'password' => 'required|min:6'
+			'password' => 'required|min:6',
+			'sexo' => 'nullable|string|in:M,F,X,O',
 		]);
 
 		if ($request->cuil != null) {
@@ -155,6 +156,7 @@ class AdminUserController extends Controller
 		$user = new User();
 		$user->nombre = $request->nombre;
 		$user->email = $request->email;
+		$user->sexo = $request->sexo;
 		$user->estado = $request->estado;
 		$user->id_rol = $request->rol;
 		$user->password = bcrypt($request->password);
@@ -295,7 +297,8 @@ class AdminUserController extends Controller
 		$validatedData = $request->validate([
 			'nombre' => 'required|string',
 			'email' => 'required|email',
-			'estado' => 'required|numeric'
+			'estado' => 'required|numeric',
+			'sexo' => 'nullable|string|in:M,F,X,O',
 		]);
 
 		if ($request->rol == 2) {
@@ -346,6 +349,7 @@ class AdminUserController extends Controller
 		//Actualizar en base
 		$user = User::findOrFail($id);
 		$user->nombre = $request->nombre;
+		$user->sexo = $request->sexo;
 		$user->email = $request->email;
 		$user->estado = $request->estado;
 		if ($request->rol == 1) {
