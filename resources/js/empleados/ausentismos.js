@@ -16,6 +16,7 @@ $(()=>{
 		datatable_options:{
 			order:[[5,'desc']],
 			dom:'<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
+			autoWidth:false,
 			columns:[
 				{
 					data:row=>row,
