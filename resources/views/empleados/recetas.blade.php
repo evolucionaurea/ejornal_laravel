@@ -35,7 +35,7 @@
                             <label for="f_desde_view" class="small mb-1">Fecha desde</label>
 
                             {{-- Campo visible (formato dd-mm-yy) --}}
-                            <input type="text" id="f_desde_view" class="form-control form-control-sm js-datepicker"
+                            <input type="text" id="f_desde_view" class="form-control js-datepicker"
                                 data-hidden-target="f_desde" autocomplete="off">
 
                             {{-- Campo real que viaja al backend (Y-m-d) --}}
@@ -46,7 +46,7 @@
                             <label for="f_hasta_view" class="small mb-1">Fecha hasta</label>
 
                             {{-- Campo visible (formato dd-mm-yy) --}}
-                            <input type="text" id="f_hasta_view" class="form-control form-control-sm js-datepicker"
+                            <input type="text" id="f_hasta_view" class="form-control js-datepicker"
                                 data-hidden-target="f_hasta" autocomplete="off">
 
                             {{-- Campo real que viaja al backend (Y-m-d) --}}
@@ -56,7 +56,7 @@
                         <div class="form-group col-sm-6 col-md-3 col-lg-3 mb-2">
                             <label for="f_nomina" class="small mb-1">Trabajador</label>
                             <select id="f_nomina" name="f_nomina"
-                                class="form-control form-control-sm js-select2-nomina">
+                                class="form-control js-select2-nomina">
                                 <option value="">Todos</option>
                                 @foreach($nominas as $n)
                                 <option value="{{ $n->id }}" {{ (string)$n->id === request('f_nomina') ? 'selected' : ''
@@ -69,7 +69,7 @@
 
                         <div class="form-group col-sm-6 col-md-3 col-lg-2 mb-2">
                             <label for="f_estado" class="small mb-1">Estado</label>
-                            <select id="f_estado" name="f_estado" class="form-control form-control-sm">
+                            <select id="f_estado" name="f_estado" class="form-control">
                                 <option value="">Todos</option>
                                 @foreach($estados as $estado)
                                 <option value="{{ $estado }}" {{ $estado===request('f_estado') ? 'selected' : '' }}>

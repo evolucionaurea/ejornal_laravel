@@ -19,19 +19,6 @@
     .receta-card.mb-4 {
         margin-bottom: 14px !important;
     }
-
-    @media (prefers-color-scheme: dark) {
-        .receta-card {
-            background: #0b1221;
-            border: 1px solid rgba(255, 255, 255, .08);
-            box-shadow: 0 10px 26px rgba(0, 0, 0, .35);
-        }
-
-        .receta-card label,
-        .receta-card .text-muted {
-            color: #cbd5e1 !important;
-        }
-    }
 </style>
 
 @section('content')

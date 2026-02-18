@@ -147,8 +147,8 @@ trait BuildReceta
     }
 
     /* ====== validación ====== */
-    protected function validarReceta(Request $req): array
-{
+  protected function validarReceta(Request $req): array
+	{
     return $this->validate($req, [
         'id_nomina' => 'required|exists:nominas,id',
 

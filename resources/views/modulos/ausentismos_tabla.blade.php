@@ -19,13 +19,6 @@
 		/*  desktop: permitir wrap */
 	}
 
-	/* Acciones en desktop en una línea */
-	.acciones_tabla {
-		display: flex;
-		justify-content: flex-end;
-		gap: .35rem;
-		flex-wrap: nowrap;
-	}
 
 	/* --- TABLET/MOBILE: acá recién forzamos el scroll horizontal --- */
 	@media (max-width: 992px) {
@@ -52,30 +45,6 @@
 		.table-responsivexx .tabla_ausentismos td:last-child {
 			white-space: normal;
 			min-width: 140px;
-		}
-
-		.acciones_tabla {
-			flex-wrap: wrap;
-		}
-	}
-
-	/* Mobile chico: acciones en columna y más angosto */
-	@media (max-width: 576px) {
-
-		.table-responsivexx .tabla_ausentismos th:last-child,
-		.table-responsivexx .tabla_ausentismos td:last-child {
-			min-width: 68px;
-			width: 68px;
-		}
-
-		.acciones_tabla {
-			flex-direction: column;
-			align-items: flex-end;
-			flex-wrap: nowrap;
-		}
-
-		.acciones_tabla .btn-label span {
-			display: none !important;
 		}
 	}
 </style>
@@ -164,7 +133,7 @@
 <hr>
 
 
-<div class="table-responsivexx">
+<div class="table-responsive">
 
 	<table data-table="ausentismos"
 		class="table table-striped table-hover table-bordered table-sm tabla_ausentismos w-100">

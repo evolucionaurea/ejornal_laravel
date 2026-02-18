@@ -70,7 +70,6 @@
 		$routeName = Route::currentRouteName();
 		$routeName = preg_replace('/^\//', '', $routeName);
 		$routeJsBase = 'js/' . str_replace('.', '/', $routeName);
-		//echo $routeJsBase;
 	@endphp
 	@if (file_exists(public_path($routeJsBase . '.js')))
 	<script defer src="{{ mix($routeJsBase . '.js') }}"></script>
