@@ -99,7 +99,7 @@ class EmpleadosRecetasController extends Controller
 
 
     public function create(Request $request)
-{
+	{
     $user = Auth::user();
 
     // ✅ Solo médicos (ajustá si tu lógica real es distinta)
@@ -259,8 +259,8 @@ class EmpleadosRecetasController extends Controller
 
 
     
-public function store(Request $req, Qbi2Client $qbi)
-{
+	public function store(Request $req, Qbi2Client $qbi)
+	{
     // Validación centralizada (incluye id_nomina, paciente, domicilio, cobertura, meds, etc.)
     $data   = $this->validarReceta($req);
 

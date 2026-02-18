@@ -251,7 +251,8 @@
 						<a href="{{url('/empleados/liquidacion')}}">Liquidacion</a>
 					</ol>
 					<ol >
-						<a href="{{asset('archivos/instructivo_de_uso_ejornal.pdf')}}" target="_blank" >Descargar Manual de Uso</a>
+						{{-- <a href="{{asset('archivos/instructivo_de_uso_ejornal.pdf')}}" target="_blank" >Descargar Manual de Uso</a> --}}
+						<a href="https://veronicajornalsalud-my.sharepoint.com/:f:/g/personal/veronicadiez_jornalsalud_com/IgBfQe_vmm0hQZiwEpctkvtZAXL6_EAPCdZ23FG5tOmIm4I?e=wevFxq" target="_blank" >Descargar Manual de Uso</a>
 					</ol>
 				</ul>
 			</div>
@@ -281,10 +282,7 @@
 					</div>
 					<div class="col-md-12">
 						<p>
-							No puedes cambiar de cliente mientras estás trabajando. Debes fichar tu salida del cliente
-							actual para poder cambiar a otro. Arriba a la derecha veras la huella de tu fichada en
-							verde.
-							Dale click para fichar tu salida y pasará a roja.
+							No puedes cambiar de cliente mientras estás trabajando. Debes fichar tu salida del cliente actual para poder cambiar a otro. Arriba a la derecha veras la huella de tu fichada en verde. Dale click para fichar tu salida y pasará a roja.
 						</p>
 					</div>
 				</div>

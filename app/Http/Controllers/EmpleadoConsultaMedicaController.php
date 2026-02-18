@@ -211,6 +211,8 @@ class EmpleadoConsultaMedicaController extends Controller
 			}
 		}
 
+		//dd($request->all());
+
 
 		if (isset($suministrados) && !empty($suministrados)) {
 
@@ -237,7 +239,9 @@ class EmpleadoConsultaMedicaController extends Controller
 			}*/
 		}
 
-		//dd($request->all());
+		if($request->amerita_salida=='1' && $request->emitir_receta == '1'){
+			return back()->withInput($request->input())->with('error', 'No puedes crear una consulta médica que amerite salida y emitir receta médica al mismo tiempo.');
+		}
 
 
 		//Guardar en base una Nueva Consulta
@@ -364,7 +368,6 @@ class EmpleadoConsultaMedicaController extends Controller
 		}
 
 
-
 		if($request->amerita_salida=='1'){
 			$consulta = $request->toArray();
 			$consulta['consulta_tipo'] = 'Médica';
@@ -391,11 +394,11 @@ class EmpleadoConsultaMedicaController extends Controller
 			]);
 		}
 
-		if($request->emitir_receta == 1)
+		if($request->emitir_receta == '1')
 		{
 			$idNomina = $request->nomina;
 			return redirect('empleados/recetas/create' . ($idNomina ? ('?id_nomina=' . urlencode($idNomina)) : ''))
-				->with('success', 'Consulta médica guardada con éxito. Créa la receta médica.');
+				->with('success', 'Consulta médica guardada con éxito. Crear la receta médica.');
 		}else{
 			return redirect('empleados/consultas/medicas')->with('success', 'Consulta médica creada con éxito');
 		}

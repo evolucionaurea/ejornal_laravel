@@ -82,15 +82,16 @@
 					</div>
 					<div class="form-group col-md-2">
 						<label>Amerita salida <span style="color: red;">*</span></label>
-						<select name="amerita_salida" class="form-control">
+						<select name="amerita_salida" class="form-control" required>
 							<option value="">--Seleccionar--</option>
-							<option value="1" {{ old('amerita_salida')==1 ? 'selected' : '' }}>Si</option>
 							<option value="0" {{ old('amerita_salida')==0 ? 'selected' : '' }}>No</option>
+							<option value="1" {{ old('amerita_salida')==1 ? 'selected' : '' }}>Si</option>
 						</select>
 					</div>
 					<div class="form-group col-md-2">
 						<label>Emitir receta <span style="color: red;">*</span></label>
-						<select name="emitir_receta" class="form-control">
+						<select name="emitir_receta" class="form-control" required>
+							<option value="">--Seleccionar--</option>
 							<option value="0" {{ old('emitir_receta')==0 ? 'selected' : '' }}>No</option>
 							<option value="1" {{ old('emitir_receta')==1 ? 'selected' : '' }}>Si</option>
 						</select>

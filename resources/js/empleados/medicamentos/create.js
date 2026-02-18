@@ -1,5 +1,7 @@
 $(() => {
 
+	console.log('create js!!!')
+
 	$('[name="medicamento"]').change(async select => {
 		const medicamentoid = $(select.currentTarget).val()
 		const response = await axios.get(`/empleados/medicamentos/stock_actual/${medicamentoid}`)

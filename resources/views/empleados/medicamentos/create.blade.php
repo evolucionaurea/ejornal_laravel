@@ -16,7 +16,9 @@
 			<h2>Movimiento de medicamentos</h2>
 			<p>Aquí puedes generar un movimiento de los medicamentos pertinentes a la empresa en la que estas trabajando</p>
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/medicamentos')}}"><i class="fas fa-arrow-alt-circle-left"></i>Volver</a>
+				<a class="btn-ejornal btn-ejornal-gris-claro" href="{{url('empleados/medicamentos')}}">
+					<i class="fas fa-arrow-alt-circle-left fa-fw"></i> Volver
+				</a>
 			</div>
 		</div>
 
@@ -38,7 +40,7 @@
 			<div class="form-row">
 				<div class="form-group col-md-4">
 					<label>Nombre</label>
-					<select name="medicamento" class="form-control form-control-sm select_2" required>
+					<select name="medicamento" class="form-control select_2" required>
 						<option value="">--Seleccionar--</option>
 						@foreach ($medicamentos as $medicamento)
 						<option value="{{$medicamento->id}}" {{ old('medicamento')==$medicamento->id ? 'selected' : '' }}>{{$medicamento->nombre}}</option>
@@ -47,9 +49,7 @@
 				  <div class="small text-muted font-italic" data-content="stock-actual"></div>
 				</div>
 				<div class="form-group col-md-4">
-					<label>
-					  Ingreso
-					</label>
+					<label>Ingreso</label>
 					<input required name="ingreso" type="number" class="form-control medicamentos_cant_pedida" placeholder="" value="{{ old('ingreso') }}" step="1" min="1">
 					<div class="small text-muted font-italic">Es la cantidad de medicamentos que ingresaron</div>
 				</div>

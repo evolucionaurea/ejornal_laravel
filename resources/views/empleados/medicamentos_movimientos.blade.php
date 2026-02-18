@@ -17,11 +17,12 @@
 
 			@if (auth()->user()->fichada == 1 || !auth()->user()->fichar)
 			<div class="cabecera_acciones">
-				<a class="btn-ejornal btn-ejornal-base" href="{{route('medicamentos.create')}}"><i
-						class="fas fa-plus-circle"></i> Nuevo movimiento</a>
+				<a class="btn-ejornal btn-ejornal-base" href="{{route('/empleados/medicamentos/create')}}">
+					<i class="fas fa-plus-circle fa-fw"></i> Nuevo movimiento
+				</a>
 			</div>
 			@else
-			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo ausentismo</i></div>
+			<div class="small text-muted"><i>Debe fichar para poder agregar un nuevo movimiento de medicamento.</i></div>
 			@endif
 
 		</div>
