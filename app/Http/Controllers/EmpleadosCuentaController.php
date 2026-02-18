@@ -34,6 +34,7 @@ class EmpleadosCuentaController extends Controller
       $user = User::findOrFail($request->id_user);
       $user->dni = $request->dni;
       $user->matricula = $request->matricula;
+      $user->tipo_matricula = $request->tipo_matricula;
       if (isset($request->fecha_vencimiento_matricula) && !empty($request->fecha_vencimiento_matricula)) {
         $fecha_vencimiento_matricula = Carbon::createFromFormat('d/m/Y', $request->fecha_vencimiento_matricula);
       }else {

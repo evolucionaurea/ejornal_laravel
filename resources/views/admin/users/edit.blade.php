@@ -295,7 +295,7 @@
 							@if ($user->matricula == null)
 							<div class="alert alert-info" role="alert">No hay un archivo adjunto</div>
 							@else
-							<p>{{$user->matricula}}</p>
+							<p>{{$user->matricula}} ({{$user->tipo_matricula}})</p>
 							@endif
 						</div>
 						<div class="form-group col-lg-4 col-md-6 col-sm-12">

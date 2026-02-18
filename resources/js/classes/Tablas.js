@@ -56,19 +56,20 @@ export default class Tablas {
 				loading()
 			}
 		}
-		datatable_options.fnDrawCallback = settings => {
-			loading({ show: false })
-			///console.log(settings.json)
+		this.datatable_options.fnDrawCallback = settings => {
+		loading({ show: false })
 		}
-		datatable_options.createdRow = (row, data, dataIndex) => {
-			$(row).attr('data-id', data.id)
+
+		this.datatable_options.createdRow = (row, data, dataIndex) => {
+		$(row).attr('data-id', data.id)
 		}
+
 		/*datatable_options.createdRow = (row,data,dataIndex)=>{
 			$(row).attr('data-id',data.id)
 		}*/
 
 		$.extend(window.datatable_options, this.datatable_options)
-		this.datatable_instance = new DataTable(this.table, window.datatable_options);
+		this.datatable_instance = new DataTable(this.table[0], window.datatable_options);
 
 		return true
 	}
@@ -92,34 +93,45 @@ export default class Tablas {
 				.catch(error => reject(error))
 		})
 	}
+
+	
 	render_table(data) {
 
+		// apagar loader
+		loading({ show: false });
 
-		this.table.find('tbody').remove()
-		let tbody = dom('tbody')
-		loading({ show: false })
-
-		if (!data.results || data.results.length == 0) return false
-
+		// 1) Si DataTable está activo, destruirlo ANTES de manipular <tbody>
 		if (this.datatable_instance) {
-			this.datatable_instance.clear()
-			this.datatable_instance.destroy()
+			try {
+			this.datatable_instance.destroy();
+			} catch (e) {}
+			this.datatable_instance = false;
 		}
 
-		data.results.map(v => {
-			let tr = this.render_row(v)
-			if ('fichada_user' in v && v.fichada_user == 0) tr.find('.acciones_tabla').remove()
-			tbody.append(tr)
-		})
+		// 2) Ahora reconstruyo el tbody
+		this.table.find('tbody').remove();
+		let tbody = dom('tbody');
 
-		this.table.append(tbody)
-		if (!this.datatable_instance) {
-			this.first_render = false
-			//this.datatable_instance = this.table.DataTable(window.datatable_options);
-			this.datatable_instance = new DataTable(this.table, window.datatable_options);
+		// algunos endpoints devuelven results, otros data
+		const results = (data && data.results) ? data.results : ((data && data.data) ? data.data : []);
+
+		// si no hay resultados, dejo tbody vacío igual (para que la tabla quede renderizada)
+		results.map(v => {
+			let tr = this.render_row(v);
+			if ('fichada_user' in v && v.fichada_user == 0) tr.find('.acciones_tabla').remove();
+			tbody.append(tr);
+		});
+
+		this.table.append(tbody);
+
+		// 3) Re-inicializo SIEMPRE DataTable con las opciones actuales
+		const opts = $.extend(true, {}, window.datatable_options || {}, this.datatable_options || {}, {
+			destroy: true // permite reiniciar sin warnings
+		});
+
+		this.datatable_instance = new DataTable(this.table[0], opts);
 		}
 
-	}
 
 
 

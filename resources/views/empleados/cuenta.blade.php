@@ -176,6 +176,16 @@
                         <label>Matrícula</label>
                         <input name="matricula" type="text" class="form-control form-control-sm"
                             value="{{auth()->user()->matricula}}">
+                        <br>
+                        <label>Tipo de Matrícula</label>
+                        <select name="tipo_matricula" class="form-control form-control-sm">
+                            <option value="MN" {{ auth()->user()->tipo_matricula == 'nacional' ? 'selected' :
+                                '' }}>
+                                nacional</option>
+                            <option value="MP" {{ auth()->user()->tipo_matricula == 'provincial' ? 'selected' :
+                                '' }}>provincial
+                            </option>
+                        </select>
                     </div>
 
 

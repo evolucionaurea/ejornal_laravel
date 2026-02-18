@@ -94,7 +94,7 @@
 
                             <option value="{{ $n->id }}" {{-- Datos del trabajador (Paciente) --}}
                                 data-nombre="{{ $n->nombre }}" data-dni="{{ $n->dni }}" data-email="{{ $n->email }}"
-                                data-telefono="{{ $n->telefono }}"
+                                data-telefono="{{ $n->telefono }}" data-sexo="{{ $n->sexo ?? '' }}"
                                 data-fecha-nacimiento="{{ $n->fecha_nacimiento ?? '' }}" {{-- Datos del CLIENTE
                                 (Domicilio) --}} data-cliente-calle="{{ optional($c)->calle ?? '' }}"
                                 data-cliente-nro="{{ optional($c)->nro ?? '' }}"
@@ -378,14 +378,16 @@
                         <div class="form-group col-md-2 mb-2">
                             <label>Tipo matrícula <span class="text-danger">*</span></label>
                             <select name="medico[matricula][tipo]" class="form-control form-control-sm">
-                                <option value="MN" {{ old('medico.matricula.tipo')==='MN' ?'selected':'' }}>MN</option>
-                                <option value="MP" {{ old('medico.matricula.tipo')==='MP' ?'selected':'' }}>MP</option>
+                                <option value="MN" {{ ($medicoTipoMatricula ?? 'MN' )==='MN' ? 'selected' : '' }}>MN
+                                </option>
+                                <option value="MP" {{ ($medicoTipoMatricula ?? 'MN' )==='MP' ? 'selected' : '' }}>MP
+                                </option>
                             </select>
                         </div>
                         <div class="form-group col-md-4 mb-2">
                             <label>Número</label>
                             <input type="text" name="medico[matricula][numero]" class="form-control form-control-sm"
-                                value="{{ old('medico.matricula.numero') }}" placeholder="Sólo dígitos (máx. 9)">
+                                value="{{ $medicoMatricula ?? '' }}" placeholder="Sólo dígitos (máx. 9)">
                         </div>
                         <div class="form-group col-md-6 mb-2">
                             <label>Provincia (requerida si MP)</label>

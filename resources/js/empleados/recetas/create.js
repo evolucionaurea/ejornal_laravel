@@ -222,6 +222,21 @@
     s2Small($sel);
   }
 
+
+  function normSexo(v) {
+  v = String(v || '').trim().toUpperCase();
+  if (!v) return '';
+  if (['M','F','X','O'].includes(v)) return v;
+
+  // por si viene "Masculino/Femenino", "Hombre/Mujer", etc.
+  if (v.startsWith('M') || v.startsWith('H')) return 'M';
+  if (v.startsWith('F')) return 'F';
+  if (v.startsWith('X')) return 'X';
+  if (v.startsWith('O')) return 'O';
+  return '';
+}
+
+
   // =========================
   // Provincias por endpoint
   // =========================
@@ -454,6 +469,7 @@
     set('paciente[email]', '');
     set('paciente[telefono]', '');
     set('paciente[fechaNacimiento]', '');
+    set('paciente[sexo]', 'M');
     const $vis = $('#paciente_fecha_visual');
     if ($vis.length) $vis.val('');
   }
@@ -483,6 +499,9 @@
     set('paciente[nroDoc]', d.dni && String(d.dni));
     set('paciente[email]', d.email);
     set('paciente[telefono]', d.telefono);
+
+     const sx = normSexo(d.sexo);
+     if (sx) set('paciente[sexo]', sx);
 
     let iso = normalizeISO(d.fechaNacimiento) || esAISO(d.fechaNacimiento);
     set('paciente[fechaNacimiento]', iso);
@@ -627,13 +646,17 @@
         (String($o.data('fechaNacimiento') ?? '').trim()) ||
         (String($o.data('fecha-nacimiento') ?? '').trim());
 
+        const sexoRaw = String($o.attr('data-sexo') || $o.data('sexo') || '').trim();
+
+
       setPaciente({
         nombre,
         apellido,
         dni: $o.attr('data-dni') || $o.data('dni'),
         email: $o.attr('data-email') || $o.data('email'),
         telefono: $o.attr('data-telefono') || $o.data('telefono'),
-        fechaNacimiento: fnac
+        fechaNacimiento: fnac,
+        sexo: sexoRaw
       });
 
       // ===== Domicilio (CLIENTE) =====

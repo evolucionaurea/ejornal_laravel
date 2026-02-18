@@ -142,9 +142,17 @@ class EmpleadosRecetasController extends Controller
     $medicoApellido = count($partes) > 1 ? implode(' ', array_slice($partes, 1)) : '';
 
     $medicoDni  = $user->dni ?? '';
-    $medicoSexo = $user->sexo ?? ''; // se agrega en punto 3
+    $medicoSexo = $user->sexo ?? '';
 
     $lockNomina = true; // para bloquear select
+
+    $medicoTipoMatricula = strtoupper(trim((string) ($user->tipo_matricula ?? 'MN')));
+    if (!in_array($medicoTipoMatricula, ['MN','MP'], true)) {
+        $medicoTipoMatricula = 'MN';
+    }
+
+    $medicoMatricula = preg_replace('/\D+/', '', (string) ($user->matricula ?? ''));
+
 
     return view('empleados.recetas.create', compact(
         'nominas',
@@ -154,6 +162,8 @@ class EmpleadosRecetasController extends Controller
         'medicoApellido',
         'medicoDni',
         'medicoSexo',
+        'medicoTipoMatricula',
+        'medicoMatricula', 
         'selectedNominaId',
         'lockNomina'
     ));

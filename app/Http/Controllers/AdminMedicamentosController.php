@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Medicamento;
-
+use App\StockMedicamento;
+use App\Cliente;
 
 class AdminMedicamentosController extends Controller
 {
@@ -14,52 +15,96 @@ class AdminMedicamentosController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
+	
+
 	public function index()
 	{
-		/*$medicamentos = Medicamento::all();
-		$medicamentos->forget([2,3]);
-		dd($medicamentos);*/
+		$medicamentos_filtro = Medicamento::orderBy('nombre')->get(['id','nombre']);
 
-		return view('admin.medicamentos');
+		$clientes = Cliente::withTrashed()
+			->orderBy('nombre')
+			->get(['id','nombre','deleted_at']);
+
+		return view('admin.medicamentos', compact('medicamentos_filtro','clientes'));
 	}
+
 
 	public function busqueda(Request $request)
 	{
-		$query = Medicamento::select('*');
-		//$query = DB::select(DB::raw("SELECT m.*, (SELECT SUM(sm.stock) FROM stock_medicamentos sm WHERE sm.id_medicamento=m.id) stock_total FROM medicamentos m"));
-		if(isset($request->medicamento)) $query->where('id',$request->medicamento);
-
-		//app()->call('App\Http\Controllers\AdminMedicamentosController@busqueda',['stock'=>1])
-
-
-		$medicamentos = $query->get();
-		$forget = [];
-
-		if($medicamentos){
-			foreach($medicamentos as $k=>$medicamento){
-
-				$stock = $medicamento->stock_medicamento()->sum('stock');
-				$medicamentos[$k]->stock_total = $stock;
-
-				if(isset($request->stock)){
-					if($request->stock && !$stock) $forget[] = $k;
-					if(!$request->stock && $stock) $forget[] = $k;
-				}
-				///if(isset($request->stock) && !$request->stock && $stock) continue;
-
-				$medicamentos[$k]->suministrados_total = $medicamento->stock_medicamento()->sum('suministrados');
-			}
+		// ✅ Solo POST (aunque alguien intente entrar por GET)
+		if (!$request->isMethod('post')) {
+			abort(405);
 		}
 
-		if($forget) $medicamentos->forget($forget);
+		$idMedicamento = $request->filled('medicamento') ? (int) $request->input('medicamento') : null;
+		$idCliente     = $request->filled('id_cliente') ? (int) $request->input('id_cliente') : null;
 
-		return [
-			'results'=>array_values($medicamentos->toArray()),
-			'request'=>$request->all(),
-			'forget'=>$forget
-		];
+		// viene como '1' / '0' desde el select (o vacío)
+		$stockFiltro = ($request->has('stock') && $request->input('stock') !== '')
+			? (string) $request->input('stock')
+			: null;
 
+		// ✅ cliente eliminado (si se filtró por cliente)
+		$clienteEliminado = false;
+		if ($idCliente) {
+			$cliente = Cliente::withTrashed()->select('id', 'deleted_at')->find($idCliente);
+			$clienteEliminado = $cliente ? !is_null($cliente->deleted_at) : false;
+		}
+
+		// ✅ Subquery agregado por medicamento (y opcionalmente por cliente)
+		$agg = StockMedicamento::query()
+			->select(
+				'id_medicamento',
+				DB::raw('COALESCE(SUM(ingreso),0) as ingreso_total'),
+				DB::raw('COALESCE(SUM(egreso),0) as egreso_total'),
+				DB::raw('COALESCE(SUM(suministrados),0) as suministrados_total'),
+				DB::raw('(COALESCE(SUM(ingreso),0) - COALESCE(SUM(suministrados),0) - COALESCE(SUM(egreso),0)) as stock_total')
+			)
+			->when($idCliente, fn ($q) => $q->where('id_cliente', $idCliente))
+			->groupBy('id_medicamento');
+
+		// ✅ Query base de medicamentos
+		$q = Medicamento::query()->from('medicamentos');
+
+		if ($idMedicamento) {
+			$q->where('medicamentos.id', $idMedicamento);
+		}
+
+		// Si filtran por cliente: INNER JOIN (solo meds con movimientos para ese cliente)
+		if ($idCliente) {
+			$q->joinSub($agg, 'sm', fn ($join) => $join->on('medicamentos.id', '=', 'sm.id_medicamento'));
+		} else {
+			$q->leftJoinSub($agg, 'sm', fn ($join) => $join->on('medicamentos.id', '=', 'sm.id_medicamento'));
+		}
+
+		$q->select(
+			'medicamentos.id',
+			'medicamentos.nombre',
+			DB::raw('COALESCE(sm.stock_total,0) as stock_total'),
+			DB::raw('COALESCE(sm.suministrados_total,0) as suministrados_total')
+		);
+
+		// ✅ Filtro C/S stock
+		if ($stockFiltro === '1') {
+			$q->whereRaw('COALESCE(sm.stock_total,0) > 0');
+		} elseif ($stockFiltro === '0') {
+			$q->whereRaw('COALESCE(sm.stock_total,0) <= 0');
+		}
+
+		$medicamentos = $q->orderBy('medicamentos.nombre')->get();
+
+		// ✅ Flag para pintar (solo tiene sentido cuando filtran por cliente)
+		$medicamentos->each(function ($m) use ($idCliente, $clienteEliminado) {
+			$m->setAttribute('cliente_eliminado', $idCliente ? $clienteEliminado : false);
+		});
+
+		// ✅ Tablas.js espera "results"
+		return response()->json([
+			'results' => $medicamentos->values()->toArray(),
+			'request' => $request->all(),
+		]);
 	}
+
 
 	/**
 	 * Show the form for creating a new resource.
