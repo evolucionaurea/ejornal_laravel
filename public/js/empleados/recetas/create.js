@@ -146,6 +146,241 @@
   };
 
   // =========================
+  // XOR UI (Medicamentos vs Prácticas)
+  // =========================
+  var RX_MODE = 'none'; // none | meds | practicas
+  var RX_FORCE = null; // null | 'practicas'  (cuando apretás "Quitar medicamentos" para pasar a prácticas sin recargar)
+
+  // refs UI (se completan en ensureRxLayout)
+  var rxCssReady = false;
+  var $MED_CARD = $(),
+    $PRA_CARD = $();
+  var $MED_HEAD = $(),
+    $PRA_HEAD = $();
+  var $MED_BODY = $(),
+    $PRA_BODY = $();
+  function ensureRxCSS() {
+    if (rxCssReady) return;
+    rxCssReady = true;
+    var css = "\n      .rx-actions{display:flex;align-items:center;gap:8px}\n      .rx-head-off{opacity:.55;filter:grayscale(.18)}\n      .rx-body{position:relative}\n      .rx-body.rx-off{opacity:.55;filter:grayscale(.25)}\n      .rx-body.rx-off::after{\n        content:\"\";\n        position:absolute; inset:0;\n        background:rgba(255,255,255,.35);\n        border-radius:10px;\n        pointer-events:none;\n      }\n      @media (prefers-color-scheme: dark){\n        .rx-body.rx-off::after{ background:rgba(15,23,42,.35); }\n      }\n      .rx-body.rx-off *{pointer-events:none !important}\n    ";
+    document.head.appendChild(Object.assign(document.createElement('style'), {
+      textContent: css
+    }));
+  }
+  function practicasCount() {
+    return $('#practicasHidden input[name="practicas[]"]').length;
+  }
+
+  // hay meds si al menos 1 fila tiene regNo o select con valor
+  function hasMedsSelected() {
+    var any = false;
+    $('#medsWrapper .med-row').each(function () {
+      var reg = String($(this).find('.regno').val() || '').trim();
+      var sel = $(this).find('.sel-medicamento').val();
+      if (reg || sel && String(sel).trim() !== '') {
+        any = true;
+        return false;
+      }
+    });
+    return any;
+  }
+  function clearPracticasUI() {
+    $('#practicasHidden').find('input[name="practicas[]"]').remove();
+    $('#practicasList').empty();
+    var $s = $('#practica_search');
+    if ($s.length) $s.val(null).trigger('change');
+  }
+  function clearMedsUI() {
+    var $wrap = $('#medsWrapper');
+    if (!$wrap.length) return;
+
+    // dejar solo la primera fila (base)
+    $wrap.children('.med-row').slice(1).remove();
+    var $r = $wrap.children('.med-row').first();
+    if (!$r.length) return;
+
+    // limpiar select2 + campos
+    $r.find('.sel-medicamento').val(null).trigger('change');
+    $r.find('input[type="number"], input[type="text"], textarea').val('');
+    $r.find('.duplicado').prop('checked', false);
+  }
+
+  // mueve todos los elementos luego del header a un contenedor .rx-body
+  function wrapAfterHeader($card, $head) {
+    if (!$card.length || !$head.length) return $();
+    var $existing = $card.children('.rx-body').first();
+    if ($existing.length) return $existing;
+    var $body = $('<div class="rx-body"></div>');
+    $head.nextAll().appendTo($body);
+    $card.append($body);
+    return $body;
+  }
+  function ensureRxLayout() {
+    ensureRxCSS();
+
+    // localizar cards de forma robusta
+    if (!$MED_CARD.length) $MED_CARD = $('#medsWrapper').closest('.receta-card');
+    if (!$PRA_CARD.length) $PRA_CARD = $('#practica_search').closest('.receta-card');
+
+    // MED header (d-flex ...)
+    if ($MED_CARD.length) {
+      $MED_HEAD = $MED_CARD.children('.d-flex.align-items-center.justify-content-between').first();
+      if ($MED_HEAD.length && !$MED_HEAD.data('rxReady')) {
+        $MED_HEAD.data('rxReady', 1);
+
+        // armar acciones (mantener btnAddMed + crear btnClearMeds)
+        var $add = $MED_HEAD.find('#btnAddMed').detach();
+        var $clear = $('#btnClearMeds');
+        if ($clear.length) $clear = $clear.detach();else {
+          $clear = $('<button/>', {
+            id: 'btnClearMeds',
+            type: 'button',
+            "class": 'btn-ejornal btn-ejornal-gris-claro',
+            text: 'Quitar medicamentos'
+          }).css({
+            'white-space': 'nowrap'
+          });
+        }
+
+        // si existía un rx-actions previo lo eliminamos
+        $MED_HEAD.find('.rx-actions').remove();
+        var $actions = $('<div class="rx-actions"></div>');
+        $actions.append($add).append($clear);
+        $MED_HEAD.append($actions);
+        $MED_BODY = wrapAfterHeader($MED_CARD, $MED_HEAD);
+      } else if ($MED_HEAD.length) {
+        $MED_BODY = $MED_CARD.children('.rx-body').first();
+      }
+    }
+
+    // PRA header (text-uppercase...)
+    if ($PRA_CARD.length) {
+      $PRA_HEAD = $PRA_CARD.children('.text-uppercase').first();
+      if ($PRA_HEAD.length && !$PRA_HEAD.data('rxReady')) {
+        $PRA_HEAD.data('rxReady', 1);
+
+        // convertir header a flex y agregar botón
+        $PRA_HEAD.addClass('d-flex align-items-center justify-content-between');
+        var $btn = $('#btnClearPracticas');
+        if ($btn.length) $btn = $btn.detach();else {
+          $btn = $('<button/>', {
+            id: 'btnClearPracticas',
+            type: 'button',
+            "class": 'btn-ejornal btn-ejornal-gris-claro',
+            text: 'Quitar práctica'
+          }).css({
+            'white-space': 'nowrap'
+          });
+        }
+
+        // Mantener el texto tal cual pero separarlo del botón
+        var txt = ($PRA_HEAD.text() || '').trim();
+        $PRA_HEAD.empty().append($('<span/>').text(txt)).append($btn);
+        $PRA_BODY = wrapAfterHeader($PRA_CARD, $PRA_HEAD);
+      } else if ($PRA_HEAD.length) {
+        $PRA_BODY = $PRA_CARD.children('.rx-body').first();
+      }
+    }
+
+    // handlers (una sola vez)
+    $(document).off('click.rxClearMeds').on('click.rxClearMeds', '#btnClearMeds', function () {
+      clearMedsUI();
+      // forzar modo prácticas aunque todavía no haya chips
+      RX_FORCE = 'practicas';
+      applyRxXorUI();
+    });
+    $(document).off('click.rxClearPracticas').on('click.rxClearPracticas', '#btnClearPracticas', function () {
+      clearPracticasUI();
+      RX_FORCE = null;
+      applyRxXorUI();
+    });
+  }
+  function updateRxButtons() {
+    // botón quitar meds activo solo si hay algo seleccionado
+    $('#btnClearMeds').prop('disabled', !hasMedsSelected());
+
+    // botón quitar práctica activo si hay prácticas o si estamos forzando prácticas (para volver atrás)
+    $('#btnClearPracticas').prop('disabled', !(practicasCount() > 0 || RX_FORCE === 'practicas' || RX_MODE === 'practicas'));
+  }
+  function setPracticasEnabled(enabled) {
+    ensureRxLayout();
+    var $s = $('#practica_search');
+    if ($s.length) {
+      $s.prop('disabled', !enabled);
+      // select2 respeta el disabled del select original
+      $s.trigger('change.select2');
+    }
+    if ($PRA_BODY.length) $PRA_BODY.toggleClass('rx-off', !enabled);
+    if ($PRA_HEAD.length) $PRA_HEAD.toggleClass('rx-head-off', !enabled);
+  }
+  function setMedsEnabled(enabled) {
+    ensureRxLayout();
+
+    // solo deshabilitamos el "Agregar"; el botón quitar meds NO se toca acá (depende de estado)
+    $('#btnAddMed').prop('disabled', !enabled);
+    $('#medsWrapper .med-row').each(function () {
+      var $row = $(this);
+
+      // inputs/textarea/botones dentro de filas
+      $row.find('input, textarea, button').prop('disabled', !enabled);
+
+      // selects
+      $row.find('select').prop('disabled', !enabled).trigger('change.select2');
+    });
+    if ($MED_BODY.length) $MED_BODY.toggleClass('rx-off', !enabled);
+    if ($MED_HEAD.length) $MED_HEAD.toggleClass('rx-head-off', !enabled);
+
+    // recalcular delete buttons
+    $('#medsWrapper').trigger('meds:toggleDel');
+  }
+  function applyRxXorUI() {
+    ensureRxLayout();
+    var hasPract = practicasCount() > 0;
+    var hasMeds = hasMedsSelected();
+
+    // Si por algún bug quedaron ambos, priorizamos lo que el usuario está haciendo:
+    // - si hay prácticas, limpiamos meds
+    // - si hay meds, limpiamos prácticas
+    if (hasPract && hasMeds) {
+      // si existe RX_FORCE a prácticas o ya estamos en prácticas, limpiamos meds; sino limpiamos prácticas
+      if (RX_FORCE === 'practicas' || RX_MODE === 'practicas') clearMedsUI();else clearPracticasUI();
+    }
+    var hasPract2 = practicasCount() > 0;
+    var hasMeds2 = hasMedsSelected();
+    if (hasPract2) {
+      RX_FORCE = null;
+      // modo prácticas: limpiar meds para no enviar nada y bloquear meds
+      if (RX_MODE !== 'practicas') clearMedsUI();
+      RX_MODE = 'practicas';
+      setMedsEnabled(false);
+      setPracticasEnabled(true);
+      updateRxButtons();
+      return;
+    }
+    if (hasMeds2) {
+      RX_FORCE = null;
+      RX_MODE = 'meds';
+      setPracticasEnabled(false);
+      setMedsEnabled(true);
+      updateRxButtons();
+      return;
+    }
+
+    // ninguno elegido: si el usuario apretó "Quitar medicamentos" lo dejamos en modo prácticas (meds apagado)
+    if (RX_FORCE === 'practicas') {
+      RX_MODE = 'practicas';
+      setMedsEnabled(false);
+      setPracticasEnabled(true);
+      updateRxButtons();
+      return;
+    }
+    RX_MODE = 'none';
+    setMedsEnabled(true);
+    setPracticasEnabled(true);
+    updateRxButtons();
+  }
+
+  // =========================
   // Spinner pequeño en labels
   // =========================
   var spCSS = false;
@@ -327,8 +562,6 @@
     v = String(v || '').trim().toUpperCase();
     if (!v) return '';
     if (['M', 'F', 'X', 'O'].includes(v)) return v;
-
-    // por si viene "Masculino/Femenino", "Hombre/Mujer", etc.
     if (v.startsWith('M') || v.startsWith('H')) return 'M';
     if (v.startsWith('F')) return 'F';
     if (v.startsWith('X')) return 'X';
@@ -370,8 +603,6 @@
       return [];
     });
   }
-
-  // Crea <select> con value=id, text=nombre
   function toSelect($input, items) {
     var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
       name = _ref3.name;
@@ -388,10 +619,7 @@
     });
     $input.replaceWith($sel);
     if (current) {
-      // 1) por value (id)
       $sel.val(current);
-
-      // 2) por texto (nombre)
       if (!$sel.val()) {
         var c = current.toLowerCase();
         var $opt = $sel.find('option').filter(function () {
@@ -402,27 +630,14 @@
     }
     return $sel;
   }
-
-  // Convierte "provincia" visible a:
-  // - select:   <select name="...id_provincia"> (value=id)
-  // - hidden:  <input type="hidden" name="...provincia"> (value=nombre)
   function ensureProvinciaPair(items, _ref4) {
     var visibleName = _ref4.visibleName,
       idName = _ref4.idName;
     var $f = $('#recetaForm');
     if (!$f.length) return null;
-
-    // Hidden con nombre (provincia)
     var $hiddenName = $f.find("[name=\"".concat(visibleName, "\"]"));
-
-    // Campo "id_provincia" puede existir como hidden del blade
     var $idField = $f.find("[name=\"".concat(idName, "\"]"));
-
-    // Si el "provincia" es input visible, lo vamos a usar como host para reemplazar por select.
-    // Si no existe, y hay idField hidden, lo reemplazamos por select y creamos hidden provincia.
     var $host = $hiddenName;
-
-    // Si hay más de uno (por cambios previos), nos quedamos con el primero.
     if ($hiddenName.length > 1) {
       $hiddenName.slice(1).remove();
       $hiddenName = $f.find("[name=\"".concat(visibleName, "\"]")).first();
@@ -431,77 +646,51 @@
       $idField.slice(1).remove();
       $idField = $f.find("[name=\"".concat(idName, "\"]")).first();
     }
-
-    // Asegurar hidden de nombre
     if (!$hiddenName.length) {
       $hiddenName = $("<input type=\"hidden\" name=\"".concat(visibleName, "\">"));
       $f.append($hiddenName);
     }
-
-    // Si el "provincia" es visible (type!=hidden/select), lo convertimos en hidden para no duplicar.
     if ($hiddenName.is('input') && ($hiddenName.attr('type') || 'text').toLowerCase() !== 'hidden') {
-      // Guardar valor (texto) antes de tocar
       var txt = String($hiddenName.val() || '').trim();
       $hiddenName.attr('type', 'hidden');
       $hiddenName.val(txt);
-      // El host visible para el select será el input original (mismo nodo), pero ya es hidden.
-      // Creamos un "placeholder" visible justo después para reemplazar con select.
       $host = $('<input type="text" class="form-control form-control-sm" value="">');
       $hiddenName.after($host);
     }
-
-    // Determinar host para el select
     if ($host && $host.length && $host.is('select')) {
-      // Si ya era select con nombre provincia, lo vamos a convertir en id_provincia
       $host.attr('name', idName);
       return $host;
     }
-
-    // Si hay idField y es input hidden, usémoslo como host (lo reemplazamos por select)
     if ($idField.length && !$host.length) {
       $host = $idField;
     }
-
-    // Si no tenemos host, creamos uno al final del form (fallback)
     if (!$host || !$host.length) {
       $host = $('<input type="text" class="form-control form-control-sm" value="">');
       $f.append($host);
     }
-
-    // Si existe idField y NO es el host, para evitar duplicado lo removemos
     if ($idField.length && $idField[0] !== $host[0]) {
       $idField.remove();
     }
-
-    // Convertir host -> select name=idName
     var curId = String($f.find("[name=\"".concat(idName, "\"]")).val() || '').trim();
     var curText = String($hiddenName.val() || '').trim();
     var $sel = toSelect($host, items, {
       name: idName
     });
-
-    // Restaurar selección por id/por texto
     if (curId) $sel.val(curId);
     if (!$sel.val() && curText) {
       var k = curText.toLowerCase();
       if (PROV_ID_BY_NAME[k]) $sel.val(PROV_ID_BY_NAME[k]);
     }
-
-    // Sync: al cambiar select, setear hidden provincia=texto
     $sel.on('change', function () {
       var txt = String($(this).find('option:selected').text() || '').trim();
       $hiddenName.val(txt);
     });
-
-    // Disparar sync inicial
     $sel.trigger('change');
     return $sel;
   }
   function syncProvinciaTextFromSelects() {
     var $f = $('#recetaForm');
     if (!$f.length) return;
-
-    // DOMICILIO
     var $domSel = $f.find('[name="domicilio[id_provincia]"]');
     var $domTxt = $f.find('[name="domicilio[provincia]"]');
     if (!$domTxt.length) {
@@ -512,8 +701,6 @@
       var txt = String($domSel.find('option:selected').text() || '').trim();
       if (txt && txt !== 'Seleccione…') $domTxt.val(txt);
     }
-
-    // MATRÍCULA
     var $matSel = $f.find('[name="medico[matricula][id_provincia]"]');
     var $matTxt = $f.find('[name="medico[matricula][provincia]"]');
     if (!$matTxt.length) {
@@ -580,7 +767,6 @@
     if ($vis.length) $vis.val('');
   }
   function setPaciente(d) {
-    // Si viene vacío, limpiar (NO setear "hoy" porque confunde)
     var empty = !d || !String(d.nombre || '').trim() && !String(d.apellido || '').trim() && !String(d.dni || '').trim() && !String(d.email || '').trim() && !String(d.telefono || '').trim() && !String(d.fechaNacimiento || '').trim();
     if (empty) {
       clearPaciente();
@@ -613,15 +799,11 @@
     set('domicilio[calle]', '');
     set('domicilio[numero]', '');
     set('domicilio[provincia]', '');
-
-    // si existe select id_provincia
     var $sel = $f.find('[name="domicilio[id_provincia]"]');
     if ($sel.length) $sel.val('').trigger('change');
     pendingDomProvId = '';
     pendingDomProvName = '';
   }
-
-  // DOMICILIO desde cliente
   function setDomicilioFromCliente(c) {
     var $f = $('#recetaForm');
     var set = function set(n, v) {
@@ -638,16 +820,12 @@
     set('domicilio[numero]', c.nro != null ? String(c.nro).trim() : '');
     var provId = String(c.id_provincia || '').trim();
     var provName = String(c.provincia || '').trim() || (provId && PROV_BY_ID[provId] ? PROV_BY_ID[provId] : '');
-
-    // Siempre guardo el nombre (para API)
     var $provHidden = $f.find('[name="domicilio[provincia]"]');
     if (!$provHidden.length) {
       $provHidden = $('<input type="hidden" name="domicilio[provincia]">');
       $f.append($provHidden);
     }
     $provHidden.val(provName);
-
-    // Si existe select por id, seteo por id y sincronizo texto
     var $provSel = $f.find('[name="domicilio[id_provincia]"]');
     if ($provSel.length && $provSel.is('select')) {
       if (provId) {
@@ -662,12 +840,8 @@
       $provSel.trigger('change');
       return;
     }
-
-    // Si todavía no es select (fallback), dejo pendiente
     pendingDomProvId = provId;
     pendingDomProvName = provName;
-
-    // si existe input visible de provincia, al menos muestro el nombre
     var $provInput = $f.find('[name="domicilio[provincia]"]');
     if ($provInput.length && !$provInput.is('select')) {
       $provInput.val(provName).trigger('input').trigger('change');
@@ -682,8 +856,6 @@
     if (!$s.length) return;
     var preset = String($s.data('preset') || '').trim();
     if (preset) showFormLoader('Cargando datos del trabajador…');
-
-    // ordenar opciones (manteniendo la primera)
     var opts = $s.find('option').toArray();
     if (opts.length > 1) {
       var first = opts.shift();
@@ -694,20 +866,23 @@
       });
       $s.empty().append(first, opts);
     }
-
-    // Select2
     $s.select2({
       width: '100%',
       minimumInputLength: 0,
       dropdownParent: $(document.body)
     });
     s2Small($s);
-
-    // Si viene preset por querystring, bloquearlo
     if (preset) {
-      $s.prop('disabled', true).trigger('change.select2');
+      // NO deshabilitar, porque si no, no se envía en el POST
       $s.on('select2:opening select2:unselecting', function (e) {
         return e.preventDefault();
+      });
+
+      // opcional: que "parezca" deshabilitado
+      var $sel2 = $s.next('.select2').find('.select2-selection--single');
+      $sel2.css({
+        background: '#e9ecef',
+        cursor: 'not-allowed'
       });
     }
     var onCh = function onCh() {
@@ -720,8 +895,6 @@
         return;
       }
       var $o = $s.find('option:selected');
-
-      // ===== Paciente (trabajador) =====
       var full = ($o.attr('data-nombre') || ((_$o$data = $o.data('nombre')) !== null && _$o$data !== void 0 ? _$o$data : '') || $o.text() || '').replace(/\s+—\s+.*$/, '').replace(/\(DNI:.*?\)/, '').trim();
       var _splitNombre = splitNombre(full),
         apellido = _splitNombre.apellido,
@@ -737,8 +910,6 @@
         fechaNacimiento: fnac,
         sexo: sexoRaw
       });
-
-      // ===== Domicilio (CLIENTE) =====
       var cCalle = String($o.attr('data-cliente-calle') || '').trim();
       var cNro = String($o.attr('data-cliente-nro') || $o.attr('data-cliente-numero') || '').trim();
       var cProvId = String($o.attr('data-cliente-id-provincia') || '').trim();
@@ -835,6 +1006,7 @@
       });
       $wrap.find('.regno,.presentacion,.nombre,.droga,' + 'input[name*="[tratamiento]"],input[name*="[posologia]"],textarea[name*="[indicaciones]"]').val('');
       $wrap.find('.duplicado').prop('checked', false);
+      applyRxXorUI();
     }
     $fin.on('select2:select', function () {
       var _ref7, _ref8, _ref9, _raw$idfinanciador;
@@ -950,16 +1122,28 @@
     });
     $sel.on('select2:select', function () {
       var _$sel$select2$;
+      // Si estamos en modo prácticas (o forzado), no permitir meds
+      if (practicasCount() > 0 || RX_FORCE === 'practicas' || RX_MODE === 'practicas') {
+        modal({
+          title: 'No se puede mezclar',
+          html: '<p>Esta receta es <b>solo de prácticas</b>. Quitá las prácticas (o salí del modo prácticas) para poder cargar medicamentos.</p>'
+        });
+        $sel.val(null).trigger('change');
+        return;
+      }
+      RX_FORCE = null;
       var r = ((_$sel$select2$ = $sel.select2('data')[0]) === null || _$sel$select2$ === void 0 ? void 0 : _$sel$select2$.raw) || {};
       $reg.val(r.regNo || '');
       $pre.val(r.presentacion || '');
       $nom.val(r.nombreProducto || '');
       $dro.val(r.nombreDroga || '');
       if (r.requiereDuplicado === true) $dup.prop('checked', true);
+      applyRxXorUI(); // bloquea prácticas + grisa
+    });
+    $sel.on('change', function () {
+      applyRxXorUI();
     });
   }
-
-  // 1 solo handler global (evita duplicarse por cada fila)
   function bindMedFilterChangeOnce() {
     $(document).off('change.medFilter');
     $(document).on('change.medFilter', '#financiador, #plan', function () {
@@ -980,6 +1164,7 @@
         var fn = $r.data('updateHint');
         if (typeof fn === 'function') fn();
       });
+      applyRxXorUI();
     });
   }
   function initMeds() {
@@ -995,21 +1180,33 @@
       var $rows = $wrap.children('.med-row');
       $rows.find('.btn-del-med').prop('disabled', $rows.length <= 1);
     }
+    $wrap.on('meds:toggleDel', toggleDel);
     $add.on('click', function () {
+      if (practicasCount() > 0 || RX_FORCE === 'practicas' || RX_MODE === 'practicas') {
+        modal({
+          title: 'No se puede mezclar',
+          html: '<p>Esta receta es <b>solo de prácticas</b>. Quitá las prácticas (o salí del modo prácticas) para poder agregar medicamentos.</p>'
+        });
+        return;
+      }
       var $r = $(tpl(idx));
       $wrap.append($r);
       attachMed($r);
       idx++;
       toggleDel();
+      applyRxXorUI();
     });
     $wrap.on('click', '.btn-del-med', function () {
       if ($wrap.children().length > 1) {
         $(this).closest('.med-row').remove();
         toggleDel();
+        applyRxXorUI();
       }
     });
     attachMed($wrap.find('.med-row').first());
     toggleDel();
+    ensureRxLayout();
+    applyRxXorUI();
   }
 
   // =========================
@@ -1047,10 +1244,19 @@
     var $chips = $('#practicasList'),
       $h = $('#practicasHidden');
     function addChip(it) {
+      if (hasMedsSelected()) {
+        modal({
+          title: 'No se puede mezclar',
+          html: '<p>Esta receta es <b>solo de medicamentos</b>. Quitá los medicamentos para poder cargar prácticas.</p>'
+        });
+        return;
+      }
+      RX_FORCE = null;
       var id = it.id;
       if ($h.find("input[value=\"".concat(id, "\"]")).length) return;
       $h.append($('<input type="hidden" name="practicas[]">').val(id));
       $chips.append($("<span class=\"badge badge-primary d-inline-flex align-items-center mr-2 mb-2\" data-id=\"".concat(id, "\" style=\"font-size:.8rem;\">\n          <span class=\"mr-2\">").concat(esc(it.text), "</span>\n          <button type=\"button\" class=\"btn btn-sm btn-light py-0 px-1 quitar-chip\" aria-label=\"Quitar\" style=\"line-height:1;\">\xD7</button>\n        </span>")));
+      applyRxXorUI(); // bloquea meds + grisa
     }
     $s.on('select2:select', function () {
       var it = $s.select2('data')[0];
@@ -1063,7 +1269,10 @@
       var id = $(this).closest('[data-id]').data('id');
       $h.find("input[name=\"practicas[]\"][value=\"".concat(id, "\"]")).remove();
       $(this).closest('[data-id]').remove();
+      applyRxXorUI();
     });
+    ensureRxLayout();
+    applyRxXorUI();
   }
 
   // =========================
@@ -1080,21 +1289,16 @@
   }
 
   // =========================
-  // Matrícula MN/MP + Provincias (matrícula + domicilio)
+  // Matrícula MN/MP + Provincias
   // =========================
   function initMatricula() {
     var $tipo = $('[name="medico[matricula][tipo]"]');
     var $numero = $('[name="medico[matricula][numero]"]');
     fetchProvincias().then(function (items) {
-      // DOMICILIO: provincia -> pair (select id + hidden nombre)
-      // visibleName: domicilio[provincia] (texto)
-      // idName:      domicilio[id_provincia] (id)
       ensureProvinciaPair(items, {
         visibleName: 'domicilio[provincia]',
         idName: 'domicilio[id_provincia]'
       });
-
-      // aplicar pendiente si vino antes
       var $domSel = $('[name="domicilio[id_provincia]"]');
       if ($domSel.length && pendingDomProvId) {
         $domSel.val(pendingDomProvId);
@@ -1105,8 +1309,6 @@
         pendingDomProvId = '';
         pendingDomProvName = '';
       }
-
-      // MATRÍCULA: provincia -> pair (select id + hidden nombre)
       var $selMat = ensureProvinciaPair(items, {
         visibleName: 'medico[matricula][provincia]',
         idName: 'medico[matricula][id_provincia]'
@@ -1162,10 +1364,7 @@
         dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
         weekHeader: 'Sm',
         dateFormat: 'dd/mm/yy',
-        firstDay: 1,
-        isRTL: false,
-        showMonthAfterYear: false,
-        yearSuffix: ''
+        firstDay: 1
       };
       $.datepicker.setDefaults($.datepicker.regional['es']);
     }
@@ -1184,6 +1383,24 @@
       if ($.fn.datepicker) $(this).datepicker('show');
     });
   }
+  function initFirmaSelloUI() {
+    var _ref0, _$chk$data;
+    var $chk = $('#incluir_firma_medico');
+    if (!$chk.length) return;
+    var hasFirma = String((_ref0 = (_$chk$data = $chk.data('hasFirma')) !== null && _$chk$data !== void 0 ? _$chk$data : $chk.data('has-firma')) !== null && _ref0 !== void 0 ? _ref0 : '') === '1';
+    var $box = $('#box_sello_medico');
+    var $fields = $box.find('.sello-field');
+    function apply() {
+      var on = hasFirma && $chk.is(':checked');
+      $box.toggleClass('d-none', !on);
+      $fields.prop('disabled', !on);
+    }
+    if (!hasFirma) {
+      $chk.prop('checked', false);
+    }
+    $chk.on('change.firmaSello', apply);
+    apply();
+  }
 
   // =========================
   // Submit (validaciones + AJAX)
@@ -1195,7 +1412,7 @@
       e.preventDefault();
       var items = [];
 
-      // Sync provincia texto desde selects (domicilio + matrícula)
+      // Sync provincia texto desde selects
       syncProvinciaTextFromSelects();
 
       // Sync fecha visual -> ISO
@@ -1228,7 +1445,7 @@
       if (!nroMat) items.push('Número de matrícula es obligatorio.');else if (nroMat.length > 10) items.push('Número de matrícula: máximo 10 dígitos.');
       if (tipoMat === 'MP' && !provMatTxt && !provMatId) items.push('Para matrícula provincial (MP), la provincia es obligatoria.');
 
-      // Domicilio (del cliente) -> obligatorio SIEMPRE
+      // Domicilio
       var dCalle = String($('[name="domicilio[calle]"]').val() || '').trim();
       var dNum = String($('[name="domicilio[numero]"]').val() || '').trim();
       var dProvTxt = String($('[name="domicilio[provincia]"]').val() || '').trim();
@@ -1244,28 +1461,54 @@
         if (!cred) items.push('Cobertura: el número de afiliado es obligatorio si indicás un financiador.');else if (!/^\d+$/.test(cred)) items.push('Cobertura: el número de afiliado debe tener solo números (sin puntos ni guiones).');
       }
 
-      // Medicamentos
+      // XOR meds/pract
+      var hasPract = practicasCount() > 0;
       var $rows = $('#medsWrapper .med-row');
-      if (!$rows.length) items.push('Agregá al menos un medicamento.');
-      $rows.each(function (i) {
-        var $r = $(this);
-        var cant = Number($r.find('input[name^="medicamentos"][name$="[cantidad]"]').val() || 0);
-        var reg = String($r.find('.regno').val() || '').trim();
-        var pre = String($r.find('.presentacion').val() || '').trim();
-        var nom = String($r.find('.nombre').val() || '').trim();
-        var dro = String($r.find('.droga').val() || '').trim();
-        var trat = String($r.find('input[name^="medicamentos"][name$="[tratamiento]"]').val() || '').trim();
-        if (!cant || cant < 1) items.push("Medicamento (fila ".concat(i + 1, "): la cantidad debe ser mayor a 0."));
-        if (!reg) items.push("Medicamento (fila ".concat(i + 1, "): seleccion\xE1 un medicamento de la lista (Registro N\xBA)."));
-
-        // si ya hay regNo (seleccionado), exigimos campos base que normalmente vienen del API
-        if (reg) {
+      var hasMeds = false;
+      $rows.each(function () {
+        var reg = String($(this).find('.regno').val() || '').trim();
+        var sel = $(this).find('.sel-medicamento').val();
+        if (reg || sel && String(sel).trim() !== '') {
+          hasMeds = true;
+          return false;
+        }
+      });
+      if (hasMeds && hasPract) items.push('No se pueden cargar medicamentos y prácticas en la misma receta. Elegí solo una opción.');
+      if (!hasMeds && !hasPract) items.push('Tenés que cargar al menos un medicamento o una práctica.');
+      if (hasPract && !hasMeds) {
+        if (practicasCount() > 10) items.push('Prácticas: máximo 10 prácticas por receta.');
+      }
+      if (hasMeds && !hasPract) {
+        $rows.each(function (i) {
+          var $r = $(this);
+          var cant = Number($r.find('input[name^="medicamentos"][name$="[cantidad]"]').val() || 0);
+          var reg = String($r.find('.regno').val() || '').trim();
+          var sel = $r.find('.sel-medicamento').val();
+          if (!reg && (!sel || String(sel).trim() === '')) {
+            items.push("Medicamento (fila ".concat(i + 1, "): seleccion\xE1 un medicamento o elimin\xE1 la fila."));
+            return;
+          }
+          var pre = String($r.find('.presentacion').val() || '').trim();
+          var nom = String($r.find('.nombre').val() || '').trim();
+          var dro = String($r.find('.droga').val() || '').trim();
+          var trat = String($r.find('input[name^="medicamentos"][name$="[tratamiento]"]').val() || '').trim();
+          if (!cant || cant < 1) items.push("Medicamento (fila ".concat(i + 1, "): la cantidad debe ser mayor a 0."));
           if (!pre) items.push("Medicamento (fila ".concat(i + 1, "): la presentaci\xF3n es obligatoria."));
           if (!nom) items.push("Medicamento (fila ".concat(i + 1, "): el nombre es obligatorio."));
           if (!dro) items.push("Medicamento (fila ".concat(i + 1, "): la droga es obligatoria."));
           if (trat !== '' && isNaN(Number(trat))) items.push("Medicamento (fila ".concat(i + 1, "): tratamiento inv\xE1lido."));
+        });
+      }
+
+      // Firma opcional
+      var $chkFirma = $('#incluir_firma_medico');
+      if ($chkFirma.length) {
+        var incluirFirma = $chkFirma.is(':checked');
+        var hasFirma = String($chkFirma.data('hasFirma') || '') === '1';
+        if (incluirFirma && !hasFirma) {
+          items.push('Marcaste incluir firma, pero este médico no tiene firma cargada en su cuenta.');
         }
-      });
+      }
       if (items.length) {
         modal({
           title: 'Revisá estos datos',
@@ -1342,6 +1585,21 @@
       },
       timeout: AJAX_TIMEOUT_MS
     });
+    $(document).off('change.firmaMedico').on('change.firmaMedico', '#incluir_firma_medico', function () {
+      var hasFirma = String($(this).data('hasFirma') || '') === '1';
+      if ($(this).is(':checked') && !hasFirma) {
+        modal({
+          title: 'Sin firma cargada',
+          html: '<p>Este médico no tiene firma cargada en su cuenta. Cargala desde tu perfil y volvé a intentar.</p>'
+        });
+        $(this).prop('checked', false);
+      }
+    });
+    initFirmaSelloUI();
+
+    // IMPORTANTE: inyectar botones/estructura antes de todo
+    ensureRxLayout();
+    applyRxXorUI();
     initSexo();
     initFecha();
     initSubmit();
@@ -1350,13 +1608,15 @@
       tries++;
       if (typeof $.fn.select2 === 'function') {
         clearInterval(iv);
-        fetchProvincias().then(function (items) {
-          initMatricula(); // arma selects provincia (matrícula + domicilio)
-          initNomina(); // completa paciente + domicilio desde cliente
+        fetchProvincias().then(function () {
+          initMatricula();
+          initNomina();
           initFinanciadores();
           initDiagnosticos();
           initMeds();
           initPracticas();
+          ensureRxLayout();
+          applyRxXorUI();
         });
       } else if (tries > 60) {
         clearInterval(iv);
@@ -1364,6 +1624,8 @@
           initMatricula();
         });
         initMeds();
+        ensureRxLayout();
+        applyRxXorUI();
       }
     }, 100);
   }

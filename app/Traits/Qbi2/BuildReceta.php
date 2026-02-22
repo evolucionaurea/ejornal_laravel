@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\ProvinciaReceta;
+use Illuminate\Support\Facades\Validator;
 
 trait BuildReceta
 {
@@ -148,8 +149,26 @@ trait BuildReceta
 
     /* ====== validación ====== */
   protected function validarReceta(Request $req): array
-	{
-    return $this->validate($req, [
+{
+    $all = $req->all();
+
+    $pr = $req->input('practicas', []);
+    $hasPracticas = is_array($pr) && count(array_filter($pr, fn($v) => trim((string)$v) !== '')) > 0;
+
+    $meds = $req->input('medicamentos', []);
+    $hasMeds = false;
+    if (is_array($meds)) {
+        foreach ($meds as $m) {
+            if (!is_array($m)) continue;
+            $reg = preg_replace('/\D+/', '', (string)($m['regNo'] ?? ''));
+            $nom = trim((string)($m['nombre'] ?? ''));
+            $dro = trim((string)($m['nombreDroga'] ?? ''));
+            $pre = trim((string)($m['presentacion'] ?? ''));
+            if ($reg !== '' || $nom !== '' || $dro !== '' || $pre !== '') { $hasMeds = true; break; }
+        }
+    }
+
+    $rules = [
         'id_nomina' => 'required|exists:nominas,id',
 
         // Médico (core)
@@ -162,55 +181,64 @@ trait BuildReceta
         'medico.matricula.numero'    => ['required','regex:/^\d{1,9}$/'],
         'medico.matricula.provincia' => 'nullable|string|max:60',
 
-        // Paciente (opcionales)
+        // Paciente
         'paciente.apellido'        => 'required|string|max:80',
         'paciente.nombre'          => 'required|string|max:80',
-        'paciente.email'          => 'required|email|max:150',
+        'paciente.email'           => 'required|email|max:150',
         'paciente.tipoDoc'         => 'nullable|string|max:20',
         'paciente.nroDoc'          => 'nullable|string|max:20',
         'paciente.sexo'            => 'nullable|in:F,M,X,O',
         'paciente.fechaNacimiento' => 'nullable|date|before_or_equal:today',
 
         // Diagnóstico
-        'diagnostico'              => 'nullable|string|max:2000',
+        'diagnostico' => 'nullable|string|max:2000',
 
-
-        // Domicilio: QBI ahora exige informar donde se realizó la atención aunque la doc dice que no (QBI248)
-        'domicilio.calle'          => 'required|string|max:150',
-        'domicilio.numero'         => 'required|string|max:30',
-        'domicilio.piso'           => 'nullable|string|max:20',
-        'domicilio.dpto'           => 'nullable|string|max:20',
-        'domicilio.cp'             => 'nullable|string|max:20',
-        'domicilio.localidad'      => 'nullable|string|max:120',
-        'domicilio.provincia'      => 'required|string|max:120',
-        'domicilio.pais'           => 'nullable|string|max:120',
-
+        // Domicilio
+        'domicilio.calle'     => 'required|string|max:150',
+        'domicilio.numero'    => 'required|string|max:30',
+        'domicilio.piso'      => 'nullable|string|max:20',
+        'domicilio.dpto'      => 'nullable|string|max:20',
+        'domicilio.cp'        => 'nullable|string|max:20',
+        'domicilio.localidad' => 'nullable|string|max:120',
+        'domicilio.provincia' => 'required|string|max:120',
+        'domicilio.pais'      => 'nullable|string|max:120',
 
         // Cobertura
-        'cobertura.credencial'     => 'nullable|regex:/^\d+$/|max:50|required_with:cobertura.idFinanciador',
-        'cobertura.planId'         => 'nullable|string|max:50',
-        'cobertura.plan'           => 'nullable|string|max:120',
-        'cobertura.idFinanciador'  => 'nullable|string|max:50',
-        'cobertura.dniTitular'     => 'nullable|string|max:20',
+        'cobertura.credencial'    => 'nullable|regex:/^\d+$/|max:50|required_with:cobertura.idFinanciador',
+        'cobertura.planId'        => 'nullable|string|max:50',
+        'cobertura.plan'          => 'nullable|string|max:120',
+        'cobertura.idFinanciador' => 'nullable|string|max:50',
+        'cobertura.dniTitular'    => 'nullable|string|max:20',
+    ];
 
-        // Medicamentos
-        'medicamentos'                      => 'required|array|min:1',
-        'medicamentos.*.cantidad'           => 'required|integer|min:1',
-        'medicamentos.*.regNo'              => 'nullable',
-        'medicamentos.*.nombre'             => 'nullable|string|max:150',
-        'medicamentos.*.presentacion'       => 'nullable|string|max:150',
-        'medicamentos.*.nombreDroga'        => 'nullable|string|max:150',
-        'medicamentos.*.posologia'          => 'nullable|string|max:500',
-        'medicamentos.*.indicaciones'       => 'nullable|string|max:500',
-        'medicamentos.*.forzarDuplicado'    => 'nullable|boolean',
-        'medicamentos.*.permiteSustitucion' => 'nullable|string|in:S,N',
-        'medicamentos.*.tratamiento'        => 'nullable|integer|min:0',
-        'medicamentos.*.diagnostico'        => 'nullable|string|max:500',
+    // Reglas según modo
+    if ($hasPracticas && !$hasMeds) {
+        $rules['practicas']   = 'required|array|min:1|max:10';
+        $rules['practicas.*'] = 'required|string|max:80';
 
-        // Postdatadas
-        'recetasPostadatas.cantidad'        => 'nullable|integer|min:0',
-        'recetasPostadatas.diasAPosdatar'   => 'nullable|integer|min:0',
-    ], [
+        // medicamentos opcional en este modo (idealmente ni vienen porque están disabled)
+        $rules['medicamentos'] = 'nullable|array';
+    } else {
+        // modo medicamentos (default)
+        $rules['medicamentos']            = 'required|array|min:1';
+        $rules['medicamentos.*.cantidad'] = 'required|integer|min:1';
+        $rules['medicamentos.*.regNo']    = 'nullable';
+        $rules['medicamentos.*.nombre']   = 'nullable|string|max:150';
+        $rules['medicamentos.*.presentacion'] = 'nullable|string|max:150';
+        $rules['medicamentos.*.nombreDroga']  = 'nullable|string|max:150';
+        $rules['medicamentos.*.posologia']    = 'nullable|string|max:500';
+        $rules['medicamentos.*.indicaciones'] = 'nullable|string|max:500';
+        $rules['medicamentos.*.forzarDuplicado'] = 'nullable|boolean';
+        $rules['medicamentos.*.permiteSustitucion'] = 'nullable|string|in:S,N';
+        $rules['medicamentos.*.tratamiento'] = 'nullable|integer|min:0';
+        $rules['medicamentos.*.diagnostico'] = 'nullable|string|max:500';
+
+        // prácticas opcional en este modo
+        $rules['practicas']   = 'nullable|array';
+        $rules['practicas.*'] = 'nullable|string|max:80';
+    }
+
+    $messages = [
         'domicilio.calle.required'      => 'Ingresá la calle donde se realizó la atención.',
         'domicilio.numero.required'     => 'Ingresá el número donde se realizó la atención.',
         'domicilio.provincia.required'  => 'Seleccioná la provincia donde se realizó la atención.',
@@ -218,7 +246,35 @@ trait BuildReceta
         'paciente.fechaNacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser posterior a hoy.',
         'cobertura.credencial.required_with' => 'Ingresá el número de afiliado si seleccionás un financiador.',
         'cobertura.credencial.regex'         => 'El número de afiliado sólo puede contener dígitos (sin puntos ni guiones).',
-    ]);
+    ];
+
+    $v = Validator::make($all, $rules, $messages);
+
+    $v->after(function ($validator) use ($hasMeds, $hasPracticas) {
+        if ($hasMeds && $hasPracticas) {
+            $validator->errors()->add('practicas', 'No se pueden cargar medicamentos y prácticas en la misma receta.');
+        }
+        if (!$hasMeds && !$hasPracticas) {
+            $validator->errors()->add('medicamentos', 'Debés cargar al menos un medicamento o una práctica.');
+        }
+    });
+
+    return $v->validate();
+}
+
+
+protected function mapPracticas(Request $req): array
+{
+    $ids = $req->input('practicas', []);
+    if (!is_array($ids)) return [];
+
+    $out = [];
+    foreach ($ids as $id) {
+        $id = trim((string)$id);
+        if ($id === '') continue;
+        $out[] = ctype_digit($id) ? (int)$id : $id;
+    }
+    return $out;
 }
 
 
@@ -475,12 +531,20 @@ protected function mapLugarAtencion(Request $req): array
     }
 
 
+    $practicas = $this->mapPracticas($req);
+
     $payload = [
-        'paciente'      => $paciente,
-        'medico'        => $medico,
-        'medicamentos'  => $medicamentos,
-        'clienteAppId'  => (int) (config('qbi2.client_app_id') ?? 510),
+    'paciente'     => $paciente,
+    'medico'       => $medico,
+    'clienteAppId' => (int) (config('qbi2.client_app_id') ?? 510),
     ];
+
+    if (!empty($practicas)) {
+        $payload['practicas'] = $practicas;
+    } else {
+        $payload['medicamentos'] = $medicamentos;
+    }
+
 
     if (!empty($lugar)) {
         $payload['lugarAtencion'] = $lugar;

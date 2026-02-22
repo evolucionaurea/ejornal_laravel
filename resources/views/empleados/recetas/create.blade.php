@@ -29,7 +29,7 @@
 
         <div class="cabecera">
             <h2 class="h4 font-weight-bold mb-1">Nueva receta</h2>
-            <p class="text-muted mb-0">Complete los datos y cargue al menos un medicamento.</p>
+            <p class="text-muted mb-0">Complete los datos y cargue medicamentos o prácticas (solo una opción).</p>
         </div>
 
         @include('../mensajes_validacion')
@@ -361,6 +361,87 @@
                     </div>
 
                     <div class="text-info font-weight-bold small mb-2">Matrícula</div>
+
+                    {{-- FIRMA Y SELLO (opcional) --}}
+                    <div class="border rounded p-3 mb-3" style="background:#f8fafc;">
+                        <div class="d-flex flex-wrap align-items-start" style="gap:14px;">
+
+                            {{-- Preview firma --}}
+                            <div style="width:220px;">
+                                <div class="small text-muted mb-1">Firma (vista previa)</div>
+
+                                @if($tieneFirmaMedico && $firmaMedicoUrl)
+                                <div class="border rounded p-2 text-center bg-white">
+                                    <img src="{{ $firmaMedicoUrl }}" alt="Firma del médico"
+                                        style="max-height:70px;max-width:100%;object-fit:contain;">
+                                </div>
+                                @else
+                                <div class="border rounded p-2 text-center bg-white text-muted small">
+                                    No hay firma cargada
+                                </div>
+                                @endif
+                            </div>
+
+                            {{-- Checkbox + ayuda + sello --}}
+                            <div class="flex-grow-1" style="min-width:260px;">
+                                <div class="text-info font-weight-bold small mb-2">Firma y sello (opcional)</div>
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="incluir_firma_medico"
+                                        name="incluir_firma_medico" value="1"
+                                        data-has-firma="{{ $tieneFirmaMedico ? 1 : 0 }}" {{ !$tieneFirmaMedico
+                                        ? 'disabled' : '' }}>
+                                    <label class="custom-control-label" for="incluir_firma_medico">
+                                        Incluir firma y sello del médico en la receta
+                                    </label>
+                                </div>
+
+                                @if($tieneFirmaMedico)
+                                <small class="text-muted d-block mt-1">
+                                    Firma detectada. Si marcás esta opción, se incluirá en la receta.
+                                </small>
+                                @else
+                                <small class="text-muted d-block mt-1">
+                                    No tenés firma cargada. Cargala desde tu perfil (sección Firma) y volvé.
+                                </small>
+                                @endif
+
+                                {{-- SELLO (3 líneas) --}}
+                                <div id="box_sello_medico" class="mt-3">
+                                    <div class="text-info font-weight-bold small mb-2">Sello (opcional)</div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4 mb-2">
+                                            <label class="mb-1">Línea 1</label>
+                                            <input type="text" name="medico[sello][linea1]"
+                                                class="form-control form-control-sm sello-field" maxlength="40"
+                                                value="{{ $selloLinea1 ?? '' }}" placeholder="Máx. 40">
+                                        </div>
+
+                                        <div class="form-group col-md-4 mb-2">
+                                            <label class="mb-1">Línea 2</label>
+                                            <input type="text" name="medico[sello][linea2]"
+                                                class="form-control form-control-sm sello-field" maxlength="40"
+                                                value="{{ $selloLinea2 ?? '' }}" placeholder="Máx. 40">
+                                        </div>
+
+                                        <div class="form-group col-md-4 mb-2">
+                                            <label class="mb-1">Línea 3</label>
+                                            <input type="text" name="medico[sello][linea3]"
+                                                class="form-control form-control-sm sello-field" maxlength="25"
+                                                value="{{ $selloLinea3 ?? '' }}" placeholder="Máx. 25 (ej: MN 12345)">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
                     <div class="form-row">
                         <div class="form-group col-md-2 mb-2">
                             <label>Tipo matrícula <span class="text-danger">*</span></label>
@@ -387,7 +468,7 @@
                 {{-- Acciones --}}
                 <div class="mt-3 d-flex">
                     <a href="{{ route('empleados.recetas') }}" class="btn-ejornal btn-ejornal-gris-claro">Volver</a>
-                    {{-- <button type="submit" class="btn-ejornal btn-ejornal-base mr-2">Generar receta</button> --}}
+                    <button type="submit" class="btn-ejornal btn-ejornal-base mr-2">Generar receta</button>
                 </div>
             </form>
         </div>

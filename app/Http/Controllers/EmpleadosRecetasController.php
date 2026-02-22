@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\EnviarEmail;
 use App\User;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class EmpleadosRecetasController extends Controller
@@ -100,15 +102,36 @@ class EmpleadosRecetasController extends Controller
 
     public function create(Request $request)
 	{
-    $user = Auth::user();
+        $user = Auth::user();
+        
 
-    // ✅ Solo médicos (ajustá si tu lógica real es distinta)
-    if ((int)$user->id_rol !== 2 || (int)$user->id_especialidad !== 1) {
-        return redirect()->route('empleados.recetas')
-            ->with('error', 'Solo los usuarios médicos pueden crear recetas.');
+        // Firma
+        $firmaFile = (string) ($user->hash_firma_medico ?: $user->firma_medico);
+
+        $firmaAbs = $firmaFile
+            ? public_path("storage/users/{$user->id}/firmas_medico/{$firmaFile}")
+            : null;
+
+        $tieneFirmaMedico = $firmaAbs && file_exists($firmaAbs);
+
+        // URL para <img> y para QBI2 (firmalink)
+        $firmaMedicoUrl = $tieneFirmaMedico
+            ? asset("storage/users/{$user->id}/firmas_medico/{$firmaFile}")
+            : null;
+
+        // Sello precargado desde el usuario (si existe)
+        $selloLinea1 = old('medico.sello.linea1', (string) ($user->sello_linea_1 ?? ''));
+        $selloLinea2 = old('medico.sello.linea2', (string) ($user->sello_linea_2 ?? ''));
+        $selloLinea3 = old('medico.sello.linea3', (string) ($user->sello_linea_3 ?? ''));
+
+
+        // Solo médicos
+        if ((int)$user->id_rol !== 2 || (int)$user->id_especialidad !== 1) {
+        return redirect()->route('empleados.recetas')->with('error', 'Solo los usuarios médicos pueden crear recetas.');
+
     }
 
-    // ✅ Debe venir id_nomina sí o sí (si no, NO se puede entrar por URL)
+    // Debe venir id_nomina sí o sí (si no, NO se puede entrar por URL)
     $idNominaQs = $request->query('id_nomina');
     if (!$idNominaQs || !ctype_digit((string)$idNominaQs)) {
         return redirect()->route('empleados.recetas')
@@ -127,7 +150,7 @@ class EmpleadosRecetasController extends Controller
         ->orderBy('nombre', 'asc')
         ->get();
 
-    // ✅ Seguridad: el id_nomina debe pertenecer a las nóminas visibles
+    // Seguridad: el id_nomina debe pertenecer a las nóminas visibles
     if (!$nominas->contains('id', $selectedNominaId)) {
         return redirect()->route('empleados.recetas')
             ->with('error', 'Trabajador inválido para tu empresa.');
@@ -165,8 +188,13 @@ class EmpleadosRecetasController extends Controller
         'medicoTipoMatricula',
         'medicoMatricula', 
         'selectedNominaId',
-        'lockNomina'
-    ));
+        'lockNomina',
+        'tieneFirmaMedico',
+        'firmaMedicoUrl',
+        'selloLinea1',
+        'selloLinea2',
+        'selloLinea3'
+        ));
 }
 
 
@@ -269,6 +297,48 @@ class EmpleadosRecetasController extends Controller
 
     // Payload para QBI2 (tu método ya debe armarlo con $req + $nomina)
     $payload = $this->buildPayload($req, $nomina);
+
+    $user = Auth::user();
+
+    $incluirFirma = (string) $req->input('incluir_firma_medico') === '1';
+
+    $firmaFile = (string) ($user->hash_firma_medico ?: $user->firma_medico);
+    $firmaAbs  = $firmaFile
+        ? public_path("storage/users/{$user->id}/firmas_medico/{$firmaFile}")
+        : null;
+
+    $hasFirma = $firmaAbs && file_exists($firmaAbs);
+
+    if ($incluirFirma && $hasFirma) {
+
+        $payload['medico']['firmalink'] = asset("storage/users/{$user->id}/firmas_medico/{$firmaFile}");
+
+        $linea1 = trim((string) $req->input('medico.sello.linea1', $user->sello_linea_1 ?? ''));
+        $linea2 = trim((string) $req->input('medico.sello.linea2', $user->sello_linea_2 ?? ''));
+        $linea3 = trim((string) $req->input('medico.sello.linea3', $user->sello_linea_3 ?? ''));
+
+        $linea1 = mb_substr($linea1, 0, 40);
+        $linea2 = mb_substr($linea2, 0, 40);
+        $linea3 = mb_substr($linea3, 0, 25);
+
+        if ($linea1 !== '' || $linea2 !== '' || $linea3 !== '') {
+            $payload['medico']['sello'] = [
+                'linea1' => $linea1,
+                'linea2' => $linea2,
+                'linea3' => $linea3,
+            ];
+        } else {
+            unset($payload['medico']['sello']);
+        }
+
+    } else {
+        if (isset($payload['medico'])) {
+            unset($payload['medico']['firmalink'], $payload['medico']['sello']);
+        }
+    }
+
+
+
 
     \Log::info('[QBI2] Crear Receta request', ['payload' => $payload]);
 
@@ -655,6 +725,19 @@ class EmpleadosRecetasController extends Controller
         return back()->with('success', 'Receta anulada correctamente.');
     }
 
+
+
+
+
+    private function getFirmaMedicoUrl($user): ?string
+    {
+        if (empty($user->hash_firma_medico)) return null;
+
+        $rel = "users/{$user->id}/firmas_medico/{$user->hash_firma_medico}";
+        $abs = public_path("storage/{$rel}");
+
+        return is_file($abs) ? asset("storage/{$rel}") : null;
+    }
 
 
 

@@ -9,6 +9,7 @@ use App\Cliente;
 use App\ClienteUser;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class EmpleadosCuentaController extends Controller
 {
@@ -33,6 +34,9 @@ class EmpleadosCuentaController extends Controller
 
       $user = User::findOrFail($request->id_user);
       $user->dni = $request->dni;
+      $user->sello_linea_1 = $request->sello_linea_1 ?? null;
+      $user->sello_linea_2 = $request->sello_linea_2 ?? null;
+      $user->sello_linea_3 = $request->sello_linea_3 ?? null;
       $user->matricula = $request->matricula;
       $user->tipo_matricula = $request->tipo_matricula;
       if (isset($request->fecha_vencimiento_matricula) && !empty($request->fecha_vencimiento_matricula)) {
@@ -41,6 +45,59 @@ class EmpleadosCuentaController extends Controller
         $fecha_vencimiento_matricula = null;
       }
       $user->fecha_vencimiento = $fecha_vencimiento_matricula;
+      $user->save();
+
+
+
+    /////////////////////// Archivo Firma Medico /////////////////
+    if ($user->firma_medico == null) {
+
+        // --- CASO 1: SUBE ARCHIVO POR PRIMERA VEZ ---
+        if ($request->hasFile('firma_medico') && $request->file('firma_medico')->isValid()) {
+            $archivo = $request->file('firma_medico');
+            $nombre = $archivo->getClientOriginalName();
+            $hash_firma_medico = $archivo->hashName();
+
+            // Guardamos físicamente en public/storage/users/{id}/firmas_medico
+            $destino = public_path("storage/users/{$request->id_user}/firmas_medico");
+            
+            // Mueve el archivo a la carpeta pública directamente
+            $archivo->move($destino, $hash_firma_medico);
+
+            $user->firma_medico = $nombre;
+            $user->hash_firma_medico = $hash_firma_medico;
+            $user->save();
+        } else {
+            return back()->with('error', 'No se ha seleccionado ningún archivo válido.');
+        }
+
+    } else {
+
+        // --- CASO 2: EDITA ARCHIVO EXISTENTE ---
+        if ($request->hasFile('firma_medico') && $request->file('firma_medico')->isValid()) {
+            $archivo = $request->file('firma_medico');
+            $nombre = $archivo->getClientOriginalName();
+            $hash_firma_medico = $archivo->hashName();
+
+            // 1. Definir ruta del archivo viejo y nuevo
+            $ruta_vieja = public_path("storage/users/{$request->id_user}/firmas_medico/{$user->hash_firma_medico}");
+            $destino = public_path("storage/users/{$request->id_user}/firmas_medico");
+
+            // 2. Eliminar archivo viejo si existe
+            if (File::exists($ruta_vieja)) {
+                File::delete($ruta_vieja);
+            }
+
+            // 3. Mover el nuevo
+            $archivo->move($destino, $hash_firma_medico);
+
+            $user->firma_medico = $nombre;
+            $user->hash_firma_medico = $hash_firma_medico;
+            $user->save();
+        }
+    }
+    /////////////////////// Fin Firma Medico /////////////////
+
 
 
 /////////////////////// Si hay un archivo de Titulo PARTE DELANTERA /////////////////
@@ -198,8 +255,6 @@ class EmpleadosCuentaController extends Controller
       }
 /////////////////////// Si hay un archivo de DNI PARTE TRASERA /////////////////
 
-
-      $user->save();
 
       return back()->with('success', 'Datos cambiados correctamente');
 

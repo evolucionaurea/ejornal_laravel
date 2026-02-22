@@ -314,6 +314,49 @@
                     </div>
 
 
+                    {{-- <div class="form-group col-md-4">
+                        <label>Tu Firma</label>
+                        <input type="file" name="firma_medico" accept="image/png" required class="custom-file-input">
+                    </div> --}}
+
+                    <div class="form-group col-md-4">
+                        <label>Tu firma</label>
+                        <br>
+                        @if (auth()->user()->firma_medico == null)
+                        <div class="custom-file">
+                            <input type="file" accept="image/png" class="custom-file-input" id="firma_medico"
+                                name="firma_medico">
+                            <label class="custom-file-label" for="firma_medico">Seleccionar archivo</label>
+                        </div>
+                        @else
+                        <div class="d-flex align-items-center alert alert-primary" role="alert">
+                            <img class="img-fluid" style="max-height: 80px;"
+                                src="/storage/users/{{ auth()->user()->id }}/firmas_medico/{{ auth()->user()->hash_firma_medico }}"
+                                alt="Firma">
+
+                            <div class="custom-file ml-3">
+                                <input type="file" accept="image/png" class="custom-file-input" id="firma_medico"
+                                    name="firma_medico">
+                                <label class="custom-file-label" for="firma_medico">Cambiar firma</label>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+
+
+                    <div class="form-group col-md-8">
+                        <label>Sello</label>
+                        <input name="sello_linea_1" type="text" class="form-control form-control-sm mb-2"
+                            value="{{(auth()->user()->sello_linea_1 != null) ? auth()->user()->sello_linea_1 : ''}}"
+                            placeholder="Línea 1 del sello">
+                        <input name="sello_linea_2" type="text" class="form-control form-control-sm mb-2"
+                            value="{{(auth()->user()->sello_linea_2 != null) ? auth()->user()->sello_linea_2 : ''}}"
+                            placeholder="Línea 2 del sello">
+                        <input name="sello_linea_3" type="text" class="form-control form-control-sm mb-2"
+                            value="{{(auth()->user()->sello_linea_3 != null) ? auth()->user()->sello_linea_3 : ''}}"
+                            placeholder="Línea 3 del sello">
+                    </div>
+
 
                     <div class="col-12">
                         <button class="btn-ejornal btn-ejornal-base" type="submit" name="button">Guardar</button>
