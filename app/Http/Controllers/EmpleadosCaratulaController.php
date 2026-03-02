@@ -167,6 +167,11 @@ class EmpleadosCaratulaController extends Controller
 	 */
 	public function store(Request $request)
 	{
+
+		//dd($request);
+		//dd(route('empleados.caratulas'));
+
+
 		$validatedData = $request->validate([
 			'peso' => 'required',
 			'altura' => 'required',
@@ -195,7 +200,7 @@ class EmpleadosCaratulaController extends Controller
 			$caratula->patologias()->sync($request->id_patologia);
 		}
 
-		return redirect()->route('nominas.show',$request->id_nomina)->with('success', 'Carátula creada con éxito'); 
+		return redirect()->route('empleados.caratulas',$request->id_nomina)->with('success', 'Carátula creada con éxito'); 
 	}
 
 	/**

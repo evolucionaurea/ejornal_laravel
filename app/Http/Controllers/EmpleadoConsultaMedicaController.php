@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 //use App\ClienteUser;
 use App\Http\Traits\Clientes;
 use App\Nomina;
+use App\Cliente;
 use App\StockMedicamento;
 use App\ConsultaMedicacion;
 use App\StockMedicamentoHistorial;
@@ -241,6 +242,19 @@ class EmpleadoConsultaMedicaController extends Controller
 
 		if($request->amerita_salida=='1' && $request->emitir_receta == '1'){
 			return back()->withInput($request->input())->with('error', 'No puedes crear una consulta médica que amerite salida y emitir receta médica al mismo tiempo.');
+		}
+
+		/// Chequear que el usuario tenga dni, matrícula. y el cliente tenga la dirección completa		
+		if($request->emitir_receta == '1'){
+			$cliente = Cliente::find(auth()->user()->id_cliente_actual);
+
+			if(!$cliente->calle || !$cliente->nro || !$cliente->id_provincia){
+				return back()->withInput($request->input())->with('error', 'No puedes generar una receta ya que falta la siguiente información en el cliente: Calle, Número y Provincia. Comunícate con el administrador de tu cuenta');
+			}
+			if(!auth()->user()->dni || !auth()->user()->matricula){
+				return back()->withInput($request->input())->with('error', 'No puedes generar una receta ya que falta información en tu cuenta: DNI y Matrícula. Comunícate con el administrador de tu cuenta');
+			}		
+
 		}
 
 
