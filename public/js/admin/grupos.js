@@ -24978,7 +24978,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\admin\grupos.js */"./resources/js/admin/grupos.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\admin\grupos.js */"./resources/js/admin/grupos.js");
 
 
 /***/ })

@@ -46781,7 +46781,7 @@ new datatables_net_dt__WEBPACK_IMPORTED_MODULE_0__["default"]('.tabla', window.d
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\admin\clientes\show.js */"./resources/js/admin/clientes/show.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\admin\clientes\show.js */"./resources/js/admin/clientes/show.js");
 
 
 /***/ })

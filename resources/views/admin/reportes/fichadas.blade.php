@@ -31,6 +31,7 @@
 			@php
 			$export = true;
 			@endphp
+			<div class="small text-muted font-italic">La exportación se limita a 15.000 registros y puede demorar unos segundos.</div>
 			@include('../../modulos.busqueda_fecha')
 			<table data-table="fichadas" class="table table-bordered table-striped table-hoverx table-sm">
 				<thead>

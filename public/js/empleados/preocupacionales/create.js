@@ -183,7 +183,7 @@ new Preocupacional();
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\empleados\preocupacionales\create.js */"./resources/js/empleados/preocupacionales/create.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\preocupacionales\create.js */"./resources/js/empleados/preocupacionales/create.js");
 
 
 /***/ })

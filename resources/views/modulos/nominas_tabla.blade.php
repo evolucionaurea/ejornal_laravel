@@ -61,7 +61,7 @@
 
 <hr>
 
-
+<div class="table-responsive">
 <table class="table table-striped table-hover table-sm tabla_nominas dt-responsive">
 
 	<!--Table head-->
@@ -92,3 +92,4 @@
 	</tbody>
 	<!--Table body-->
 </table>
+</div>

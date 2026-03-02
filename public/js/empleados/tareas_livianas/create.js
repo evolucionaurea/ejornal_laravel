@@ -122,7 +122,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\empleados\tareas_livianas\create.js */"./resources/js/empleados/tareas_livianas/create.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\tareas_livianas\create.js */"./resources/js/empleados/tareas_livianas/create.js");
 
 
 /***/ })

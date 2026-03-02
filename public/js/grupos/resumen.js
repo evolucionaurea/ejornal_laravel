@@ -63461,7 +63461,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\grupos\resumen.js */"./resources/js/grupos/resumen.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\grupos\resumen.js */"./resources/js/grupos/resumen.js");
 
 
 /***/ })
