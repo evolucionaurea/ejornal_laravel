@@ -52,3 +52,21 @@ window.datatable_options = {
 	}
 
 }
+
+if($('[data-toggle="table-scroll"]').length>0){
+
+	const table = $('[data-scroll-content="table"] table')
+	const table_width = table.width()
+	
+	const spacer = $('[data-scroll-content="spacer"]')
+	spacer.find('.table-spacer').css('width', 1325)
+
+	$('[data-scroll-content="table"]').on('scroll', function(){
+		spacer.scrollLeft($(this).scrollLeft())
+	})
+
+	$('[data-scroll-content="spacer"]').on('scroll', function(){
+		$('[data-scroll-content="table"]').scrollLeft($(this).scrollLeft())
+	})
+	
+}
