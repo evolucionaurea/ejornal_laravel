@@ -2327,7 +2327,7 @@ function sliceEvents(props, allDay) {
     return Object(_internal_common_js__WEBPACK_IMPORTED_MODULE_0__["ad"])(props.eventStore, props.eventUiBases, props.dateProfile.activeRange, allDay ? props.nextDayThreshold : null).fg;
 }
 
-const version = '6.1.19';
+const version = '6.1.20';
 
 
 
@@ -17170,7 +17170,7 @@ process.umask = function() { return 0; };
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
-* sweetalert2 v11.26.3
+* sweetalert2 v11.26.20
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -17720,7 +17720,7 @@ process.umask = function() { return 0; };
       value = parseInt(value);
     }
     if (value || parseInt(`${value}`) === 0) {
-      elem.style.setProperty(property, typeof value === 'number' ? `${value}px` : value);
+      elem.style.setProperty(property, typeof value === 'number' ? `${value}px` : (/** @type {string} */value));
     } else {
       elem.style.removeProperty(property);
     }
@@ -17796,7 +17796,7 @@ process.umask = function() { return 0; };
    * @param {HTMLElement | null} elem
    * @returns {boolean}
    */
-  const isVisible$1 = elem => !!(elem && (elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length));
+  const isVisible$1 = elem => Boolean(elem && (elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length));
 
   /**
    * @returns {boolean}
@@ -17807,7 +17807,7 @@ process.umask = function() { return 0; };
    * @param {HTMLElement} elem
    * @returns {boolean}
    */
-  const isScrollable = elem => !!(elem.scrollHeight > elem.clientHeight);
+  const isScrollable = elem => Boolean(elem.scrollHeight > elem.clientHeight);
 
   /**
    * @param {HTMLElement} element
@@ -17815,7 +17815,7 @@ process.umask = function() { return 0; };
    * @returns {boolean}
    */
   const selfOrParentIsScrollable = (element, stopElement) => {
-    let parent = element;
+    let parent = /** @type {HTMLElement | null} */element;
     while (parent && parent !== stopElement) {
       if (isScrollable(parent)) {
         return true;
@@ -17922,50 +17922,81 @@ process.umask = function() { return 0; };
       return false;
     }
     oldContainer.remove();
-    removeClass([document.documentElement, document.body], [swalClasses['no-backdrop'], swalClasses['toast-shown'], swalClasses['has-column']]);
+    removeClass([document.documentElement, document.body], [swalClasses['no-backdrop'], swalClasses['toast-shown'],
+    // @ts-ignore: 'has-column' is not defined in swalClasses but may be set dynamically
+    swalClasses['has-column']]);
     return true;
   };
   const resetValidationMessage$1 = () => {
-    globalState.currentInstance.resetValidationMessage();
+    if (globalState.currentInstance) {
+      globalState.currentInstance.resetValidationMessage();
+    }
   };
   const addInputChangeListeners = () => {
     const popup = getPopup();
+    if (!popup) {
+      return;
+    }
     const input = getDirectChildByClass(popup, swalClasses.input);
     const file = getDirectChildByClass(popup, swalClasses.file);
-    /** @type {HTMLInputElement} */
+    /** @type {HTMLInputElement | null} */
     const range = popup.querySelector(`.${swalClasses.range} input`);
-    /** @type {HTMLOutputElement} */
+    /** @type {HTMLOutputElement | null} */
     const rangeOutput = popup.querySelector(`.${swalClasses.range} output`);
     const select = getDirectChildByClass(popup, swalClasses.select);
-    /** @type {HTMLInputElement} */
+    /** @type {HTMLInputElement | null} */
     const checkbox = popup.querySelector(`.${swalClasses.checkbox} input`);
     const textarea = getDirectChildByClass(popup, swalClasses.textarea);
-    input.oninput = resetValidationMessage$1;
-    file.onchange = resetValidationMessage$1;
-    select.onchange = resetValidationMessage$1;
-    checkbox.onchange = resetValidationMessage$1;
-    textarea.oninput = resetValidationMessage$1;
-    range.oninput = () => {
-      resetValidationMessage$1();
-      rangeOutput.value = range.value;
-    };
-    range.onchange = () => {
-      resetValidationMessage$1();
-      rangeOutput.value = range.value;
-    };
+    if (input) {
+      input.oninput = resetValidationMessage$1;
+    }
+    if (file) {
+      file.onchange = resetValidationMessage$1;
+    }
+    if (select) {
+      select.onchange = resetValidationMessage$1;
+    }
+    if (checkbox) {
+      checkbox.onchange = resetValidationMessage$1;
+    }
+    if (textarea) {
+      textarea.oninput = resetValidationMessage$1;
+    }
+    if (range && rangeOutput) {
+      range.oninput = () => {
+        resetValidationMessage$1();
+        rangeOutput.value = range.value;
+      };
+      range.onchange = () => {
+        resetValidationMessage$1();
+        rangeOutput.value = range.value;
+      };
+    }
   };
 
   /**
    * @param {string | HTMLElement} target
    * @returns {HTMLElement}
    */
-  const getTarget = target => typeof target === 'string' ? document.querySelector(target) : target;
+  const getTarget = target => {
+    if (typeof target === 'string') {
+      const element = document.querySelector(target);
+      if (!element) {
+        throw new Error(`Target element "${target}" not found`);
+      }
+      return /** @type {HTMLElement} */element;
+    }
+    return target;
+  };
 
   /**
    * @param {SweetAlertOptions} params
    */
   const setupAccessibility = params => {
     const popup = getPopup();
+    if (!popup) {
+      return;
+    }
     popup.setAttribute('role', params.toast ? 'alert' : 'dialog');
     popup.setAttribute('aria-live', params.toast ? 'polite' : 'assertive');
     if (!params.toast) {
@@ -17979,6 +18010,7 @@ process.umask = function() { return 0; };
   const setupRTL = targetElement => {
     if (window.getComputedStyle(targetElement).direction === 'rtl') {
       addClass(getContainer(), swalClasses.rtl);
+      globalState.isRTL = true;
     }
   };
 
@@ -18001,7 +18033,7 @@ process.umask = function() { return 0; };
     }
     setInnerHtml(container, sweetHTML);
     container.dataset['swal2Theme'] = params.theme;
-    const targetElement = getTarget(params.target);
+    const targetElement = getTarget(params.target || 'body');
     targetElement.appendChild(container);
     if (params.topLayer) {
       container.setAttribute('popover', '');
@@ -18039,7 +18071,7 @@ process.umask = function() { return 0; };
    */
   const handleObject = (param, target) => {
     // JQuery element(s)
-    if (param.jquery) {
+    if ('jquery' in param) {
       handleJqueryElem(target, param);
     }
 
@@ -18051,7 +18083,7 @@ process.umask = function() { return 0; };
 
   /**
    * @param {HTMLElement} target
-   * @param {object} elem
+   * @param {any} elem
    */
   const handleJqueryElem = (target, elem) => {
     target.textContent = '';
@@ -18267,7 +18299,8 @@ process.umask = function() { return 0; };
 
   var privateProps = {
     innerParams: new WeakMap(),
-    domCache: new WeakMap()
+    domCache: new WeakMap(),
+    focusedElement: new WeakMap()
   };
 
   /// <reference path="../../../../sweetalert2.d.ts"/>
@@ -18438,96 +18471,119 @@ process.umask = function() { return 0; };
   const renderInputType = {};
 
   /**
-   * @param {HTMLInputElement} input
+   * @param {Input | HTMLElement} input
    * @param {SweetAlertOptions} params
-   * @returns {HTMLInputElement}
+   * @returns {Input}
    */
   renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = renderInputType.search = renderInputType.date = renderInputType['datetime-local'] = renderInputType.time = renderInputType.week = renderInputType.month = /** @type {(input: Input | HTMLElement, params: SweetAlertOptions) => Input} */
   (input, params) => {
-    checkAndSetInputValue(input, params.inputValue);
-    setInputLabel(input, input, params);
-    setInputPlaceholder(input, params);
-    input.type = params.input;
-    return input;
+    const inputElement = /** @type {HTMLInputElement} */input;
+    checkAndSetInputValue(inputElement, params.inputValue);
+    setInputLabel(inputElement, inputElement, params);
+    setInputPlaceholder(inputElement, params);
+    inputElement.type = /** @type {string} */params.input;
+    return inputElement;
   };
 
   /**
-   * @param {HTMLInputElement} input
+   * @param {Input | HTMLElement} input
    * @param {SweetAlertOptions} params
-   * @returns {HTMLInputElement}
+   * @returns {Input}
    */
   renderInputType.file = (input, params) => {
-    setInputLabel(input, input, params);
-    setInputPlaceholder(input, params);
-    return input;
+    const inputElement = /** @type {HTMLInputElement} */input;
+    setInputLabel(inputElement, inputElement, params);
+    setInputPlaceholder(inputElement, params);
+    return inputElement;
   };
 
   /**
-   * @param {HTMLInputElement} range
+   * @param {Input | HTMLElement} range
    * @param {SweetAlertOptions} params
-   * @returns {HTMLInputElement}
+   * @returns {Input}
    */
   renderInputType.range = (range, params) => {
-    const rangeInput = range.querySelector('input');
-    const rangeOutput = range.querySelector('output');
-    checkAndSetInputValue(rangeInput, params.inputValue);
-    rangeInput.type = params.input;
-    checkAndSetInputValue(rangeOutput, params.inputValue);
-    setInputLabel(rangeInput, range, params);
-    return range;
+    const rangeContainer = /** @type {HTMLElement} */range;
+    const rangeInput = rangeContainer.querySelector('input');
+    const rangeOutput = rangeContainer.querySelector('output');
+    if (rangeInput) {
+      checkAndSetInputValue(rangeInput, params.inputValue);
+      rangeInput.type = /** @type {string} */params.input;
+      setInputLabel(rangeInput, /** @type {Input} */range, params);
+    }
+    if (rangeOutput) {
+      checkAndSetInputValue(rangeOutput, params.inputValue);
+    }
+    return /** @type {Input} */range;
   };
 
   /**
-   * @param {HTMLSelectElement} select
+   * @param {Input | HTMLElement} select
    * @param {SweetAlertOptions} params
-   * @returns {HTMLSelectElement}
+   * @returns {Input}
    */
   renderInputType.select = (select, params) => {
-    select.textContent = '';
+    const selectElement = /** @type {HTMLSelectElement} */select;
+    selectElement.textContent = '';
     if (params.inputPlaceholder) {
       const placeholder = document.createElement('option');
       setInnerHtml(placeholder, params.inputPlaceholder);
       placeholder.value = '';
       placeholder.disabled = true;
       placeholder.selected = true;
-      select.appendChild(placeholder);
+      selectElement.appendChild(placeholder);
     }
-    setInputLabel(select, select, params);
-    return select;
+    setInputLabel(selectElement, selectElement, params);
+    return selectElement;
   };
 
   /**
-   * @param {HTMLInputElement} radio
-   * @returns {HTMLInputElement}
+   * @param {Input | HTMLElement} radio
+   * @returns {Input}
    */
   renderInputType.radio = radio => {
-    radio.textContent = '';
-    return radio;
+    const radioElement = /** @type {HTMLElement} */radio;
+    radioElement.textContent = '';
+    return /** @type {Input} */radio;
   };
 
   /**
-   * @param {HTMLLabelElement} checkboxContainer
+   * @param {Input | HTMLElement} checkboxContainer
    * @param {SweetAlertOptions} params
-   * @returns {HTMLInputElement}
+   * @returns {Input}
    */
   renderInputType.checkbox = (checkboxContainer, params) => {
-    const checkbox = getInput$1(getPopup(), 'checkbox');
+    const popup = getPopup();
+    if (!popup) {
+      throw new Error('Popup not found');
+    }
+    const checkbox = getInput$1(popup, 'checkbox');
+    if (!checkbox) {
+      throw new Error('Checkbox input not found');
+    }
     checkbox.value = '1';
     checkbox.checked = Boolean(params.inputValue);
-    const label = checkboxContainer.querySelector('span');
-    setInnerHtml(label, params.inputPlaceholder || params.inputLabel);
+    const containerElement = /** @type {HTMLElement} */checkboxContainer;
+    const label = containerElement.querySelector('span');
+    if (label) {
+      const placeholderOrLabel = params.inputPlaceholder || params.inputLabel;
+      if (placeholderOrLabel) {
+        setInnerHtml(label, placeholderOrLabel);
+      }
+    }
     return checkbox;
   };
 
   /**
-   * @param {HTMLTextAreaElement} textarea
+   * @param {Input | HTMLElement} textarea
    * @param {SweetAlertOptions} params
-   * @returns {HTMLTextAreaElement}
+   * @returns {Input}
    */
   renderInputType.textarea = (textarea, params) => {
-    checkAndSetInputValue(textarea, params.inputValue);
-    setInputPlaceholder(textarea, params);
-    setInputLabel(textarea, textarea, params);
+    const textareaElement = /** @type {HTMLTextAreaElement} */textarea;
+    checkAndSetInputValue(textareaElement, params.inputValue);
+    setInputPlaceholder(textareaElement, params);
+    setInputLabel(textareaElement, textareaElement, params);
 
     /**
      * @param {HTMLElement} el
@@ -18539,26 +18595,33 @@ process.umask = function() { return 0; };
     setTimeout(() => {
       // https://github.com/sweetalert2/sweetalert2/issues/1699
       if ('MutationObserver' in window) {
-        const initialPopupWidth = parseInt(window.getComputedStyle(getPopup()).width);
+        const popup = getPopup();
+        if (!popup) {
+          return;
+        }
+        const initialPopupWidth = parseInt(window.getComputedStyle(popup).width);
         const textareaResizeHandler = () => {
           // check if texarea is still in document (i.e. popup wasn't closed in the meantime)
-          if (!document.body.contains(textarea)) {
+          if (!document.body.contains(textareaElement)) {
             return;
           }
-          const textareaWidth = textarea.offsetWidth + getMargin(textarea);
-          if (textareaWidth > initialPopupWidth) {
-            getPopup().style.width = `${textareaWidth}px`;
-          } else {
-            applyNumericalStyle(getPopup(), 'width', params.width);
+          const textareaWidth = textareaElement.offsetWidth + getMargin(textareaElement);
+          const popupElement = getPopup();
+          if (popupElement) {
+            if (textareaWidth > initialPopupWidth) {
+              popupElement.style.width = `${textareaWidth}px`;
+            } else {
+              applyNumericalStyle(popupElement, 'width', params.width);
+            }
           }
         };
-        new MutationObserver(textareaResizeHandler).observe(textarea, {
+        new MutationObserver(textareaResizeHandler).observe(textareaElement, {
           attributes: true,
           attributeFilter: ['style']
         });
       }
     });
-    return textarea;
+    return textareaElement;
   };
 
   /**
@@ -18822,7 +18885,11 @@ process.umask = function() { return 0; };
    */
   const down = event => {
     const popup = getPopup();
-    if (event.target === popup || getIcon().contains(/** @type {HTMLElement} */event.target)) {
+    if (!popup) {
+      return;
+    }
+    const icon = getIcon();
+    if (event.target === popup || icon && icon.contains(/** @type {HTMLElement} */event.target)) {
       dragging = true;
       const clientXY = getClientXY(event);
       mousedownX = clientXY.clientX;
@@ -18838,12 +18905,17 @@ process.umask = function() { return 0; };
    */
   const move = event => {
     const popup = getPopup();
+    if (!popup) {
+      return;
+    }
     if (dragging) {
       let {
         clientX,
         clientY
       } = getClientXY(event);
-      popup.style.insetInlineStart = `${initialX + (clientX - mousedownX)}px`;
+      const deltaX = clientX - mousedownX;
+      // In RTL mode, negate the horizontal delta since insetInlineStart refers to the right edge
+      popup.style.insetInlineStart = `${initialX + (globalState.isRTL ? -deltaX : deltaX)}px`;
       popup.style.insetBlockStart = `${initialY + (clientY - mousedownY)}px`;
     }
   };
@@ -19036,6 +19108,7 @@ process.umask = function() { return 0; };
    * @param {SweetAlertOptions} params
    */
   const render = (instance, params) => {
+    var _globalState$eventEmi;
     renderPopup(instance, params);
     renderContainer(instance, params);
     renderProgressSteps(instance, params);
@@ -19050,7 +19123,7 @@ process.umask = function() { return 0; };
     if (typeof params.didRender === 'function' && popup) {
       params.didRender(popup);
     }
-    globalState.eventEmitter.emit('didRender', popup);
+    (_globalState$eventEmi = globalState.eventEmitter) === null || _globalState$eventEmi === void 0 || _globalState$eventEmi.emit('didRender', popup);
   };
 
   /*
@@ -19097,8 +19170,9 @@ process.umask = function() { return 0; };
    * @param {GlobalState} globalState
    */
   const removeKeydownHandler = globalState => {
-    if (globalState.keydownTarget && globalState.keydownHandlerAdded) {
-      globalState.keydownTarget.removeEventListener('keydown', globalState.keydownHandler, {
+    if (globalState.keydownTarget && globalState.keydownHandlerAdded && globalState.keydownHandler) {
+      const handler = /** @type {EventListenerOrEventListenerObject} */ /** @type {unknown} */globalState.keydownHandler;
+      globalState.keydownTarget.removeEventListener('keydown', handler, {
         capture: globalState.keydownListenerCapture
       });
       globalState.keydownHandlerAdded = false;
@@ -19113,13 +19187,19 @@ process.umask = function() { return 0; };
   const addKeydownHandler = (globalState, innerParams, dismissWith) => {
     removeKeydownHandler(globalState);
     if (!innerParams.toast) {
-      globalState.keydownHandler = e => keydownHandler(innerParams, e, dismissWith);
-      globalState.keydownTarget = innerParams.keydownListenerCapture ? window : getPopup();
-      globalState.keydownListenerCapture = innerParams.keydownListenerCapture;
-      globalState.keydownTarget.addEventListener('keydown', globalState.keydownHandler, {
-        capture: globalState.keydownListenerCapture
-      });
-      globalState.keydownHandlerAdded = true;
+      /** @type {(this: HTMLElement, event: KeyboardEvent) => void} */
+      const handler = e => keydownHandler(innerParams, e, dismissWith);
+      globalState.keydownHandler = handler;
+      const target = innerParams.keydownListenerCapture ? window : getPopup();
+      if (target) {
+        globalState.keydownTarget = target;
+        globalState.keydownListenerCapture = innerParams.keydownListenerCapture;
+        const eventHandler = /** @type {EventListenerOrEventListenerObject} */ /** @type {unknown} */handler;
+        globalState.keydownTarget.addEventListener('keydown', eventHandler, {
+          capture: globalState.keydownListenerCapture
+        });
+        globalState.keydownHandlerAdded = true;
+      }
     }
   };
 
@@ -19207,7 +19287,11 @@ process.umask = function() { return 0; };
     if (!callIfFunction(innerParams.allowEnterKey)) {
       return;
     }
-    const input = getInput$1(getPopup(), innerParams.input);
+    const popup = getPopup();
+    if (!popup || !innerParams.input) {
+      return;
+    }
+    const input = getInput$1(popup, innerParams.input);
     if (event.target && input && event.target instanceof HTMLElement && event.target.outerHTML === input.outerHTML) {
       if (['textarea', 'file'].includes(innerParams.input)) {
         return; // do not submit
@@ -19337,7 +19421,7 @@ process.umask = function() { return 0; };
   };
 
   // @ts-ignore
-  const isSafariOrIOS = typeof window !== 'undefined' && !!window.GestureEvent; // true for Safari desktop + all iOS browsers https://stackoverflow.com/a/70585394
+  const isSafariOrIOS = typeof window !== 'undefined' && Boolean(window.GestureEvent); // true for Safari desktop + all iOS browsers https://stackoverflow.com/a/70585394
 
   /**
    * Fix iOS scrolling
@@ -19413,11 +19497,13 @@ process.umask = function() { return 0; };
   /**
    * https://github.com/sweetalert2/sweetalert2/issues/1786
    *
-   * @param {object} event
+   * @param {TouchEvent} event
    * @returns {boolean}
    */
   const isStylus = event => {
-    return event.touches && event.touches.length && event.touches[0].touchType === 'stylus';
+    return Boolean(event.touches && event.touches.length &&
+    // @ts-ignore - touchType is not a standard property
+    event.touches[0].touchType === 'stylus');
   };
 
   /**
@@ -19486,7 +19572,7 @@ process.umask = function() { return 0; };
    * @param {SweetAlert} instance
    * @param {HTMLElement} container
    * @param {boolean} returnFocus
-   * @param {() => void} didClose
+   * @param {(() => void) | undefined} didClose
    */
   function removePopupAndResetState(instance, container, returnFocus, didClose) {
     if (isToast()) {
@@ -19524,6 +19610,7 @@ process.umask = function() { return 0; };
    * Instance method to close sweetAlert
    *
    * @param {SweetAlertResult | undefined} resolveValue
+   * @this {SweetAlert}
    */
   function close(resolveValue) {
     resolveValue = prepareResolveValue(resolveValue);
@@ -19540,6 +19627,11 @@ process.umask = function() { return 0; };
       swalPromiseResolve(resolveValue);
     }
   }
+
+  /**
+   * @param {SweetAlert} instance
+   * @returns {boolean}
+   */
   const triggerClosePopup = instance => {
     const popup = getPopup();
     if (!popup) {
@@ -19560,6 +19652,7 @@ process.umask = function() { return 0; };
 
   /**
    * @param {Error | string} error
+   * @this {SweetAlert}
    */
   function rejectPromise(error) {
     const rejectPromise = privateMethods.swalPromiseReject.get(this);
@@ -19575,6 +19668,7 @@ process.umask = function() { return 0; };
    */
   const handleAwaitingPromise = instance => {
     if (instance.isAwaitingPromise) {
+      // @ts-ignore
       delete instance.isAwaitingPromise;
       // The instance might have been previously partly destroyed, we must resume the destroy process in this case #2335
       if (!privateProps.innerParams.get(instance)) {
@@ -19617,11 +19711,11 @@ process.umask = function() { return 0; };
       innerParams.willClose(popup);
     }
     (_globalState$eventEmi = globalState.eventEmitter) === null || _globalState$eventEmi === void 0 || _globalState$eventEmi.emit('willClose', popup);
-    if (animationIsSupported) {
-      animatePopup(instance, popup, container, innerParams.returnFocus, innerParams.didClose);
-    } else {
+    if (animationIsSupported && container) {
+      animatePopup(instance, popup, container, Boolean(innerParams.returnFocus), innerParams.didClose);
+    } else if (container) {
       // Otherwise, remove immediately
-      removePopupAndResetState(instance, container, innerParams.returnFocus, innerParams.didClose);
+      removePopupAndResetState(instance, container, Boolean(innerParams.returnFocus), innerParams.didClose);
     }
   };
 
@@ -19630,7 +19724,7 @@ process.umask = function() { return 0; };
    * @param {HTMLElement} popup
    * @param {HTMLElement} container
    * @param {boolean} returnFocus
-   * @param {() => void} didClose
+   * @param {(() => void) | undefined} didClose
    */
   const animatePopup = (instance, popup, container, returnFocus, didClose) => {
     globalState.swalCloseEventFinishedCallback = removePopupAndResetState.bind(null, instance, container, returnFocus, didClose);
@@ -19652,7 +19746,7 @@ process.umask = function() { return 0; };
 
   /**
    * @param {SweetAlert} instance
-   * @param {() => void} didClose
+   * @param {(() => void) | undefined} didClose
    */
   const triggerDidCloseAndDispose = (instance, didClose) => {
     setTimeout(() => {
@@ -19942,7 +20036,7 @@ process.umask = function() { return 0; };
    * @returns {boolean}
    */
   const isSelected = (optionValue, inputValue) => {
-    return !!inputValue && inputValue.toString() === optionValue.toString();
+    return Boolean(inputValue) && inputValue !== null && inputValue !== undefined && inputValue.toString() === optionValue.toString();
   };
 
   /**
@@ -20031,7 +20125,7 @@ process.umask = function() { return 0; };
    * @param {*} value
    */
   const deny = (instance, value) => {
-    const innerParams = privateProps.innerParams.get(instance || undefined);
+    const innerParams = privateProps.innerParams.get(instance);
     if (innerParams.showLoaderOnDeny) {
       showLoading(getDenyButton());
     }
@@ -20048,7 +20142,7 @@ process.umask = function() { return 0; };
             value: typeof preDenyValue === 'undefined' ? value : preDenyValue
           });
         }
-      }).catch(error => rejectWith(instance || undefined, error));
+      }).catch(error => rejectWith(instance, error));
     } else {
       instance.close(/** @type SweetAlertResult */{
         isDenied: true,
@@ -20083,7 +20177,7 @@ process.umask = function() { return 0; };
    * @param {*} value
    */
   const confirm = (instance, value) => {
-    const innerParams = privateProps.innerParams.get(instance || undefined);
+    const innerParams = privateProps.innerParams.get(instance);
     if (innerParams.showLoaderOnConfirm) {
       showLoading();
     }
@@ -20098,7 +20192,7 @@ process.umask = function() { return 0; };
         } else {
           succeedWith(instance, typeof preConfirmValue === 'undefined' ? value : preConfirmValue);
         }
-      }).catch(error => rejectWith(instance || undefined, error));
+      }).catch(error => rejectWith(instance, error));
     } else {
       succeedWith(instance, value);
     }
@@ -20106,6 +20200,7 @@ process.umask = function() { return 0; };
 
   /**
    * Hides loader and shows back the button which was hidden by .showLoading()
+   * @this {SweetAlert}
    */
   function hideLoading() {
     // do nothing if popup is closed
@@ -20128,11 +20223,21 @@ process.umask = function() { return 0; };
     domCache.confirmButton.disabled = false;
     domCache.denyButton.disabled = false;
     domCache.cancelButton.disabled = false;
+    const focusedElement = privateProps.focusedElement.get(this);
+    if (focusedElement instanceof HTMLElement) {
+      focusedElement.focus();
+      privateProps.focusedElement.delete(this);
+    }
   }
+
+  /**
+   * @param {DomCache} domCache
+   */
   const showRelatedButton = domCache => {
-    const buttonToReplace = domCache.popup.getElementsByClassName(domCache.loader.getAttribute('data-button-to-replace'));
+    const dataButtonToReplace = domCache.loader.getAttribute('data-button-to-replace');
+    const buttonToReplace = dataButtonToReplace ? domCache.popup.getElementsByClassName(dataButtonToReplace) : [];
     if (buttonToReplace.length) {
-      show(buttonToReplace[0], 'inline-block');
+      show(/** @type {HTMLElement} */buttonToReplace[0], 'inline-block');
     } else if (allButtonsAreHidden()) {
       hide(domCache.actions);
     }
@@ -20142,6 +20247,7 @@ process.umask = function() { return 0; };
    * Gets the input DOM node, this method works with input parameter.
    *
    * @returns {HTMLInputElement | null}
+   * @this {SweetAlert}
    */
   function getInput() {
     const innerParams = privateProps.innerParams.get(this);
@@ -20190,6 +20296,11 @@ process.umask = function() { return 0; };
    */
   function enableButtons() {
     setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], false);
+    const focusedElement = privateProps.focusedElement.get(this);
+    if (focusedElement instanceof HTMLElement) {
+      focusedElement.focus();
+      privateProps.focusedElement.delete(this);
+    }
   }
 
   /**
@@ -20197,6 +20308,7 @@ process.umask = function() { return 0; };
    * @this {SweetAlert}
    */
   function disableButtons() {
+    privateProps.focusedElement.set(this, document.activeElement);
     setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], true);
   }
 
@@ -20442,6 +20554,7 @@ process.umask = function() { return 0; };
   /**
    * Updates popup parameters.
    *
+   * @this {any}
    * @param {SweetAlertOptions} params
    */
   function update(params) {
@@ -20455,7 +20568,9 @@ process.umask = function() { return 0; };
     const validUpdatableParams = filterValidParams(params);
     const updatedParams = Object.assign({}, innerParams, validUpdatableParams);
     showWarningsForParams(updatedParams);
-    container.dataset['swal2Theme'] = updatedParams.theme;
+    if (container) {
+      container.dataset['swal2Theme'] = updatedParams.theme;
+    }
     render(this, updatedParams);
     privateProps.innerParams.set(this, updatedParams);
     Object.defineProperties(this, {
@@ -20472,10 +20587,12 @@ process.umask = function() { return 0; };
    * @returns {SweetAlertOptions}
    */
   const filterValidParams = params => {
+    /** @type {Record<string, any>} */
     const validUpdatableParams = {};
     Object.keys(params).forEach(param => {
       if (isUpdatableParameter(param)) {
-        validUpdatableParams[param] = params[param];
+        const typedParams = /** @type {Record<string, any>} */params;
+        validUpdatableParams[param] = typedParams[param];
       } else {
         warn(`Invalid parameter to update: ${param}`);
       }
@@ -20485,8 +20602,10 @@ process.umask = function() { return 0; };
 
   /**
    * Dispose the current SweetAlert2 instance
+   * @this {SweetAlert}
    */
   function _destroy() {
+    var _globalState$eventEmi;
     const domCache = privateProps.domCache.get(this);
     const innerParams = privateProps.innerParams.get(this);
     if (!innerParams) {
@@ -20502,7 +20621,7 @@ process.umask = function() { return 0; };
     if (typeof innerParams.didDestroy === 'function') {
       innerParams.didDestroy();
     }
-    globalState.eventEmitter.emit('didDestroy');
+    (_globalState$eventEmi = globalState.eventEmitter) === null || _globalState$eventEmi === void 0 || _globalState$eventEmi.emit('didDestroy');
     disposeSwal(this);
   }
 
@@ -20512,6 +20631,7 @@ process.umask = function() { return 0; };
   const disposeSwal = instance => {
     disposeWeakMaps(instance);
     // Unset this.params so GC will dispose it (#1569)
+    // @ts-ignore
     delete instance.params;
     // Unset globalState props so GC will dispose globalState (#1569)
     delete globalState.keydownHandler;
@@ -20531,29 +20651,47 @@ process.umask = function() { return 0; };
     } else {
       unsetWeakMaps(privateMethods, instance);
       unsetWeakMaps(privateProps, instance);
+
+      // @ts-ignore
       delete instance.isAwaitingPromise;
       // Unset instance methods
+      // @ts-ignore
       delete instance.disableButtons;
+      // @ts-ignore
       delete instance.enableButtons;
+      // @ts-ignore
       delete instance.getInput;
+      // @ts-ignore
       delete instance.disableInput;
+      // @ts-ignore
       delete instance.enableInput;
+      // @ts-ignore
       delete instance.hideLoading;
+      // @ts-ignore
       delete instance.disableLoading;
+      // @ts-ignore
       delete instance.showValidationMessage;
+      // @ts-ignore
       delete instance.resetValidationMessage;
+      // @ts-ignore
       delete instance.close;
+      // @ts-ignore
       delete instance.closePopup;
+      // @ts-ignore
       delete instance.closeModal;
+      // @ts-ignore
       delete instance.closeToast;
+      // @ts-ignore
       delete instance.rejectPromise;
+      // @ts-ignore
       delete instance.update;
+      // @ts-ignore
       delete instance._destroy;
     }
   };
 
   /**
-   * @param {object} obj
+   * @param {Record<string, WeakMap<any, any>>} obj
    * @param {SweetAlert} instance
    */
   const unsetWeakMaps = (obj, instance) => {
@@ -20622,7 +20760,7 @@ process.umask = function() { return 0; };
    * @returns {boolean}
    */
   const isAnyButtonShown = innerParams => {
-    return !!(innerParams.showConfirmButton || innerParams.showDenyButton || innerParams.showCancelButton || innerParams.showCloseButton);
+    return Boolean(innerParams.showConfirmButton || innerParams.showDenyButton || innerParams.showCancelButton || innerParams.showCloseButton);
   };
   let ignoreOutsideClick = false;
 
@@ -20678,9 +20816,24 @@ process.umask = function() { return 0; };
     };
   };
 
-  const isJqueryElement = elem => typeof elem === 'object' && elem.jquery;
+  /**
+   * @param {unknown} elem
+   * @returns {boolean}
+   */
+  const isJqueryElement = elem => typeof elem === 'object' && elem !== null && 'jquery' in elem;
+
+  /**
+   * @param {unknown} elem
+   * @returns {boolean}
+   */
   const isElement = elem => elem instanceof Element || isJqueryElement(elem);
+
+  /**
+   * @param {ReadonlyArray<unknown>} args
+   * @returns {SweetAlertOptions}
+   */
   const argsToParams = args => {
+    /** @type {Record<string, unknown>} */
     const params = {};
     if (typeof args[0] === 'object' && !isElement(args[0])) {
       Object.assign(params, args[0]);
@@ -20694,12 +20847,13 @@ process.umask = function() { return 0; };
         }
       });
     }
-    return params;
+    return /** @type {SweetAlertOptions} */params;
   };
 
   /**
    * Main method to create a new SweetAlert2 popup
    *
+   * @this {new (...args: any[]) => any}
    * @param  {...SweetAlertOptions} args
    * @returns {Promise<SweetAlertResult>}
    */
@@ -20725,9 +20879,15 @@ process.umask = function() { return 0; };
    *
    * @param {SweetAlertOptions} mixinParams
    * @returns {SweetAlert}
+   * @this {typeof import('../SweetAlert.js').SweetAlert}
    */
   function mixin(mixinParams) {
+    // @ts-ignore: 'this' refers to the SweetAlert constructor
     class MixinSwal extends this {
+      /**
+       * @param {any} params
+       * @param {any} priorityMixinParams
+       */
       _main(params, priorityMixinParams) {
         return super._main(params, Object.assign({}, mixinParams, priorityMixinParams));
       }
@@ -20807,13 +20967,15 @@ process.umask = function() { return 0; };
    * @returns {boolean}
    */
   const isTimerRunning = () => {
-    return !!(globalState.timeout && globalState.timeout.isRunning());
+    return Boolean(globalState.timeout && globalState.timeout.isRunning());
   };
 
   let bodyClickListenerAdded = false;
+  /** @type {Record<string, any>} */
   const clickHandlers = {};
 
   /**
+   * @this {any}
    * @param {string} attr
    */
   function bindClickHandler(attr = 'data-swal-template') {
@@ -20823,10 +20985,14 @@ process.umask = function() { return 0; };
       bodyClickListenerAdded = true;
     }
   }
+
+  /**
+   * @param {MouseEvent} event
+   */
   const bodyClickListener = event => {
-    for (let el = event.target; el && el !== document; el = el.parentNode) {
+    for (let el = /** @type {any} */event.target; el && el !== document; el = el.parentNode) {
       for (const attr in clickHandlers) {
-        const template = el.getAttribute(attr);
+        const template = el.getAttribute && el.getAttribute(attr);
         if (template) {
           clickHandlers[attr].fire({
             template
@@ -20875,10 +21041,11 @@ process.umask = function() { return 0; };
      */
     once(eventName, eventHandler) {
       /**
-       * @param {Array} args
+       * @param {...any} args
        */
       const onceFn = (...args) => {
         this.removeListener(eventName, onceFn);
+        // @ts-ignore
         eventHandler.apply(this, args);
       };
       this.on(eventName, onceFn);
@@ -20886,7 +21053,7 @@ process.umask = function() { return 0; };
 
     /**
      * @param {string} eventName
-     * @param {Array} args
+     * @param {...any} args
      */
     emit(eventName, ...args) {
       this._getHandlersByEventName(eventName).forEach(
@@ -20895,6 +21062,7 @@ process.umask = function() { return 0; };
        */
       eventHandler => {
         try {
+          // @ts-ignore
           eventHandler.apply(this, args);
         } catch (error) {
           console.error(error);
@@ -20935,7 +21103,9 @@ process.umask = function() { return 0; };
    * @param {EventHandler} eventHandler
    */
   const on = (eventName, eventHandler) => {
-    globalState.eventEmitter.on(eventName, eventHandler);
+    if (globalState.eventEmitter) {
+      globalState.eventEmitter.on(eventName, eventHandler);
+    }
   };
 
   /**
@@ -20943,7 +21113,9 @@ process.umask = function() { return 0; };
    * @param {EventHandler} eventHandler
    */
   const once = (eventName, eventHandler) => {
-    globalState.eventEmitter.once(eventName, eventHandler);
+    if (globalState.eventEmitter) {
+      globalState.eventEmitter.once(eventName, eventHandler);
+    }
   };
 
   /**
@@ -20951,6 +21123,10 @@ process.umask = function() { return 0; };
    * @param {EventHandler} [eventHandler]
    */
   const off = (eventName, eventHandler) => {
+    if (!globalState.eventEmitter) {
+      return;
+    }
+
     // Remove all handlers for all events
     if (!eventName) {
       globalState.eventEmitter.reset();
@@ -21116,9 +21292,9 @@ process.umask = function() { return 0; };
       if (!paramName || !value) {
         return;
       }
-      if (typeof defaultParams[paramName] === 'boolean') {
+      if (paramName in defaultParams && typeof defaultParams[(/** @type {keyof typeof defaultParams} */paramName)] === 'boolean') {
         result[paramName] = value !== 'false';
-      } else if (typeof defaultParams[paramName] === 'object') {
+      } else if (paramName in defaultParams && typeof defaultParams[(/** @type {keyof typeof defaultParams} */paramName)] === 'object') {
         result[paramName] = JSON.parse(value);
       } else {
         result[paramName] = value;
@@ -21165,10 +21341,16 @@ process.umask = function() { return 0; };
       result[`${type}ButtonText`] = button.innerHTML;
       result[`show${capitalizeFirstLetter(type)}Button`] = true;
       if (button.hasAttribute('color')) {
-        result[`${type}ButtonColor`] = button.getAttribute('color');
+        const color = button.getAttribute('color');
+        if (color !== null) {
+          result[`${type}ButtonColor`] = color;
+        }
       }
       if (button.hasAttribute('aria-label')) {
-        result[`${type}ButtonAriaLabel`] = button.getAttribute('aria-label');
+        const ariaLabel = button.getAttribute('aria-label');
+        if (ariaLabel !== null) {
+          result[`${type}ButtonAriaLabel`] = ariaLabel;
+        }
       }
     });
     return result;
@@ -21226,7 +21408,7 @@ process.umask = function() { return 0; };
    * @returns {object}
    */
   const getSwalInput = templateContent => {
-    /** @type {object} */
+    /** @type {Record<string, any>} */
     const result = {};
     /** @type {HTMLElement | null} */
     const input = templateContent.querySelector('swal-input');
@@ -21313,12 +21495,16 @@ process.umask = function() { return 0; };
    * @param {SweetAlertOptions} params
    */
   const openPopup = params => {
+    var _globalState$eventEmi, _globalState$eventEmi2;
     const container = getContainer();
     const popup = getPopup();
+    if (!container || !popup) {
+      return;
+    }
     if (typeof params.willOpen === 'function') {
       params.willOpen(popup);
     }
-    globalState.eventEmitter.emit('willOpen', popup);
+    (_globalState$eventEmi = globalState.eventEmitter) === null || _globalState$eventEmi === void 0 || _globalState$eventEmi.emit('willOpen', popup);
     const bodyStyles = window.getComputedStyle(document.body);
     const initialBodyOverflow = bodyStyles.overflowY;
     addClasses(container, popup, params);
@@ -21328,27 +21514,32 @@ process.umask = function() { return 0; };
       setScrollingVisibility(container, popup);
     }, SHOW_CLASS_TIMEOUT);
     if (isModal()) {
-      fixScrollContainer(container, params.scrollbarPadding, initialBodyOverflow);
+      // Using ternary instead of ?? operator for Webpack 4 compatibility
+      fixScrollContainer(container, params.scrollbarPadding !== undefined ? params.scrollbarPadding : false, initialBodyOverflow);
       setAriaHidden();
     }
     if (!isToast() && !globalState.previousActiveElement) {
       globalState.previousActiveElement = document.activeElement;
     }
     if (typeof params.didOpen === 'function') {
-      setTimeout(() => params.didOpen(popup));
+      const didOpen = params.didOpen;
+      setTimeout(() => didOpen(popup));
     }
-    globalState.eventEmitter.emit('didOpen', popup);
+    (_globalState$eventEmi2 = globalState.eventEmitter) === null || _globalState$eventEmi2 === void 0 || _globalState$eventEmi2.emit('didOpen', popup);
   };
 
   /**
-   * @param {AnimationEvent} event
+   * @param {Event} event
    */
   const swalOpenAnimationFinished = event => {
     const popup = getPopup();
-    if (event.target !== popup) {
+    if (!popup || event.target !== popup) {
       return;
     }
     const container = getContainer();
+    if (!container) {
+      return;
+    }
     popup.removeEventListener('animationend', swalOpenAnimationFinished);
     popup.removeEventListener('transitionend', swalOpenAnimationFinished);
     container.style.overflowY = 'auto';
@@ -21394,14 +21585,20 @@ process.umask = function() { return 0; };
    * @param {SweetAlertOptions} params
    */
   const addClasses = (container, popup, params) => {
-    addClass(container, params.showClass.backdrop);
+    var _params$showClass;
+    if ((_params$showClass = params.showClass) !== null && _params$showClass !== void 0 && _params$showClass.backdrop) {
+      addClass(container, params.showClass.backdrop);
+    }
     if (params.animation) {
       // this workaround with opacity is needed for https://github.com/sweetalert2/sweetalert2/issues/2059
       popup.style.setProperty('opacity', '0', 'important');
       show(popup, 'grid');
       setTimeout(() => {
+        var _params$showClass2;
         // Animate popup right after showing it
-        addClass(popup, params.showClass.popup);
+        if ((_params$showClass2 = params.showClass) !== null && _params$showClass2 !== void 0 && _params$showClass2.popup) {
+          addClass(popup, params.showClass.popup);
+        }
         // and remove the opacity workaround
         popup.style.removeProperty('opacity');
       }, SHOW_CLASS_TIMEOUT); // 10ms in order to fix #2062
@@ -21494,7 +21691,12 @@ process.umask = function() { return 0; };
       /**
        * @type {Promise<SweetAlertResult>}
        */
-      _classPrivateFieldInitSpec(this, _promise, void 0);
+      _classPrivateFieldInitSpec(this, _promise, /** @type {Promise<SweetAlertResult>} */
+      Promise.resolve({
+        isConfirmed: false,
+        isDenied: false,
+        isDismissed: true
+      }));
       // Prevent run in Node env
       if (typeof window === 'undefined') {
         return;
@@ -21511,6 +21713,11 @@ process.umask = function() { return 0; };
       this.isAwaitingPromise = false;
       _classPrivateFieldSet2(_promise, this, this._main(currentInstance.params));
     }
+
+    /**
+     * @param {any} userParams
+     * @param {any} mixinParams
+     */
     _main(userParams, mixinParams = {}) {
       showWarningsForParams(Object.assign({}, mixinParams, userParams));
       if (globalState.currentInstance) {
@@ -21548,9 +21755,16 @@ process.umask = function() { return 0; };
     }
 
     // `catch` cannot be the name of a module export, so we define our thenable methods here instead
+    /**
+     * @param {any} onFulfilled
+     */
     then(onFulfilled) {
       return _classPrivateFieldGet2(_promise, this).then(onFulfilled);
     }
+
+    /**
+     * @param {any} onFinally
+     */
     finally(onFinally) {
       return _classPrivateFieldGet2(_promise, this).finally(onFinally);
     }
@@ -21560,7 +21774,7 @@ process.umask = function() { return 0; };
    * @param {SweetAlert} instance
    * @param {DomCache} domCache
    * @param {SweetAlertOptions} innerParams
-   * @returns {Promise}
+   * @returns {Promise<SweetAlertResult>}
    */
   const swalPromise = (instance, domCache, innerParams) => {
     return new Promise((resolve, reject) => {
@@ -21628,17 +21842,17 @@ process.umask = function() { return 0; };
    * @returns {DomCache}
    */
   const populateDomCache = instance => {
-    const domCache = {
-      popup: getPopup(),
-      container: getContainer(),
-      actions: getActions(),
-      confirmButton: getConfirmButton(),
-      denyButton: getDenyButton(),
-      cancelButton: getCancelButton(),
-      loader: getLoader(),
-      closeButton: getCloseButton(),
-      validationMessage: getValidationMessage(),
-      progressSteps: getProgressSteps()
+    const domCache = /** @type {DomCache} */{
+      popup: (/** @type {HTMLElement} */getPopup()),
+      container: (/** @type {HTMLElement} */getContainer()),
+      actions: (/** @type {HTMLElement} */getActions()),
+      confirmButton: (/** @type {HTMLElement} */getConfirmButton()),
+      denyButton: (/** @type {HTMLElement} */getDenyButton()),
+      cancelButton: (/** @type {HTMLElement} */getCancelButton()),
+      loader: (/** @type {HTMLElement} */getLoader()),
+      closeButton: (/** @type {HTMLElement} */getCloseButton()),
+      validationMessage: (/** @type {HTMLElement} */getValidationMessage()),
+      progressSteps: (/** @type {HTMLElement} */getProgressSteps())
     };
     privateProps.domCache.set(instance, domCache);
     return domCache;
@@ -21657,13 +21871,13 @@ process.umask = function() { return 0; };
         dismissWith('timer');
         delete globalState.timeout;
       }, innerParams.timer);
-      if (innerParams.timerProgressBar) {
+      if (innerParams.timerProgressBar && timerProgressBar) {
         show(timerProgressBar);
         applyCustomClass(timerProgressBar, innerParams, 'timerProgressBar');
         setTimeout(() => {
           if (globalState.timeout && globalState.timeout.running) {
             // timer can be already stopped or unset at this point
-            animateTimerProgressBar(innerParams.timer);
+            animateTimerProgressBar(/** @type {number} */innerParams.timer);
           }
         });
       }
@@ -21689,8 +21903,8 @@ process.umask = function() { return 0; };
     }
     // TODO: this is dumb, remove `allowEnterKey` param in the next major version
     if (!callIfFunction(innerParams.allowEnterKey)) {
-      warnAboutDeprecation('allowEnterKey');
-      blurActiveElement();
+      warnAboutDeprecation('allowEnterKey', 'preConfirm: () => false');
+      domCache.popup.focus();
       return;
     }
     if (focusAutofocus(domCache)) {
@@ -21737,11 +21951,6 @@ process.umask = function() { return 0; };
     }
     return false;
   };
-  const blurActiveElement = () => {
-    if (document.activeElement instanceof HTMLElement && typeof document.activeElement.blur === 'function') {
-      document.activeElement.blur();
-    }
-  };
 
   // Assign instance methods from src/instanceMethods/*.js to prototype
   SweetAlert.prototype.disableButtons = disableButtons;
@@ -21770,15 +21979,18 @@ process.umask = function() { return 0; };
      * @param {...(SweetAlertOptions | string | undefined)} args
      * @returns {SweetAlertResult | Promise<SweetAlertResult> | undefined}
      */
+    // @ts-ignore: Dynamic property assignment for backwards compatibility
     SweetAlert[key] = function (...args) {
+      // @ts-ignore
       if (currentInstance && currentInstance[key]) {
+        // @ts-ignore
         return currentInstance[key](...args);
       }
-      return null;
+      return undefined;
     };
   });
   SweetAlert.DismissReason = DismissReason;
-  SweetAlert.version = '11.26.3';
+  SweetAlert.version = '11.26.20';
 
   const Swal = SweetAlert;
   // @ts-ignore
@@ -22043,7 +22255,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\admin\agendas.js */"./resources/js/admin/agendas.js");
+module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\admin\agendas.js */"./resources/js/admin/agendas.js");
 
 
 /***/ })

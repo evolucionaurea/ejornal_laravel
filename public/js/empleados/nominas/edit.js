@@ -111,7 +111,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\empleados\nominas\edit.js */"./resources/js/empleados/nominas/edit.js");
+module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\empleados\nominas\edit.js */"./resources/js/empleados/nominas/edit.js");
 
 
 /***/ })

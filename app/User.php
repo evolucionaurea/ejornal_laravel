@@ -41,6 +41,7 @@ class User extends Authenticatable
 	 */
 	protected $casts = [
 		'email_verified_at' => 'datetime',
+		'matricula' => 'array',
 	];
 
 	/**
@@ -49,6 +50,11 @@ class User extends Authenticatable
 	 * @var array
 	 */
 	protected $with = ['rol','especialidad'];
+
+	public function matriculas()
+	{
+		return $this->hasMany(\App\UserMatricula::class, 'id_user');
+	}
 
 	/**
 	 * Accessor para obtener el rol del usuario

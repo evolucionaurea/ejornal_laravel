@@ -80,7 +80,7 @@ class AdminResumenController extends Controller
 
 	public function destroy($id)
 	{
-			//
+			// Eliminar un registro
 	}
 
 	public function getMedicamentos(Request $request)

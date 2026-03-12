@@ -66,6 +66,7 @@ Hay algunas tablas que se consultan por datos concretos porque no fue pensado.
 Por ejemplo los Tipos de Ausentismo:
 - ID 8 y ID 9: Son casos sospechosos o confirmados de covid. Se utilizan para las querys y logica en varias partes del sitio. Están harcodeados (8, 9). Hoy dia se pueden crear, modificar y eliminar tipos de ausentismos. El cliente sabe que no debe eliminarlos, pero es un riesgo que exista la posibilidad. Por el momento no se tomó otra decisión al respecto.
 - ID 12 Es de accidente. Esto se utiliza para las estadisticas y logica tambien.
+- Si lo instalas por primera vez, debes comentar la llamada al User loggeado en Exceptions > Handler.php para poder instalarlo. Luego la podes volver a descomentar
 
 ### Tabla Users
 - Id cliente actual:

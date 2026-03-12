@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use App\Error;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Exceptions\PostTooLargeException;
 
 class Handler extends ExceptionHandler
 {
@@ -57,8 +58,17 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+
+    public function render($request, Throwable $exception)
     {
+        if ($exception instanceof PostTooLargeException) {
+            return redirect()
+                ->back()
+                ->with('error', 'La carga supera el límite permitido. Máximo 2MB por archivo.')
+                ->withInput();
+        }
+
         return parent::render($request, $exception);
     }
+
 }

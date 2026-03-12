@@ -2327,7 +2327,7 @@ function sliceEvents(props, allDay) {
     return Object(_internal_common_js__WEBPACK_IMPORTED_MODULE_0__["ad"])(props.eventStore, props.eventUiBases, props.dateProfile.activeRange, allDay ? props.nextDayThreshold : null).fg;
 }
 
-const version = '6.1.19';
+const version = '6.1.20';
 
 
 
@@ -16299,7 +16299,7 @@ new Calendar();
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\empleados\agenda.js */"./resources/js/empleados/agenda.js");
+module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\empleados\agenda.js */"./resources/js/empleados/agenda.js");
 
 
 /***/ })

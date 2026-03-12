@@ -19,7 +19,7 @@ use App\Mail\EnviarEmail;
 use App\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Storage;
-
+use App\UserMatricula;
 
 
 class EmpleadosRecetasController extends Controller
@@ -169,12 +169,10 @@ class EmpleadosRecetasController extends Controller
 
     $lockNomina = true; // para bloquear select
 
-    $medicoTipoMatricula = strtoupper(trim((string) ($user->tipo_matricula ?? 'MN')));
-    if (!in_array($medicoTipoMatricula, ['MN','MP'], true)) {
-        $medicoTipoMatricula = 'MN';
-    }
-
-    $medicoMatricula = preg_replace('/\D+/', '', (string) ($user->matricula ?? ''));
+    $mat = $this->validarMatriculaReceta($user);
+    $medicoTipoMatricula = $mat['tipo'];      // MN o MP
+    $medicoMatricula     = $mat['numero'];    // sólo dígitos
+    $matriculaWarning    = $mat['warning'];   // texto o null
 
 
     return view('empleados.recetas.create', compact(
@@ -187,6 +185,7 @@ class EmpleadosRecetasController extends Controller
         'medicoSexo',
         'medicoTipoMatricula',
         'medicoMatricula', 
+        'matriculaWarning',
         'selectedNominaId',
         'lockNomina',
         'tieneFirmaMedico',
@@ -289,6 +288,37 @@ class EmpleadosRecetasController extends Controller
     
 	public function store(Request $req, Qbi2Client $qbi)
 	{
+
+    $user = Auth::user();
+    $mat = $this->validarMatriculaReceta($user);
+
+    // Si no hay número, no dejamos generar receta
+    if (trim((string) $mat['numero']) === '') {
+        $msg = 'No tenés matrícula cargada. Cargala en Mi cuenta → Matrículas.';
+
+        if ($req->ajax() || $req->wantsJson()) {
+            return response()->json([
+                'ok' => false,
+                'message' => $msg,
+                'errors' => [
+                    'medico.matricula.numero' => [$msg],
+                ],
+            ], 422);
+        }
+
+        return back()->with('error', $msg)->withInput();
+    }
+
+    // Forzamos valores en el request (aunque el user intente cambiarlos)
+    $medico = $req->input('medico', []);
+    $medicoMat = is_array($medico['matricula'] ?? null) ? $medico['matricula'] : [];
+    $medicoMat['tipo']   = $mat['tipo'];
+    $medicoMat['numero'] = $mat['numero'];
+    $medico['matricula'] = $medicoMat;
+
+    $req->merge(['medico' => $medico]);
+
+
     // Validación centralizada (incluye id_nomina, paciente, domicilio, cobertura, meds, etc.)
     $data   = $this->validarReceta($req);
 
@@ -739,6 +769,56 @@ class EmpleadosRecetasController extends Controller
         return is_file($abs) ? asset("storage/{$rel}") : null;
     }
 
+
+    private function validarMatriculaReceta(User $user): array
+    {
+        // Traigo todas las matrículas del médico
+        $items = UserMatricula::where('id_user', $user->id)->get()->keyBy('tipo');
+
+        $digits = function ($v) {
+            return preg_replace('/\D+/', '', (string) $v);
+        };
+
+        // 1) Preferencia absoluta: MN si existe y tiene número
+        $mn = $items->get('MN');
+        if ($mn && $digits($mn->nro) !== '') {
+            return [
+                'tipo'    => 'MN',
+                'numero'  => $digits($mn->nro),
+                'warning' => null,
+            ];
+        }
+
+        // 2) Si no hay MN, usar MP si existe y tiene número, con warning
+        $mp = $items->get('MP');
+        if ($mp && $digits($mp->nro) !== '') {
+            return [
+                'tipo'    => 'MP',
+                'numero'  => $digits($mp->nro),
+                'warning' => 'No tenés matrícula nacional (MN) cargada. Se usará la provincial (MP), pero la MN es la que debería usarse.',
+            ];
+        }
+
+        // 3) Fallback: primera matrícula con número (si en el futuro hay más tipos)
+        foreach ($items as $it) {
+            $num = $digits($it->nro);
+            if ($num !== '') {
+                $t = strtoupper(trim((string) $it->tipo));
+                return [
+                    'tipo'    => $t,
+                    'numero'  => $num,
+                    'warning' => 'No tenés matrícula nacional (MN) cargada. Se usará otra matrícula disponible, pero la MN es la que debería usarse.',
+                ];
+            }
+        }
+
+        // 4) No hay ninguna matrícula cargada
+        return [
+            'tipo'    => 'MN',
+            'numero'  => '',
+            'warning' => 'No tenés matrícula cargada. Cargala en Mi cuenta → Matrículas.',
+        ];
+    }
 
 
 

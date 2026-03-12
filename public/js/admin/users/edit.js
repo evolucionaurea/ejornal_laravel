@@ -93,19 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-//const { Alert } = require("bootstrap")
-
 $(function () {
-  var roles = [{
-    id: 1,
-    name: 'admin'
-  }, {
-    id: 2,
-    name: 'empleado'
-  }, {
-    id: 3,
-    name: 'cliente'
-  }];
   var fields = [{
     roles: [1],
     "class": '.select_permiso_edicion_fichadas'
@@ -161,53 +149,118 @@ $(function () {
     roles: [4],
     "class": '.grupos'
   }];
-  var mostrar_ocultar_campos = function mostrar_ocultar_campos(roleid) {
-    roleid = parseInt(roleid);
-    fields.map(function (field) {
-      ///console.log(field.roles, field.class);
-      if (!field.roles.includes(roleid)) {
-        $(field["class"]).addClass('d-none');
-      } else {
-        $(field["class"]).removeClass('d-none');
-      }
+  function roleId() {
+    return parseInt($('[name="rol"]').val() || '0', 10);
+  }
+  function especialidadId() {
+    return parseInt($('[name="especialidad"]').val() || '0', 10);
+  }
+  function isEmpleadoMedico() {
+    return roleId() === 2 && especialidadId() === 1;
+  }
+  function mostrar_ocultar_campos(rid) {
+    rid = parseInt(rid, 10);
+    fields.forEach(function (field) {
+      if (!field.roles.includes(rid)) $(field["class"]).addClass('d-none');else $(field["class"]).removeClass('d-none');
     });
-    switch (roleid) {
-      case 2:
-        $('.mostrar_clientes label').text('¿Para quien trabajará?');
-        break;
-      case 3:
-        $('.mostrar_clientes label').text('¿Este usuario a que Cliente pertenece?');
-        break;
-      default:
-        break;
-    }
-  };
+    if (rid === 2) $('.mostrar_clientes label').text('¿Para quien trabajará?');
+    if (rid === 3) $('.mostrar_clientes label').text('¿Este usuario a que Cliente pertenece?');
+
+    // SOLO empleado médico: mostrar sección docs
+    $('.mostrar_docs_medico').toggleClass('d-none', !isEmpleadoMedico());
+  }
+
+  // Inicial
   mostrar_ocultar_campos($('[name="rol"]').val());
+
+  // Cambios
   $('[name="rol"]').on('change', function (e) {
-    var roleid = $(e.currentTarget).val();
-    mostrar_ocultar_campos(roleid);
+    mostrar_ocultar_campos($(e.currentTarget).val());
   });
-  $('#cliente_select_multiple').select2({
-    placeholder: 'Buscar...'
-  }).trigger('change');
+  $(document).on('change', '[name="especialidad"]', function () {
+    mostrar_ocultar_campos($('[name="rol"]').val());
+  });
 
-  /*$('#select_cliente_original').select2({
-  	placeholder: 'Buscar...'
-  }).trigger('change');*/
+  // select2 clientes
+  if ($('#cliente_select_multiple').length) {
+    $('#cliente_select_multiple').select2({
+      placeholder: 'Buscar...'
+    }).trigger('change');
+  }
 
+  // custom-file label
+  $(document).on('change', '.custom-file-input', function () {
+    var fileName = this.files && this.files.length ? this.files[0].name : 'Seleccionar archivo';
+    $(this).siblings('.custom-file-label').text(fileName);
+  });
+
+  // ===== límite uploads (10MB por archivo, 10MB total) =====
+  var MAX_FILE_BYTES = 10 * 1024 * 1024;
+  var MAX_TOTAL_BYTES = 10 * 1024 * 1024;
+  function mb(bytes) {
+    return (bytes / 1024 / 1024).toFixed(2);
+  }
+  function showWarn(msg) {
+    if (window.Swal && Swal.fire) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Carga inválida',
+        text: msg
+      });
+    } else {
+      alert(msg);
+    }
+  }
+  function validateFiles($form) {
+    var total = 0;
+    var tooBigFile = null;
+    $form.find('input[type="file"]').each(function () {
+      var files = this.files;
+      if (!files || !files.length) return;
+      for (var i = 0; i < files.length; i++) {
+        var f = files[i];
+        total += f.size;
+        if (f.size > MAX_FILE_BYTES) {
+          tooBigFile = f;
+          return false;
+        }
+      }
+      if (tooBigFile) return false;
+    });
+    if (tooBigFile) {
+      showWarn("\"".concat(tooBigFile.name, "\" supera ").concat(mb(MAX_FILE_BYTES), "MB. Eleg\xED un archivo m\xE1s liviano."));
+      return false;
+    }
+    if (total > MAX_TOTAL_BYTES) {
+      showWarn("La carga total es ".concat(mb(total), "MB y supera el m\xE1ximo permitido (").concat(mb(MAX_TOTAL_BYTES), "MB). Sub\xED menos archivos por vez."));
+      return false;
+    }
+    return true;
+  }
+
+  // Intercept submit en create y edit
+  $('#form_create_user_por_admin, #form_edit_user_por_admin').on('submit', function (e) {
+    if (!$('.mostrar_docs_medico').length) return;
+    if ($('.mostrar_docs_medico').hasClass('d-none')) return;
+    var ok = validateFiles($(this));
+    if (!ok) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+  });
+
+  // confirmación existente (solo edit)
   $("#admin_edit_user").click(function (e) {
     e.preventDefault();
-
-    // Si el usuario es Empleado
     var rol = $('[name="rol"]').val();
     if (rol == 2) {
       var fichada = $('#validacion_submit').data('fichada');
-      var fichar = $('#validacion_submit').data('fichar');
       var usuario_debe_fichar = $('[name="fichar"]').val();
       if (fichada == 1 && usuario_debe_fichar == 0) {
         Swal.fire({
           icon: 'warning',
-          title: 'El usuario tiene la fichada activa. Esta trabajando. Si continua ficharemos la salida del empleado y luego haremos que no sea necesario que éste vuelva a fichar.',
+          title: 'El usuario tiene la fichada activa. Si continúa, ficharemos la salida.',
           showCancelButton: true,
           reverseButtons: true,
           cancelButtonText: '<i class="fa fa-times fa-fw"></i> Cancelar',
@@ -246,7 +299,7 @@ __webpack_require__(/*! ./create.js */ "./resources/js/admin/users/create.js");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\ejornal_laravel\resources\js\admin\users\edit.js */"./resources/js/admin/users/edit.js");
+module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\admin\users\edit.js */"./resources/js/admin/users/edit.js");
 
 
 /***/ })
