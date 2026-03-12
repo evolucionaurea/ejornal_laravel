@@ -141,7 +141,7 @@ Object.keys(jsEntries).forEach(key => {
 });
 
 
-const appUrl = process.env.APP_URL || 'http://ejornal_laravel.test';
+const appUrl = process.env.APP_URL || 'https://ejornal_laravel.test';
 
 if (!mix.inProduction()) {
     mix.browserSync({

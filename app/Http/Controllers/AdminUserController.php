@@ -75,6 +75,9 @@ class AdminUserController extends Controller
 		];
 	}
 
+
+
+
 	public function create()
 	{
 		$roles = Rol::orderBy('nombre', 'asc')->get();
