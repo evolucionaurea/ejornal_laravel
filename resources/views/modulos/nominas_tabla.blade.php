@@ -61,7 +61,11 @@
 
 <hr>
 
+<div data-toggle="table-scroll" data-scroll-content="spacer" class="table-responsive">
+	<div class="table-spacer">&nbsp;</div>
+</div>
 
+<div data-toggle="table-scroll" data-scroll-content="table" class="table-responsive">
 <table class="table table-striped table-hover table-sm tabla_nominas dt-responsive">
 
 	<!--Table head-->
@@ -92,3 +96,4 @@
 	</tbody>
 	<!--Table body-->
 </table>
+</div>

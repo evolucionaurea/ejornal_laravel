@@ -108,7 +108,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\admin\grupos\create.js */"./resources/js/admin/grupos/create.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\admin\grupos\create.js */"./resources/js/admin/grupos/create.js");
 
 
 /***/ })

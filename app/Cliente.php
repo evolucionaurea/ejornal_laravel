@@ -71,5 +71,13 @@ class Cliente extends Model
       return $this->belongsTo(ProvinciaReceta::class, 'id_provincia');
   }
 
+	public function getDireccionCompletaAttribute()
+	{
+		if($this->calle && $this->nro && $this->provincia){
+			return trim($this->calle . ' ' . $this->nro.', '.$this->provincia->nombre);
+		}
+		return $this->direccion;
+	}
+
 
 }

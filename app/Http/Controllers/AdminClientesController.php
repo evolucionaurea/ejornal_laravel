@@ -153,7 +153,7 @@ class AdminClientesController extends Controller
 
     $validatedData = $request->validate([
       'nombre' => 'required|string',
-      'direccion' => 'required|string',
+      //'direccion' => 'required|string',
       'provincia' => 'required|integer',
       'calle' => 'nullable|string',
       'nro' => 'nullable|string'

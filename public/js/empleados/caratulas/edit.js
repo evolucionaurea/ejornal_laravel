@@ -138,7 +138,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\empleados\caratulas\edit.js */"./resources/js/empleados/caratulas/edit.js");
+module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\caratulas\edit.js */"./resources/js/empleados/caratulas/edit.js");
 
 
 /***/ })

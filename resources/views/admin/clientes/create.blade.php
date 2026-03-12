@@ -39,27 +39,27 @@
 				<div class="form-row">
 					<div class="form-group col-md-2">
 						<label>Nombre de la empresa</label>
-						<input required name="nombre" type="text" class="form-control form-control-sm" placeholder="">
+						<input required name="nombre" value="{{old('nombre')}}" type="text" class="form-control form-control-sm" placeholder="">
 					</div>
 					<div class="form-group col-md-2">
 						<label>Dirección <small>(Dejará de estar en uso)</small></label>
-						<input required name="direccion" type="text" class="form-control form-control-sm"
+						<input required name="direccion" value="{{old('direccion')}}" type="text" class="form-control form-control-sm"
 							placeholder="">
 					</div>
 					<div class="form-group col-md-2">
 						<label>Calle</label>
-						<input required name="calle" type="text" class="form-control form-control-sm" placeholder="">
+						<input required name="calle" value="{{old('calle')}}" type="text" class="form-control form-control-sm" placeholder="">
 					</div>
 					<div class="form-group col-md-2">
 						<label>Número</label>
-						<input required name="nro" type="text" class="form-control form-control-sm" placeholder="">
+						<input required name="nro" value="{{old('nro')}}" type="text" class="form-control form-control-sm" placeholder="">
 					</div>
 					{{-- Elegir la provincia por tabla de ProvinciaReceta --}}
 					<div class="form-group col-md-2">
 						<label>Provincia</label>
 						<select required name="provincia" class="form-control form-control-sm select2">
 							@foreach ($provincias as $provincia)
-							<option value="{{$provincia->id}}">{{$provincia->nombre}}</option>
+							<option value="{{$provincia->id}}" @if (old('provincia') == $provincia->id) selected @endif>{{$provincia->nombre}}</option>
 							@endforeach
 						</select>
 					</div>
