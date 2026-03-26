@@ -251,7 +251,7 @@ class EmpleadoConsultaMedicaController extends Controller
 			if(!$cliente->calle || !$cliente->nro || !$cliente->id_provincia){
 				return back()->withInput($request->input())->with('error', 'No puedes generar una receta ya que falta la siguiente información en el cliente: Calle, Número y Provincia. Comunícate con el administrador de tu cuenta');
 			}
-			if(!auth()->user()->dni || !auth()->user()->matricula){
+			if(!auth()->user()->dni || !auth()->user()->matriculas){
 				return back()->withInput($request->input())->with('error', 'No puedes generar una receta ya que falta información en tu cuenta: DNI y Matrícula. Comunícate con el administrador de tu cuenta');
 			}		
 
