@@ -115,7 +115,18 @@ trait StockMedicamentos {
 		if($request->order){
 			$sort = $request->columns[$request->order[0]['column']]['name'];
 			$dir  = $request->order[0]['dir'];
+			// Calificar columnas ambiguas por los joins
+			$sortMap = [
+				'created_at' => 'stock_medicamentos_historial.created_at',
+				'motivo'     => 'stock_medicamentos_historial.motivo',
+				'ingreso'    => 'stock_medicamentos_historial.ingreso',
+				'egreso'     => 'stock_medicamentos_historial.egreso',
+				'suministrados' => 'stock_medicamentos_historial.suministrados',
+			];
+			$sort = $sortMap[$sort] ?? $sort;
 			$query->orderBy($sort,$dir);
+		} else {
+			$query->orderBy('stock_medicamentos_historial.created_at', 'desc');
 		}
 
 
@@ -176,7 +187,7 @@ trait StockMedicamentos {
 			'request' => $request->all(),
 			'queries'=>DB::getQueryLog(),
 
-			'sort'=>$request->columns[$request->order[0]['column']]['name'].','.$request->order[0]['dir']
+			'sort'=>$request->order ? $request->columns[$request->order[0]['column']]['name'].','.$request->order[0]['dir'] : null
 		];
 
 

@@ -1427,6 +1427,12 @@
 
     $chk.off('change.firmaSello').on('change.firmaSello', apply);
     apply();
+
+    // Truncar al pegar texto que exceda maxlength
+    $fields.on('input.selloMax', function () {
+      const ml = parseInt(this.getAttribute('maxlength'), 10);
+      if (ml && this.value.length > ml) this.value = this.value.substring(0, ml);
+    });
   }
 
 
@@ -1741,6 +1747,15 @@
 
         if (incluirFirma && !hasFirma) {
           items.push('Marcaste incluir firma, pero este médico no tiene firma cargada en su cuenta.');
+        }
+
+        if (incluirFirma && hasFirma) {
+          $('#box_sello_medico .sello-field').each(function () {
+            const ml = parseInt(this.getAttribute('maxlength'), 10);
+            if (ml && this.value.length > ml) {
+              items.push($(this).closest('.form-group').find('label').text().trim() + ': máximo ' + ml + ' caracteres.');
+            }
+          });
         }
       }
 

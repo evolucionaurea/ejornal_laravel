@@ -11,7 +11,7 @@ $(() => {
 		server_side: true,
 
 		datatable_options: {
-			order: [[7, 'desc']],
+			order: [[8, 'desc']],
 
 			dom: '<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
 

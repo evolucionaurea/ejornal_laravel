@@ -29,6 +29,7 @@ use App\ConsultaNutricional;
 use App\TareaLivianaDocumentacion;
 use App\EdicionFichada;
 use App\PreocupacionalTipoEstudio;
+use App\Receta;
 
 use App\Http\Traits\Ausentismos;
 use App\Http\Traits\Preocupacionales;
@@ -1181,6 +1182,20 @@ foreach ($fichadas as $fichada) {
 			->leftJoin('users','users.nombre','tarea_liviana_documentacion.user');
 
 
+		   $recetas = Receta::select(
+			   'recetas.id_cliente',
+			   'recetas.id_nomina',
+			   'users.nombre as user',
+			   'recetas.created_at',
+			   DB::raw('"Receta Emitida" as actividad'),
+			   DB::raw('clientes.nombre as cliente_nombre'),
+			   DB::raw('nominas.nombre as trabajador_nombre'),
+			   'users.estado'
+		   )
+			   ->join('clientes','clientes.id','recetas.id_cliente')
+			   ->join('nominas','nominas.id','recetas.id_nomina')
+			   ->leftJoin('users','users.id','recetas.id_user');
+
 		DB::enableQueryLog();
 
 
@@ -1195,7 +1210,8 @@ foreach ($fichadas as $fichada) {
 				$tareas_livianas,
 				$comunicaciones_tareas_livianas,
 				$documentaciones_tareas_livianas,
-				$nutricionales
+				$nutricionales,
+				$recetas
 			){
 
 				$query->select('*')
@@ -1208,7 +1224,8 @@ foreach ($fichadas as $fichada) {
 					->union($tareas_livianas)
 					->union($comunicaciones_tareas_livianas)
 					->union($documentaciones_tareas_livianas)
-					->union($nutricionales);
+					->union($nutricionales)
+					->union($recetas);
 
 			},'uniones');
 
