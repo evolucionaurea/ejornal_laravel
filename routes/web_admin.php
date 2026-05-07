@@ -198,5 +198,21 @@ Route::get('admin/recetas/{id}', 'AdminRecetasController@show')
     ->where('id', '\d+')
     ->name('admin.recetas.show');
 
+	// Financiadores que permiten anulación de receta
+	Route::get('admin/receta-financiadores-anulacion', 'AdminRecetaFinanciadoresAnulacionController@index')
+		->name('admin.receta_financiadores_anulacion.index');
+	Route::get('admin/receta-financiadores-anulacion/create', 'AdminRecetaFinanciadoresAnulacionController@create')
+		->name('admin.receta_financiadores_anulacion.create');
+	Route::post('admin/receta-financiadores-anulacion', 'AdminRecetaFinanciadoresAnulacionController@store')
+		->name('admin.receta_financiadores_anulacion.store');
+	Route::get('admin/receta-financiadores-anulacion/{id}/edit', 'AdminRecetaFinanciadoresAnulacionController@edit')
+		->where('id', '\d+')
+		->name('admin.receta_financiadores_anulacion.edit');
+	Route::put('admin/receta-financiadores-anulacion/{id}', 'AdminRecetaFinanciadoresAnulacionController@update')
+		->where('id', '\d+')
+		->name('admin.receta_financiadores_anulacion.update');
+	Route::delete('admin/receta-financiadores-anulacion/{id}', 'AdminRecetaFinanciadoresAnulacionController@destroy')
+		->where('id', '\d+')
+		->name('admin.receta_financiadores_anulacion.destroy');
 
 });

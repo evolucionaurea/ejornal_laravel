@@ -20,6 +20,7 @@ use App\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Storage;
 use App\UserMatricula;
+use App\RecetaFinanciadorAnulacion;
 
 
 class EmpleadosRecetasController extends Controller
@@ -87,14 +88,18 @@ class EmpleadosRecetasController extends Controller
 
         // Respuesta parcial para AJAX (filtros / paginación)
         if ($request->ajax()) {
-            return view('empleados.recetas._tabla', compact('recetas'))->render();
+            $financiadoresAnulacionIds = RecetaFinanciadorAnulacion::idsPermitidos();
+            return view('empleados.recetas._tabla', compact('recetas', 'financiadoresAnulacionIds'))->render();
         }
+
+        $financiadoresAnulacionIds = RecetaFinanciadorAnulacion::idsPermitidos();
 
         return view('empleados.recetas', compact(
             'recetas',
             'nominas',
             'estados',
-            'clientes'
+            'clientes',
+            'financiadoresAnulacionIds'
         ));
     }
 
@@ -260,6 +265,8 @@ class EmpleadosRecetasController extends Controller
             ? $receta->created_at->format('d/m/Y H:i')
             : null;
 
+        $financiadoresAnulacionIds = RecetaFinanciadorAnulacion::idsPermitidos();
+
         return view('empleados.recetas.show', compact(
             'receta',
             'clientes',
@@ -280,7 +287,8 @@ class EmpleadosRecetasController extends Controller
             'listaMeds',
             'domLugar',
             'estadoClass',
-            'createdAtFormatted'
+            'createdAtFormatted',
+            'financiadoresAnulacionIds'
         ));
     }
 
@@ -743,6 +751,13 @@ class EmpleadosRecetasController extends Controller
 
         $receta->estado = 'anulada';
         $receta->save();
+
+        Log::info('Receta anulada', [
+            'receta_id' => (int) $receta->id,
+            'hash_id'   => (string) $receta->hash_id,
+            'user_id'   => (int) auth()->id(),
+            'todo' => $receta->toArray(),
+        ]);
 
         if ($req->ajax() || $req->wantsJson()) {
             return response()->json([

@@ -34,14 +34,6 @@
 
             @include('../mensajes_validacion')
 
-            {{-- Si ya está funcionando, podés borrar este alert --}}
-            <div class="alert alert-success alert-dismissible fade show mt-2 mr-4 ml-4" role="alert">
-                Aun no disponible la generación de recetas. Pronto estará listo.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
             <div class="px-3 py-3">
                 <form id="recetaForm" method="POST" action="{{ route('empleados.recetas.store') }}"
                     data-url-get-financiadores="{{ route('empleados.recetas.get_financiadores') }}"
