@@ -61,7 +61,7 @@
                                 Ver PDF
                             </a>
 
-                            @if (strtolower($receta->estado) !== 'anulada')
+                            {{-- @if (strtolower($receta->estado) !== 'anulada')
                                 @php
                                     $idFinanciadorReceta = (string) ($payload['cobertura']['idFinanciador'] ?? '');
                                     $permiteAnulacion =
@@ -78,7 +78,7 @@
                                         No anulable
                                     </span>
                                 @endif
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
 

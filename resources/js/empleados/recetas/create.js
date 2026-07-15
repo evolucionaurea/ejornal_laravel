@@ -453,6 +453,39 @@
     return m ? m[1] : '';
   }
 
+  function isValidCalendarDate(dd, mm, yyyy) {
+    if (!Number.isInteger(dd) || !Number.isInteger(mm) || !Number.isInteger(yyyy)) return false;
+    if (yyyy < 1900 || yyyy > new Date().getFullYear()) return false;
+    if (mm < 1 || mm > 12) return false;
+    const dias = new Date(yyyy, mm, 0).getDate();
+    return dd >= 1 && dd <= dias;
+  }
+
+  // Acepta DD/MM/AAAA, DD-MM-AAAA, AAAA-MM-DD o solo dígitos (DDMMAAAA) y devuelve
+  // { visual: 'DD/MM/AAAA', iso: 'AAAA-MM-DD' } o null si no se puede interpretar.
+  function parseFechaFlexible(raw) {
+    const s = String(raw || '').trim();
+    if (!s) return { visual: '', iso: '' };
+
+    let dd, mm, yyyy;
+
+    let m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+    if (m) {
+      dd = parseInt(m[1], 10); mm = parseInt(m[2], 10); yyyy = parseInt(m[3], 10);
+    } else if ((m = s.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/))) {
+      yyyy = parseInt(m[1], 10); mm = parseInt(m[2], 10); dd = parseInt(m[3], 10);
+    } else if ((m = s.match(/^(\d{2})(\d{2})(\d{4})$/))) {
+      dd = parseInt(m[1], 10); mm = parseInt(m[2], 10); yyyy = parseInt(m[3], 10);
+    } else {
+      return null;
+    }
+
+    if (!isValidCalendarDate(dd, mm, yyyy)) return null;
+
+    const p2 = n => String(n).padStart(2, '0');
+    return { visual: `${p2(dd)}/${p2(mm)}/${yyyy}`, iso: `${yyyy}-${p2(mm)}-${p2(dd)}` };
+  }
+
   function s2Small($sel) {
     const $w = $sel.next('.select2'), $s = $w.find('.select2-selection--single');
     $s.css({ height: '31px', 'min-height': '31px', 'border-radius': '.2rem', 'border-color': '#ced4da', padding: '2px 8px' });
@@ -1366,7 +1399,7 @@
     const $iso = $('[name="paciente[fechaNacimiento]"]');
     if (!$iso.length) return;
 
-    const $vis = $('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" readonly>');
+    const $vis = $('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" autocomplete="off">');
     const curISO = $iso.val();
     $vis.val(isoAEs(curISO)).insertAfter($iso);
 
@@ -1377,7 +1410,43 @@
     }
 
     $iso.attr('type', 'hidden');
-    $vis.on('keydown paste', e => e.preventDefault());
+
+    let fechaCommitting = false;
+
+    function commitFecha() {
+      if (fechaCommitting) return;
+      fechaCommitting = true;
+
+      const raw = $vis.val();
+      const parsed = parseFechaFlexible(raw);
+
+      if (parsed === null) {
+        modal({
+          title: 'Fecha inválida',
+          html: '<p>La fecha ingresada no es válida. Usá el formato <b>DD/MM/AAAA</b> o seleccioná una fecha del calendario.</p>'
+        });
+        $vis.val(isoAEs($iso.val()));
+        fechaCommitting = false;
+        return;
+      }
+
+      $vis.val(parsed.visual);
+      $iso.val(parsed.iso);
+
+      if ($.fn.datepicker && parsed.iso) {
+        try { $vis.datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', parsed.iso)); } catch (e) {}
+      }
+
+      fechaCommitting = false;
+    }
+
+    // Filtro en vivo: sólo dígitos y separadores de fecha, largo acotado.
+    $vis.on('input.fechaNac', function () {
+      const clean = String(this.value || '').replace(/[^0-9/\-.]/g, '').slice(0, 10);
+      if (clean !== this.value) this.value = clean;
+    });
+
+    $vis.on('blur.fechaNac', commitFecha);
 
     if ($.datepicker && !$.datepicker.regional['es']) {
       $.datepicker.regional['es'] = {
@@ -1400,7 +1469,7 @@
         changeYear: true,
         yearRange: '1900:+0',
         dateFormat: 'dd/mm/yy',
-        onClose: v => $iso.val(esAISO(v))
+        onClose: () => commitFecha()
       });
     }
     $vis.on('focus click', function () { if ($.fn.datepicker) $(this).datepicker('show'); });

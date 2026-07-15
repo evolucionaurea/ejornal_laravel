@@ -34,6 +34,8 @@
                             isset($financiadoresAnulacionIds) &&
                             in_array($idFinanciadorReceta, $financiadoresAnulacionIds, true);
                     @endphp
+
+
                     <tr id="receta-{{ $r->id }}" data-id="{{ $r->id }}"
                         data-url-anular="{{ route('empleados.recetas.anular', $r->id) }}" data-csrf="{{ csrf_token() }}">
                         <td><span class="text-monospace">{{ $r->id }}</span></td>
