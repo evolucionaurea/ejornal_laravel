@@ -77,7 +77,7 @@
                                 href="{{ route('empleados.recetas.show', $r->id) }}">
                                 Ver
                             </a>
-                            @if ($r->estado != 'anulada')
+                            {{-- @if ($r->estado != 'anulada')
                                 @if ($permiteAnulacion)
                                     <button type="button" class="btn-ejornal btn-danger btn-sm js-anular">
                                         Anular
@@ -88,7 +88,7 @@
                                         No anulable
                                     </span>
                                 @endif
-                            @endif
+                            @endif --}}
                         </td>
                     </tr>
                 @endforeach
