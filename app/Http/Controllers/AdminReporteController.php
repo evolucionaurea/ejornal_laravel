@@ -1267,7 +1267,7 @@ foreach ($fichadas as $fichada) {
 		if($request->user){
 			$query->where('user',$request->user);
 		}
-		if($request->estado!==null){
+		if($request->filled('estado')){
 			$query->where('estado',$request->estado);
 		}
 
