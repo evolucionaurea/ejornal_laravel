@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 59);
+/******/ 	return __webpack_require__(__webpack_require__.s = 61);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25290,7 +25290,7 @@ $(function () {
     ///datatable_options:{order:[[ 0, "desc" ]]},
     server_side: true,
     datatable_options: {
-      order: [[7, 'desc']],
+      order: [[8, 'desc']],
       dom: '<"table-spacer-top"l>t<"table-spacer-bottom"ip>',
       autoWidth: false,
       columnDefs: [{
@@ -25386,14 +25386,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 59:
+/***/ 61:
 /*!******************************************************************!*\
   !*** multi ./resources/js/empleados/medicamentos/movimientos.js ***!
   \******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\medicamentos\movimientos.js */"./resources/js/empleados/medicamentos/movimientos.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\medicamentos\movimientos.js */"./resources/js/empleados/medicamentos/movimientos.js");
 
 
 /***/ })

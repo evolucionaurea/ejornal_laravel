@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 60);
+/******/ 	return __webpack_require__(__webpack_require__.s = 62);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25420,14 +25420,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 60:
+/***/ 62:
 /*!**********************************************************!*\
   !*** multi ./resources/js/empleados/preocupacionales.js ***!
   \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\preocupacionales.js */"./resources/js/empleados/preocupacionales.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\preocupacionales.js */"./resources/js/empleados/preocupacionales.js");
 
 
 /***/ })

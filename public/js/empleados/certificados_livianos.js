@@ -25311,7 +25311,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\certificados_livianos.js */"./resources/js/empleados/certificados_livianos.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\certificados_livianos.js */"./resources/js/empleados/certificados_livianos.js");
 
 
 /***/ })

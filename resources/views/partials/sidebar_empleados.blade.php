@@ -178,6 +178,10 @@
 						class="{{ setActiveSub('empleados.consultas.nutricionales') }}">
 						<a href="{{url('/empleados/consultas/nutricionales')}}">Nutricional</a>
 					</ol>
+					<ol data-route="empleados.consultas.otras"
+						class="{{ setActiveSub('empleados.consultas.otras') }}">
+						<a href="{{url('/empleados/consultas/otras')}}">Otras</a>
+					</ol>
 				</ul>
 			</div>
 		</li>

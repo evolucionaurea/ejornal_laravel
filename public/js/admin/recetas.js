@@ -266,7 +266,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\admin\recetas.js */"./resources/js/admin/recetas.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\admin\recetas.js */"./resources/js/admin/recetas.js");
 
 
 /***/ })

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 67);
+/******/ 	return __webpack_require__(__webpack_require__.s = 69);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25317,14 +25317,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 67:
+/***/ 69:
 /*!**********************************************************!*\
   !*** multi ./resources/js/clientes/nominas_historial.js ***!
   \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\clientes\nominas_historial.js */"./resources/js/clientes/nominas_historial.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\clientes\nominas_historial.js */"./resources/js/clientes/nominas_historial.js");
 
 
 /***/ })

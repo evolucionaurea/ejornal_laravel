@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 61);
+/******/ 	return __webpack_require__(__webpack_require__.s = 63);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -176,14 +176,14 @@ new Preocupacional();
 
 /***/ }),
 
-/***/ 61:
+/***/ 63:
 /*!*****************************************************************!*\
   !*** multi ./resources/js/empleados/preocupacionales/create.js ***!
   \*****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\preocupacionales\create.js */"./resources/js/empleados/preocupacionales/create.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\preocupacionales\create.js */"./resources/js/empleados/preocupacionales/create.js");
 
 
 /***/ })

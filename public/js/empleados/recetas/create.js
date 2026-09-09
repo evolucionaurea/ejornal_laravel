@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 64);
+/******/ 	return __webpack_require__(__webpack_require__.s = 66);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -494,6 +494,48 @@
     var s = String(input).trim();
     var m = s.match(/^(\d{4}-\d{2}-\d{2})/);
     return m ? m[1] : '';
+  }
+  function isValidCalendarDate(dd, mm, yyyy) {
+    if (!Number.isInteger(dd) || !Number.isInteger(mm) || !Number.isInteger(yyyy)) return false;
+    if (yyyy < 1900 || yyyy > new Date().getFullYear()) return false;
+    if (mm < 1 || mm > 12) return false;
+    var dias = new Date(yyyy, mm, 0).getDate();
+    return dd >= 1 && dd <= dias;
+  }
+
+  // Acepta DD/MM/AAAA, DD-MM-AAAA, AAAA-MM-DD o solo dígitos (DDMMAAAA) y devuelve
+  // { visual: 'DD/MM/AAAA', iso: 'AAAA-MM-DD' } o null si no se puede interpretar.
+  function parseFechaFlexible(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return {
+      visual: '',
+      iso: ''
+    };
+    var dd, mm, yyyy;
+    var m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+    if (m) {
+      dd = parseInt(m[1], 10);
+      mm = parseInt(m[2], 10);
+      yyyy = parseInt(m[3], 10);
+    } else if (m = s.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/)) {
+      yyyy = parseInt(m[1], 10);
+      mm = parseInt(m[2], 10);
+      dd = parseInt(m[3], 10);
+    } else if (m = s.match(/^(\d{2})(\d{2})(\d{4})$/)) {
+      dd = parseInt(m[1], 10);
+      mm = parseInt(m[2], 10);
+      yyyy = parseInt(m[3], 10);
+    } else {
+      return null;
+    }
+    if (!isValidCalendarDate(dd, mm, yyyy)) return null;
+    var p2 = function p2(n) {
+      return String(n).padStart(2, '0');
+    };
+    return {
+      visual: "".concat(p2(dd), "/").concat(p2(mm), "/").concat(yyyy),
+      iso: "".concat(yyyy, "-").concat(p2(mm), "-").concat(p2(dd))
+    };
   }
   function s2Small($sel) {
     var $w = $sel.next('.select2'),
@@ -1348,7 +1390,7 @@
   function initFecha() {
     var $iso = $('[name="paciente[fechaNacimiento]"]');
     if (!$iso.length) return;
-    var $vis = $('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" readonly>');
+    var $vis = $('<input type="text" id="paciente_fecha_visual" class="form-control form-control-sm" placeholder="DD/MM/AAAA" autocomplete="off">');
     var curISO = $iso.val();
     $vis.val(isoAEs(curISO)).insertAfter($iso);
     if (pendingFechaISO) {
@@ -1357,9 +1399,37 @@
       pendingFechaISO = '';
     }
     $iso.attr('type', 'hidden');
-    $vis.on('keydown paste', function (e) {
-      return e.preventDefault();
+    var fechaCommitting = false;
+    function commitFecha() {
+      if (fechaCommitting) return;
+      fechaCommitting = true;
+      var raw = $vis.val();
+      var parsed = parseFechaFlexible(raw);
+      if (parsed === null) {
+        modal({
+          title: 'Fecha inválida',
+          html: '<p>La fecha ingresada no es válida. Usá el formato <b>DD/MM/AAAA</b> o seleccioná una fecha del calendario.</p>'
+        });
+        $vis.val(isoAEs($iso.val()));
+        fechaCommitting = false;
+        return;
+      }
+      $vis.val(parsed.visual);
+      $iso.val(parsed.iso);
+      if ($.fn.datepicker && parsed.iso) {
+        try {
+          $vis.datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', parsed.iso));
+        } catch (e) {}
+      }
+      fechaCommitting = false;
+    }
+
+    // Filtro en vivo: sólo dígitos y separadores de fecha, largo acotado.
+    $vis.on('input.fechaNac', function () {
+      var clean = String(this.value || '').replace(/[^0-9/\-.]/g, '').slice(0, 10);
+      if (clean !== this.value) this.value = clean;
     });
+    $vis.on('blur.fechaNac', commitFecha);
     if ($.datepicker && !$.datepicker.regional['es']) {
       $.datepicker.regional['es'] = {
         closeText: 'Cerrar',
@@ -1383,8 +1453,8 @@
         changeYear: true,
         yearRange: '1900:+0',
         dateFormat: 'dd/mm/yy',
-        onClose: function onClose(v) {
-          return $iso.val(esAISO(v));
+        onClose: function onClose() {
+          return commitFecha();
         }
       });
     }
@@ -1411,6 +1481,12 @@
     if (!hasFirma) $chk.prop('checked', false);
     $chk.off('change.firmaSello').on('change.firmaSello', apply);
     apply();
+
+    // Truncar al pegar texto que exceda maxlength
+    $fields.on('input.selloMax', function () {
+      var ml = parseInt(this.getAttribute('maxlength'), 10);
+      if (ml && this.value.length > ml) this.value = this.value.substring(0, ml);
+    });
   }
 
   // =========================================================
@@ -1539,6 +1615,14 @@
         var hasFirma = String($chkFirma.data('hasFirma') || $chkFirma.data('has-firma') || '') === '1';
         if (incluirFirma && !hasFirma) {
           items.push('Marcaste incluir firma, pero este médico no tiene firma cargada en su cuenta.');
+        }
+        if (incluirFirma && hasFirma) {
+          $('#box_sello_medico .sello-field').each(function () {
+            var ml = parseInt(this.getAttribute('maxlength'), 10);
+            if (ml && this.value.length > ml) {
+              items.push($(this).closest('.form-group').find('label').text().trim() + ': máximo ' + ml + ' caracteres.');
+            }
+          });
         }
       }
       if (items.length) {
@@ -1740,14 +1824,14 @@
 
 /***/ }),
 
-/***/ 64:
+/***/ 66:
 /*!********************************************************!*\
   !*** multi ./resources/js/empleados/recetas/create.js ***!
   \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\empleados\recetas\create.js */"./resources/js/empleados/recetas/create.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\recetas\create.js */"./resources/js/empleados/recetas/create.js");
 
 
 /***/ })

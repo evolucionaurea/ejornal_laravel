@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 63);
+/******/ 	return __webpack_require__(__webpack_require__.s = 65);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -383,14 +383,14 @@
 
 /***/ }),
 
-/***/ 63:
+/***/ 65:
 /*!*************************************************!*\
   !*** multi ./resources/js/empleados/recetas.js ***!
   \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\empleados\recetas.js */"./resources/js/empleados/recetas.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\recetas.js */"./resources/js/empleados/recetas.js");
 
 
 /***/ })

@@ -103,7 +103,7 @@ $(function () {
   var CSRF = tokenEl ? tokenEl.getAttribute('content') : '';
   $('#id_nomina').on('change', /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(select) {
-      var idNomina, template;
+      var idNomina, template, $template;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.n) {
           case 0:
@@ -119,7 +119,9 @@ $(function () {
             return window.get_template("/api/get_caratula_nomina/".concat(idNomina));
           case 2:
             template = _context.v;
-            $('#caratula').html(template);
+            $template = $(template);
+            if (route == 'empleados.consultas.otras.create') $template.find('[data-toggle="usar-datos-caratula"]').remove();
+            $('#caratula').html($template);
           case 3:
             return _context.a(2);
         }
@@ -272,6 +274,7 @@ $(function () {
   $('body').on('click', '[data-toggle="usar-datos-caratula"]', function () {
     var peso = $('[data-content="peso"]').text();
     var altura = $('[data-content="altura"]').text();
+    console.log(peso, altura);
     $('[name="peso"]').val(peso);
     $('[name="altura"]').val(altura);
     $("input[name='imc']").val(window.calculate_imc(peso, altura));
@@ -391,7 +394,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\consultas\medicas\create.js */"./resources/js/empleados/consultas/medicas/create.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\consultas\medicas\create.js */"./resources/js/empleados/consultas/medicas/create.js");
 
 
 /***/ })

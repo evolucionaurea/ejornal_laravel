@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 69);
+/******/ 	return __webpack_require__(__webpack_require__.s = 71);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25402,14 +25402,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 69:
+/***/ 71:
 /*!****************************************************!*\
   !*** multi ./resources/js/clientes/ausentismos.js ***!
   \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\clientes\ausentismos.js */"./resources/js/clientes/ausentismos.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\clientes\ausentismos.js */"./resources/js/clientes/ausentismos.js");
 
 
 /***/ })

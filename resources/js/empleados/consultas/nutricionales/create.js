@@ -37,7 +37,7 @@ $(() => {
 	toggleCampos(); // Ejecutar al cargar la página
 
 
-	$('[name="fecha_atencion"]').datepicker();
+	$('[name="fecha_atencion"],[name="prox_cita"]').datepicker();
 
 
 	$("input[name='peso'],input[name='altura']").on('keyup change', function () {

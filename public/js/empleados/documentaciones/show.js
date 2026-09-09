@@ -259,7 +259,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\documentaciones\show.js */"./resources/js/empleados/documentaciones/show.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\documentaciones\show.js */"./resources/js/empleados/documentaciones/show.js");
 
 
 /***/ })

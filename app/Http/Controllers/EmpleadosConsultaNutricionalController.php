@@ -46,7 +46,7 @@ class EmpleadosConsultaNutricionalController extends Controller
 
 
 	public function busqueda(Request $request)
-{
+	{
     $search = is_array($request->search) ? ($request->search['value'] ?? null) : $request->search;
 
     $q = ConsultaNutricional::select('consultas_nutricionales.*')
@@ -111,7 +111,7 @@ class EmpleadosConsultaNutricionalController extends Controller
         'fichar_user'  => auth()->user()->fichar,
         'request' => $request->all(),
     ];
-}
+	}
 
 
 

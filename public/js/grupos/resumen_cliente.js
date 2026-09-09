@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 72);
+/******/ 	return __webpack_require__(__webpack_require__.s = 74);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -63464,14 +63464,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 72:
+/***/ 74:
 /*!******************************************************!*\
   !*** multi ./resources/js/grupos/resumen_cliente.js ***!
   \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\grupos\resumen_cliente.js */"./resources/js/grupos/resumen_cliente.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\grupos\resumen_cliente.js */"./resources/js/grupos/resumen_cliente.js");
 
 
 /***/ })

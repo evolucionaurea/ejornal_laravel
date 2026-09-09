@@ -25320,7 +25320,7 @@ $(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\comunicaciones_livianas.js */"./resources/js/empleados/comunicaciones_livianas.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\comunicaciones_livianas.js */"./resources/js/empleados/comunicaciones_livianas.js");
 
 
 /***/ })

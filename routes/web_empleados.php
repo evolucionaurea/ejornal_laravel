@@ -301,6 +301,22 @@ Route::group(['middleware' => 'autenticacion_empleados'], function () {
 	Route::post('empleados/consultas/nutricionales/busqueda', 'EmpleadosConsultaNutricionalController@busqueda');
 
 
+	/// CONSULTAS OTRAS
+	Route::get('empleados.consultas.otras/exportar', 'EmpleadosConsultasOtrasController@exportar');
+	Route::resource('empleados/consultas/otras', 'EmpleadosConsultasOtrasController', [
+		'names' => [
+			'index' => 'empleados.consultas.otras', 
+			'create' => 'empleados.consultas.otras.create',
+			'store' => 'empleados.consultas.otras.store',
+			'show' => 'empleados.consultas.otras.show',
+			'edit' => 'empleados.consultas.otras.edit',
+			'update' => 'empleados.consultas.otras.update',
+			'destroy' => 'empleados.consultas.otras.destroy',
+		],
+	]);
+	Route::post('empleados/consultas/otras/busqueda', 'EmpleadosConsultasOtrasController@busqueda');
+
+
 	Route::resource('empleados/consultas/patologias', 'EmpleadosPatologiasController', [
 		'names' => [
 			'index' => 'empleados.consultas.patologias'

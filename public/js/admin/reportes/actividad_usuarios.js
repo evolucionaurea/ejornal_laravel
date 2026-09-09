@@ -25335,7 +25335,7 @@ var Tablas = /*#__PURE__*/function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\admin\reportes\actividad_usuarios.js */"./resources/js/admin/reportes/actividad_usuarios.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\admin\reportes\actividad_usuarios.js */"./resources/js/admin/reportes/actividad_usuarios.js");
 
 
 /***/ })

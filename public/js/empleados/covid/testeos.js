@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 55);
+/******/ 	return __webpack_require__(__webpack_require__.s = 57);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25300,14 +25300,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 55:
+/***/ 57:
 /*!*******************************************************!*\
   !*** multi ./resources/js/empleados/covid/testeos.js ***!
   \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\empleados\covid\testeos.js */"./resources/js/empleados/covid/testeos.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\empleados\covid\testeos.js */"./resources/js/empleados/covid/testeos.js");
 
 
 /***/ })

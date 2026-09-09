@@ -12,7 +12,9 @@ $(() => {
 			return;
 		}
 		const template = await window.get_template(`/api/get_caratula_nomina/${idNomina}`);
-		$('#caratula').html(template);
+		const $template = $(template);
+		if (route == 'empleados.consultas.otras.create') $template.find('[data-toggle="usar-datos-caratula"]').remove();
+		$('#caratula').html($template);
 	});
 	if ($('#id_nomina').val() != '') {
 		$('#id_nomina').trigger('change')
@@ -132,6 +134,7 @@ $(() => {
 	$('body').on('click', '[data-toggle="usar-datos-caratula"]', () => {
 		const peso = $('[data-content="peso"]').text();
 		const altura = $('[data-content="altura"]').text();
+		console.log(peso, altura)
 
 		$('[name="peso"]').val(peso);
 		$('[name="altura"]').val(altura);

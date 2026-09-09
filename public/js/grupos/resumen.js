@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 71);
+/******/ 	return __webpack_require__(__webpack_require__.s = 73);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -63454,14 +63454,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 71:
+/***/ 73:
 /*!**********************************************!*\
   !*** multi ./resources/js/grupos/resumen.js ***!
   \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\grupos\resumen.js */"./resources/js/grupos/resumen.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\grupos\resumen.js */"./resources/js/grupos/resumen.js");
 
 
 /***/ })

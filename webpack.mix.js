@@ -79,6 +79,9 @@ const jsEntries = {
 		'consultas.enfermeria',
 		'consultas.enfermeria.create',
 
+		'consultas.otras',
+		'consultas.otras.create',
+
 		'covid.testeos',
 		'covid.vacunas',
 
@@ -114,47 +117,47 @@ const jsEntries = {
 
 // compilar los archivos de cada grupo
 Object.keys(jsEntries).forEach(key => {
-    const items = jsEntries[key];
-    const folder = `resources/js/${key}/`;
+	const items = jsEntries[key];
+	const folder = `resources/js/${key}/`;
 
-    items.forEach(item => {
-        let subfolder = item.includes('.') ? `${item.split('.')[0]}/` : '';
-        let file;
+	items.forEach(item => {
+		let subfolder = item.includes('.') ? `${item.split('.')[0]}/` : '';
+		let file;
 
-        if (item.includes('.')) {
-            const parts = item.split('.');
-            if (parts.length === 3) {
-                subfolder = `${subfolder}/${parts[1]}/`;
-                file = parts[2];
-            } else {
-                file = parts[1];
-            }
-        } else {
-            file = item;
-        }
+		if (item.includes('.')) {
+			const parts = item.split('.');
+			if (parts.length === 3) {
+				subfolder = `${subfolder}/${parts[1]}/`;
+				file = parts[2];
+			} else {
+				file = parts[1];
+			}
+		} else {
+			file = item;
+		}
 
-        mix.js(
-            `${folder}${subfolder}${file}.js`,
-            `public/js/${key}/${subfolder}${file}.js`
-        );
-    });
+		mix.js(
+			`${folder}${subfolder}${file}.js`,
+			`public/js/${key}/${subfolder}${file}.js`
+		);
+	});
 });
 
 
 const appUrl = process.env.APP_URL || 'https://ejornal_laravel.test';
 
 if (!mix.inProduction()) {
-    mix.browserSync({
-        proxy: appUrl,
-        port: 3000,
-        open: true,
-        notify: false,
-        files: [
-            'resources/views/**/*.blade.php',
-            'public/js/**/*.js',
-            'public/css/**/*.css',
-        ],
-    });
+	mix.browserSync({
+		proxy: appUrl,
+		port: 3000,
+		open: true,
+		notify: false,
+		files: [
+			'resources/views/**/*.blade.php',
+			'public/js/**/*.js',
+			'public/css/**/*.css',
+		],
+	});
 }
 
 mix.version();

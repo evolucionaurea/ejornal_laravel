@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 74);
+/******/ 	return __webpack_require__(__webpack_require__.s = 76);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25323,14 +25323,14 @@ $(function () {
 
 /***/ }),
 
-/***/ 74:
+/***/ 76:
 /*!**********************************************************!*\
   !*** multi ./resources/js/grupos/nominas_movimientos.js ***!
   \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\grupos\nominas_movimientos.js */"./resources/js/grupos/nominas_movimientos.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\grupos\nominas_movimientos.js */"./resources/js/grupos/nominas_movimientos.js");
 
 
 /***/ })

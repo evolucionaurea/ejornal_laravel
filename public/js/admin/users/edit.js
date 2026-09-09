@@ -299,7 +299,7 @@ __webpack_require__(/*! ./create.js */ "./resources/js/admin/users/create.js");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\ela_g\Herd\ejornal_laravel\resources\js\admin\users\edit.js */"./resources/js/admin/users/edit.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\admin\users\edit.js */"./resources/js/admin/users/edit.js");
 
 
 /***/ })

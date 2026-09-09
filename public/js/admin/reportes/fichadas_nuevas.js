@@ -25548,7 +25548,7 @@ var Tablas = /*#__PURE__*/function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\work\ejornal\resources\js\admin\reportes\fichadas_nuevas.js */"./resources/js/admin/reportes/fichadas_nuevas.js");
+module.exports = __webpack_require__(/*! E:\work\ejornal\resources\js\admin\reportes\fichadas_nuevas.js */"./resources/js/admin/reportes/fichadas_nuevas.js");
 
 
 /***/ })
