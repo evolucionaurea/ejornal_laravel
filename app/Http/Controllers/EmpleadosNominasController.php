@@ -113,7 +113,7 @@ class EmpleadosNominasController extends Controller
 		$trabajador->nombre = $request->nombre;
 		$trabajador->sexo = $request->sexo;
 		if (isset($request->email) && !empty($request->email)) {
-			$trabajador->email = $request->email;
+			$trabajador->email = preg_replace('/[^0-9]/', '', $request->email);
 		}
 		if (isset($request->telefono) && !empty($request->telefono)) {
 			$trabajador->telefono = $request->telefono;
@@ -282,10 +282,10 @@ class EmpleadosNominasController extends Controller
 
 
 		$trabajador->nombre = $request->nombre;
-		$trabajador->email = $request->email;
+		$trabajador->email = preg_replace('/[^0-9]/', '', $request->email);
 
 		$trabajador->telefono = $request->telefono;
-		$trabajador->dni = $request->dni;
+		$trabajador->dni = preg_replace('/[^0-9]/', '', $request->dni);
 		$trabajador->sexo = $request->sexo;
 		$trabajador->calle = $request->calle;
 		$trabajador->nro = $request->nro;
@@ -471,6 +471,8 @@ class EmpleadosNominasController extends Controller
 	public function cargar_excel(Request $request)
 	{
 
+		//dd($request->all());
+
 
 		if(!auth()->user()->id_cliente_actual) return back()->with('error', 'Debes estar trabajando en algún cliente para poder realizar esta acción.');
 
@@ -494,7 +496,7 @@ class EmpleadosNominasController extends Controller
 			if($indice!==0){
 
 			// Filtrar filas completamente vacías o con solo espacios en blanco
-            $fila_tiene_contenido = false;
+      $fila_tiene_contenido = false;
             
 			// Verificar si al menos los campos obligatorios tienen contenido
 			if (!empty(trim($fila[0])) || !empty(trim($fila[1])) || !empty(trim($fila[2])) || !empty(trim($fila[3]))) {
@@ -514,10 +516,10 @@ class EmpleadosNominasController extends Controller
 			if ($fila_tiene_contenido) {
 				$registros[] = (object) [
 					'nombre'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[0]),
-					'dni'=>$fila[1],
+					'dni'=>preg_replace('/[^0-9]/', '', $fila[1]),
 					'estado'=>$fila[2],
 					'sector'=>iconv('ISO-8859-1', 'UTF-8//IGNORE', $fila[3]),
-					'email'=>$fila[4],
+					'email'=>preg_replace('/[^0-9]/', '', $fila[4]), //es cuil
 					'telefono'=>$fila[5],
 					'fecha_nacimiento'=>$fila[6],
 
@@ -625,11 +627,9 @@ class EmpleadosNominasController extends Controller
 
 			}
 
-
-
 			if($request->mover==='1'){
 				foreach($nomina_actual as $n_actual){
-					if($n_actual->dni == $registro->dni && $n_actual->id_cliente != auth()->user()->id_cliente_actual ){
+					if(preg_replace('/[^0-9]/', '', $n_actual->dni) == $registro->dni && $n_actual->id_cliente != auth()->user()->id_cliente_actual ){
 
 						// compruebo si tiene ausentismo o tarea liviana activo
 						if($has_ausentismo_tarea_liviana = $this->hasAusentismoOrTareaLiviana($n_actual)){
@@ -651,16 +651,24 @@ class EmpleadosNominasController extends Controller
 
 		if(!empty($errores)) return back()->with(compact('errores'));
 
+		
+
+
+		//// base  || excel
+		//// email == cuil
+		//// dni   == dni
 
 		foreach ($registros as $kr=>$registro):
 
 			$empleado_existente = false;
 			foreach($nomina_actual as $n_actual){
-				if($n_actual->dni == $registro->dni && $n_actual->email==$registro->email){
+				if(preg_replace('/[^0-9]/', '', $n_actual->dni) == $registro->dni){
+
+					//&& preg_replace('/[^0-9]/','',$n_actual->email)==$registro->email
 					$empleado_existente = $n_actual;
 					break;
 				}
-			}
+			}	
 
 
 			if(!$empleado_existente){
@@ -669,6 +677,7 @@ class EmpleadosNominasController extends Controller
 				$nomina->id_cliente = auth()->user()->id_cliente_actual;
 				$empleados_inexistentes[] = $registro;
 			}else{
+
 				//$nomina = Nomina::find($empleado);
 				$nomina = clone $empleado_existente;
 				if($request->coincidencia==='1') $empleados_actualizados[] = $registro;
@@ -691,9 +700,9 @@ class EmpleadosNominasController extends Controller
 			if(!$empleado_existente || ($empleado_existente && $request->coincidencia==='1')){
 
 				$nomina->nombre = $registro->nombre;
-				$nomina->email = strtolower($registro->email);
+				$nomina->email = $registro->email;
 
-				$nomina->dni = preg_replace('/[^0-9]/', '', $registro->dni);
+				$nomina->dni = $registro->dni;
 
 				if($registro->fecha_nacimiento){
 					$nomina->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $registro->fecha_nacimiento);
@@ -808,7 +817,7 @@ class EmpleadosNominasController extends Controller
 		$nomina_historial_creado = NominaHistorial::where('cliente_id',auth()->user()->id_cliente_actual)
 			->orderBy('year_month','desc')
 			->first();
-		$total_nomina = count($nomina_actual)+count($empleados_inexistentes)-($request->borrar==='1' ? count($empleados_borrables) : 0);
+		$total_nomina = count($nomina_actual_cliente)+count($empleados_inexistentes)-($request->borrar==='1' ? count($empleados_borrables) : 0);
 		$nomina_historial = new NominaHistorial;
 		$nomina_historial->year_month = CarbonImmutable::now()->format('Ym');
 		$nomina_historial->cliente_id = auth()->user()->id_cliente_actual;

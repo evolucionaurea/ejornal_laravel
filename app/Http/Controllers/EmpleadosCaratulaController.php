@@ -335,7 +335,7 @@ class EmpleadosCaratulaController extends Controller
 			}
 
 			return redirect()
-				->route('nominas.show', $request->id_nomina)
+				->route('empleados/nominas/show',$request->id_nomina)
 				->with('success', 'Carátula actualizada con éxito');
 
 		} catch (\Illuminate\Validation\ValidationException $ve) {

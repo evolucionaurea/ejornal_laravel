@@ -40,7 +40,7 @@
     @endif
 
     <div class="tarjeta">
-      <form action="{{url('empleados/caratulas/update', $caratula->id)}}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+      <form action="{{ url('empleados/caratulas/'.$caratula->id) }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
 				@csrf
 				@method('PUT')
 				<input type="hidden" name="id_nomina" value="{{ $caratula->nomina->id }}">
