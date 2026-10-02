@@ -138,18 +138,17 @@
 
 			<!-- Consultas día -->
 			<div class="col-md-4 col-lg-4 mb-4">
-				<div class="card light-blue lighten-1 white-text">
+				<a href="{{route('empleados.consultas.todas',['filtro'=>'dia'])}}" class="card light-blue lighten-1 white-text">
 					<div class="card-body d-flex justify-content-between align-items-center">
 						<div>
-							<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$consultas_medicas +
-								$consultas_enfermeria + $consultas_nutricionales}}</p>
+							<p class="h2-responsive font-weight-bold mt-n2 mb-0">{{$consultas_medicas + $consultas_enfermeria + $consultas_nutricionales + $consultas_otras}}</p>
 							<p class="mb-0">Consultas totales del día</p>
 						</div>
 						<div>
 							<i class="fas fa-comments fa-2x text-black-40"></i>
 						</div>
 					</div>
-				</div>
+				</a>
 			</div>
 
 

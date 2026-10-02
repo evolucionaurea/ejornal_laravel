@@ -264,6 +264,28 @@
 			</div>
 		</div>
 
+		{{-- Otras --}}
+		<div class="card">
+			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingOtra">
+				<h2 class="mb-0 d-flex">
+					<button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+						data-target="#collapseOtra" aria-expanded="false" aria-controls="collapseOtra">
+						<h6>Otras consultas ({{ count($consultas_otras) }})</h6>
+					</button>
+					<i style="cursor: pointer;" data-toggle="collapse" data-target="#collapseOtra"
+						class="fal fa-chevron-circle-down text-white"></i>
+				</h2>
+			</div>
+			<div id="collapseOtra" class="collapse {{count($consultas_otras) ? 'show' : ''}}"
+				aria-labelledby="headingOtra" data-parent="#accordionExample">
+
+				<div class="card-body table-responsive">
+					@include('modulos.perfil_trabajador.consultas_otras_tabla')
+				</div>
+
+			</div>
+		</div>
+
 		{{-- EXAMENES --}}
 		<div class="card">
 			<div class="card-header bg-dark text-white cabecera_consultas_historial" id="headingThree">

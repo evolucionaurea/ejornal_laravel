@@ -91,7 +91,16 @@ $(() => {
 						console.log(v);
 
 						if (meta.settings.json.fichada_user != 1 && meta.settings.json.fichar_user) return '';
-						let tipoRuta = v.tipo === 'Médica' ? 'medicas' : (v.tipo === 'Nutricional' ? 'nutricionales' : 'enfermeria');
+						let tipoRuta = '#';
+
+						switch (v.tipo) {
+							case 'Médica': tipoRuta = 'medicas'; break;
+							case 'Nutricional': tipoRuta = 'nutricionales'; break;
+							case 'Enfermería': tipoRuta = 'enfermeria'; break;
+							default: tipoRuta = 'otras'; break;
+						}
+
+
 						return `
 						<div class="acciones_tabla">
 							<a title="Ver" href="${tipoRuta}/${v.id}">

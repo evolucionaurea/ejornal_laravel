@@ -10,6 +10,7 @@ use App\CovidTesteo;
 use App\CovidVacuna;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
+use App\ConsultaOtra;
 use App\Ausentismo;
 use App\Caratula;
 use App\ConsultaNutricional;
@@ -242,6 +243,12 @@ trait Nominas
 		->orderBy('fecha_atencion','desc')
 		->get();
 
+		$consultas_otras = ConsultaOtra::where('nomina_id',$id)
+		->with(['nomina','cliente','profesional_tipo'])
+		->orderBy('fecha','desc')
+		->get();
+		//dd($consultas_otras);
+
 		$ausentismos = Ausentismo::where('id_trabajador', $id)
 			->with([
 				'trabajador',
@@ -268,7 +275,7 @@ trait Nominas
 
 		$resumen_historial = [];
 		foreach($ausentismos as $ausentismo){
-			$resumen_historial[$ausentismo->fecha_inicio->format('Ymd')] = (object) [
+			$resumen_historial[$ausentismo->fecha_inicio->format('Ymd').'_ausentismo'] = (object) [
 				'fecha'=>$ausentismo->fecha_inicio,
 				'tipo'=>$ausentismo->tipo->nombre,
 				'evento'=>'Ausentismo',
@@ -278,7 +285,7 @@ trait Nominas
 			];
 		}
 		foreach($consultas_enfermeria as $enfermeria){
-			$resumen_historial[$enfermeria->fecha->format('Ymd')] = (object) [
+			$resumen_historial[$enfermeria->fecha->format('Ymd').'_enfermeria'] = (object) [
 				'fecha'=>$enfermeria->fecha,
 				'tipo'=>$enfermeria->diagnostico->nombre,
 				'evento'=>'Consulta Enfermería',
@@ -288,7 +295,7 @@ trait Nominas
 			];
 		}
 		foreach($consultas_medicas as $medica){
-			$resumen_historial[$medica->fecha->format('Ymd')] = (object) [
+			$resumen_historial[$medica->fecha->format('Ymd').'_medica'] = (object) [
 				'fecha'=>$medica->fecha,
 				'tipo'=>$medica->diagnostico->nombre,
 				'evento'=>'Consulta Médicas',
@@ -298,7 +305,7 @@ trait Nominas
 			];
 		}
 		foreach($consultas_nutricionales as $nutricional){
-			$resumen_historial[$nutricional->fecha_atencion->format('Ymd')] = (object) [
+			$resumen_historial[$nutricional->fecha_atencion->format('Ymd').'_nutricional'] = (object) [
 				'fecha'=>$nutricional->fecha_atencion,
 				'tipo'=>$nutricional->tipo,
 				'evento'=>'Consulta Nutricional',
@@ -307,8 +314,18 @@ trait Nominas
 				'cliente'=>$nutricional->cliente
 			];
 		}
+		foreach($consultas_otras as $otra){
+			$resumen_historial[$otra->fecha->format('Ymd').'_otra'] = (object) [
+				'fecha'=>$otra->fecha,
+				'tipo' => $otra->profesional_tipo ? $otra->profesional_tipo->nombre : 'Sin especificar',
+				'evento'=>'Otra Consulta',
+				'observaciones'=>$otra->motivo.'. '.$otra->desarrollo,
+				'usuario'=>$otra->user->nombre,
+				'cliente'=>$otra->cliente
+			];
+		}
 		foreach($preocupacionales as $preocupacional){
-			$resumen_historial[$preocupacional->fecha->format('Ymd')] = (object) [
+			$resumen_historial[$preocupacional->fecha->format('Ymd').'_preocupacional'] = (object) [
 				'fecha'=>$preocupacional->fecha,
 				'tipo' => isset($preocupacional->tipo) ? $preocupacional->tipo->nombre : 'Sin especificar',
 				'evento'=>'Exámen Médico Complementario',
@@ -325,6 +342,7 @@ trait Nominas
 			'consultas_medicas',
 			'consultas_enfermeria',
 			'consultas_nutricionales',
+			'consultas_otras',
 			'ausentismos',
 			'clientes',
 			'vacunas',

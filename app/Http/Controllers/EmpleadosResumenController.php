@@ -15,6 +15,7 @@ use App\CovidTesteo;
 use App\ConsultaMedica;
 use App\ConsultaEnfermeria;
 use App\ConsultaNutricional;
+use App\ConsultaOtra;
 use App\CovidVacuna;
 // use Jenssegers\Agent\Agent;
 use Microsoft\Graph\Graph;
@@ -110,6 +111,11 @@ class EmpleadosResumenController extends Controller
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->whereDate('consultas_nutricionales.fecha_atencion', '=', Carbon::now()->format('Y-m-d'))
 		->count();
+
+		$consultas_otras = ConsultaOtra::join('nominas', 'consultas_otras.nomina_id', 'nominas.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->whereDate('consultas_otras.fecha', '=', Carbon::now()->format('Y-m-d'))
+		->count();
 		//dd($consultas_nutricionales);
 
 		/*$vacunados_varias_dosis = CovidVacuna::join('nominas', 'covid_vacunas.id_nomina', 'nominas.id')
@@ -162,6 +168,12 @@ class EmpleadosResumenController extends Controller
 		->whereYear('consultas_nutricionales.fecha_atencion', '=', $fecha_actual->year)
 		->count();
 
+		$otras_consultas_mes = ConsultaOtra::join('nominas', 'consultas_otras.nomina_id', 'nominas.id')
+		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
+		->whereMonth('consultas_otras.fecha', '=', $fecha_actual->month)
+		->whereYear('consultas_otras.fecha', '=', $fecha_actual->year)
+		->count();
+
 		/*$ausencia_covid = Ausentismo::join('nominas', 'ausentismos.id_trabajador', 'nominas.id')
 		->where('nominas.id_cliente', auth()->user()->id_cliente_actual)
 		->where('ausentismos.fecha_regreso_trabajar', '!=', null)
@@ -173,8 +185,20 @@ class EmpleadosResumenController extends Controller
 		->select('ausentismos.*', 'nominas.nombre', 'nominas.email', 'nominas.telefono', 'nominas.dni', 'nominas.estado')
 		->count();*/
 
-		return view('empleados.resumen', compact('clientes', 'total_nomina', 'ausentes_hoy', 'consultas_medicas',
-		'medicas_mes', 'enfermerias_mes', 'consultas_enfermeria', 'nutricionales_mes', 'ausencia_covid', 'consultas_nutricionales'));
+		return view('empleados.resumen', compact(
+			'clientes', 
+			'total_nomina', 
+			'ausentes_hoy', 
+			'medicas_mes',
+			'enfermerias_mes',
+			'nutricionales_mes',
+			'otras_consultas_mes',
+			'consultas_medicas',
+			'consultas_enfermeria',
+			'consultas_nutricionales',
+			'consultas_otras',
+			'ausencia_covid'
+		));
 	}
 
 

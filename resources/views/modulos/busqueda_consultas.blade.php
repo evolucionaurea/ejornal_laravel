@@ -19,10 +19,10 @@
 			</div>
 
 			<div class="col-lg-4">
-				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="" readonly>
+				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="{{ Request::get('filtro')=='dia' ? \Carbon\Carbon::now()->format('d/m/Y') : '' }}" readonly>
 			</div>
 			<div class="col-lg-4">
-				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="" readonly>
+				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="{{ Request::get('filtro')=='dia' ? \Carbon\Carbon::now()->format('d/m/Y') : '' }}" readonly>
 			</div>
 
 			<div class="col-lg-4">

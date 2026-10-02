@@ -182,8 +182,6 @@ class EmpleadoConsultasTodasController extends Controller
 				DB::raw('NULL as frec_cardiaca')
 			);
 		}
-		
-
 
 
 		if ($request->search) {

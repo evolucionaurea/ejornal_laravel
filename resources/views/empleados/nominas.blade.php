@@ -102,10 +102,10 @@
 							{{ csrf_field() }}
 
 							<div class="input-group">
-								<div class="custom-file">
-									<input name="archivo" id="input_file" type="file" class="custom-file-input"
+								<div class="custom-filex">
+									<input name="archivo" id="input_file" type="file" class="custom-file-inputx"
 										accept="*.csv,*.xls,*.xlsx">
-									<label for="input_file" class="custom-file-label">Subir Archivo</label>
+									{{-- <label for="input_file" class="custom-file-label">Subir Archivo</label> --}}
 								</div>
 							</div>
 
