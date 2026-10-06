@@ -100,10 +100,14 @@
 					<thead>
 						<tr class="bg-light">
 							<th>Tipo</th>
+							<th>Fecha</th>
 							<th>Descripción</th>
 							<th>Archivo</th>
 							<th>Última Actualización</th>
 							<th>Usuario que la creó</th>
+							@if($editar_comunicaciones)
+							<th></th>
+							@endif
 						</tr>
 					</thead>
 					<tbody>
@@ -111,6 +115,7 @@
 						@foreach($ausencia->comunicaciones as $comunicacion)
 						<tr>
 							<td class="align-middle">{{ $comunicacion->tipo->nombre }}</td>
+							<td class="align-middle">{{ $comunicacion->fecha ? $comunicacion->fecha->format('d/m/Y') : '' }}</td>
 							<td class="align-middle">{{ $comunicacion->descripcion }}</td>
 							<td class="align-middle">
 								@if ($comunicacion->archivos->isNotEmpty())
@@ -135,6 +140,14 @@
 							</td>
 							<td class="align-middle">{{ $comunicacion->updated_at->format('d/m/Y') }}</td>
 							<td class="align-middle">{{ $comunicacion->user ?? $ausencia->user }}</td>
+							@if($editar_comunicaciones)
+							<td class="align-middle">
+								@include('empleados.comunicaciones.partials.acciones', [
+									'comunicacion' => $comunicacion,
+									'puede_eliminar' => $ausencia->comunicaciones->count() > 1
+								])
+							</td>
+							@endif
 						</tr>
 						@endforeach @endif
 					</tbody>
@@ -170,13 +183,18 @@
 						{{ csrf_field() }}
 						<input type="hidden" name="id_ausentismo" value="{{$ausencia->id}}">
 						<div class="form-row">
-							<div class="form-group col-md-12">
+							<div class="form-group col-md-8">
 								<label>Tipo de comunicación</label>
 								<select class="form-control" name="id_tipo">
 									@foreach ($tipo_comunicaciones as $tipo)
 									<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
 									@endforeach
 								</select>
+							</div>
+							<div class="form-group col-md-4">
+								<label>Fecha</label>
+								<input data-toggle="fecha-comunicacion" name="fecha" type="text" class="form-control" required
+									autocomplete="off" value="{{ now()->format('d/m/Y') }}">
 							</div>
 							<div class="form-group col-md-12">
 								<label>Descripción</label>
@@ -199,5 +217,8 @@
 </div>
 
 
+@include('empleados.comunicaciones.partials.modales_editar', [
+	'comunicaciones' => $editar_comunicaciones ? $ausencia->comunicaciones : collect()
+])
 
 @endsection

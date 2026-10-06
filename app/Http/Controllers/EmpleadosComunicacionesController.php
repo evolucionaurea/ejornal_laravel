@@ -36,6 +36,7 @@ class EmpleadosComunicacionesController extends Controller
 			'comunicaciones.id_ausentismo',
 			'comunicaciones.id',
 			'comunicaciones.descripcion',
+			'comunicaciones.fecha',
 			'comunicaciones.created_at',
 			DB::raw('IF(comunicaciones.user IS NOT NULL, comunicaciones.user, ausentismos.user) as user'),
 			DB::raw('tipo_comunicacion.nombre as tipo'),
@@ -60,10 +61,10 @@ class EmpleadosComunicacionesController extends Controller
 
 		// Filtros
 		if ($request->from) {
-			$query->whereDate('comunicaciones.created_at', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
+			$query->whereDate('comunicaciones.fecha', '>=', Carbon::createFromFormat('d/m/Y', $request->from)->format('Y-m-d'));
 		}
 		if ($request->to) {
-			$query->whereDate('comunicaciones.created_at', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
+			$query->whereDate('comunicaciones.fecha', '<=', Carbon::createFromFormat('d/m/Y', $request->to)->format('Y-m-d'));
 		}
 		if ($request->estado && $request->estado != 'todos') {
 			$query->where('nominas.estado', '=', $request->estado == 'activos' ? '1' : '0');
@@ -128,15 +129,12 @@ class EmpleadosComunicacionesController extends Controller
 			'descripcion' => 'required',
 			'id_tipo' => 'required',
 			'id_ausentismo' => 'required',
+			'fecha' => 'nullable|date_format:d/m/Y',
 		]);
 
-		if ($request->hasFile('archivos')) {
-			foreach ($request->file('archivos') as $archivo) {
-				$errorMessage = $this->validarArchivo($archivo);
-				if ($errorMessage) {
-					return back()->withErrors(['archivo' => $errorMessage])->withInput();
-				}
-			}
+		$errorMessage = $this->validarArchivos($request);
+		if ($errorMessage) {
+			return back()->withErrors(['archivo' => $errorMessage])->withInput();
 		}
 
 		// Guardar en base Comunicaciones
@@ -144,23 +142,11 @@ class EmpleadosComunicacionesController extends Controller
 		$comunicacion->id_ausentismo = $request->id_ausentismo;
 		$comunicacion->id_tipo = $request->id_tipo;
 		$comunicacion->descripcion = $request->descripcion;
+		$comunicacion->fecha = $request->fecha ? Carbon::createFromFormat('d/m/Y', $request->fecha) : Carbon::today();
 		$comunicacion->user = auth()->user()->nombre;
 		$comunicacion->save();
 
-		if ($request->hasFile('archivos')) {
-			foreach ($request->file('archivos') as $archivo) {
-				// Guardar el archivo con el nombre hasheado en el disco (carpeta comunicaciones/{id})
-				$hashedFilename = $archivo->hashName();
-				$archivo->storeAs('comunicaciones/'.$comunicacion->id, $hashedFilename, 'local');
-
-				// Crear un nuevo registro en la tabla comunicaciones_archivos
-				$comunicacionArchivo = new ComunicacionArchivo();
-				$comunicacionArchivo->id_comunicacion = $comunicacion->id;
-				$comunicacionArchivo->archivo = $archivo->getClientOriginalName(); // Nombre original para referencia
-				$comunicacionArchivo->hash_archivo = $hashedFilename; // Nombre del archivo hasheado
-				$comunicacionArchivo->save();
-			}
-		}
+		$this->guardarArchivos($request, $comunicacion);
 
 		return redirect('empleados/ausentismo/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
 		//return redirect('empleados/comunicaciones/'.$request->id_ausentismo)->with('success', 'Comunicación guardada con éxito');
@@ -180,6 +166,7 @@ class EmpleadosComunicacionesController extends Controller
 			->with(['trabajador','tipo','comunicaciones'=>function($query){
 				$query
 					->with(['archivos','tipo'])
+					->orderBy('fecha','desc')
 					->orderBy('created_at','desc');
 			}])
 			->first();
@@ -198,9 +185,13 @@ class EmpleadosComunicacionesController extends Controller
 
 		$clientes = $this->getClientesUser();
 
+		// Solo se editan/eliminan comunicaciones de ausentismos del cliente actual y de trabajadores no transferidos
+		$editar_comunicaciones = $ausencia->id_cliente == $ausencia->trabajador->id_cliente && $ausencia->id_cliente == auth()->user()->id_cliente_actual;
+
 		return view('empleados.comunicaciones.show', compact(
 			'ausencia',
 			'clientes',
+			'editar_comunicaciones',
 			///'comunicaciones_ausentismo',
 			'tipo_comunicaciones'
 		));
@@ -227,7 +218,39 @@ class EmpleadosComunicacionesController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		//
+		$validatedData = $request->validate([
+			'descripcion' => 'required',
+			'id_tipo' => 'required',
+			'fecha' => 'required|date_format:d/m/Y',
+		]);
+
+		$comunicacion = $this->getComunicacionCliente($id);
+		if (!$comunicacion) {
+			return back()->with('error', 'No se encontró la comunicación');
+		}
+
+		$errorMessage = $this->validarArchivos($request);
+		if ($errorMessage) {
+			return back()->withErrors(['archivo' => $errorMessage])->withInput();
+		}
+
+		$comunicacion->id_tipo = $request->id_tipo;
+		$comunicacion->descripcion = $request->descripcion;
+		$comunicacion->fecha = Carbon::createFromFormat('d/m/Y', $request->fecha);
+		$comunicacion->save();
+
+		// Quitar los archivos que se marcaron para eliminar
+		if ($request->archivos_eliminar) {
+			$archivos = $comunicacion->archivos()->whereIn('id', $request->archivos_eliminar)->get();
+			foreach ($archivos as $archivo) {
+				Storage::disk('local')->delete('comunicaciones/'.$comunicacion->id.'/'.$archivo->hash_archivo);
+				$archivo->delete();
+			}
+		}
+
+		$this->guardarArchivos($request, $comunicacion);
+
+		return back()->with('success', 'Comunicación actualizada con éxito');
 	}
 
 	/**
@@ -238,7 +261,21 @@ class EmpleadosComunicacionesController extends Controller
 	 */
 	public function destroy($id)
 	{
-		//
+		$comunicacion = $this->getComunicacionCliente($id);
+		if (!$comunicacion) {
+			return back()->with('error', 'No se encontró la comunicación');
+		}
+
+		// El ausentismo siempre debe conservar al menos una comunicación
+		if (Comunicacion::where('id_ausentismo', $comunicacion->id_ausentismo)->count() <= 1) {
+			return back()->with('error', 'No se puede eliminar la única comunicación del ausentismo');
+		}
+
+		$comunicacion->archivos()->delete();
+		Storage::disk('local')->deleteDirectory('comunicaciones/'.$comunicacion->id);
+		$comunicacion->delete();
+
+		return back()->with('success', 'Comunicación eliminada correctamente');
 	}
 
 
@@ -302,6 +339,7 @@ class EmpleadosComunicacionesController extends Controller
 			'Trabajador',
 			'Tipo de Comunicación',
 			'Usuario que Registró',
+			'Fecha',
 			'Fecha de Carga',
 			'Estado',
 			'Descripción'
@@ -315,6 +353,7 @@ class EmpleadosComunicacionesController extends Controller
 				$row->nombre,
 				$row->tipo,
 				$row->user,
+				$row->fecha ? $row->fecha->format('d/m/Y') : '',
 				$row->created_at,
 				$row->estado ? 'activo' : 'inactivo',
 				$row->descripcion
@@ -331,6 +370,49 @@ class EmpleadosComunicacionesController extends Controller
 
 	}
 
+
+
+	// Comunicación solo si su ausentismo pertenece al cliente actual del usuario
+	private function getComunicacionCliente($id)
+	{
+		return Comunicacion::where('id', $id)
+			->whereHas('ausentismo', function ($query) {
+				$query->where('id_cliente', auth()->user()->id_cliente_actual);
+			})
+			->first();
+	}
+
+
+	private function validarArchivos(Request $request)
+	{
+		if (!$request->hasFile('archivos')) return null;
+
+		foreach ($request->file('archivos') as $archivo) {
+			$errorMessage = $this->validarArchivo($archivo);
+			if ($errorMessage) return $errorMessage;
+		}
+
+		return null;
+	}
+
+
+	private function guardarArchivos(Request $request, Comunicacion $comunicacion)
+	{
+		if (!$request->hasFile('archivos')) return;
+
+		foreach ($request->file('archivos') as $archivo) {
+			// Guardar el archivo con el nombre hasheado en el disco (carpeta comunicaciones/{id})
+			$hashedFilename = $archivo->hashName();
+			$archivo->storeAs('comunicaciones/'.$comunicacion->id, $hashedFilename, 'local');
+
+			// Crear un nuevo registro en la tabla comunicaciones_archivos
+			$comunicacionArchivo = new ComunicacionArchivo();
+			$comunicacionArchivo->id_comunicacion = $comunicacion->id;
+			$comunicacionArchivo->archivo = $archivo->getClientOriginalName(); // Nombre original para referencia
+			$comunicacionArchivo->hash_archivo = $hashedFilename; // Nombre del archivo hasheado
+			$comunicacionArchivo->save();
+		}
+	}
 
 
 	private function validarArchivo($archivo, $maxSize = 2048, $formatosPermitidos = ['jpeg', 'png', 'jpg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'])

@@ -93,7 +93,7 @@
 					<thead>
 						@if( $ausentismo->id_cliente == $ausentismo->trabajador->id_cliente)
 						<tr>
-							<th colspan="5">
+							<th colspan="7">
 								<button data-toggle="modal" data-target="#cargar_comunicaciones_ausentismo" class="btn-ejornal btn-ejornal-success" >
 									<i class="fas fa-plus-circle fa-fw"></i> <span>Crear Comunicación</span>
 								</button>
@@ -102,16 +102,21 @@
 						@endif
 						<tr>
 							<th>Tipo</th>
+							<th>Fecha</th>
 							<th>Descripción</th>
 							<th>Archivos</th>
 							<th>Última Actualización</th>
 							<th>Usuario que registra</th>
+							@if($editar_comunicaciones)
+							<th></th>
+							@endif
 						</tr>
 					</thead>
 					<tbody>
 						@foreach($ausentismo->comunicaciones as $comunicacion)
 						<tr>
 							<td class="align-middle">{{ $comunicacion->tipo->nombre }}</td>
+							<td class="align-middle">{{ $comunicacion->fecha ? $comunicacion->fecha->format('d/m/Y') : '' }}</td>
 							<td class="align-middle">{{ $comunicacion->descripcion }}</td>
 							<td class="align-middle">
 								@if($comunicacion->archivos->toArray())
@@ -127,6 +132,14 @@
 							</td>
 							<td class="align-middle">{{ $comunicacion->updated_at->format('d/m/Y') }}</td>
 							<td class="align-middle">{{ $comunicacion->user }}</td>
+							@if($editar_comunicaciones)
+							<td class="align-middle">
+								@include('empleados.comunicaciones.partials.acciones', [
+									'comunicacion' => $comunicacion,
+									'puede_eliminar' => $ausentismo->comunicaciones->count() > 1
+								])
+							</td>
+							@endif
 						</tr>
 						@endforeach
 					</tbody>
@@ -260,13 +273,18 @@
 						{{ csrf_field() }}
 						<input type="hidden" name="id_ausentismo" value="{{$ausentismo->id}}">
 						<div class="form-row">
-							<div class="form-group col-md-12">
+							<div class="form-group col-md-8">
 								<label>Tipo de comunicación</label>
 								<select class="form-control" name="id_tipo">
 									@foreach ($tipo_comunicaciones as $tipo)
 									<option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
 									@endforeach
 								</select>
+							</div>
+							<div class="form-group col-md-4">
+								<label>Fecha</label>
+								<input data-toggle="fecha-comunicacion" name="fecha" type="text" class="form-control" required
+									autocomplete="off" value="{{ now()->format('d/m/Y') }}">
 							</div>
 							<div class="form-group col-md-12">
 								<label>Descripción</label>
@@ -287,5 +305,9 @@
 	</div>
 </div>
 
+
+@include('empleados.comunicaciones.partials.modales_editar', [
+	'comunicaciones' => $editar_comunicaciones ? $ausentismo->comunicaciones : collect()
+])
 
 @endsection

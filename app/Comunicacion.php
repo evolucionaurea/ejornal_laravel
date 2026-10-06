@@ -17,10 +17,11 @@ class Comunicacion extends Model
   protected $table = 'comunicaciones';
 
   // Campos habilitados para ingresar
-  protected $fillable = ['id_ausentismo', 'id_tipo', 'user', 'descripcion', 'archivo', 'hash_archivo'];
+  protected $fillable = ['id_ausentismo', 'id_tipo', 'user', 'descripcion', 'fecha', 'archivo', 'hash_archivo'];
 
   protected $casts = [
-  	'created_at'=>'date:d/m/Y'
+  	'created_at'=>'date:d/m/Y',
+  	'fecha'=>'date:d/m/Y'
   ];
 
   public function tipo(){

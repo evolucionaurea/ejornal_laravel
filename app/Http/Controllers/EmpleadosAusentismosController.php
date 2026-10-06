@@ -228,6 +228,7 @@ class EmpleadosAusentismosController extends Controller
 		$comunicacion->id_ausentismo = $ausentismo->id;
 		$comunicacion->id_tipo = $request->tipo_comunicacion;
 		$comunicacion->descripcion = $request->descripcion;
+		$comunicacion->fecha = Carbon::today();
 		$comunicacion->user = auth()->user()->nombre;
 		$comunicacion->save();
 
@@ -292,14 +293,23 @@ class EmpleadosAusentismosController extends Controller
 	public function show($id, Request $request)
 	{
 
-		$ausentismo = Ausentismo::findOrFail($id);
+		$ausentismo = Ausentismo::with(['comunicaciones'=>function($query){
+				$query
+					->with(['archivos','tipo'])
+					->orderBy('fecha','asc')
+					->orderBy('id','asc');
+			}])
+			->findOrFail($id);
 		$clientes = $this->getClientesUser();
 
 		$tipo_comunicaciones = TipoComunicacion::orderBy('nombre', 'asc')->get();
 
 		//dd( $ausentismo->comunicaciones[1]->archivos->toArray() ? 'lleno' : 'vacio' );
 
-		return view('empleados.ausentismos.show',compact('ausentismo','clientes','tipo_comunicaciones'));
+		// Solo se editan/eliminan comunicaciones de ausentismos del cliente actual y de trabajadores no transferidos
+		$editar_comunicaciones = $ausentismo->id_cliente == $ausentismo->trabajador->id_cliente && $ausentismo->id_cliente == auth()->user()->id_cliente_actual;
+
+		return view('empleados.ausentismos.show',compact('ausentismo','clientes','tipo_comunicaciones','editar_comunicaciones'));
 
 	}
 
@@ -585,6 +595,7 @@ class EmpleadosAusentismosController extends Controller
 	  	$comunicacion->id_ausentismo = $request->id_ausentismo;
 	  	$comunicacion->id_tipo = $request->id_tipo;
 	  	$comunicacion->descripcion = $request->descripcion;
+	  	$comunicacion->fecha = Carbon::today();
 	  	$comunicacion->user = auth()->user()->nombre;
 	  	$comunicacion->save();
 

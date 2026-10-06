@@ -37,9 +37,9 @@ $(()=>{
 					width:180
 				},
 				{
-					data:'created_at',
+					data:'fecha',
 					className:'align-middle',
-					name:'comunicaciones.created_at'
+					name:'comunicaciones.fecha'
 				},
 				{
 					data: 'archivos',

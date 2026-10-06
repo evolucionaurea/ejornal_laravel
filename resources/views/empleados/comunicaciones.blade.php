@@ -86,7 +86,7 @@
 						<th>Trabajador</th>
 						<th>Tipo</th>
 						<th>Usuario que registró</th>
-						<th>Cargado</th>
+						<th>Fecha</th>
 						<th>Archivos</th>
 						<th>Estado</th>
 						<th>Descripción</th>
