@@ -106,6 +106,13 @@
 						Inactivos</option>
 				</select>
 			</div>
+
+			<div class="mb-1 col-md-6">
+				<input placeholder="Desde" name="from" type="text" class="form-control form-control-sm" value="{{ Request::get('filtro')=='dia' ? \Carbon\Carbon::now()->format('d/m/Y') : '' }}" readonly>
+			</div>
+			<div class="mb-1 col-md-6">
+				<input placeholder="Hasta" name="to" type="text" class="form-control form-control-sm" value="{{ Request::get('filtro')=='dia' ? \Carbon\Carbon::now()->format('d/m/Y') : '' }}" readonly>
+			</div>
 		</div>
 
 	</div>
@@ -113,17 +120,23 @@
 	<div class="col-lg-4 border-left align-items-center d-flex">
 
 		<div class="mr-1 mb-1">
-			<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro"><i class="fas fa-search"></i>
-				Buscar</button>
+			<button data-toggle="search" class="btn-ejornal btn-ejornal-gris-claro">
+				<i class="fas fa-search"></i>
+				Buscar
+			</button>
 		</div>
 		<div class="mr-1 mb-1">
-			<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!"><i class="fas fa-list"></i>
-				Mostrar todo</button>
+			<button data-toggle="clear" class="btn-ejornal btn-ejornal-gris-claro" href="#!">
+				<i class="fas fa-list"></i>
+				Mostrar todo
+			</button>
 		</div>
 
 		<div class="mr-1 mb-1">
 			<button data-toggle="export" data-href="{{url(Route::currentRouteName().'/exportar')}}"
-				class="btn-ejornal btn-info"><i class="fas fa-file-excel"></i> Exportar</button>
+				class="btn-ejornal btn-info">
+				<i class="fas fa-file-excel"></i> Exportar
+			</button>
 		</div>
 
 	</div>

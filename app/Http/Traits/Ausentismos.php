@@ -239,7 +239,8 @@ trait Ausentismos {
 
 		if($request->from) {
 			$from = Carbon::createFromFormat('d/m/Y',$request->from);
-			$query->whereRaw("'{$from->toDateString()}' BETWEEN fecha_inicio AND IFNULL(fecha_final,NOW())");
+			//$query->whereRaw("'{$from->toDateString()}' BETWEEN fecha_inicio AND IFNULL(fecha_final,NOW())");
+			$query->whereRaw("fecha_inicio >= '{$from->toDateString()}'");
 			//$query->where(function($query) use ($request){
 				//->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $from))
 				// los que siguen ausentes fuera rango actual
@@ -252,7 +253,8 @@ trait Ausentismos {
 		if($request->to) {
 			$from = $request->from ? Carbon::createFromFormat('d/m/Y',$request->from) : $now;
 			$to = Carbon::createFromFormat('d/m/Y',$request->to);
-			$query->whereRaw("IFNULL(fecha_final,DATE(NOW())) BETWEEN '{$from->toDateString()}' AND '{$to->toDateString()}'");
+			//$query->whereRaw("IFNULL(fecha_final,DATE(NOW())) BETWEEN '{$from->toDateString()}' AND '{$to->toDateString()}'");
+			$query->whereRaw("fecha_final <= '{$to->toDateString()}'");
 			/*$query->where(function($query) use ($request){
 				$query->where('fecha_regreso_trabajar','<=',$to)
 					->orWhere('fecha_regreso_trabajar',null);
