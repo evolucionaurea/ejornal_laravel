@@ -110,10 +110,10 @@
 						<input readonly required name="fecha_final" type="text" class="form-control" value="@if(\Session::has('consulta')){{ \Session::get('consulta')['fecha_final'] }}@else{{ old("fecha_final") }}@endif">
 					</div>
 
-					<div class="form-group col-lg-2">
+					{{-- <div class="form-group col-lg-2">
 						<label>Fecha Regreso</label>
 						<input readonly name="fecha_regreso_trabajar" type="text" class="form-control" value="@if(\Session::has('consulta')){{ \Session::get('consulta')['fecha_final'] }}@else{{ old("fecha_regreso_trabajar") }}@endif">
-					</div>
+					</div> --}}
 
 
 					<div class="form-group col-lg-12">

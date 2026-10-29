@@ -68,12 +68,12 @@
 						<input name="fecha_final" type="text" class="form-control" required
 							value="{{ (!empty($ausentismo->fecha_final)) ? date('d/m/Y',strtotime($ausentismo->fecha_final)) : "" }}">
 					</div>
-					<div class="form-group col-md-2">
+					{{-- <div class="form-group col-md-2">
 						<label>Fecha en que regresó</label>
 						<input style="background-color: #f0f0f0; pointer-events: none;" name="fecha_regreso_trabajar"
 							type="text" class="form-control"
 							value="{{ (!empty($ausentismo->fecha_regreso_trabajar)) ? date('d/m/Y',strtotime($ausentismo->fecha_regreso_trabajar)) : "" }}">
-					</div>
+					</div> --}}
 
 					<div class="form-group col-md-12">
 						<label>Comentario</label>

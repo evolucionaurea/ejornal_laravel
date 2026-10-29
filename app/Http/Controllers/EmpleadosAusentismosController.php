@@ -144,7 +144,7 @@ class EmpleadosAusentismosController extends Controller
 		}
 
 
-		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
+		/* if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
 			$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
 			if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
@@ -164,7 +164,7 @@ class EmpleadosAusentismosController extends Controller
 
 		if ($buscar_ausentismos_trabajador > 0) {
 			return back()->withInput()->with('error', 'Este trabajador tiene ausentismos sin fecha de regreso cargada. No podrás cargar nuevos ausentismos hasta en tanto dicha fecha sea cargada.');
-		}
+		} */
 
 		$ausentismos_solapamientos = Ausentismo::where('id_trabajador', $request->trabajador)
 		->where(function($query) use ($fecha_inicio,$fecha_final){
@@ -202,11 +202,11 @@ class EmpleadosAusentismosController extends Controller
 		$ausentismo->fecha_final = $fecha_final;
 		$ausentismo->comentario = ($request->comentario) ? $request->comentario : null;
 
-		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
+		/* if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
 			$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
 		}else {
-			$ausentismo->fecha_regreso_trabajar = $fecha_final;
-		}
+		} */
+		$ausentismo->fecha_regreso_trabajar = $fecha_final;
 
 		// Si hay un archivo adjunto
 		/*if($request->hasFile('archivo')) {
@@ -394,7 +394,7 @@ class EmpleadosAusentismosController extends Controller
 			}
 		}
 
-		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
+		/* if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar) && !is_null($request->fecha_regreso_trabajar)) {
 			$fecha_regreso_trabajar = Carbon::createFromFormat('d/m/Y', $request->fecha_regreso_trabajar);
 
 			if (!isset($request->fecha_final) && empty($request->fecha_final) && !is_null($request->fecha_final)) {
@@ -404,7 +404,7 @@ class EmpleadosAusentismosController extends Controller
 			if ($fecha_final->greaterThan($fecha_regreso_trabajar)) {
 				return back()->withInput()->with('error', 'La fecha final no puede ser mayor que la fecha de regreso al trabajo');
 			}
-		}
+		} */
 
 		//Actualizar en base
 		$ausentismo = Ausentismo::findOrFail($id);
@@ -451,11 +451,12 @@ class EmpleadosAusentismosController extends Controller
 		}else {
 			$ausentismo->fecha_final = null;
 		}
-		if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
+		/* if (isset($request->fecha_regreso_trabajar) && !empty($request->fecha_regreso_trabajar)) {
 			$ausentismo->fecha_regreso_trabajar = $fecha_regreso_trabajar;
 		}else {
-			$ausentismo->fecha_regreso_trabajar = null;
-		}
+			}	 */
+		$ausentismo->fecha_regreso_trabajar = $ausentismo->fecha_final;
+
 		$ausentismo->user = auth()->user()->nombre;
 		$ausentismo->save();
 

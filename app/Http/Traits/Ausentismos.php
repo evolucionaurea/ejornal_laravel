@@ -230,35 +230,33 @@ trait Ausentismos {
 			$query->where('ausentismos.fecha_inicio','<=',$now->subMonth()->endOfMonth());
 		}
 
-
-
 		if($request->estado){
 			$query->where('nominas.estado','=',$request->estado=='activo' ? 1 : 0);
 		}
+		
 
+		/// chequear si hay ausentismos que 'toquen' en el rango de fechas selccionadas
+		if($request->from && $request->to){
+			$query->where(function($query) use ($request){
 
-		if($request->from) {
-			$from = Carbon::createFromFormat('d/m/Y',$request->from);
-			//$query->whereRaw("'{$from->toDateString()}' BETWEEN fecha_inicio AND IFNULL(fecha_final,NOW())");
-			$query->whereRaw("fecha_inicio >= '{$from->toDateString()}'");
-			//$query->where(function($query) use ($request){
-				//->where('fecha_inicio','>=',Carbon::createFromFormat('d/m/Y', $from))
-				// los que siguen ausentes fuera rango actual
-				/*->orWhere(function($query) use ($request) {
-						$query->where('fecha_regreso_trabajar','>=',Carbon::createFromFormat('d/m/Y', $request->from))
-							->orWhere('fecha_regreso_trabajar',null);
-				});*/
-			//});
-		}
-		if($request->to) {
-			$from = $request->from ? Carbon::createFromFormat('d/m/Y',$request->from) : $now;
-			$to = Carbon::createFromFormat('d/m/Y',$request->to);
-			//$query->whereRaw("IFNULL(fecha_final,DATE(NOW())) BETWEEN '{$from->toDateString()}' AND '{$to->toDateString()}'");
-			$query->whereRaw("fecha_final <= '{$to->toDateString()}'");
-			/*$query->where(function($query) use ($request){
-				$query->where('fecha_regreso_trabajar','<=',$to)
-					->orWhere('fecha_regreso_trabajar',null);
-			});*/
+				$to = Carbon::createFromFormat('d/m/Y',$request->to);
+				$from = Carbon::createFromFormat('d/m/Y',$request->from);
+
+				
+				$query->whereBetween('fecha_inicio',[$from->toDateString(),$to->toDateString()])
+							->orWhereBetween('fecha_final',[$from->toDateString(),$to->toDateString()]);
+			});
+		}else{
+
+			if($request->from) {
+				$from = Carbon::createFromFormat('d/m/Y',$request->from);				
+				$query->whereRaw("fecha_inicio >= '{$from->toDateString()}'");				
+			}
+			if($request->to) {				
+				$to = Carbon::createFromFormat('d/m/Y',$request->to);				
+				$query->whereRaw("fecha_final <= '{$to->toDateString()}'");				
+			}
+
 		}
 
 		if($request->tipo) $query->where('id_tipo',$request->tipo);
