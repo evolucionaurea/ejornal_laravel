@@ -61,8 +61,8 @@ $(() => {
 					className: 'align-middle border-left',
 					sortable: false,
 					render: v => {
-						if (v.id_consulta_enfermeria != null) return v.consulta_enfermeria.trabajador.nombre
-						if (v.id_consulta_medica != null) return v.consulta_medica.trabajador.nombre
+						if (v.id_consulta_enfermeria != null && v.consulta_enfermeria.trabajador != null) return v.consulta_enfermeria.trabajador.nombre
+						if (v.id_consulta_medica != null && v.consulta_medica.trabajador != null) return v.consulta_medica.trabajador.nombre
 						return '<span class="text-muted font-italic">[no aplica]</span>'
 
 					}
